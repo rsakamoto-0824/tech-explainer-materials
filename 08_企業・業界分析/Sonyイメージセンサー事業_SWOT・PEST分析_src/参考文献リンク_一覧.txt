@@ -1,0 +1,109 @@
+ソニーのイメージセンサー事業 SWOT・PEST分析 参考文献・リンク一覧
+確認日 2026-09-27。説明・保存ファイル名・未取得の理由は 参考文献リンク.md を参照
+
+[1] ソニーグループ（2026-05-08）FY2025 Consolidated Financial Results（決算説明資料）（閲覧のみ）
+    https://www.sec.gov/Archives/edgar/data/313838/000110465926057456/tm2613222d2_6k.htm
+[2] ソニーグループ（2026-05-08）Consolidated Financial Summary for the Fiscal Year Ended March 31, 2026（閲覧のみ）
+    https://www.sec.gov/Archives/edgar/data/313838/000110465926057451/tm2613222d1_6k.htm
+[3] ソニーグループ（2026-07-31）Q1 FY2026 Consolidated Financial Results（決算説明資料）（閲覧のみ）
+    https://www.sec.gov/Archives/edgar/data/313838/000110465926088922/tm2621477d2_6k.htm
+[4] ソニーグループ（2025-05-14）Consolidated Financial Summary for the Fiscal Year Ended March 31, 2025（閲覧のみ）
+    https://www.sec.gov/Archives/edgar/data/313838/000110465925048017/tm2514462d2_6k.htm
+[5] ソニーグループ（2023-04-28）2022年度 決算短信（英文、SEC提出版）（閲覧のみ）
+    https://www.sec.gov/Archives/edgar/data/313838/000115752323000641/a53388224.htm
+[6] SSS（2021-12-16）世界初 2層トランジスタ画素積層型CMOSイメージセンサー技術を開発
+    https://www.sony-semicon.com/ja/news/2021/2021121601.html
+[7] SSS（2026-09閲覧）ソニーの半導体の歴史/沿革
+    https://www.sony-semicon.com/ja/company/history/index.html
+[8] SSS（2026-09閲覧）拠点一覧（日本）
+    https://www.sony-semicon.com/ja/company/base/index.html
+[9] SSS（2026-09閲覧）インテリジェントビジョンセンサー（AIセンサー）
+    https://www.sony-semicon.com/ja/technology/ivs/index.html
+[10] SSS（2025-06-13）I&SS分野 事業プレゼンテーション 動画公開のお知らせ
+    https://www.sony-semicon.com/ja/info/2025/2025061301.html
+[11] SSS（2026-05-08）TSMCと次世代イメージセンサーに関する戦略的提携に向けた基本合意書を締結
+    https://www.sony-semicon.com/ja/news/2026/2026050801.html
+[12] SSS（2026-06-17）LOFIC搭載のモバイル用CMOSイメージセンサーを商品化
+    https://www.sony-semicon.com/ja/info/2026/2026061701.html
+[13] SSS（2026-07-22）三菱電機とAIビジョンセンサーソリューションの合弁会社設立に合意
+    https://www.sony-semicon.com/ja/news/2026/2026072201.html
+[14] SSS（2026-07-29）2026年7月28日発生の熊本地方を震源とした地震の影響について（第1報）
+    https://www.sony-semicon.com/ja/info/2026/2026072901.html
+[15] SSS（2026-07-31）令和8年熊本地震の影響について（第2報）
+    https://www.sony-semicon.com/ja/info/2026/2026073101.html
+[16] SSS（2026-08-11）TSMCと次世代イメージセンサーにおける合弁会社の設立に関する確定契約を締結
+    https://www.sony-semicon.com/ja/news/2026/2026081101.html
+[17] 経済産業省（2026-04-17）供給確保計画の概要（ソニーセミコンダクタマニュファクチャリング）
+    https://www.meti.go.jp/policy/economy/economic_security/semicon/nintei_anpohandoutai_keikaku_28.pdf
+[18] Yole Group（2026-08-03）CIS industry: Sony extends its lead as China overtakes South Korea
+    https://www.yolegroup.com/press-release/cis-industry-sony-extends-its-lead-as-china-overtakes-south-korea/
+[19] デジカメライフ（2026-08-21）CMOSセンサー世界シェア2025（日経業界地図2027年版の紹介）
+    https://dclife.jp/archives/18627
+[20] IT之家（2026-09-07）报告称国产 CMOS 厂商豪威 2025 年全球份额首超三星
+    https://www.ithome.com/0/999/120.htm
+[21] TechInsights（2025-09-05）Smartphone Image Sensor Market Share Q2 2025
+    https://www.techinsights.com/blog/narrative-smartphone-image-sensor-market-share-q2-2025
+[22] IDC（2026-05-26）Worldwide Smartphone Market to Decline 13.9% in 2026 as Memory Crisis and US-Iran War Constrain Growth
+    https://www.idc.com/resource-center/blog/worldwide-smartphone-market-to-decline-13-9-in-2026-as-memory-crisis-and-us-iran-war-constrain-growth/
+[23] IDC（2026-08-26）Smartphone Shipments Set for Record 16.7% Drop in 2026, as the Memory Crisis Hits Full Force
+    https://www.idc.com/resource-center/blog/smartphone-shipments-set-for-record-16-7-drop-in-2026-as-the-memory-crisis-hits-full-force/
+[24] Apple（2025-08-06）Apple increases U.S. commitment to $600 billion, announces ambitious program
+    https://www.apple.com/newsroom/2025/08/apple-increases-us-commitment-to-600-billion-usd-announces-ambitious-program/
+[25] TrendForce（2025-08-07）Samsung Tapped to Produce Apple’s New Chips at Austin Fab, Likely iPhone Image Sensors
+    https://www.trendforce.com/news/2025/08/07/news-samsung-tapped-to-produce-apples-new-chips-at-austin-fab-likely-for-iphone-image-sensors/
+[26] MacRumors（2025-12-24）Advanced iPhone 18 Camera Sensor to Be Made in Texas
+    https://www.macrumors.com/2025/12/24/iphone-18-camera-sensor-to-be-made-in-texas/
+[27] Sammy Fans（2026-01-11）Apple could pay Samsung $1.5 billion a year for iPhone camera（SemiAnalysisの推計を紹介）
+    https://www.sammyfans.com/2026/01/11/apple-could-pay-samsung-1-5-billion-a-year-for-iphone-camera/
+[28] TrendForce（2025-03-06）SK hynix Reportedly Exits CIS to Focus on AI amid Weak Demand and Fierce China Competition
+    https://www.trendforce.com/news/2025/03/06/news-sk-hynix-reportedly-exits-cis-to-focus-on-ai-memory-amid-weak-demand-and-fierce-china-competition/
+[29] 米議会調査局（2026-01-30）U.S. Tariffs and the 2025 U.S.-Japan Framework Agreement（IN12608）
+    https://www.congress.gov/crs_external_products/IN/PDF/IN12608/IN12608.3.pdf
+[30] Skadden（2026-02-24）The Supreme Court Ends IEEPA Tariffs, Bringing Fresh Uncertainty for Companies
+    https://www.skadden.com/insights/publications/2026/02/the-supreme-court-ends-ieepa-tariffs
+[31] Sandler, Travis & Rosenberg（2026-09閲覧）Section 232 Tariffs on Semiconductors
+    https://www.strtrade.com/trade-news-resources/tariff-actions-resources/section-232-investigation-semiconductors
+[32] TMI総合法律事務所（2026）中国による日本企業の輸出管理規制リストへの追加と実務対応
+    https://www.tmi.gr.jp/eyes/blog/2026/18033.html
+[33] 地方経済総合研究所（2025-11-05）熊本の水資源と半導体産業
+    https://www.reri.or.jp/report-and-news/ckm-semiconductor-water/
+[34] EE Times Japan（2024-06-03）イメージセンサーの成長を今後けん引するのは？ ソニーが見る半導体市場と成長戦略
+    https://eetimes.itmedia.co.jp/ee/articles/2406/03/news056.html
+[35] EE Times Japan（2025-06-13）イメージセンサー金額シェア60％目標「数年遅れる」、ソニー半導体
+    https://eetimes.itmedia.co.jp/ee/articles/2506/13/news108.html
+[36] EE Times Japan（2025-06-19）センサーで微細プロセス、ロジックも12nm導入へ ソニーのイメージセンサー戦略
+    https://eetimes.itmedia.co.jp/ee/articles/2506/19/news091.html
+[37] EE Times Japan（2025-07-07）26年度には世界大手の9割が採用、黒字化も 本格化するソニーの車載イメージセンサー
+    https://eetimes.itmedia.co.jp/ee/articles/2507/07/news061.html
+[38] EE Times Japan（2025-10-02）ソニーが初の車室内用イメージセンサー投入、法規制で急成長の市場狙う
+    https://eetimes.itmedia.co.jp/ee/articles/2510/02/news038.html
+[39] EE Times Japan（2025-11-11）ソニー半導体、過去最高更新で見通しを上方修正 スマホ向け好調
+    https://eetimes.itmedia.co.jp/ee/articles/2511/11/news110.html
+[40] EE Times Japan（2026-01-15）iPhoneのイメージセンサー、ソニーの独占供給「崩壊のとき」は近いのか
+    https://eetimes.itmedia.co.jp/ee/articles/2601/15/news062.html
+[41] EE Times Japan（2026-04-17）経産省がソニー画像センサー新工場に最大600億円補助
+    https://eetimes.itmedia.co.jp/ee/articles/2604/17/news121.html
+[42] EE Times Japan（2026-05-08）「画素の製造もパートナーと」十時氏が語る、ソニー×TSMC合弁の狙いと期待
+    https://eetimes.itmedia.co.jp/ee/articles/2605/08/news114.html
+[43] EE Times Japan（2026-05-14）ソニーセミコンCTOに聞く――イメージセンサー技術革新の核
+    https://eetimes.itmedia.co.jp/ee/articles/2605/11/news104.html
+[44] EE Times Japan（2026-05-15）「技術ナンバーワンであり続ける」 ソニーセミコンCTOが語る技術戦略
+    https://eetimes.itmedia.co.jp/ee/articles/2605/15/news024.html
+[45] EE Times Japan（2026-05-18）iPhone好調で過去最高も、「世界一」維持へ動くソニー半導体
+    https://eetimes.itmedia.co.jp/ee/articles/2605/18/news060.html
+[46] EE Times Japan（2026-07-23）三菱電機とソニー、AIビジョンセンサーで新会社設立へ
+    https://eetimes.itmedia.co.jp/ee/articles/2607/23/news079.html
+[47] EE Times Japan（2026-07-31）ソニー半導体は1Q過去最高益、スマホ市況停滞も主要顧客ら拡大
+    https://eetimes.itmedia.co.jp/ee/articles/2607/31/news110.html
+[48] EE Times Japan（2026-08-12）ソニーとTSMC、イメージセンサー合弁会社に7470億円 熊本で29年量産
+    https://eetimes.itmedia.co.jp/ee/articles/2608/12/news054.html
+[49] EE Times Japan（2026-08-26）25年のイメージセンサー市場は過去最高、ソニーはシェア5割
+    https://eetimes.itmedia.co.jp/ee/articles/2608/26/news049.html
+[50] EE Times Japan（2026-09-03）ついにイメージセンサー世界シェア5割、ソニーが迎える正念場
+    https://eetimes.itmedia.co.jp/ee/articles/2609/03/news054.html
+[51] ソニーグループ（2025-06-13）Business Segment Presentation 2025: Imaging & Sensing Solutions（資料PDF）（未取得）
+    https://www.sony.com/en/SonyInfo/IR/library/presen/business_segment_meeting/pdf/2025/ISS_E.pdf
+[52] ソニーグループ（2026-05-08）2025年度 連結業績 補足資料（Supplemental Information）（未取得）
+    https://www.sony.com/ja/SonyInfo/IR/library/presen/er/
+[53] ソニーグループ（2024-05-31）2024年 事業説明会 イメージング＆センシング・ソリューション分野（資料）（未取得）
+    https://www.sony.com/ja/SonyInfo/IR/library/presen/business_segment_meeting/

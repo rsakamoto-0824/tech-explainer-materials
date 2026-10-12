@@ -1,0 +1,227 @@
+{
+  "status": "completed",
+  "step": "完了",
+  "case_collection": "2026-09-26_重ね合わせ制御ロードマップ",
+  "created_case_collection": true,
+  "created": 41,
+  "reused": 0,
+  "unread_tagged": 41,
+  "linked_files": 32,
+  "existing_files": 0,
+  "existing_references_added": 22,
+  "existing_references_not_found": [
+    "macmillen1982"
+  ],
+  "missing_files": [],
+  "field_warnings": [],
+  "failures": [],
+  "items": [
+    {
+      "key": "slonaker1988",
+      "zotero_key": "KMQSN5T6",
+      "status": "created"
+    },
+    {
+      "key": "kohno2010",
+      "zotero_key": "LHGHTEDR",
+      "status": "created"
+    },
+    {
+      "key": "maas2011",
+      "zotero_key": "7HWKCVWH",
+      "status": "created"
+    },
+    {
+      "key": "vandekerkhof2017",
+      "zotero_key": "PLN9ITM3",
+      "status": "created"
+    },
+    {
+      "key": "mack2005",
+      "zotero_key": "ZSVJZ76N",
+      "status": "created"
+    },
+    {
+      "key": "kato2007",
+      "zotero_key": "AER97F8V",
+      "status": "created"
+    },
+    {
+      "key": "itrs2007",
+      "zotero_key": "DIR5UFMB",
+      "status": "created"
+    },
+    {
+      "key": "irds2021",
+      "zotero_key": "Y7SACZ4Q",
+      "status": "created"
+    },
+    {
+      "key": "irds2022",
+      "zotero_key": "B5AJYMTS",
+      "status": "created"
+    },
+    {
+      "key": "irds2023",
+      "zotero_key": "P7VH2ZNE",
+      "status": "created"
+    },
+    {
+      "key": "us10444639",
+      "zotero_key": "SIFJMVHD",
+      "status": "created"
+    },
+    {
+      "key": "us11221561",
+      "zotero_key": "8RFFZ4AR",
+      "status": "created"
+    },
+    {
+      "key": "us5493402",
+      "zotero_key": "RHF8R46C",
+      "status": "created"
+    },
+    {
+      "key": "asml_investorday2024",
+      "zotero_key": "ELMR2AU6",
+      "status": "created"
+    },
+    {
+      "key": "asml_nxt1950i_2008",
+      "zotero_key": "2TXL3SXV",
+      "status": "created"
+    },
+    {
+      "key": "asml_holistic_2010",
+      "zotero_key": "ZG7ISQEJ",
+      "status": "created"
+    },
+    {
+      "key": "asml_nxt1980di_2015",
+      "zotero_key": "5R2YJFJI",
+      "status": "created"
+    },
+    {
+      "key": "asml_twinscan20_2021",
+      "zotero_key": "I8T7HZPR",
+      "status": "created"
+    },
+    {
+      "key": "asml_history",
+      "zotero_key": "3BBPUGS2",
+      "status": "created"
+    },
+    {
+      "key": "asml_nxe3400b",
+      "zotero_key": "U7NXVSG7",
+      "status": "created"
+    },
+    {
+      "key": "asml_nxt2000i",
+      "zotero_key": "3CU3M6TU",
+      "status": "created"
+    },
+    {
+      "key": "asml_nxt2050i",
+      "zotero_key": "6F4XJL54",
+      "status": "created"
+    },
+    {
+      "key": "asml_nxt2100i",
+      "zotero_key": "GBC7NFCC",
+      "status": "created"
+    },
+    {
+      "key": "asml_q3_2022",
+      "zotero_key": "XR9WQPMJ",
+      "status": "created"
+    },
+    {
+      "key": "asml_highna_2024",
+      "zotero_key": "B8AGGPB3",
+      "status": "created"
+    },
+    {
+      "key": "asml_ar2021",
+      "zotero_key": "SZTCXTLJ",
+      "status": "created"
+    },
+    {
+      "key": "nikon_s636e_product",
+      "zotero_key": "X7RX3VW5",
+      "status": "created"
+    },
+    {
+      "key": "nikon_s636e_2023",
+      "zotero_key": "UNVCDHWC",
+      "status": "created"
+    },
+    {
+      "key": "nikon_s635e_story",
+      "zotero_key": "NPC6XLN4",
+      "status": "created"
+    },
+    {
+      "key": "nikon_lb1000_2025",
+      "zotero_key": "4GAJXM6Y",
+      "status": "created"
+    },
+    {
+      "key": "nikon_lb1000_2026",
+      "zotero_key": "MZMUHPAR",
+      "status": "created"
+    },
+    {
+      "key": "canon_nil_2023",
+      "zotero_key": "ASG87WAI",
+      "status": "created"
+    },
+    {
+      "key": "kla_pwg2_2017",
+      "zotero_key": "437R64VP",
+      "status": "created"
+    },
+    {
+      "key": "3dincites_pwg5_2020",
+      "zotero_key": "REDLS5IN",
+      "status": "created"
+    },
+    {
+      "key": "bitschips_2025",
+      "zotero_key": "KQ3NI8MF",
+      "status": "created"
+    },
+    {
+      "key": "siliconangle_2026",
+      "zotero_key": "WW8UVM98",
+      "status": "created"
+    },
+    {
+      "key": "trendforce_2024",
+      "zotero_key": "VZI2J44Z",
+      "status": "created"
+    },
+    {
+      "key": "asml_h1_2024",
+      "zotero_key": "6BQXGSAS",
+      "status": "created"
+    },
+    {
+      "key": "intel_10k_fy2025",
+      "zotero_key": "LGHZ7AHM",
+      "status": "created"
+    },
+    {
+      "key": "lam_vectordt_2019",
+      "zotero_key": "5PEQBWE3",
+      "status": "created"
+    },
+    {
+      "key": "edn_aim_2003",
+      "zotero_key": "664ZTR6M",
+      "status": "created"
+    }
+  ],
+  "summary": "新規登録 41 件（うち「未読」タグ 41 件）、登録済みの再利用 0 件、登録済みの参考文献を案件コレクションへ 22 件、ファイルのリンク添付 32 件（添付済み 0 件）、失敗 0 件",
+  "updated_at": "2026-09-27T02:42:53.510Z"
+}

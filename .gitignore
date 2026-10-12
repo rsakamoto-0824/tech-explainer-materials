@@ -1,0 +1,8 @@
+.DS_Store
+node_modules/
+__pycache__/
+*.pyc
+.env
+.env.local
+# Officeで開いている間に作られるロックファイル
+~$*

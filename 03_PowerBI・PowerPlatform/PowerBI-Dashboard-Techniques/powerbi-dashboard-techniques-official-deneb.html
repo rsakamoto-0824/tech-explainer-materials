@@ -1,0 +1,1098 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Power BI ダッシュボード技術</title>
+    <style>
+      /* ===== 配色・サイズの定数（CSS変数：Microsoft Fluent 2 準拠） ===== */
+      :root {
+        --color-bg: #f5f5f5; /* Fluent Neutral Background Canvas */
+        --color-surface: #ffffff;
+        --color-sidebar-bg: #ffffff; /* 明るいナビゲーション（Microsoft Learn風） */
+        --color-sidebar-text: #424242;
+        --color-sidebar-hover: #f0f0f0;
+        --color-sidebar-selected-bg: #ebf3fc;
+        --color-text: #242424; /* Fluent Neutral Foreground 1 */
+        --color-text-sub: #616161; /* Fluent Neutral Foreground 3 */
+        --color-accent: #0f6cbd; /* Fluent Brand Primary */
+        --color-accent-deep: #115ea3;
+        --color-accent-light: #2899f5;
+        --color-blue: #0f6cbd;
+        --color-purple: #8764b8; /* Fluent Purple：Deneb編の識別色 */
+        --color-purple-deep: #6b4c99;
+        --color-border: #e0e0e0; /* Fluent Neutral Stroke 2 */
+        --color-code-bg: #f0f0f0;
+        --color-note-bg: #ebf3fc;
+        --color-note-border: #0f6cbd;
+        --color-tip-bg: #e7f5ea;
+        --color-tip-border: #107c10; /* Fluent Success */
+        --color-warn-bg: #fdf3f4;
+        --color-warn-border: #d13438; /* Fluent Danger */
+        --color-rule-bg: #fdf6e3;
+        --color-rule-border: #f7a600; /* Fluent Warning */
+        --color-ms-bg: #ebf3fc;
+        --color-ms-border: #0f6cbd;
+        --color-deneb-bg: #f3f0f9;
+        --color-deneb-border: #8764b8;
+
+        --shadow-2: 0 1px 2px rgba(0, 0, 0, 0.08), 0 0 2px rgba(0, 0, 0, 0.04);
+        --shadow-4: 0 2px 4px rgba(0, 0, 0, 0.1), 0 0 2px rgba(0, 0, 0, 0.06);
+        --shadow-8: 0 4px 8px rgba(0, 0, 0, 0.12), 0 0 2px rgba(0, 0, 0, 0.06);
+
+        --sidebar-width-px: 310px;
+        --content-max-width-px: 960px; /* PC閲覧前提の本文幅 */
+        --page-min-width-px: 1180px; /* これ未満は横スクロールで表示（PC専用） */
+        --radius-px: 8px;
+        --font-base: 16px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        min-width: var(--page-min-width-px);
+        font-family:
+          "Segoe UI", "Segoe UI Variable", "Yu Gothic UI", "Hiragino Kaku Gothic ProN", "Meiryo",
+          system-ui, sans-serif;
+        font-size: var(--font-base);
+        line-height: 1.8;
+        color: var(--color-text);
+        background: var(--color-bg);
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* ===== 左サイドバー（目次） ===== */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: var(--sidebar-width-px);
+        height: 100vh;
+        overflow-y: auto;
+        background: var(--color-sidebar-bg);
+        color: var(--color-sidebar-text);
+        border-right: 1px solid var(--color-border);
+        padding: 24px 14px 40px;
+      }
+      .sidebar-brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0 8px 16px;
+        border-bottom: 1px solid var(--color-border);
+        margin-bottom: 14px;
+      }
+      .sidebar-brand .logo {
+        width: 34px;
+        height: 34px;
+        background: linear-gradient(135deg, var(--color-accent-light), var(--color-accent));
+        color: #fff;
+        font-weight: 700;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        flex-shrink: 0;
+      }
+      .sidebar-brand .title {
+        font-size: 13.5px;
+        font-weight: 600;
+        color: var(--color-text);
+        line-height: 1.4;
+      }
+      .toc-label {
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        font-weight: 600;
+        color: var(--color-text-sub);
+        padding: 12px 10px 4px;
+      }
+      .sidebar nav a {
+        display: block;
+        color: var(--color-sidebar-text);
+        text-decoration: none;
+        padding: 7px 12px;
+        border-radius: 4px;
+        font-size: 13.5px;
+        border-left: 3px solid transparent;
+        transition:
+          background 0.15s,
+          color 0.15s;
+      }
+      .sidebar nav a:hover {
+        background: var(--color-sidebar-hover);
+        color: var(--color-text);
+      }
+      .sidebar nav a.active {
+        background: var(--color-sidebar-selected-bg);
+        color: var(--color-accent-deep);
+        border-left-color: var(--color-accent);
+        font-weight: 600;
+      }
+      .sidebar nav a .num {
+        display: inline-block;
+        width: 22px;
+        color: var(--color-accent);
+        font-weight: 600;
+      }
+
+      /* ===== 本文 ===== */
+      .main {
+        margin-left: var(--sidebar-width-px);
+        padding: 48px 40px 120px;
+      }
+      .content {
+        max-width: var(--content-max-width-px);
+        margin: 0 auto;
+      }
+
+      header.report-header {
+        background: linear-gradient(120deg, #0f6cbd 0%, #2899f5 55%, #50c8f5 100%);
+        color: #fff;
+        border-radius: var(--radius-px);
+        padding: 40px 36px;
+        margin-bottom: 36px;
+        box-shadow: var(--shadow-8);
+      }
+      header.report-header .eyebrow {
+        color: #d6ecff;
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        margin: 0 0 12px;
+      }
+      header.report-header h1 {
+        font-size: 25px;
+        font-weight: 600;
+        line-height: 1.5;
+        margin: 0 0 16px;
+      }
+      header.report-header p {
+        color: #eaf5ff;
+        font-size: 15px;
+        margin: 0;
+      }
+      .meta-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 18px;
+        margin-top: 22px;
+        font-size: 13px;
+        color: #d6ecff;
+      }
+      .meta-row span {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      /* パート見出し */
+      .part-divider {
+        margin: 38px 0 22px;
+        padding: 16px 22px;
+        border-radius: var(--radius-px);
+        color: #fff;
+        font-weight: 600;
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        box-shadow: var(--shadow-4);
+      }
+      .part-divider.ms {
+        background: linear-gradient(120deg, #0f6cbd, #2899f5);
+      }
+      .part-divider.deneb {
+        background: linear-gradient(120deg, #6b4c99, #8764b8);
+      }
+      .part-divider .pmark {
+        background: rgba(255, 255, 255, 0.22);
+        border-radius: 4px;
+        padding: 2px 10px;
+        font-size: 13px;
+      }
+
+      section {
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-px);
+        padding: 28px 32px 32px;
+        margin-bottom: 26px;
+        scroll-margin-top: 20px;
+        box-shadow: var(--shadow-2);
+      }
+      section > h2 {
+        font-size: 21px;
+        font-weight: 600;
+        margin: 0 0 6px;
+        padding-bottom: 14px;
+        border-bottom: 2px solid var(--color-purple); /* 既定はDeneb編 */
+        display: flex;
+        align-items: baseline;
+        gap: 12px;
+      }
+      section.ms-sec > h2 {
+        border-bottom-color: var(--color-blue);
+      }
+      section > h2 .chapter-no {
+        color: var(--color-purple-deep);
+        font-size: 15px;
+        font-weight: 700;
+      }
+      section.ms-sec > h2 .chapter-no {
+        color: var(--color-accent-deep);
+      }
+      .lead {
+        color: var(--color-text-sub);
+        font-size: 14.5px;
+        margin: 14px 0 20px;
+      }
+      h3 {
+        font-size: 17px;
+        font-weight: 600;
+        margin: 26px 0 10px;
+        padding-left: 12px;
+        border-left: 4px solid var(--color-purple);
+      }
+      section.ms-sec h3 {
+        border-left-color: var(--color-blue);
+      }
+      h4 {
+        font-size: 15px;
+        font-weight: 600;
+        margin: 18px 0 8px;
+      }
+      p {
+        margin: 10px 0;
+      }
+      ul,
+      ol {
+        margin: 10px 0;
+        padding-left: 24px;
+      }
+      li {
+        margin: 6px 0;
+      }
+      strong {
+        color: #171717;
+      }
+      .en {
+        color: var(--color-text-sub);
+        font-size: 0.92em;
+      }
+
+      /* コード */
+      code {
+        background: var(--color-code-bg);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family: "Cascadia Code", "SFMono-Regular", Consolas, "Courier New", monospace;
+        font-size: 13.5px;
+        color: #115ea3;
+      }
+      pre {
+        background: #1f1f1f;
+        color: #e6e6e6;
+        padding: 16px 18px;
+        border-radius: 6px;
+        overflow-x: auto;
+        font-size: 13px;
+        line-height: 1.6;
+        margin: 14px 0;
+      }
+      pre code {
+        background: none;
+        color: inherit;
+        padding: 0;
+      }
+      pre .cm {
+        color: #8b9aa8;
+      } /* コメント */
+      pre .ky {
+        color: #6cb6ff;
+      } /* JSONキー */
+      pre .vl {
+        color: #c9a0ff;
+      } /* 値 */
+      pre .st {
+        color: #7ee787;
+      } /* 文字列 */
+
+      /* 注記ボックス */
+      .box {
+        border-radius: 6px;
+        padding: 14px 18px;
+        margin: 16px 0;
+        font-size: 14px;
+      }
+      .box p {
+        margin: 4px 0;
+      }
+      .box .box-title {
+        font-weight: 600;
+        display: block;
+        margin-bottom: 4px;
+      }
+      .box.note {
+        background: var(--color-note-bg);
+        border-left: 4px solid var(--color-note-border);
+      }
+      .box.tip {
+        background: var(--color-tip-bg);
+        border-left: 4px solid var(--color-tip-border);
+      }
+      .box.warn {
+        background: var(--color-warn-bg);
+        border-left: 4px solid var(--color-warn-border);
+      }
+      .box.rule {
+        background: var(--color-rule-bg);
+        border-left: 4px solid var(--color-rule-border);
+      }
+
+      /* 公式引用 */
+      .doc-quote {
+        border-radius: 6px;
+        padding: 12px 16px;
+        margin: 14px 0;
+        font-size: 13.5px;
+      }
+      .doc-quote.ms {
+        background: var(--color-ms-bg);
+        border-left: 4px solid var(--color-ms-border);
+      }
+      .doc-quote.deneb {
+        background: var(--color-deneb-bg);
+        border-left: 4px solid var(--color-deneb-border);
+      }
+      .doc-quote .src {
+        font-weight: 600;
+        display: block;
+        margin-bottom: 2px;
+        font-size: 12.5px;
+      }
+      .doc-quote.ms .src {
+        color: var(--color-accent-deep);
+      }
+      .doc-quote.deneb .src {
+        color: var(--color-purple-deep);
+      }
+
+      /* テーブル */
+      .table-wrap {
+        overflow-x: auto;
+        margin: 16px 0;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 13.5px;
+      }
+      th,
+      td {
+        border: 1px solid var(--color-border);
+        padding: 9px 12px;
+        text-align: left;
+        vertical-align: top;
+      }
+      th {
+        background: var(--color-purple);
+        color: #fff;
+        font-weight: 600;
+      }
+      section.ms-sec th {
+        background: var(--color-accent);
+      }
+      tbody tr:nth-child(even) {
+        background: #fafafa;
+      }
+      tbody tr:hover {
+        background: #f0f0f0;
+      }
+      td code {
+        white-space: nowrap;
+      }
+
+      /* トップへ戻る */
+      #back-to-top {
+        position: fixed;
+        right: 28px;
+        bottom: 28px;
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background: var(--color-accent);
+        color: #fff;
+        border: none;
+        font-size: 22px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: var(--shadow-8);
+        opacity: 0;
+        visibility: hidden;
+        transition:
+          opacity 0.25s,
+          visibility 0.25s,
+          transform 0.15s,
+          background 0.15s;
+        z-index: 200;
+      }
+      #back-to-top.show {
+        opacity: 1;
+        visibility: visible;
+      }
+      #back-to-top:hover {
+        background: var(--color-accent-deep);
+        transform: translateY(-3px);
+      }
+      #back-to-top span {
+        display: block;
+        line-height: 1;
+      }
+      #back-to-top small {
+        font-size: 9px;
+        font-weight: 600;
+      }
+
+      footer.report-footer {
+        max-width: var(--content-max-width-px);
+        margin: 40px auto 0;
+        color: var(--color-text-sub);
+        font-size: 13px;
+        text-align: center;
+        padding-top: 20px;
+        border-top: 1px solid var(--color-border);
+      }
+
+      /* 印刷時は目次と操作ボタンを省く */
+      @media print {
+        .sidebar,
+        #back-to-top {
+          display: none;
+        }
+        .main {
+          margin-left: 0;
+          padding: 0;
+        }
+        section {
+          break-inside: avoid;
+          box-shadow: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ===== 左サイドバー（目次） ===== -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="logo">★</div>
+        <div class="title">公式ドキュメント & Deneb<br />Power BI 技術レポート</div>
+      </div>
+      <div class="toc-label">目次 / CONTENTS</div>
+      <nav id="toc">
+        <a href="#ms-visuals"><span class="num">1</span>公式：ビジュアルの全体像</a>
+        <a href="#ms-choose"><span class="num">2</span>公式：ビジュアルの選び方</a>
+        <a href="#ms-design"><span class="num">3</span>公式：デザイン原則</a>
+        <a href="#ms-model"><span class="num">4</span>公式：セマンティックモデル</a>
+        <a href="#ms-perf"><span class="num">5</span>公式：パフォーマンス最適化</a>
+        <a href="#ms-advanced"><span class="num">6</span>公式：高度な分析機能</a>
+        <a href="#deneb-what"><span class="num">7</span>Deneb：とは何か</a>
+        <a href="#deneb-start"><span class="num">8</span>Deneb：導入と作成手順</a>
+        <a href="#deneb-dataset"><span class="num">9</span>Deneb：datasetの仕組み</a>
+        <a href="#deneb-interact"><span class="num">10</span>Deneb：PBI連携機能</a>
+        <a href="#deneb-when"><span class="num">11</span>標準 vs Deneb 使い分け</a>
+      </nav>
+    </aside>
+
+    <!-- ===== 本文 ===== -->
+    <div class="main">
+      <div class="content">
+        <header class="report-header">
+          <p class="eyebrow">OFFICIAL DOCS &amp; DENEB RESEARCH REPORT</p>
+          <h1>Power BI ダッシュボード作成技術</h1>
+          <div class="meta-row">
+            <span>📅 作成日：2026年6月24日</span>
+          </div>
+        </header>
+
+
+        <!-- ===== PART A ===== -->
+        <div class="part-divider ms">
+          <span class="pmark">PART A</span>Microsoft 公式ドキュメント編
+        </div>
+
+        <!-- 1. ビジュアル全体像 -->
+        <section id="ms-visuals" class="ms-sec">
+          <h2><span class="chapter-no">1</span>公式：ビジュアル（visuals）の全体像</h2>
+          <p class="lead">
+            公式によると、ビジュアルはレポートの「構成要素（building
+            blocks）」。セマンティックモデルとDAX計算を“意味のある洞察”に変換します。用途別の公式分類を押さえましょう。
+          </p>
+
+          <h3>用途別カテゴリ（公式分類）</h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>カテゴリ</th>
+                  <th>主なビジュアル</th>
+                  <th>得意なこと</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>比較・推移</td>
+                  <td>横棒/縦棒、折れ線、面、コンボ、リボン、ウォーターフォール</td>
+                  <td>カテゴリ比較・時系列トレンド・増減の積み上げ</td>
+                </tr>
+                <tr>
+                  <td>全体に対する割合</td>
+                  <td>円/ドーナツ、ツリーマップ、じょうごグラフ</td>
+                  <td>構成比・階層的な割合・段階的プロセス</td>
+                </tr>
+                <tr>
+                  <td>分布・関係</td>
+                  <td>散布図、バブル、ドットプロット</td>
+                  <td>2変数の相関・クラスター発見</td>
+                </tr>
+                <tr>
+                  <td>明細表示</td>
+                  <td>テーブル、マトリックス</td>
+                  <td>正確な値の確認・多次元の集計とドリル</td>
+                </tr>
+                <tr>
+                  <td>地理</td>
+                  <td>各種マップ</td>
+                  <td>地理・空間データの表示</td>
+                </tr>
+                <tr>
+                  <td>重要数値・進捗</td>
+                  <td>カード、KPI、ゲージ、目標(Goals)</td>
+                  <td>単一指標の強調・目標への進捗</td>
+                </tr>
+                <tr>
+                  <td>AI支援</td>
+                  <td>分解ツリー、主要なインフルエンサー、スマートナラティブ、異常検出</td>
+                  <td>要因分析・自然言語要約・外れ値検出</td>
+                </tr>
+                <tr>
+                  <td>フィルター</td>
+                  <td>スライサー（ボタン/リスト/ドロップダウン/日付）</td>
+                  <td>キャンバス上での絞り込み</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="doc-quote ms">
+            <span class="src">Microsoft Learn「Overview of visualizations」より</span>
+            ビジュアルは互いに<strong>クロスフィルター・クロスハイライト</strong>で連携し、完全にインタラクティブな体験を生む。さらに別ページ・別レポートへ<strong>ドリルスルー</strong>して詳細を探索できる。
+          </div>
+
+          <div class="box note">
+            <span class="box-title">📌 知っておくと差がつく公式ビジュアル</span>
+            <ul style="margin: 6px 0 0">
+              <li>
+                <strong>リボングラフ</strong
+                >：期間ごとの「順位の変化」を、常に最上位を上にして見せる
+              </li>
+              <li>
+                <strong>分解ツリー（Decomposition tree）</strong
+                >：AIが次に見るべき次元を提案しながら任意の順で深掘り
+              </li>
+              <li><strong>スマートナラティブ</strong>：トレンドや要点を自動で文章化</li>
+              <li>
+                <strong>R / Python ビジュアル</strong
+                >：予測・統計など高度分析向け（※Denebとの比較は第7章）
+              </li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- 2. 選び方 -->
+        <section id="ms-choose" class="ms-sec">
+          <h2><span class="chapter-no">2</span>公式：適切なビジュアルの選び方</h2>
+          <p class="lead">公式が示す選択の判断軸はシンプルです。</p>
+          <ul>
+            <li><strong>データ型</strong>：カテゴリ／数値／時系列／地理のどれか</li>
+            <li><strong>目的</strong>：値を比較する／トレンドを見る／関係を示す／進捗を追う</li>
+            <li><strong>閲覧者</strong>：どこまでの詳細が必要か</li>
+            <li><strong>スペース</strong>：使える表示領域の広さ</li>
+          </ul>
+          <div class="doc-quote ms">
+            <span class="src">Microsoft Learn「ダッシュボード設計のヒント」より</span>
+            円・ドーナツ・ゲージなどの円形グラフは理想的ではない。<strong>値の比較には横棒・縦棒</strong>が優れている（人は値を横に並べて比較できるため）。3Dなど読み取りづらいビジュアルは避ける。
+          </div>
+        </section>
+
+        <!-- 3. デザイン原則 -->
+        <section id="ms-design" class="ms-sec">
+          <h2><span class="chapter-no">3</span>公式：レポート/ダッシュボードのデザイン原則</h2>
+          <p class="lead">公式ドキュメントが繰り返し説く、普遍的な設計原則です。</p>
+
+          <h3>① ひと目でストーリーを語る</h3>
+          <ul>
+            <li>
+              各ページは「ひと目で1つのストーリー」を語る。<strong>スクロールバーを避ける</strong>
+            </li>
+            <li>最も重要な情報を目立たせ、清潔で雑然としないレイアウトに</li>
+            <li>カードビジュアルで重要数値を強調。コンテキスト（文脈）を必ず添える</li>
+          </ul>
+
+          <h3>② 読む順序に沿って配置</h3>
+          <p>
+            人は上から下・左から右に読む。<strong>最上位レベルのデータを左上</strong>に置き、右・下へ進むほど詳細に。数値は3〜4桁に丸め、千・百万単位で表示する（「3,400,000」より「340万」）。
+          </p>
+
+          <h3>③ アクセシビリティ（accessibility）に従う</h3>
+          <div class="doc-quote ms">
+            <span class="src">Microsoft Learn より</span>
+            レポート設計ではアクセシビリティのベストプラクティスに従う。<strong
+              >説明的なタイトル、ビジュアルの代替テキスト（alt text）、論理的なタブ順序</strong
+            >を使い、誰もが使えるレポートにする。
+          </div>
+
+          <h3>④ モバイル最適化</h3>
+          <p>
+            モバイルレイアウトには<strong>重要かつ頻用するビジュアルだけ</strong>を追加し、ヘッダーやデザインを簡素化して狭い画面に合わせる。
+          </p>
+        </section>
+
+        <!-- 4. セマンティックモデル -->
+        <section id="ms-model" class="ms-sec">
+          <h2><span class="chapter-no">4</span>公式：セマンティックモデルを使いやすくする</h2>
+          <p class="lead">
+            公式の最適化ガイドは「セマンティックモデル（semantic
+            model）はすべてのレポートの基盤」と位置づけます。作り手が整えるべき項目です。
+          </p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>項目</th>
+                  <th>公式が推奨すること</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Names（命名）</td>
+                  <td>テーブル・列・メジャーに分かりやすい名前を。「Table1」より「Store Sales」</td>
+                </tr>
+                <tr>
+                  <td>Descriptions（説明）</td>
+                  <td>名前で足りない詳細は説明文に。何を含み、どう使うかを記す</td>
+                </tr>
+                <tr>
+                  <td>Hide（非表示）</td>
+                  <td>IDなどレポートに不要な列は隠し、使ってほしいものだけ見せる</td>
+                </tr>
+                <tr>
+                  <td>Hierarchies（階層）</td>
+                  <td>年→月→日、カテゴリ→サブ→商品などの階層を作る</td>
+                </tr>
+                <tr>
+                  <td>Measures（メジャー）</td>
+                  <td>集計はメジャーで定義し、レポート間で一貫性を持たせる</td>
+                </tr>
+                <tr>
+                  <td>Formats（書式）</td>
+                  <td>桁区切り・小数桁・日付形式など既定の表示形式を設定（動的書式も可）</td>
+                </tr>
+                <tr>
+                  <td>Data category（データ category）</td>
+                  <td>列が「国」「Web URL」などであることを指定し、地図等で正しく扱う</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            さらに公式は、計算グループ（calculation
+            groups）、フィールドパラメーター、What-ifパラメーター、グループ化／ビン分割なども状況に応じて評価するよう勧めています。
+          </p>
+        </section>
+
+        <!-- 5. パフォーマンス -->
+        <section id="ms-perf" class="ms-sec">
+          <h2><span class="chapter-no">5</span>公式：パフォーマンス最適化ガイド</h2>
+          <p class="lead">
+            公式は最適化を「データソース／データモデル／ビジュアル／環境」の4層で考えます。レポート作者が今日からできる要点を抜粋します。
+          </p>
+
+          <h3>① 最も限定的なフィルターを当てる</h3>
+          <div class="doc-quote ms">
+            <span class="src">Microsoft Learn「Optimization guide」より</span>
+            ビジュアルが表示するデータが多いほど読み込みは遅くなる。例えば1億行のテーブルを無加工で置くのは典型的な失敗。<strong
+              >「Top N」フィルター</strong
+            >で表示件数を上限（例：10,000）に抑えれば、体験を損なわずメモリ使用が激減し性能が上がる。
+          </div>
+
+          <h3>② 1ページのビジュアル数を絞る</h3>
+          <p>
+            1ページのビジュアルは必要最小限に。詳細は<strong>ドリルスルーページ</strong>や<strong>レポートページツールチップ</strong>で補えば、ページに詰め込まずに済む。テーブルは特にコストが高い点に注意。
+          </p>
+
+          <h3>③ カスタムビジュアルの性能を検証する</h3>
+          <p>
+            最適化が不十分なカスタムビジュアルは<strong>レポート全体の性能を落とす</strong>。導入前に必ず性能を確認する（Denebを使う際もこの観点が重要）。
+          </p>
+
+          <h3>④ ダッシュボードのキャッシュを活かす</h3>
+          <p>
+            ダッシュボードのタイルはキャッシュされ、レポートより安定して速い。<strong>よく使うビジュアルをダッシュボードにピン留めし、最初の入口にする</strong>と“第一の防衛線”になり、容量負荷も下がる。
+          </p>
+
+          <div class="box warn">
+            <span class="box-title">⚠ RLSとキャッシュの注意</span>
+            <p>
+              動的な行レベルセキュリティ（RLS）を使うと、タイルは<strong>ユーザー単位でキャッシュ</strong>され、役割（role）ごとに更新クエリが発行されます。RLS適用時は性能影響を理解しておきましょう。
+            </p>
+          </div>
+        </section>
+
+        <!-- 6. 高度な機能 -->
+        <section id="ms-advanced" class="ms-sec">
+          <h2><span class="chapter-no">6</span>公式：知っておきたい高度な分析機能</h2>
+          <p class="lead">標準だけでも表現力を大きく上げられる、公式機能の数々です。</p>
+          <ul>
+            <li>
+              <strong>条件付き書式（conditional formatting）</strong
+              >：値・ルール・カラースケールで色を動的に。ヒートマップや状態表示に
+            </li>
+            <li>
+              <strong>レポートページツールチップ</strong
+              >：ホバー時に1ページ丸ごとの詳細（関連グラフ・KPI）を表示
+            </li>
+            <li>
+              <strong>ビジュアル計算（visual calculations）</strong
+              >：ビジュアル上で直接DAXを書き、累計・移動平均・構成比・順位をフィルター文脈を意識せず作成
+            </li>
+            <li>
+              <strong>分析ペイン（Analytics pane）</strong
+              >：定数線・平均線・最小/最大・中央値・パーセンタイル線、予測、異常検出を追加
+            </li>
+            <li>
+              <strong>スモールマルチプル（small multiples）</strong
+              >：1つのビジュアルを地域別などに分割し、格子状に並べて比較
+            </li>
+            <li>
+              <strong>レポートテーマ（JSONテーマ）</strong
+              >：色・フォント・背景を一括適用。JSONで書き出してチーム共有し、組織で統一
+            </li>
+          </ul>
+          <div class="box tip">
+            <span class="box-title">💡 まず標準機能を尽くす</span>
+            <p>
+              ここまでの機能を組み合わせれば、多くの要件は標準ビジュアルだけで満たせます。<strong>「標準で足りるか」を先に検証</strong>してから、次章のDeneb（カスタム）を検討するのが公式・社内ルール双方に沿った進め方です。
+            </p>
+          </div>
+        </section>
+
+        <!-- ===== PART B ===== -->
+        <div class="part-divider deneb">
+          <span class="pmark">PART B</span>Deneb（カスタムビジュアル）編
+        </div>
+
+        <!-- 7. Denebとは -->
+        <section id="deneb-what">
+          <h2><span class="chapter-no">7</span>Deneb とは何か</h2>
+          <p class="lead">
+            標準ビジュアルで表現しきれない図を、宣言的なJSONで自由に作るための認定カスタムビジュアルです。
+          </p>
+
+          <h3>定義</h3>
+          <p>
+            Denebは<strong
+              >Microsoft Power BIの認定カスタムビジュアル（certified custom visual）</strong
+            >で、<strong>Vega / Vega-Lite</strong>
+            という宣言的JSON文法を使って独自のデータ可視化を作れます。「認定」はMicrosoftが品質・セキュリティ基準を満たすと認めた印です。
+          </p>
+
+          <h3>Vega と Vega-Lite の違い</h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Vega-Lite</th>
+                  <th>Vega</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>位置づけ</td>
+                  <td>高水準・簡潔。少ない記述で標準的なグラフ</td>
+                  <td>低水準・自由度最大。複雑/独自の表現向け</td>
+                </tr>
+                <tr>
+                  <td>向いている人</td>
+                  <td>まず使い始める人・一般的なグラフ</td>
+                  <td>細部まで作り込みたい上級者</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            まずは<strong>Vega-Liteから始める</strong>のがおすすめ。足りなくなったらVegaへ、という順序が自然です。
+          </p>
+
+          <h3>R / Python ビジュアルに対するDenebの利点（公式）</h3>
+          <div class="doc-quote deneb">
+            <span class="src">Deneb公式「Introduction」より</span>
+            ①
+            <strong>外部依存なし</strong
+            >：ライブラリが同梱され、ローカル環境やゲートウェイへの追加依存が不要。<br />
+            ② <strong>描画が速い</strong>：Power
+            BIクライアント内でレンダリングするため、外部委譲より高速になりやすい。<br />
+            ③ <strong>Webネイティブ</strong>：Power BIのインタラクティブ機能と統合できる。
+          </div>
+          <p>
+            publish to web・オンプレのReport Server・モバイルなど、Power
+            BIレポートが動く場所ならどこでも動作するよう必要なライブラリが同梱されています。
+          </p>
+        </section>
+
+        <!-- 8. 導入と作成手順 -->
+        <section id="deneb-start">
+          <h2><span class="chapter-no">8</span>Deneb の導入と作成手順</h2>
+          <p class="lead">公式の「Simple Worked Example」に沿った、最短の作成手順です。</p>
+
+          <h3>インストール</h3>
+          <p>
+            <strong>AppSource</strong
+            >から入手するのが最も簡単で、最新版に保ちやすい方法です。ビジュアルの追加ダイアログで「Deneb」を検索して追加します。
+          </p>
+
+          <h3>作成ステップ（棒グラフの例）</h3>
+          <ol>
+            <li>キャンバスにDenebビジュアルを配置する</li>
+            <li>
+              <strong>Values</strong>データロールに、列（例 <code>City</code>）とメジャー（例
+              <code>Mean Temperature</code>）を追加
+            </li>
+            <li>ビジュアルのヘッダーから<strong>Edit</strong>でビジュアルエディタを開く</li>
+            <li>
+              「Create using… &gt; <strong>Vega-Lite</strong> &gt; テンプレート（例：Interactive bar
+              chart / empty with Power BI theming）」を選択
+            </li>
+            <li>プレースホルダにフィールドを割り当て（City→カテゴリ軸、Mean Temperature→値軸）</li>
+            <li><strong>Create</strong>で初期JSON仕様（specification）が生成される</li>
+          </ol>
+
+          <h3>最小のVega-Lite仕様（イメージ）</h3>
+          <pre><code>{
+  <span class="ky">"$schema"</span>: <span class="st">"https://vega.github.io/schema/vega-lite/v5.json"</span>,
+  <span class="ky">"data"</span>: { <span class="ky">"name"</span>: <span class="st">"dataset"</span> },   <span class="cm">// ← Power BIのデータに接続</span>
+  <span class="ky">"mark"</span>: <span class="st">"bar"</span>,
+  <span class="ky">"encoding"</span>: {
+    <span class="ky">"y"</span>: { <span class="ky">"field"</span>: <span class="st">"City"</span>, <span class="ky">"type"</span>: <span class="st">"nominal"</span> },
+    <span class="ky">"x"</span>: { <span class="ky">"field"</span>: <span class="st">"Mean Temperature"</span>, <span class="ky">"type"</span>: <span class="st">"quantitative"</span> }
+  }
+}</code></pre>
+
+          <h3>仕上げ（config で見た目を統一）</h3>
+          <p>
+            公式例では別枠の <code>config</code> JSONで、フォント（Segoe
+            UI）、軸線・目盛りの除去、バーの角丸（10px）、バー色（<code>#605E5C</code>）、グリッド線の破線（<code
+              >[1, 5]</code
+            >）などを設定し、Power BIらしい見た目に整えています。
+          </p>
+        </section>
+
+        <!-- 9. dataset -->
+        <section id="deneb-dataset">
+          <h2><span class="chapter-no">9</span>Deneb の <code>dataset</code> の仕組み</h2>
+          <p class="lead">
+            DenebでPower BIのデータを扱う心臓部です。ここを理解すれば自由に図が作れます。
+          </p>
+
+          <h3>自動バインド</h3>
+          <p>
+            ビジュアルの<strong>Values</strong>データロールに入れたデータは、Vega/Vega-Lite内の
+            <code>dataset</code>
+            という名前の内部データセットに<strong>自動的に結び付き</strong>ます。列・メジャーの増減やフィルターによる行数の変化に応じて<strong>動的に更新</strong>されます。
+          </p>
+
+          <h3>仕様での参照方法</h3>
+          <pre><code><span class="cm">// Vega-Lite</span>
+<span class="ky">"data"</span>: { <span class="ky">"name"</span>: <span class="st">"dataset"</span> }
+
+<span class="cm">// Vega</span>
+<span class="ky">"data"</span>: [ { <span class="ky">"name"</span>: <span class="st">"dataset"</span> } ]</code></pre>
+
+          <h3>フィールド名のルール（つまずきポイント）</h3>
+          <ul>
+            <li>
+              参照には、データモデルの内部名ではなく<strong
+                >Valuesロールに表示される表示名（display name）</strong
+              >を使う
+            </li>
+            <li>各行は、全ディメンション・メジャーの値の組み合わせ（テーブルの行粒度）に対応</li>
+            <li>
+              問題になりやすい文字（<code>.</code> <code>[</code> <code>]</code> <code>\</code>
+              <code>"</code>）は<strong>自動でアンダースコアに置換</strong>。例：<code
+                >$ Sales.Current</code
+              >
+              → <code>$ Sales_Current</code>
+            </li>
+            <li>データはJSONのオブジェクト配列として渡され、各オブジェクトが1行</li>
+          </ul>
+
+          <div class="box note">
+            <span class="box-title">📌 「データが出ない」ときの第一チェック</span>
+            <p>
+              多くの場合、<code>"data": {"name": "dataset"}</code>
+              の記述漏れか、<strong>フィールド名の表記ゆれ（表示名・置換後の名前）</strong>が原因です。まずここを確認しましょう。
+            </p>
+          </div>
+        </section>
+
+        <!-- 10. PBI連携 -->
+        <section id="deneb-interact">
+          <h2><span class="chapter-no">10</span>Deneb × Power BI インタラクティブ機能</h2>
+          <p class="lead">
+            Denebの真価は「自由な見た目」と「Power BIらしい操作性」を両立できる点にあります。
+          </p>
+          <p>公式は連携できる機能として次の5つを挙げています。</p>
+          <ul>
+            <li>
+              <strong>Tooltips（ツールチップ）</strong>：ホバー時の補足情報。Power
+              BIのレポートページツールチップとも連携可能
+            </li>
+            <li><strong>Context menus（コンテキストメニュー）</strong>：右クリックメニュー</li>
+            <li>
+              <strong>Cross-filtering（クロスフィルター＝選択）</strong
+              >：Denebの要素をクリックして他ビジュアルを絞り込む
+            </li>
+            <li>
+              <strong>Advanced cross-filtering（高度なクロスフィルター）</strong
+              >：より細かな選択制御
+            </li>
+            <li>
+              <strong>Cross-highlighting（クロスハイライト）</strong
+              >：選択値を強調し、それ以外を薄く表示
+            </li>
+          </ul>
+          <div class="doc-quote deneb">
+            <span class="src">Deneb公式「Simple Worked Example」より</span>
+            公式の棒グラフ例では、<strong>2つのbarマークを重ねた layered view</strong>
+            を使い、元の値を不透明度30%、ハイライト値（<code>Mean Temperature__highlight</code
+            >）を重ねて表示。特別なフィールド
+            <code>__selected__</code> が不透明度のエンコードを通じてクロスフィルターを制御する。
+          </div>
+          <p>
+            つまり、テンプレートから作れば<strong>クロスフィルター/ハイライトが最初から組み込まれた</strong>状態で始められます。
+          </p>
+        </section>
+
+        <!-- 11. 使い分け -->
+        <section id="deneb-when">
+          <h2><span class="chapter-no">11</span>標準ビジュアル vs Deneb の使い分け</h2>
+          <p class="lead">公式の考え方と社内ルールを合わせた、実務的な判断基準です。</p>
+
+          <h3>判断フロー</h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>状況</th>
+                  <th>選ぶもの</th>
+                  <th>理由</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>一般的な棒/折れ線/カード/マトリックス等で足りる</td>
+                  <td><strong>標準ビジュアル</strong></td>
+                  <td>速い・保守が楽・学習コスト最小</td>
+                </tr>
+                <tr>
+                  <td>標準＋条件付き書式/分析ペイン/スモールマルチプルで足りる</td>
+                  <td><strong>標準の高度機能</strong></td>
+                  <td>カスタム導入前にまず尽くす</td>
+                </tr>
+                <tr>
+                  <td>標準では表現できない独自図・細かな制御が必要</td>
+                  <td><strong>Deneb</strong></td>
+                  <td>Vega/Vega-Liteで自由表現。認定・外部依存なし・高速</td>
+                </tr>
+                <tr>
+                  <td>予測・統計など計算主体</td>
+                  <td>R/Python も候補だが<strong>Deneb優先で検討</strong></td>
+                  <td>外部依存なし・描画が速いため（社内ルール）</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="box rule">
+            <span class="box-title">📐 社内ルール：Vega-Lite定義はGitで差分管理</span>
+            <p>
+              Denebを使う場合も、<strong>仕様（Vega/Vega-Lite定義）はGitHubで差分（テキスト)管理しやすい形で保存</strong>します。DenebのspecはJSONテキストなので、<code>.json</code>として書き出せばレビュー・履歴管理が容易です。バイナリ中心で差分が見えない形だけで管理しないこと。
+            </p>
+          </div>
+
+          <div class="box warn">
+            <span class="box-title">⚠ カスタムビジュアル採用時の確認</span>
+            <p>
+              公式が警告するとおり、最適化不足のカスタムビジュアルはレポート全体を遅くします。Deneb採用時も<strong
+                >表示件数を絞り（Top N）、性能を実測</strong
+              >してから本番投入しましょう。
+            </p>
+          </div>
+        </section>
+
+
+
+        <footer class="report-footer">
+          Microsoft公式ドキュメント &amp; Deneb で学ぶ Power BI ダッシュボード作成技術 ／ Official
+          Docs &amp; Deneb Research Report ／ 2026年6月24日作成
+        </footer>
+      </div>
+    </div>
+
+    <button id="back-to-top" aria-label="トップへ戻る" title="トップへ戻る">
+      <span>▲</span><small>TOP</small>
+    </button>
+
+    <script>
+      // ===== 定数 =====
+      const SCROLL_SHOW_THRESHOLD_PX = 300; // この高さを超えたら「トップへ戻る」を表示
+
+      const backToTop = document.getElementById("back-to-top");
+      const tocLinks = document.querySelectorAll("#toc a");
+      const sections = document.querySelectorAll("section[id]");
+
+      window.addEventListener("scroll", function () {
+        if (window.scrollY > SCROLL_SHOW_THRESHOLD_PX) {
+          backToTop.classList.add("show");
+        } else {
+          backToTop.classList.remove("show");
+        }
+        highlightActiveSection();
+      });
+
+      backToTop.addEventListener("click", function () {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+
+      function highlightActiveSection() {
+        let currentId = "";
+        sections.forEach(function (sec) {
+          const top = sec.getBoundingClientRect().top;
+          if (top <= 120) currentId = sec.id;
+        });
+        tocLinks.forEach(function (link) {
+          link.classList.toggle("active", link.getAttribute("href") === "#" + currentId);
+        });
+      }
+
+      highlightActiveSection();
+    </script>
+  </body>
+</html>

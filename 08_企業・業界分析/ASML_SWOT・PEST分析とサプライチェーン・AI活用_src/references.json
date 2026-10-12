@@ -1,0 +1,628 @@
+{
+ "checked_on": "2026-10-10",
+ "note": "通商の2件（Skadden・Sandler, Travis & Rosenberg）はソニーの分析資料で 2026-09-27 に保存したファイルをコピーした。そのほかは 2026-10-10 に保存した",
+ "references": [
+  {
+   "key": "asml_q4_2025_pr",
+   "inDeck": true,
+   "itemType": "report",
+   "affiliation": "ASML",
+   "publisher": "ASML",
+   "title": "ASML reports €32.7 billion total net sales and €9.6 billion net income in 2025",
+   "dateLabel": "2026-01-28",
+   "date": "2026-01-28",
+   "url": "https://ourbrand.asml.com/m/c416bb685db46ca0/original/ASML-Press-Release-Q4-and-full-year-2025-financial-results.pdf",
+   "files": [
+    "sources/2026_ASML_Press release Q4 and full year 2025 financial results.pdf"
+   ],
+   "status": "saved",
+   "note": "2025年の売上高327億ユーロ・粗利率52.8%・純利益96億ユーロ、10〜12月の受注132億ユーロ（うちEUV 74億）、受注残388億ユーロ、2026年見通し340億〜390億ユーロ、120億ユーロの自社株買い、技術・IT組織の簡素化"
+  },
+  {
+   "key": "asml_ir_q4_2025",
+   "inDeck": true,
+   "itemType": "presentation",
+   "affiliation": "ASML",
+   "publisher": "ASML",
+   "title": "Investor Relations presentation Q4 2025",
+   "dateLabel": "2026-01-28",
+   "date": "2026-01-28",
+   "url": "https://ourbrand.asml.com/m/3136300aa4999bc1/original/2026_01_28_Presentation-Investor-Relations-Q4-2025.pdf",
+   "files": [
+    "sources/2026_ASML_Investor Relations presentation Q4 2025.pdf"
+   ],
+   "status": "saved",
+   "note": "2021〜2025年の売上高・粗利率・研究開発費・純利益・出荷台数の推移。2025年のEUV売上116億ユーロ（48台）、DUV 120億ユーロ（279台）、システム売上の技術別・用途別・出荷先別の内訳"
+  },
+  {
+   "key": "asml_ar2025_strategic",
+   "inDeck": true,
+   "itemType": "report",
+   "affiliation": "ASML",
+   "publisher": "ASML",
+   "title": "Annual Report 2025: Strategic report section",
+   "dateLabel": "2026-02-25",
+   "date": "2026-02-25",
+   "url": "https://ourbrand.asml.com/m/8ab959d4926657b/original/asml-2025-annual-report-strategic-report-section.pdf",
+   "files": [
+    "sources/2026_ASML_Annual Report 2025 strategic report section.pdf"
+   ],
+   "status": "saved",
+   "note": "製品関連サプライヤー約900社・その他約4,200社、「単一調達・二重の能力」の方針、カール・ツァイスSMTは光学系の唯一の供給元、製造拠点、AIの活用（製品・研究開発・生産・現場の診断・管理部門）とミストラルAIへの投資（CFOインタビュー）、AIのリスク"
+  },
+  {
+   "key": "asml_ar2025_esef",
+   "inDeck": true,
+   "itemType": "report",
+   "affiliation": "ASML",
+   "publisher": "ASML",
+   "title": "Annual Report 2025 (IFRS-EU, ESEF)",
+   "dateLabel": "2026-02-25",
+   "date": "2026-02-25",
+   "url": "https://filings.xbrl.org/724500Y6DUVHQD6OXN27/2025-12-31/ESEF/NL/0/asml-2025-12-31-1-en/reports/asml-2025-12-31-1-en.xhtml",
+   "files": [
+    "sources/2026_ASML_Annual Report 2025 (IFRS-EU, ESEF).xhtml"
+   ],
+   "status": "saved",
+   "note": "年次報告書の全文。地域別売上（2023〜2025年）、従業員数（オランダ23,707人ほか）、カール・ツァイスSMT Holdingへの24.9%出資（2017年）と購入額（2025年44億ユーロ）・融資、Cymer（2013年）・HMI（2016年）の買収"
+  },
+  {
+   "key": "asml_q1_2026_pr",
+   "inDeck": true,
+   "itemType": "report",
+   "affiliation": "ASML",
+   "publisher": "ASML",
+   "title": "ASML reports €8.8 billion total net sales and €2.8 billion net income in Q1 2026",
+   "dateLabel": "2026-04-15",
+   "date": "2026-04-15",
+   "url": "https://mfn.se/one/a/asml-holding/asml-reports-eu8-8-billion-total-net-sales-and-eu2-8-billion-net-income-in-q1-2026-cdb323f9",
+   "files": [
+    "sources/web/2026_ASML_Q1 2026 financial results (MFN).html"
+   ],
+   "status": "saved",
+   "note": "2026年1〜3月の売上高88億ユーロ・粗利率53.0%、2026年見通しを360億〜400億ユーロへ引き上げ（ASMLの発表を配信したMFNの掲載）"
+  },
+  {
+   "key": "asml_ir_q1_2026",
+   "inDeck": true,
+   "itemType": "presentation",
+   "affiliation": "ASML",
+   "publisher": "ASML",
+   "title": "Investor Relations presentation Q1 2026",
+   "dateLabel": "2026-04-15",
+   "date": "2026-04-15",
+   "url": "https://ourbrand.asml.com/asset/d7b914e6-fdd1-4262-b805-d80f3efcb39a/2026_04_15_Presentation-Investor-Relations-Q1-2026.pdf",
+   "files": [
+    "sources/2026_ASML_Investor Relations presentation Q1 2026.pdf"
+   ],
+   "status": "saved",
+   "note": "2026年1〜3月のシステム売上63億ユーロの内訳（出荷先は韓国45%・台湾23%・中国19%・米国12%）"
+  },
+  {
+   "key": "asml_q2_2026_pr",
+   "inDeck": true,
+   "itemType": "report",
+   "affiliation": "ASML",
+   "publisher": "ASML",
+   "title": "ASML reports €9.3 billion total net sales and €2.9 billion net income in Q2 2026",
+   "dateLabel": "2026-07-15",
+   "date": "2026-07-15",
+   "url": "https://ourbrand.asml.com/asset/c8dbf3fc-4c5e-4406-83f6-27694b138245/Press-Release-Financial-Results-Q2-2026.pdf",
+   "files": [
+    "sources/2026_ASML_Press release Q2 2026 financial results.pdf"
+   ],
+   "status": "saved",
+   "note": "2026年4〜6月の売上高93億ユーロ・粗利率54.0%、2026年見通しを430億〜450億ユーロへ再び引き上げ、2027年にEUV（低NA）と液浸DUVの能力を約30%増やす計画、従業員4.45万人超"
+  },
+  {
+   "key": "asml_ir_q2_2026",
+   "inDeck": true,
+   "itemType": "presentation",
+   "affiliation": "ASML",
+   "publisher": "ASML",
+   "title": "Investor Relations presentation Q2 2026",
+   "dateLabel": "2026-07-15",
+   "date": "2026-07-15",
+   "url": "https://ourbrand.asml.com/asset/9078cf4d-91fd-4dd9-a5d5-d1caab6dc046/2026_07_15_Presentation-Investor-Relations-Q2-2026.pdf",
+   "files": [
+    "sources/2026_ASML_Investor Relations presentation Q2 2026.pdf"
+   ],
+   "status": "saved",
+   "note": "2026年4〜6月のシステム売上66億ユーロの内訳（EUV 57%、ロジック51%・メモリ49%、出荷先は韓国43%・台湾30%・中国14%・米国9%）"
+  },
+  {
+   "key": "asml_call_q2_2026",
+   "inDeck": true,
+   "itemType": "report",
+   "affiliation": "ASML",
+   "publisher": "ASML",
+   "title": "Transcript investor call Q2 2026",
+   "dateLabel": "2026-07-15",
+   "date": "2026-07-15",
+   "url": "https://ourbrand.asml.com/asset/1fd3908a-0381-47b5-9b69-a3094f656651/2026_07_15-ASML-Transcript-investor-call-Q2-2026.pdf",
+   "files": [
+    "sources/2026_ASML_Transcript investor call Q2 2026.pdf"
+   ],
+   "status": "saved",
+   "note": "2026年はEUV（低NA）約65台・液浸DUV約130台を出荷、EUVのシステム売上+45%超、メモリ向け+75%超、先端ロジックのファウンドリー向け+25%超、保守・アップグレード+30%超、中国は売上の約20%。2027年の低NA EUVはほぼ受注済み"
+  },
+  {
+   "key": "asml_high_na_2026",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "ASML",
+   "publisher": "ASML",
+   "title": "High NA EUV reaches new readiness milestone with first high-volume Logic product",
+   "dateLabel": "2026-07-15",
+   "date": "2026-07-15",
+   "url": "https://mfn.se/one/a/asml-holding/high-na-euv-reaches-new-readiness-milestone-with-first-high-volume-logic-product-dd245453",
+   "files": [
+    "sources/web/2026_ASML_High NA EUV reaches new readiness milestone (MFN).html"
+   ],
+   "status": "saved",
+   "note": "インテルが18AプロセスでHigh NA EUVを使い、Core Ultra シリーズ3の一部を量産。歩留まりは従来のEUV（NXE）と同等（ASMLの発表を配信したMFNの掲載）"
+  },
+  {
+   "key": "asml_bic_north_2026",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "ASML",
+   "publisher": "ASML",
+   "title": "ASML begins construction of new Eindhoven campus, strengthening its presence in the Brainport region",
+   "dateLabel": "2026-09-08",
+   "date": "2026-09-08",
+   "url": "https://mfn.se/one/a/asml-holding/asml-begins-construction-of-new-eindhoven-campus-strengthening-its-presence-in-the-brainport-region-2a2db7dd",
+   "files": [
+    "sources/web/2026_ASML_Construction of new Eindhoven campus BIC North (MFN).html"
+   ],
+   "status": "saved",
+   "note": "アイントホーフェンのBIC Northで第2の大型拠点を着工（約35万m²、最大2万人分）。第1期は2029年完成・3,000人以上、新しい生産方式「フロー工場」。イェッテン首相が出席"
+  },
+  {
+   "key": "asml_mistral_2025",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "ASML",
+   "publisher": "ASML",
+   "title": "ASML, Mistral AI enter strategic partnership",
+   "dateLabel": "2025-09-09",
+   "date": "2025-09-09",
+   "url": "https://www.nasdaq.com/press-release/asml-mistral-ai-enter-strategic-partnership-2025-09-09",
+   "files": [
+    "sources/web/2025_ASML_ASML and Mistral AI enter strategic partnership (Nasdaq).html"
+   ],
+   "status": "saved",
+   "note": "ミストラルAIと長期の協業契約。製品群・研究開発・業務でのAIモデル活用を探る。シリーズCを主導し13億ユーロを出資（完全希薄化後で約11%）、CFOが戦略委員会に参加（ASMLの発表のNasdaq掲載）"
+  },
+  {
+   "key": "mistral_asml_2026",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "Mistral AI",
+   "publisher": "Mistral AI",
+   "title": "ASML accelerates advanced semiconductor lithography with Mistral",
+   "dateLabel": "2026-04-24",
+   "date": "2026-04-24",
+   "url": "https://mistral.ai/customers/asml/",
+   "files": [
+    "sources/web/2026_Mistral AI_ASML customer story.html"
+   ],
+   "status": "saved",
+   "note": "最初の活用例：ソフトウェアの信頼性向上と問題の早期発見を担うAIエージェント、大量のログ解析による故障原因の特定、技術文書の作成の自動化"
+  },
+  {
+   "key": "electrooptics_2018",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "TRUMPF",
+   "publisher": "Electro Optics",
+   "title": "Driving Moore's law with CO2 lasers",
+   "dateLabel": "2018-06-14",
+   "date": "2018-06-14",
+   "url": "https://www.electrooptics.com/analysis-opinion/driving-moore-s-law-co2-lasers",
+   "files": [
+    "sources/web/2018_Electro Optics_Driving Moore's law with CO2 lasers (TRUMPF).html"
+   ],
+   "status": "saved",
+   "note": "トルンプ（独ディッツィンゲン）がASML・Cymer・ツァイスとEUV用CO2レーザーを開発。約30kWに増幅したパルスを毎秒5万回、錫の液滴に当ててEUV光を作る"
+  },
+  {
+   "key": "homburger_2020",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "ASML",
+   "publisher": "Homburger",
+   "title": "Homburger advises ASML on the planned acquisition of all shares of Berliner Glas",
+   "dateLabel": "2020-07-16",
+   "date": "2020-07-16",
+   "url": "https://www.homburger.ch/de/aktuell/asml-planned-acquisition-shares-berliner-glas/",
+   "files": [
+    "sources/web/2020_Homburger_ASML planned acquisition of all shares of Berliner Glas.html"
+   ],
+   "status": "saved",
+   "note": "ASMLが独ベルリナー・グラス（EUV・DUV用の高級セラミック・光学モジュール）の全株式取得で合意（2020年7月15日発表、法律事務所の案件紹介）"
+  },
+  {
+   "key": "fhi_2021",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "VDL",
+   "publisher": "FHI",
+   "title": "VDL wins prizes during ASML Supplier Day",
+   "dateLabel": "2021-11-09",
+   "date": "2021-11-09",
+   "url": "https://fhi.nl/en/news/vdl-in-de-prijzen-tijdens-supplier-day-asml",
+   "files": [
+    "sources/web/2021_FHI_VDL wins prizes during ASML Supplier Day.html"
+   ],
+   "status": "saved",
+   "note": "VDL ETG（オランダ）がASMLの装置の機構モジュール（RH DUV V-frame）の移管・コスト削減で表彰。長年ASMLの各種モジュールを製造"
+  },
+  {
+   "key": "govnl_2025_01",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "オランダ政府",
+   "publisher": "Government of the Netherlands",
+   "title": "Klever: export controls on advanced semiconductor manufacturing equipment to be tightened",
+   "dateLabel": "2025-01-15",
+   "date": "2025-01-15",
+   "url": "https://www.government.nl/latest/news/2025/01/15/klever-export-controls-on-advanced-semiconductor-manufacturing-equipment-to-be-tightened",
+   "files": [
+    "sources/web/2025_Government of the Netherlands_Export controls on advanced semiconductor manufacturing equipment to be tightened.html"
+   ],
+   "status": "saved",
+   "note": "2025年4月1日から一部の計測・検査装置も国の輸出許可の対象に。2023年9月に始まった制度の2度目の拡大。EU域外のすべての仕向け地が対象で、禁止ではなく個別審査"
+  },
+  {
+   "key": "fool_2026_04",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "",
+   "publisher": "The Motley Fool",
+   "title": "ASML Just Got Hit by a New China Export Threat. Is This a Buying Opportunity or a Red Flag?",
+   "dateLabel": "2026-04-20",
+   "date": "2026-04-20",
+   "url": "https://www.fool.com/investing/2026/04/20/asml-just-got-hit-by-a-new-china-export-threat-is/",
+   "files": [
+    "sources/web/2026_The Motley Fool_ASML just got hit by a new China export threat.html"
+   ],
+   "status": "saved",
+   "note": "米議会の超党派議員がMATCH法案を提出。液浸DUVの対中輸出と、中国で稼働中の装置の保守サービスを禁じる内容"
+  },
+  {
+   "key": "trendforce_2026_08",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "",
+   "publisher": "TrendForce",
+   "title": "U.S. May Push Near-Total ASML China Ban on DUV Sales and Servicing Amid China Domestic Lithography Push",
+   "dateLabel": "2026-08-25",
+   "date": "2026-08-25",
+   "url": "https://www.trendforce.com/news/2026/08/25/news-u-s-may-push-near-total-asml-china-ban-on-duv-sales-and-servicing-amid-chinas-domestic-lithography-push/",
+   "files": [
+    "sources/web/2026_TrendForce_US may push near-total ASML China ban on DUV sales and servicing.html"
+   ],
+   "status": "saved",
+   "note": "米国がオランダにほぼ全面的な対中禁輸を求める構え（NU.nlの報道）。MATCH法案は2026年4月2日に下院へ提出、国防予算法に盛り込まれる見通し。中国は国産の液浸DUVを開発中（ロイター）"
+  },
+  {
+   "key": "dutchnews_2026_06",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "",
+   "publisher": "DutchNews",
+   "title": "ASML denies US accusation an advanced machine reached China",
+   "dateLabel": "2026-06-19",
+   "date": "2026-06-19",
+   "url": "https://www.dutchnews.nl/2026/06/asml-denies-us-accusation-an-advanced-machine-reached-china/",
+   "files": [
+    "sources/web/2026_DutchNews_ASML denies US accusation an advanced machine reached China.html"
+   ],
+   "status": "saved",
+   "note": "米商務長官がEUV装置の中国流入を疑うと伝えたとの報道（Bloomberg）。ASMLは「EUV装置も専用部品も中国に出荷したことはない」と否定。証拠は公開されていない"
+  },
+  {
+   "key": "techrepublic_2025_12",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "",
+   "publisher": "TechRepublic",
+   "title": "China Secretly Builds Its Own EUV Chipmaking Machine",
+   "dateLabel": "2025-12-18",
+   "date": "2025-12-18",
+   "url": "https://www.techrepublic.com/article/news-china-euv-prototype/",
+   "files": [
+    "sources/web/2025_TechRepublic_China EUV prototype (Reuters report).html"
+   ],
+   "status": "saved",
+   "note": "ロイターの報道の紹介：中国が深圳でEUVの試作機を完成（2025年初め）。EUV光は出せるが、まだ動くチップは作れていない。ASMLは「EUV装置を中国に販売したことはない」"
+  },
+  {
+   "key": "thompsonhine_2025_11",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "米国政府",
+   "publisher": "Thompson Hine",
+   "title": "White House Announces One-Year Suspension of the BIS “Affiliates Rule”",
+   "dateLabel": "2025-11-04",
+   "date": "2025-11-04",
+   "url": "https://www.thompsonhinesmartrade.com/2025/11/white-house-announces-one-year-suspension-of-the-bis-affiliates-rule/",
+   "files": [
+    "sources/web/2025_Thompson Hine_White House announces one-year suspension of the BIS Affiliates Rule.html"
+   ],
+   "status": "saved",
+   "note": "規制対象企業が50%以上を所有する会社にも規制を広げる「50%ルール」（2025年9月）を、米中合意に伴い2025年11月10日から1年間停止"
+  },
+  {
+   "key": "clarkhill_2025_11",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "中国政府",
+   "publisher": "Clark Hill",
+   "title": "China Hits “Pause” on Rare-Earth Export Controls and What it Means for Supply Chains",
+   "dateLabel": "2025-11-24",
+   "date": "2025-11-24",
+   "url": "https://clarkhill.com/news-events/news/china-hits-pause-on-rare-earth-export-controls-and-what-it-means-for-supply-chains",
+   "files": [
+    "sources/web/2025_Clark Hill_China hits pause on rare-earth export controls.html"
+   ],
+   "status": "saved",
+   "note": "中国が2025年10月のレアアース等の輸出規制の実施を停止（11月7日・9日の公告）。一部は2026年11月27日まで。一時的な措置と位置づけ"
+  },
+  {
+   "key": "register_2025_08",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "",
+   "publisher": "The Register",
+   "title": "Transatlantic chip war fizzles as EU and US framework confirms 15% tariff cap",
+   "dateLabel": "2025-08-21",
+   "date": "2025-08-21",
+   "url": "https://www.theregister.com/2025/08/21/eu_us_15_percent_tariff_cap/",
+   "files": [
+    "sources/web/2025_The Register_EU and US framework confirms 15 percent tariff cap.html"
+   ],
+   "status": "saved",
+   "note": "米EUの共同声明で、EUからの半導体などへの関税の上限を15%とする枠組みが固まった"
+  },
+  {
+   "key": "skadden_2026_02",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "",
+   "publisher": "Skadden",
+   "title": "The Supreme Court Ends IEEPA Tariffs, Bringing Fresh Uncertainty for Companies",
+   "dateLabel": "2026-02-24",
+   "date": "2026-02-24",
+   "url": "https://www.skadden.com/insights/publications/2026/02/the-supreme-court-ends-ieepa-tariffs",
+   "files": [
+    "sources/web/2026_Skadden_The Supreme Court ends IEEPA tariffs.html"
+   ],
+   "status": "saved",
+   "note": "2026年2月20日、連邦最高裁がIEEPAに基づく関税を違法と判断。各国との合意の前提が揺らぎ、代わりの関税の行方は不透明"
+  },
+  {
+   "key": "strtrade_232",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "",
+   "publisher": "Sandler, Travis & Rosenberg",
+   "title": "Section 232 Tariffs on Semiconductors",
+   "dateLabel": "2026-09閲覧",
+   "date": "2026-09",
+   "url": "https://www.strtrade.com/trade-news-resources/tariff-actions-resources/section-232-investigation-semiconductors",
+   "files": [
+    "sources/web/2026_Sandler Travis & Rosenberg_Section 232 tariffs on semiconductors.html"
+   ],
+   "status": "saved",
+   "note": "特定の半導体製品への232条関税（25%）が2026年1月15日に発効"
+  },
+  {
+   "key": "ec_chips_act2_2026",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "欧州委員会",
+   "publisher": "European Commission",
+   "title": "Proposal for a Chips Act 2.0",
+   "dateLabel": "2026-06-03",
+   "date": "2026-06-03",
+   "url": "https://digital-strategy.ec.europa.eu/en/library/proposal-chips-act-20",
+   "files": [
+    "sources/web/2026_European Commission_Proposal for a Chips Act 2.0.html"
+   ],
+   "status": "saved",
+   "note": "欧州委員会がChips Act 2.0を提案（2026年6月3日）。欧州の強みを補強し、先端半導体の能力を築き、戦略的な依存を減らす"
+  },
+  {
+   "key": "nltimes_2024_03",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "オランダ政府",
+   "publisher": "NL Times",
+   "title": "Over €2.5 billion confirmed for Eindhoven area, technical education in bid to keep ASML",
+   "dateLabel": "2024-03-28",
+   "date": "2024-03-28",
+   "url": "https://nltimes.nl/node/71993",
+   "files": [
+    "sources/web/2024_NL Times_Over 2.5 billion euros confirmed for Eindhoven area to keep ASML.html"
+   ],
+   "status": "saved",
+   "note": "政府と地域が計25.1億ユーロをアイントホーフェン地域と技術教育に投じる「ベートーベン計画」。ASMLが国内にとどまることが前提"
+  },
+  {
+   "key": "dutchnews_2026_01",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "ASML",
+   "publisher": "DutchNews",
+   "title": "After record year, ASML is to cut 1,700 jobs, mainly in NL",
+   "dateLabel": "2026-01-28",
+   "date": "2026-01-28",
+   "url": "https://www.dutchnews.nl/2026/01/after-record-year-asml-is-to-cut-1700-jobs-mainly-in-nl/",
+   "files": [
+    "sources/web/2026_DutchNews_After record year ASML is to cut 1700 jobs.html"
+   ],
+   "status": "saved",
+   "note": "過去最高の業績の一方、技術・IT部門の簡素化で約1,700人を削減（主にオランダ）。革新と技術開発への集中が目的"
+  },
+  {
+   "key": "dutchnews_2026_09",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "オランダ政府",
+   "publisher": "DutchNews",
+   "title": "Mind the gap: how 30% ruling changes may affect your paycheck",
+   "dateLabel": "2026-09-08",
+   "date": "2026-09-08",
+   "url": "https://www.dutchnews.nl/2026/09/mind-the-gap-how-30-ruling-changes-may-affect-your-paycheck/",
+   "files": [
+    "sources/web/2026_DutchNews_How 30 percent ruling changes may affect your paycheck.html"
+   ],
+   "status": "saved",
+   "note": "高度外国人材の税優遇（30%ルール）を2027年から27%に縮小し、対象の年収の下限も引き上げ"
+  },
+  {
+   "key": "nltimes_2026_05",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "",
+   "publisher": "NL Times",
+   "title": "Business leaders call on cabinet to fix power grid congestion",
+   "dateLabel": "2026-05-18",
+   "date": "2026-05-18",
+   "url": "https://nltimes.nl/2026/05/18/business-leaders-call-cabinet-fix-power-grid-congestion",
+   "files": [
+    "sources/web/2026_NL Times_Business leaders call on cabinet to fix power grid congestion.html"
+   ],
+   "status": "saved",
+   "note": "経済団体が送電網の混雑を「国家的な危機」として扱うよう政府に要請。ブレインポート・アイントホーフェンが止まれば半導体装置の生産に響くと警告"
+  },
+  {
+   "key": "semi_2026_07",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "SEMI",
+   "publisher": "SEMI",
+   "title": "Global Semiconductor Equipment Sales Forecast to Reach a Record $229 Billion in 2028, SEMI Reports",
+   "dateLabel": "2026-07-14",
+   "date": "2026-07-14",
+   "url": "https://www.semi.org/en/semi-press-release/global-semiconductor-equipment-sales-forecast-to-reach-a-record-229-billion-dollars-in-2028-semi-reports",
+   "files": [
+    "sources/web/2026_SEMI_Global semiconductor equipment sales forecast to reach a record 229 billion dollars in 2028.html"
+   ],
+   "status": "saved",
+   "note": "半導体製造装置の世界販売は2026年に1,659億ドル（+23.2%）、前工程装置は1,439億ドル（+23.1%）、DRAM向けは+39%。2028年に2,295億ドルの見通し"
+  },
+  {
+   "key": "trendforce_2026_07",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "TSMC",
+   "publisher": "TrendForce",
+   "title": "TSMC After Earnings Call: Foreign Brokerages See EUV-Driven CapEx Surge and 2027 Price Hikes",
+   "dateLabel": "2026-07-17",
+   "date": "2026-07-17",
+   "url": "https://www.trendforce.com/news/2026/07/17/news-tsmc-after-earnings-call-foreign-brokerages-see-euv-driven-capex-surge-and-2027-price-hikes/",
+   "files": [
+    "sources/web/2026_TrendForce_TSMC after earnings call EUV-driven capex surge.html"
+   ],
+   "status": "saved",
+   "note": "TSMCが2026年の設備投資見通しを520億〜560億ドルから600億〜640億ドルへ引き上げ。EUV関連の支出が増加の主因"
+  },
+  {
+   "key": "trendforce_2026_02",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "",
+   "publisher": "TrendForce",
+   "title": "ASML’s High-NA EUV for 2027-28: Which Giants Are Betting Big—Intel, Samsung, SK hynix or TSMC?",
+   "dateLabel": "2026-02-16",
+   "date": "2026-02-16",
+   "url": "https://www.trendforce.com/news/2026/02/16/news-asmls-high-na-euv-for-2027-28-which-giants-are-betting-big-intel-samsung-sk-hynix-or-tsmc/",
+   "files": [
+    "sources/web/2026_TrendForce_ASML High-NA EUV for 2027-28 which giants are betting big.html"
+   ],
+   "status": "saved",
+   "note": "日経の報道の紹介：High-NA EUVの量産利用は2027〜28年に始まり、インテル・サムスン・SKハイニックスが先行（ASMLのCEOの発言）"
+  },
+  {
+   "key": "tomshardware_2025_12",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "",
+   "publisher": "Tom's Hardware",
+   "title": "U.S. government awards Gelsinger-backed EUV developer xLight with $150 million in federal incentives",
+   "dateLabel": "2025-12-02",
+   "date": "2025-12-02",
+   "url": "https://www.tomshardware.com/tech-industry/semiconductors/u-s-government-awards-gelsinger-backed-euv-developer-xlight-with-usd150-million-in-federal-incentives-company-to-develop-new-electron-based-light-source-for-lithography-tools",
+   "files": [
+    "sources/web/2025_Tom's Hardware_US government awards xLight 150 million dollars.html"
+   ],
+   "status": "saved",
+   "note": "米商務省がEUV用の自由電子レーザー光源を開発するスタートアップxLightに1.5億ドルの支援を表明（基本合意）"
+  },
+  {
+   "key": "canon_2024_09",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "キヤノン",
+   "publisher": "Canon",
+   "title": "Canon delivers FPA-1200NZ2C nanoimprint lithography system for semiconductor manufacturing to the Texas Institute for Electronics",
+   "dateLabel": "2024-09-26",
+   "date": "2024-09-26",
+   "url": "https://global.canon/en/news/2024/20240926.html",
+   "files": [
+    "sources/web/2024_Canon_Canon ships nanoimprint lithography system to Texas Institute for Electronics.html"
+   ],
+   "status": "saved",
+   "note": "キヤノンがナノインプリント方式の露光装置を米テキサスの研究組織に出荷。投影露光とは異なる方式"
+  },
+  {
+   "key": "asml_ir_quarterly_results",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "ASML",
+   "publisher": "ASML",
+   "title": "Quarterly results (Q3 2026 results announcement date)",
+   "dateLabel": "2026-10閲覧",
+   "date": "2026-10",
+   "url": "https://investor.asml.com/quarterly-results",
+   "files": [
+    "sources/web/2026_ASML_Quarterly results page (browser view 2026-10-10).txt"
+   ],
+   "status": "saved",
+   "note": "2026年7〜9月期の決算を2026年10月14日（水）に発表する予定（07:00 CETに発表文、15:00 CETに投資家向けの電話会議）。スクリプトからは接続できなかったため、アプリ内のブラウザで閲覧した本文を保存した"
+  },
+  {
+   "key": "asml_mistral_2025_web",
+   "inDeck": false,
+   "itemType": "webpage",
+   "affiliation": "ASML",
+   "publisher": "ASML",
+   "title": "ASML, Mistral AI enter strategic partnership（asml.com）",
+   "dateLabel": "2025-09-09",
+   "date": "2025-09-09",
+   "url": "https://www.asml.com/en/news/press-releases/2025/asml-mistral-ai-enter-strategic-partnership",
+   "files": [],
+   "status": "not_fetched",
+   "reason": "asml.com がスクリプトからの取得を拒否した（HTTP 403）。ボット対策の回避は行っていない",
+   "note": "同じ発表文を Nasdaq の掲載で保存した（参考文献12）"
+  },
+  {
+   "key": "asml_q2_2026_web",
+   "inDeck": false,
+   "itemType": "webpage",
+   "affiliation": "ASML",
+   "publisher": "ASML",
+   "title": "ASML reports €9.3 billion total net sales and €2.9 billion net income in Q2 2026（asml.com）",
+   "dateLabel": "2026-07-15",
+   "date": "2026-07-15",
+   "url": "https://www.asml.com/en/news/press-releases/2026/q2-2026-financial-results",
+   "files": [],
+   "status": "not_fetched",
+   "reason": "asml.com がスクリプトからの取得を拒否した（HTTP 403）。ボット対策の回避は行っていない",
+   "note": "同じ発表文を ASML の公式資料置き場のPDFで保存した（参考文献7）"
+  }
+ ]
+}

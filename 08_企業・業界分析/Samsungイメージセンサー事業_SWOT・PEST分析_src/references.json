@@ -1,0 +1,681 @@
+{
+ "checked_on": "2026-09-28",
+ "note": "ソニーの分析資料と共通の17件（18ファイル）は、そちらで 2026-09-27 に保存したファイルをコピーした。そのほかは 2026-09-28 に保存した",
+ "references": [
+  {
+   "key": "samsung_q2_2026",
+   "inDeck": true,
+   "itemType": "report",
+   "affiliation": "Samsung",
+   "publisher": "Samsung Electronics",
+   "title": "Samsung Electronics Announces Second Quarter 2026 Results",
+   "dateLabel": "2026-07-30",
+   "date": "2026-07-30",
+   "url": "https://news.samsung.com/global/samsung-electronics-announces-second-quarter-2026-results",
+   "files": [
+    "sources/web/2026_Samsung Electronics_Second quarter 2026 results.html"
+   ],
+   "status": "saved",
+   "note": "全社の売上高171.5兆ウォン・営業利益89.5兆ウォン、DS部門127.5兆・89.2兆ウォン、MX・ネットワークは0.7兆ウォンの営業赤字。System LSIは中国のモバイル需要の弱さの中で量産帯向けSoC・センサーの拡販により上半期の売上が過去最高。下期もセンサーの競争力を強める"
+  },
+  {
+   "key": "samsung_q1_2026",
+   "inDeck": true,
+   "itemType": "report",
+   "affiliation": "Samsung",
+   "publisher": "Samsung Electronics",
+   "title": "Samsung Electronics Announces First Quarter 2026 Results",
+   "dateLabel": "2026-04-30",
+   "date": "2026-04-30",
+   "url": "https://news.samsung.com/global/samsung-electronics-announces-first-quarter-2026-results",
+   "files": [
+    "sources/web/2026_Samsung Electronics_First quarter 2026 results.html"
+   ],
+   "status": "saved",
+   "note": "全社の売上高133.9兆ウォン・営業利益57.2兆ウォン、DS部門81.7兆・53.7兆ウォン。System LSIは4〜6月に量産帯スマホ向けのSoCとセンサーを拡販し、下期に2億画素センサーの顧客と製品群を広げる計画"
+  },
+  {
+   "key": "samsung_auto4ac_2021",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "Samsung",
+   "publisher": "Samsung Electronics",
+   "title": "Samsung Introduces Its First ISOCELL Image Sensor Tailored for Automotive Applications",
+   "dateLabel": "2021-07-13",
+   "date": "2021-07-13",
+   "url": "https://news.samsung.com/global/samsung-introduces-its-first-isocell-image-sensor-tailored-for-automotive-applications",
+   "files": [
+    "sources/web/2021_Samsung Electronics_ISOCELL Auto 4AC first automotive ISOCELL.html"
+   ],
+   "status": "saved",
+   "note": "初の車載向けISOCELL Auto 4AC（サラウンドビュー・リアカメラ向け、120dBのHDR、LEDのちらつき低減）。電子ミラー（CMS）や自動運転などへ製品群を広げる計画"
+  },
+  {
+   "key": "samsung_hp1_2021",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "Samsung",
+   "publisher": "Samsung Electronics",
+   "title": "Samsung Brings Advanced Ultra-Fine Pixel Technologies to New Mobile Image Sensors",
+   "dateLabel": "2021-09-02",
+   "date": "2021-09-02",
+   "url": "https://news.samsung.com/global/samsung-brings-advanced-ultra-fine-pixel-technologies-to-new-mobile-image-sensors",
+   "files": [
+    "sources/web/2021_Samsung Electronics_ISOCELL HP1 and GN5 ultra-fine pixel technologies.html"
+   ],
+   "status": "saved",
+   "note": "業界初の2億画素センサー ISOCELL HP1（画素0.64µm）。16画素をまとめて使うTetra²pixel、8K動画"
+  },
+  {
+   "key": "samsung_vizion_2023",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "Samsung",
+   "publisher": "Samsung Electronics",
+   "title": "Samsung Unveils Two New ISOCELL Vizion Sensors Tailored for Robotics and XR Applications",
+   "dateLabel": "2023-12-19",
+   "date": "2023-12-19",
+   "url": "https://news.samsung.com/global/samsung-unveils-two-new-isocell-vizion-sensors-tailored-for-robotics-and-xr-applications",
+   "files": [
+    "sources/web/2023_Samsung Electronics_ISOCELL Vizion 63D and 931 for robotics and XR.html"
+   ],
+   "status": "saved",
+   "note": "ロボット・XR向けに、距離を測るToFのVizion 63Dとグローバルシャッターの Vizion 931 を発表。Vizionシリーズは2020年から"
+  },
+  {
+   "key": "samsung_hp9_2024",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "Samsung",
+   "publisher": "Samsung Electronics",
+   "title": "Samsung Unveils Versatile Image Sensors for Superior Smartphone Photography",
+   "dateLabel": "2024-06-27",
+   "date": "2024-06-27",
+   "url": "https://news.samsung.com/global/samsung-unveils-versatile-image-sensors-for-superior-smartphone-photography",
+   "files": [
+    "sources/web/2024_Samsung Electronics_ISOCELL HP9, GNJ and JN5.html"
+   ],
+   "status": "saved",
+   "note": "業界初の望遠用2億画素 ISOCELL HP9（0.56µm、1/1.4型）とGNJ・JN5。主カメラとサブカメラの差を縮めることが業界の新しい方向（System LSIセンサー事業チームのCTO）"
+  },
+  {
+   "key": "samsung_hp5_ces_2026",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "Samsung",
+   "publisher": "Samsung Semiconductor",
+   "title": "[CES Innovation Awards 2026 Honoree] ISOCELL HP5: Advancing Mobile Imaging with the Industry’s Smallest 0.5㎛ Pixels",
+   "dateLabel": "2026-01-08",
+   "date": "2026-01-08",
+   "url": "https://news.samsungsemiconductor.com/global/ces-innovation-awards-2026-honoree-isocell-hp5-advancing-mobile-imaging-with-the-industrys-smallest-0-5%E3%8E%9B-pixels/",
+   "files": [
+    "sources/web/2026_Samsung Semiconductor_ISOCELL HP5 CES Innovation Awards 2026 honoree.html"
+   ],
+   "status": "saved",
+   "note": "0.5µm画素を使う初の2億画素センサー HP5（1/1.56型、望遠向け）。小さい画素の感度を、DTIの改良・TiO2・高屈折率レンズで補った"
+  },
+  {
+   "key": "thelec_2021_08",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "Samsung",
+   "publisher": "THE ELEC",
+   "title": "Samsung narrows CIS market share with Sony in 2020",
+   "dateLabel": "2021-08-13",
+   "date": "2021-08-13",
+   "url": "https://www.thelec.net/news/articleView.html?idxno=3231",
+   "files": [
+    "sources/web/2021_THE ELEC_Samsung narrows CIS market share with Sony in 2020.html"
+   ],
+   "status": "saved",
+   "note": "Yoleの調査で2020年のシェアはソニー40%・サムスン22%（2019年は42%・21%）。サムスンは2002年に生産開始、2014年まではOmniVisionに次ぐ3位、2018年までシェア20%未満。メモリの知見で急成長"
+  },
+  {
+   "key": "eetj_2023_07_27",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "Yole Group",
+   "publisher": "EE Times Japan",
+   "title": "首位ソニーが3年ぶりシェア拡大、2022年CIS市場",
+   "dateLabel": "2023-07-27",
+   "date": "2023-07-27",
+   "url": "https://eetimes.itmedia.co.jp/ee/articles/2307/27/news084.html",
+   "files": [
+    "sources/web/2023_EE Times Japan_首位ソニーが3年ぶりシェア拡大、2022年CIS市場_p1.html",
+    "sources/web/2023_EE Times Japan_首位ソニーが3年ぶりシェア拡大、2022年CIS市場_p2.html"
+   ],
+   "status": "saved",
+   "note": "Yoleの調査で2022年のシェアはソニー42%、サムスン19%（前年比−3ポイント）、OmniVision 11%。市場は212.9億ドル"
+  },
+  {
+   "key": "yole_2024_07",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "Yole Group",
+   "publisher": "Yole Group",
+   "title": "Sony is set to capture 50% of the CIS market",
+   "dateLabel": "2024-07-03",
+   "date": "2024-07-03",
+   "url": "https://www.yolegroup.com/press-release/sony-is-set-to-capture-50-of-the-cis-market/",
+   "files": [
+    "sources/web/2024_Yole Group_Sony is set to capture 50% of the CIS market.html"
+   ],
+   "status": "saved",
+   "note": "サムスンとSK hynixは売上が停滞・微減し、生産能力をメモリ（特にHBM）へ振り向け。HuaweiやHonorは地政学リスクを避けて自国のセンサーメーカーへ。中国勢はソニー・サムスンと競うハイエンド品を開発"
+  },
+  {
+   "key": "eetj_2024_07_04",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "Yole Group",
+   "publisher": "EE Times Japan",
+   "title": "首位ソニーはシェア45％に拡大、2023年のCMOSイメージセンサー市場",
+   "dateLabel": "2024-07-04",
+   "date": "2024-07-04",
+   "url": "https://eetimes.itmedia.co.jp/ee/articles/2407/04/news078.html",
+   "files": [
+    "sources/web/2024_EE Times Japan_首位ソニーはシェア45％に拡大、2023年のCIS市場_p1.html",
+    "sources/web/2024_EE Times Japan_首位ソニーはシェア45％に拡大、2023年のCIS市場_p2.html"
+   ],
+   "status": "saved",
+   "note": "Yoleの調査で2023年のシェアはソニー45%、サムスン19%（前年同様）、OmniVision 11%。市場は217.9億ドル"
+  },
+  {
+   "key": "eetj_2025_05_28",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "Counterpoint Research",
+   "publisher": "EE Times Japan",
+   "title": "24年のスマホ用CIS出荷台数、首位はソニーで2位＆3位に中国勢",
+   "dateLabel": "2025-05-28",
+   "date": "2025-05-28",
+   "url": "https://eetimes.itmedia.co.jp/ee/articles/2505/28/news061.html",
+   "files": [
+    "sources/web/2025_EE Times Japan_24年のスマホ用CIS出荷台数、首位はソニーで2位＆3位に中国勢.html"
+   ],
+   "status": "saved",
+   "note": "Counterpoint Researchの調査。2024年のスマホ用センサーの出荷は44億個（+2%）で、台数ではソニー、GalaxyCore（+34%）、OmniVision（+14%）の順"
+  },
+  {
+   "key": "yole_2025_07",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "Yole Group",
+   "publisher": "Yole Group",
+   "title": "CIS market to reach more than $30 billion by 2030, driven by mobile, automotive, and security applications",
+   "dateLabel": "2025-07-28",
+   "date": "2025-07-28",
+   "url": "https://www.yolegroup.com/press-release/cis-market-to-reach-more-than-30-billion-by-2030-driven-by-mobile-automotive-and-security-applications/",
+   "files": [
+    "sources/web/2025_Yole Group_CIS market to reach more than 30 billion USD by 2030.html"
+   ],
+   "status": "saved",
+   "note": "2024年の市場は232億ドル（+6.4%）。ソニーは1ポイント上昇、SmartSensは売上+105.7%、サムスンは売上横ばい。2023年の車載カメラモジュールは2.36億個（1台あたり約3個）"
+  },
+  {
+   "key": "eetj_2025_08_07",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "Yole Group",
+   "publisher": "EE Times Japan",
+   "title": "2024年のイメージセンサー市場もソニーがトップ、高まる中国の存在感",
+   "dateLabel": "2025-08-07",
+   "date": "2025-08-07",
+   "url": "https://eetimes.itmedia.co.jp/ee/articles/2508/07/news045.html",
+   "files": [
+    "sources/web/2025_EE Times Japan_2024年のイメージセンサー市場もソニーがトップ、高まる中国の存在感.html"
+   ],
+   "status": "saved",
+   "note": "Yoleの2024年の調査の紹介（市場232億ドル、2030年に301億ドル）。中国メーカーの存在感が高まる"
+  },
+  {
+   "key": "yole_2026",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "Yole Group",
+   "publisher": "Yole Group",
+   "title": "CIS industry: Sony extends its lead as China overtakes South Korea",
+   "dateLabel": "2026-08-03",
+   "date": "2026-08-03",
+   "url": "https://www.yolegroup.com/press-release/cis-industry-sony-extends-its-lead-as-china-overtakes-south-korea/",
+   "files": [
+    "sources/web/2026_Yole Group_CIS industry Sony extends its lead as China overtakes South Korea.html"
+   ],
+   "status": "saved",
+   "note": "サムスンは2位を維持するが売上はおおむね横ばい（プレミアムはソニー、中低価格帯は中国勢との競争）。モバイル向けはソニー57%。AI向けメモリの逼迫が2026年以降のセンサーの供給リスク"
+  },
+  {
+   "key": "eetj_2026_08_26",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "Yole Group",
+   "publisher": "EE Times Japan",
+   "title": "25年のイメージセンサー市場は過去最高、ソニーはシェア5割",
+   "dateLabel": "2026-08-26",
+   "date": "2026-08-26",
+   "url": "https://eetimes.itmedia.co.jp/ee/articles/2608/26/news049.html",
+   "files": [
+    "sources/web/2026_EE Times Japan_25年のイメージセンサー市場は過去最高、ソニーはシェア5割_p1.html",
+    "sources/web/2026_EE Times Japan_25年のイメージセンサー市場は過去最高、ソニーはシェア5割_p2.html"
+   ],
+   "status": "saved",
+   "note": "Yoleの調査：2025年の市場253億ドル（+9%）、2031年303億ドル（年3.1%）。地域別で韓国勢は前年比−4ポイントの17%、中国勢は21%で2位に。競争軸は3D集積へ、ソニーの3層積層（iPhone・OPPO向け）が節目"
+  },
+  {
+   "key": "dclife_map2027",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "日本経済新聞社",
+   "publisher": "デジカメライフ",
+   "title": "CMOSセンサー世界シェア2025（日経業界地図2027年版の紹介）",
+   "dateLabel": "2026-08-21",
+   "date": "2026-08-21",
+   "url": "https://dclife.jp/archives/18627",
+   "files": [
+    "sources/web/2026_デジカメライフ_日経業界地図 CMOSイメージセンサー出荷額ベース世界シェア2025.html"
+   ],
+   "status": "saved",
+   "note": "2025年の出荷額ベースのシェア：ソニー53.6%、オムニビジョン13.4%、サムスン13.2%（前年比−1.7ポイント）で3位に後退、スマートセンス5.6%、ギャラクシーコア3.9%"
+  },
+  {
+   "key": "ithome_2026",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "",
+   "publisher": "IT之家",
+   "title": "报告称国产 CMOS 厂商豪威 2025 年全球份额首超三星，位居世界第二",
+   "dateLabel": "2026-09-07",
+   "date": "2026-09-07",
+   "url": "https://www.ithome.com/0/999/120.htm",
+   "files": [
+    "sources/web/2026_IT之家_豪威2025年全球份额首超三星.html"
+   ],
+   "status": "saved",
+   "note": "TSRの調査で2025年の市場は約230億ドル（+11.2%）、2026年は横ばいの見込み。OmniVisionの売上は約30億ドル・シェア13%で、初めてサムスンを上回り2位"
+  },
+  {
+   "key": "techinsights_q2_2025",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "TechInsights",
+   "publisher": "TechInsights",
+   "title": "Smartphone Image Sensor Market Share Q2 2025",
+   "dateLabel": "2025-09-05",
+   "date": "2025-09-05",
+   "url": "https://www.techinsights.com/blog/narrative-smartphone-image-sensor-market-share-q2-2025",
+   "files": [
+    "sources/web/2025_TechInsights_Smartphone image sensor market share Q2 2025.html"
+   ],
+   "status": "saved",
+   "note": "2025年4〜6月のスマホ用センサー（金額）で、ソニーが51%超の首位、2位がサムスンのSystem LSI、3位がOmniVision"
+  },
+  {
+   "key": "edaily_2018",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "Samsung",
+   "publisher": "Edaily（이데일리）",
+   "title": "“이미지센서 캐파 전환 결정된 바 없어”-삼성전자 컨콜（イメージセンサーへの能力転換は未定：サムスン電子の決算説明会）",
+   "dateLabel": "2018-04-26",
+   "date": "2018-04-26",
+   "url": "https://edaily.co.kr/News/Read?mediaCodeNo=257&newsId=02974966619180056",
+   "files": [
+    "sources/web/2018_Edaily_이미지센서 캐파 전환 결정된 바 없어（삼성전자 컨콜）.html"
+   ],
+   "status": "saved",
+   "note": "決算説明会で、華城の11ライン（DRAM）をイメージセンサー用に転換中で、13ラインの追加転換は未定と説明"
+  },
+  {
+   "key": "trendforce_2025_03",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "SK hynix",
+   "publisher": "TrendForce",
+   "title": "SK hynix Reportedly Exits CIS to Focus on AI amid Weak Demand and Fierce China Competition",
+   "dateLabel": "2025-03-06",
+   "date": "2025-03-06",
+   "url": "https://www.trendforce.com/news/2025/03/06/news-sk-hynix-reportedly-exits-cis-to-focus-on-ai-memory-amid-weak-demand-and-fierce-china-competition/",
+   "files": [
+    "sources/web/2025_TrendForce_SK hynix reportedly exits CIS to focus on AI memory.html"
+   ],
+   "status": "saved",
+   "note": "SK hynixがイメージセンサー事業から撤退し、AI向けメモリへ集中（需要の弱さと中国勢との競争）"
+  },
+  {
+   "key": "digitimes_2026_04",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "Samsung",
+   "publisher": "DIGITIMES",
+   "title": "Samsung System LSI talent exits raise risks for Exynos and image sensors",
+   "dateLabel": "2026-04-16",
+   "date": "2026-04-16",
+   "url": "https://www.digitimes.com/news/a20260415PD234/samsung-lsi-exynos-cis-talent-design.html",
+   "files": [
+    "sources/web/2026_DIGITIMES_Samsung System LSI talent exits raise risks for Exynos and image sensors.html"
+   ],
+   "status": "saved",
+   "note": "System LSIの中核技術者の離職が続き、ExynosとISOCELLの開発に空白が生じる懸念。本文は有料で、公開部分（冒頭）だけを確認"
+  },
+  {
+   "key": "koreaherald_2026_01",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "韓国政府",
+   "publisher": "The Korea Herald",
+   "title": "Long-stalled chip bill clears National Assembly",
+   "dateLabel": "2026-01-29",
+   "date": "2026-01-29",
+   "url": "https://www.koreaherald.com/article/10665897",
+   "files": [
+    "sources/web/2026_The Korea Herald_Long-stalled chip bill clears National Assembly.html"
+   ],
+   "status": "saved",
+   "note": "半導体特別法が成立（大統領直属の委員会、特別会計、首都圏外のクラスター支援）。研究開発職の週52時間の適用除外は見送り"
+  },
+  {
+   "key": "idc_2026_05",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "IDC",
+   "publisher": "IDC",
+   "title": "Worldwide Smartphone Market to Decline 13.9% in 2026 as Memory Crisis and US-Iran War Constrain Growth",
+   "dateLabel": "2026-05-26",
+   "date": "2026-05-26",
+   "url": "https://www.idc.com/resource-center/blog/worldwide-smartphone-market-to-decline-13-9-in-2026-as-memory-crisis-and-us-iran-war-constrain-growth/",
+   "files": [
+    "sources/web/2026_IDC_Worldwide smartphone market to decline 13.9% in 2026.html"
+   ],
+   "status": "saved",
+   "note": "サムスンのスマホはメモリの確保・Galaxy S26・中価格帯の攻勢でAndroidの落ち込みに逆らってシェアを伸ばす見通し。200ドル未満の機種が最も縮む"
+  },
+  {
+   "key": "idc_2026_08",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "IDC",
+   "publisher": "IDC",
+   "title": "Smartphone Shipments Set for Record 16.7% Drop in 2026, as the Memory Crisis Hits Full Force",
+   "dateLabel": "2026-08-26",
+   "date": "2026-08-26",
+   "url": "https://www.idc.com/resource-center/blog/smartphone-shipments-set-for-record-16-7-drop-in-2026-as-the-memory-crisis-hits-full-force/",
+   "files": [
+    "sources/web/2026_IDC_Smartphone shipments set for record 16.7% drop in 2026.html"
+   ],
+   "status": "saved",
+   "note": "2026年のスマホ出荷は−16.7%（約10億台強）、Android −24.3%・iOS −1.3%。DRAM・NANDは前年比300%超の上昇、平均価格は581ドル（+27.6%）、100ドル未満の機種は存続の危機"
+  },
+  {
+   "key": "gsmarena_s26u",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "Samsung",
+   "publisher": "GSMArena",
+   "title": "Samsung Galaxy S26 Ultra review: Camera - photo and video quality",
+   "dateLabel": "2026-03-06",
+   "date": "2026-03-06",
+   "url": "https://www.gsmarena.com/samsung_galaxy_s26_ultra-review-2939p5.php",
+   "files": [
+    "sources/web/2026_GSMArena_Samsung Galaxy S26 Ultra review camera.html"
+   ],
+   "status": "saved",
+   "note": "S26 Ultraのカメラ5個のうち4個がISOCELL（主HP2・超広角JN3・3倍望遠3LD・前面3LU）、5倍望遠はソニーIMX854。主カメラのHP2はS23 Ultra（2023年）から据え置き"
+  },
+  {
+   "key": "apple_2025_08",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "Apple",
+   "publisher": "Apple",
+   "title": "Apple increases U.S. commitment to $600 billion, announces ambitious program",
+   "dateLabel": "2025-08-06",
+   "date": "2025-08-06",
+   "url": "https://www.apple.com/newsroom/2025/08/apple-increases-us-commitment-to-600-billion-usd-announces-ambitious-program/",
+   "files": [
+    "sources/web/2025_Apple_Apple increases US commitment to 600 billion USD.html"
+   ],
+   "status": "saved",
+   "note": "米国投資を6,000億ドルに拡大。Samsungのオースティン工場で、世界で初めて使う新しいチップ製造技術を立ち上げると発表（製品名は示さず）"
+  },
+  {
+   "key": "trendforce_2025_08",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "Samsung",
+   "publisher": "TrendForce",
+   "title": "Samsung Tapped to Produce Apple’s New Chips at Austin Fab, Likely iPhone Image Sensors",
+   "dateLabel": "2025-08-07",
+   "date": "2025-08-07",
+   "url": "https://www.trendforce.com/news/2025/08/07/news-samsung-tapped-to-produce-apples-new-chips-at-austin-fab-likely-for-iphone-image-sensors/",
+   "files": [
+    "sources/web/2025_TrendForce_Samsung tapped to produce Apple new chips at Austin fab.html"
+   ],
+   "status": "saved",
+   "note": "Business Koreaの報道の紹介：Appleの新チップはiPhone用イメージセンサーとの見方。ISOCELLは2枚の貼り合わせで、GalaxyのほかXiaomi・vivo・Motorolaに供給。2024年のシェアはソニー50%超、サムスン15.4%"
+  },
+  {
+   "key": "digitimes_2025_08",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "Samsung",
+   "publisher": "DIGITIMES",
+   "title": "Samsung reportedly planning to produce iPhone image sensors in Texas, but keep packaging in Korea",
+   "dateLabel": "2025-08-11",
+   "date": "2025-08-11",
+   "url": "https://www.digitimes.com/news/a20250811PD218/samsung-texas-fab-cis-apple-iphone-packaging.html",
+   "files": [
+    "sources/web/2025_DIGITIMES_Samsung to produce iPhone image sensors in Texas but keep packaging in Korea.html"
+   ],
+   "status": "saved",
+   "note": "オースティンにApple向けのセンサーのラインを作るが、後工程は韓国で行う可能性（業界筋）"
+  },
+  {
+   "key": "macrumors_2025_10",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "Samsung",
+   "publisher": "MacRumors",
+   "title": "Suppliers Already Preparing for iPhone 18's Camera",
+   "dateLabel": "2025-10-15",
+   "date": "2025-10-15",
+   "url": "https://www.macrumors.com/2025/10/15/suppliers-already-preparing-for-iphone-18-camera/",
+   "files": [
+    "sources/web/2025_MacRumors_Suppliers already preparing for iPhone 18 camera.html"
+   ],
+   "status": "saved",
+   "note": "The Elecの報道の紹介：テスト協力会社の斗山テスナが1.23億ドルの装置投資。オースティンのラインは2027年にiPhone 18へ供給する見込みで、約10年ぶりのApple向け復帰"
+  },
+  {
+   "key": "macrumors_2025_12",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "Samsung",
+   "publisher": "MacRumors",
+   "title": "Advanced iPhone 18 Camera Sensor to Be Made in Texas",
+   "dateLabel": "2025-12-24",
+   "date": "2025-12-24",
+   "url": "https://www.macrumors.com/2025/12/24/iphone-18-camera-sensor-to-be-made-in-texas/",
+   "files": [
+    "sources/web/2025_MacRumors_iPhone 18 camera sensor to be made in Texas.html"
+   ],
+   "status": "saved",
+   "note": "The Elecの報道の紹介：3層積層のセンサーをオースティンで製造。オースティンに190億ドルの投資計画、ラインは早ければ2026年3月に稼働"
+  },
+  {
+   "key": "9to5mac_2025_12",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "Samsung",
+   "publisher": "9to5Mac",
+   "title": "iPhone 18 Pro camera sensors look set to be made in the USA",
+   "dateLabel": "2025-12-24",
+   "date": "2025-12-24",
+   "url": "https://9to5mac.com/2025/12/24/iphone-18-pro-camera-sensors-look-set-to-be-made-in-the-usa/",
+   "files": [
+    "sources/web/2025_9to5Mac_iPhone 18 Pro camera sensors look set to be made in the USA.html"
+   ],
+   "status": "saved",
+   "note": "3枚のウエハーをハイブリッド接合で重ねる3層積層。量産開始の時期から、まずiPhone 18 Proに載るとの見立て"
+  },
+  {
+   "key": "sammyfans_2026_01",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "Samsung",
+   "publisher": "Sammy Fans",
+   "title": "Apple could pay Samsung $1.5 billion a year for iPhone camera（SemiAnalysisの推計を紹介）",
+   "dateLabel": "2026-01-11",
+   "date": "2026-01-11",
+   "zoteroTitle": "Apple could pay Samsung $1.5 billion a year for iPhone camera",
+   "url": "https://www.sammyfans.com/2026/01/11/apple-could-pay-samsung-1-5-billion-a-year-for-iphone-camera/",
+   "files": [
+    "sources/web/2026_Sammy Fans_Apple could pay Samsung 1.5 billion a year for iPhone camera.html"
+   ],
+   "status": "saved",
+   "note": "SemiAnalysisの推計：2027年までにiPhone向けセンサー数量の20〜30%（年1.5億〜2億個、売上10億〜15億ドル）をサムスンが得る可能性"
+  },
+  {
+   "key": "sammyfans_2026_07",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "Samsung",
+   "publisher": "Sammy Fans",
+   "title": "Apple iPhone 18 adopts Samsung camera sensors",
+   "dateLabel": "2026-07-03",
+   "date": "2026-07-03",
+   "url": "https://www.sammyfans.com/2026/07/03/apple-reportedly-adopts-samsung-camera-sensors/",
+   "files": [
+    "sources/web/2026_Sammy Fans_Apple iPhone 18 reportedly adopts Samsung camera sensors.html"
+   ],
+   "status": "saved",
+   "note": "流出データ（Tata）でサムスンがiPhone 18のセンサーの供給元に。ソニーと併用、比率は性能・効率・価格で見直されるとの見方。情報源の信頼性は不明"
+  },
+  {
+   "key": "eetj_2026_01_15",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "Samsung",
+   "publisher": "EE Times Japan",
+   "title": "iPhoneのイメージセンサー、ソニーの独占供給「崩壊のとき」は近いのか",
+   "dateLabel": "2026-01-15",
+   "date": "2026-01-15",
+   "url": "https://eetimes.itmedia.co.jp/ee/articles/2601/15/news062.html",
+   "files": [
+    "sources/web/2026_EE Times Japan_iPhoneのイメージセンサー、ソニーの独占供給「崩壊のとき」は近いのか.html"
+   ],
+   "status": "saved",
+   "note": "2024年の「iPhone 16に採用」のうわさは立ち消え。2025年、米国の関税と製造回帰を背景に、Samsung採用の話が現実味を帯びた"
+  },
+  {
+   "key": "nist_chips_samsung",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "米国政府",
+   "publisher": "NIST（CHIPS for America）",
+   "title": "Samsung Electronics (Texas)",
+   "dateLabel": "2026-09閲覧",
+   "date": "2026-09",
+   "url": "https://www.nist.gov/chips/samsung-electronics-texas-taylor",
+   "files": [
+    "sources/web/2026_NIST CHIPS_Samsung Electronics (Texas) award.html"
+   ],
+   "status": "saved",
+   "note": "CHIPS法による直接支援 最大47.45億ドル（最終決定）。テイラーの先端ロジック工場とR&D、オースティンの拡張（FD-SOI）に370億ドル超を投資。1996年から米国で製造"
+  },
+  {
+   "key": "wh_2025_11",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "米国政府",
+   "publisher": "The White House",
+   "title": "Joint Fact Sheet on President Donald J. Trump’s Meeting with President Lee Jae Myung",
+   "dateLabel": "2025-11-13",
+   "date": "2025-11-13",
+   "url": "https://www.whitehouse.gov/fact-sheets/2025/11/joint-fact-sheet-on-president-donald-j-trumps-meeting-with-president-lee-jae-myung/",
+   "files": [
+    "sources/web/2025_The White House_Joint fact sheet on President Trump's meeting with President Lee Jae Myung.html"
+   ],
+   "status": "saved",
+   "note": "韓国製品の相互関税は15%。半導体の232条関税は、韓国以上の貿易量をもつ国との将来の合意より不利にしない方針。造船1,500億ドル＋戦略投資2,000億ドル"
+  },
+  {
+   "key": "skadden_2026_02",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "",
+   "publisher": "Skadden",
+   "title": "The Supreme Court Ends IEEPA Tariffs, Bringing Fresh Uncertainty for Companies",
+   "dateLabel": "2026-02-24",
+   "date": "2026-02-24",
+   "url": "https://www.skadden.com/insights/publications/2026/02/the-supreme-court-ends-ieepa-tariffs",
+   "files": [
+    "sources/web/2026_Skadden_The Supreme Court ends IEEPA tariffs.html"
+   ],
+   "status": "saved",
+   "note": "2026年2月20日、連邦最高裁がIEEPAに基づく関税を違法と判断。各国との合意の前提が揺らぐ。122条による10%の関税（15%へ引き上げの意向）など代わりの関税が続く"
+  },
+  {
+   "key": "strtrade_232",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "",
+   "publisher": "Sandler, Travis & Rosenberg",
+   "title": "Section 232 Tariffs on Semiconductors",
+   "dateLabel": "2026-09閲覧",
+   "date": "2026-09",
+   "url": "https://www.strtrade.com/trade-news-resources/tariff-actions-resources/section-232-investigation-semiconductors",
+   "files": [
+    "sources/web/2026_Sandler Travis & Rosenberg_Section 232 tariffs on semiconductors.html"
+   ],
+   "status": "saved",
+   "note": "特定の半導体製品への232条関税（25%）が2026年1月15日に発効"
+  },
+  {
+   "key": "sss_lytia_l910",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "ソニー",
+   "publisher": "ソニーセミコンダクタソリューションズ",
+   "title": "LOFIC搭載のモバイル用CMOSイメージセンサーを商品化",
+   "dateLabel": "2026-06-17",
+   "date": "2026-06-17",
+   "url": "https://www.sony-semicon.com/ja/info/2026/2026061701.html",
+   "files": [
+    "sources/web/2026_ソニーセミコンダクタソリューションズ_LOFIC搭載モバイル用センサー LYTIA L910.html"
+   ],
+   "status": "saved",
+   "note": "LYTIA L910：1回の露光で100dB、約5,000万画素、2026年夏に量産出荷"
+  },
+  {
+   "key": "sss_tsmc_jv",
+   "inDeck": true,
+   "itemType": "webpage",
+   "affiliation": "ソニー",
+   "publisher": "ソニーセミコンダクタソリューションズ",
+   "title": "TSMCと次世代イメージセンサーにおける合弁会社の設立に関する確定契約を締結",
+   "dateLabel": "2026-08-11",
+   "date": "2026-08-11",
+   "url": "https://www.sony-semicon.com/ja/news/2026/2026081101.html",
+   "files": [
+    "sources/web/2026_ソニーセミコンダクタソリューションズ_TSMCとの合弁会社設立の確定契約.html"
+   ],
+   "status": "saved",
+   "note": "熊本県合志市に合弁会社。SSS約4,650億円・TSMC約2,820億円を拠出、2029年量産予定"
+  },
+  {
+   "key": "commerce_2024_12",
+   "inDeck": false,
+   "itemType": "webpage",
+   "affiliation": "米国政府",
+   "publisher": "米商務省",
+   "title": "Biden-Harris Administration Announces CHIPS Incentives Award with Samsung Electronics to Solidify U.S. Leadership in Leading-Edge Semiconductor Production",
+   "dateLabel": "2024-12",
+   "date": "2024-12",
+   "url": "https://www.commerce.gov/news/press-releases/2024/12/biden-harris-administration-announces-chips-incentives-award-samsung",
+   "files": [],
+   "status": "not_fetched",
+   "reason": "commerce.gov がスクリプトからの取得を拒否した（HTTP 403）。ボット対策の回避は行っていない",
+   "note": "CHIPS法の支援（最大47.45億ドル）の最終決定の発表。同じ内容は NIST のページ（保存済み）で確認した"
+  }
+ ]
+}

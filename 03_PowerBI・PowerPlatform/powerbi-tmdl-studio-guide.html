@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Power BI ダッシュボード開発 — TMDL と Power BI Studio の利用手順</title>
+<style>
+  :root {
+    --fs-xs: 13px; --fs-sm: 14px; --fs-base: 16px; --fs-md: 18px; --fs-lg: 22px; --fs-xl: 30px;
+    --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px; --sp-6: 24px; --sp-8: 32px; --sp-12: 48px; --sp-16: 64px;
+    --r-sm: 6px; --r-md: 10px; --r-lg: 14px;
+    --c-bg: #f6f7f9; --c-card: #ffffff; --c-text: #14181f; --c-muted: #5a6472; --c-border: #dfe3e8;
+    --c-accent: #2f6feb; --c-accent-soft: #eef3fc;
+    --c-bad: #c62828; --c-bad-soft: #fff1ee;
+    --c-good: #2e7d32; --c-good-soft: #eef7ee;
+    --c-warn: #8a5a00; --c-warn-soft: #fff5d6;
+    --c-code-bg: #1c2230; --c-code-text: #e3e8ef;
+    --c-tmdl: #b5502a;   /* TMDL */
+    --c-pbis: #0b6fb4;   /* Power BI Studio */
+    --sidebar-w: 280px;
+    --shadow-sm: 0 1px 2px rgba(16,24,40,.05);
+    --shadow-md: 0 4px 16px rgba(16,24,40,.08);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: var(--sp-4); }
+  body {
+    margin: 0; font-family: "Hiragino Sans", "Yu Gothic", "Meiryo", system-ui, -apple-system, sans-serif;
+    font-size: var(--fs-base); line-height: 1.75; color: var(--c-text); background: var(--c-bg);
+    -webkit-font-smoothing: antialiased;
+  }
+  :focus-visible { outline: 3px solid #ffb300; outline-offset: 2px; border-radius: 4px; }
+  .skip-link {
+    position: absolute; left: var(--sp-2); top: -60px; z-index: 100; background: var(--c-accent);
+    color: #fff; padding: var(--sp-3) var(--sp-4); border-radius: var(--r-sm); text-decoration: none; transition: top .15s;
+  }
+  .skip-link:focus { top: var(--sp-2); }
+
+  .layout { display: grid; grid-template-columns: var(--sidebar-w) 1fr; min-height: 100vh; }
+  aside.sidebar { background: #1c2230; color: #cdd3dc; padding: var(--sp-6) var(--sp-4); position: sticky; top: 0; align-self: start; height: 100vh; overflow-y: auto; }
+  .sidebar-title {
+    display: flex; gap: var(--sp-3); align-items: flex-start; color: #fff; text-decoration: none;
+    padding: var(--sp-3); border-radius: var(--r-md); background: rgba(255,255,255,.06); margin-bottom: var(--sp-6); min-height: 44px;
+  }
+  .sidebar-title:hover { background: rgba(255,255,255,.12); }
+  .sidebar-title .lbl { font-weight: 700; font-size: var(--fs-sm); line-height: 1.5; }
+  .sidebar-title small { display: block; font-weight: 400; color: #9aa4b2; font-size: var(--fs-xs); }
+  aside.sidebar h2 { font-size: var(--fs-xs); letter-spacing: .08em; color: #8b94a3; margin: 0 0 var(--sp-3); text-transform: uppercase; }
+  aside.sidebar ol { list-style: none; margin: 0; padding: 0; }
+  aside.sidebar li { margin-bottom: var(--sp-1); }
+  aside.sidebar a.toc-link { display: block; color: #cdd3dc; text-decoration: none; font-size: var(--fs-sm); padding: 10px var(--sp-3); border-radius: var(--r-sm); line-height: 1.45; }
+  aside.sidebar a.toc-link:hover { background: rgba(255,255,255,.09); color: #fff; }
+  aside.sidebar a.toc-link[aria-current="true"] { background: var(--c-accent); color: #fff; font-weight: 700; }
+  aside.sidebar .toc-sub { padding-left: var(--sp-4); font-size: var(--fs-xs); }
+
+  main { padding: var(--sp-12) var(--sp-8) var(--sp-16); max-width: 1020px; }
+  header.top { margin-bottom: var(--sp-12); }
+  header.top h1 { font-size: var(--fs-xl); line-height: 1.35; margin: 0 0 var(--sp-4); }
+  .lead { font-size: var(--fs-md); color: var(--c-muted); margin: 0 0 var(--sp-6); max-width: 76ch; }
+  .env { background: var(--c-card); border: 1px solid var(--c-border); border-radius: var(--r-md); padding: var(--sp-4) var(--sp-6); box-shadow: var(--shadow-sm); }
+  .env dl { display: grid; grid-template-columns: max-content 1fr; gap: var(--sp-2) var(--sp-6); margin: 0; font-size: var(--fs-sm); }
+  .env dt { color: var(--c-muted); }
+  .env dd { margin: 0; font-weight: 600; }
+
+  section.chapter { margin-bottom: var(--sp-16); scroll-margin-top: var(--sp-4); }
+  section.chapter > h2 { font-size: var(--fs-lg); margin: 0 0 var(--sp-4); padding-bottom: var(--sp-3); border-bottom: 2px solid var(--c-border); display: flex; align-items: center; gap: var(--sp-3); flex-wrap: wrap; }
+  h3 { font-size: var(--fs-md); margin: var(--sp-8) 0 var(--sp-3); }
+  h4 { font-size: var(--fs-base); margin: var(--sp-6) 0 var(--sp-2); }
+  p, li { max-width: 82ch; }
+
+  .badge { display: inline-flex; align-items: center; gap: 6px; font-size: var(--fs-xs); font-weight: 700; color: #fff; padding: 4px 10px; border-radius: 999px; white-space: nowrap; }
+  .badge.tmdl { background: var(--c-tmdl); } .badge.pbis { background: var(--c-pbis); }
+  .ver { font-size: var(--fs-xs); color: var(--c-muted); font-weight: 400; font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+
+  .note { border-radius: var(--r-md); padding: var(--sp-4) var(--sp-6); margin: var(--sp-4) 0; border: 1px solid transparent; }
+  .note .note-t { font-weight: 700; display: flex; align-items: center; gap: var(--sp-2); margin-bottom: var(--sp-2); }
+  .note p:last-child, .note ul:last-child, .note ol:last-child { margin-bottom: 0; }
+  .note.tip { background: var(--c-good-soft); border-color: #bcd9bd; } .note.tip .note-t { color: var(--c-good); }
+  .note.warn { background: var(--c-warn-soft); border-color: #e6d391; } .note.warn .note-t { color: var(--c-warn); }
+  .note.stop { background: var(--c-bad-soft); border-color: #f0c3ba; } .note.stop .note-t { color: var(--c-bad); }
+  .note.info { background: var(--c-accent-soft); border-color: #c3d7f5; } .note.info .note-t { color: var(--c-accent); }
+
+  table { width: 100%; border-collapse: collapse; margin: var(--sp-4) 0; font-size: var(--fs-sm); background: var(--c-card); }
+  caption { text-align: left; font-weight: 700; padding-bottom: var(--sp-2); font-size: var(--fs-base); }
+  th, td { border: 1px solid var(--c-border); padding: 10px var(--sp-3); text-align: left; vertical-align: top; line-height: 1.65; }
+  thead th { background: #eef1f5; font-weight: 700; }
+  tbody tr:nth-child(even) { background: #fafbfc; }
+  .tbl-wrap { overflow-x: auto; }
+
+  kbd { display: inline-block; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: var(--fs-xs); background: #eef1f5; border: 1px solid #c6ced9; border-bottom-width: 2px; border-radius: 5px; padding: 2px 7px; white-space: nowrap; color: #24303f; }
+  code { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: .93em; background: #eef1f5; padding: 2px 6px; border-radius: 4px; word-break: break-word; }
+
+  .codeblock { position: relative; margin: var(--sp-4) 0; }
+  .codeblock .cap { font-size: var(--fs-xs); color: var(--c-muted); margin-bottom: var(--sp-2); }
+  .codeblock pre { background: var(--c-code-bg); color: var(--c-code-text); padding: var(--sp-6); padding-right: 108px; border-radius: var(--r-md); overflow-x: auto; margin: 0; line-height: 1.7; font-size: var(--fs-sm); }
+  .codeblock pre code { background: none; padding: 0; color: inherit; }
+  .copy-btn { position: absolute; top: 10px; right: 10px; min-height: 36px; min-width: 84px; background: #38445a; color: #fff; border: 1px solid #4c5a74; border-radius: var(--r-sm); font-size: var(--fs-xs); cursor: pointer; font-family: inherit; padding: 0 var(--sp-3); }
+  .copy-btn:hover { background: #46536d; }
+  .copy-msg { font-size: var(--fs-xs); margin-top: var(--sp-2); min-height: 1.2em; }
+  .copy-msg.ok { color: var(--c-good); } .copy-msg.ng { color: var(--c-bad); }
+
+  ol.steps { counter-reset: st; list-style: none; padding: 0; margin: var(--sp-4) 0; }
+  ol.steps > li { counter-increment: st; position: relative; padding: 0 0 var(--sp-4) 46px; margin-bottom: var(--sp-2); }
+  ol.steps > li::before { content: counter(st); position: absolute; left: 0; top: 1px; width: 30px; height: 30px; border-radius: 50%; background: var(--c-accent); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: var(--fs-sm); }
+  ol.steps.tmdl > li::before { background: var(--c-tmdl); }
+  ol.steps.pbis > li::before { background: var(--c-pbis); }
+
+  .role-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--sp-4); margin: var(--sp-6) 0; }
+  .role-card { background: var(--c-card); border: 1px solid var(--c-border); border-radius: var(--r-md); padding: var(--sp-6); box-shadow: var(--shadow-sm); }
+  .role-card h3 { margin-top: 0; }
+  .role-card .q { color: var(--c-muted); font-size: var(--fs-sm); margin: 0 0 var(--sp-2); }
+  .role-card .a { font-weight: 700; margin: 0 0 var(--sp-3); }
+  .role-card ul { margin: 0; padding-left: 1.2em; font-size: var(--fs-sm); }
+
+  .flow { display: grid; gap: var(--sp-2); margin: var(--sp-4) 0; }
+  .flow-step { background: var(--c-card); border: 1px solid var(--c-border); border-radius: var(--r-md); padding: var(--sp-3) var(--sp-4); display: grid; grid-template-columns: 34px 1fr; gap: var(--sp-3); align-items: start; }
+  .flow-step .n { width: 28px; height: 28px; border-radius: 50%; background: var(--c-pbis); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: var(--fs-sm); }
+  .flow-step .t { font-weight: 700; }
+  .flow-step .d { font-size: var(--fs-sm); color: var(--c-muted); }
+  .flow-arrow { text-align: center; color: var(--c-muted); font-size: var(--fs-sm); line-height: 1; }
+
+  .back-to-top { position: fixed; right: var(--sp-6); bottom: var(--sp-6); z-index: 50; width: 56px; height: 56px; border-radius: 50%; border: 1px solid var(--c-border); background: var(--c-card); color: var(--c-text); box-shadow: var(--shadow-md); cursor: pointer; font-size: var(--fs-xs); font-family: inherit; line-height: 1.2; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; }
+  .back-to-top:hover { background: var(--c-accent); color: #fff; border-color: var(--c-accent); }
+  .back-to-top .ic { font-size: var(--fs-base); }
+  .toc-toggle { display: none; }
+
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    aside.sidebar { position: static; height: auto; padding: var(--sp-4); }
+    .toc-toggle { display: block; width: 100%; min-height: 44px; background: rgba(255,255,255,.1); color: #fff; border: 1px solid rgba(255,255,255,.2); border-radius: var(--r-sm); font-size: var(--fs-sm); font-family: inherit; cursor: pointer; margin-bottom: var(--sp-3); }
+    aside.sidebar ol[hidden] { display: none; }
+    aside.sidebar h2 { display: none; }
+    main { padding: var(--sp-6) var(--sp-4) var(--sp-16); }
+    header.top h1 { font-size: var(--fs-lg); }
+    .env dl { grid-template-columns: 1fr; gap: 2px var(--sp-2); }
+    .env dt { margin-top: var(--sp-2); }
+    .back-to-top { right: var(--sp-3); bottom: var(--sp-3); width: 52px; height: 52px; }
+    .codeblock pre { padding-right: var(--sp-4); padding-top: 52px; }
+  }
+  @media print { aside.sidebar, .back-to-top, .copy-btn { display: none; } .layout { grid-template-columns: 1fr; } body { background: #fff; } }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">本文へスキップ</a>
+<div class="layout">
+  <aside class="sidebar" aria-label="目次">
+    <a href="#top" class="sidebar-title">
+      <span aria-hidden="true">📊</span>
+      <span class="lbl">TMDL &amp; Power BI Studio 手順書<small>クリックで先頭へ戻る</small></span>
+    </a>
+    <button class="toc-toggle" type="button" id="toc-toggle" aria-expanded="false" aria-controls="toc">目次を開く ▾</button>
+    <h2>目次</h2>
+    <ol id="toc">
+      <li><a class="toc-link" href="#ch0">0. 2つの拡張の守備範囲</a></li>
+      <li><a class="toc-link" href="#ch1">1. 前提の確認</a></li>
+      <li><a class="toc-link toc-sub" href="#ch1-2">　1-2 PBIPの構造</a></li>
+      <li><a class="toc-link" href="#ch2">2. TMDL拡張の使い方</a></li>
+      <li><a class="toc-link toc-sub" href="#ch2-2">　2-2 設定6項目</a></li>
+      <li><a class="toc-link toc-sub" href="#ch2-4">　2-4 実物で読み解く</a></li>
+      <li><a class="toc-link" href="#ch3">3. Power BI Studio の使い方</a></li>
+      <li><a class="toc-link toc-sub" href="#ch3-1">　3-1 初期設定</a></li>
+      <li><a class="toc-link toc-sub" href="#ch3-3">　3-3 TMDL連携（核心）</a></li>
+      <li><a class="toc-link toc-sub" href="#ch3-4">　3-4 データセット運用</a></li>
+      <li><a class="toc-link toc-sub" href="#ch3-6">　3-6 ノートブック</a></li>
+      <li><a class="toc-link" href="#ch4">4. 開発手順の2パターン</a></li>
+      <li><a class="toc-link" href="#ch5">5. 既に踏んだ地雷と回避策</a></li>
+      <li><a class="toc-link" href="#ch6">6. 設定まとめ</a></li>
+      <li><a class="toc-link" href="#ch7">7. コマンド早見表</a></li>
+    </ol>
+  </aside>
+
+  <main id="main">
+    <header class="top" id="top">
+      <h1>Power BI ダッシュボード開発<br>TMDL と Power BI Studio の利用手順</h1>
+      <p class="lead">
+        Mac の VS Code から Power BI のセマンティックモデルを編集・検証・発行するための手順書です。
+        2つの拡張は役割がまったく違うため、「どちらで何をするか」を先に固定してから手順に入ります。
+      </p>
+      <div class="env">
+        <dl>
+          <dt>対象バージョン</dt>
+          <dd>TMDL 1.6.5（publisher: analysis-services）／ Power BI Studio 2.11.1（publisher: GerhardBrueckl）</dd>
+          <dt>確認環境</dt>
+          <dd>macOS 26.6.2 ／ Apple M1 ／ .NET Runtime 10.0.11 導入済み</dd>
+          <dt>対象リポジトリ</dt>
+          <dd>litho-overlay-dashboard ／ PowerBI_LithoBooster_DashBoard（.tmdl 計26ファイル）</dd>
+          <dt>本資料の根拠</dt>
+          <dd>両拡張の定義ファイル・README、および実際のリポジトリの TMDL ファイルから確認</dd>
+        </dl>
+      </div>
+    </header>
+
+    <!-- ===== 0 ===== -->
+    <section class="chapter" id="ch0">
+      <h2>0. 2つの拡張の守備範囲</h2>
+      <p>名前が似ているので混同しがちですが、この2つは<strong>まったく別の道具</strong>です。片方はテキストエディタの支援、もう片方はサーバーとの通信手段です。</p>
+      <div class="role-grid">
+        <div class="role-card">
+          <h3><span class="badge tmdl">TMDL</span> 書くための拡張</h3>
+          <p class="q">正体</p>
+          <p class="a">言語サポートのみ。<strong>コマンドは0個</strong></p>
+          <ul>
+            <li><code>.tmdl</code> / <code>.tmd</code> の色分けと入力補完</li>
+            <li>DAX の整形</li>
+            <li>フォルダ全体の構文チェック（既定はオフ）</li>
+            <li><strong>通信はしない</strong>。ローカルのファイルを扱うだけ</li>
+          </ul>
+        </div>
+        <div class="role-card">
+          <h3><span class="badge pbis">Power BI Studio</span> つなぐための拡張</h3>
+          <p class="q">正体</p>
+          <p class="a">Power BI サービスの操作卓。<strong>コマンド63個</strong></p>
+          <ul>
+            <li>ワークスペース／データセット／レポートの一覧と操作</li>
+            <li>サービス上のモデルを直接 TMDL で編集・検証・発行</li>
+            <li>更新の実行・スケジュール設定・パラメーター更新</li>
+            <li>DAX / REST API を実行するノートブック</li>
+          </ul>
+        </div>
+      </div>
+      <div class="note info">
+        <div class="note-t"><span aria-hidden="true">💡</span>Mac 環境ではこの組み合わせが特に重要</div>
+        <p><strong>Power BI Desktop は Windows 専用で、Mac には存在しません。</strong>そのため Mac 上でモデル定義を触る手段は実質この2つだけです。TMDL拡張で安全にテキストを書き、Power BI Studio でサービスへ送る、という分担になります。</p>
+      </div>
+    </section>
+
+    <!-- ===== 1 ===== -->
+    <section class="chapter" id="ch1">
+      <h2>1. 前提の確認</h2>
+
+      <h3 id="ch1-1">1-1 TMDL機能を使うための前提（ここが最初の関門）</h3>
+      <div class="tbl-wrap">
+      <table>
+        <caption>Power BI Studio の TMDL 機能に必要なもの</caption>
+        <thead><tr><th style="width:28%">前提</th><th style="width:20%">この環境の状態</th><th>補足</th></tr></thead>
+        <tbody>
+          <tr><td><strong>.NET Runtime 7 以上</strong></td><td>✅ 10.0.11 が導入済み</td><td>TMDL操作は .NET製の補助プログラム（TMDL Proxy）が担当するため必須</td></tr>
+          <tr><td>Power BI サービスのアカウント</td><td>要確認</td><td>組織のテナントへサインインする</td></tr>
+          <tr><td>API権限</td><td>要確認</td><td><code>Workspace.Read.All</code> / <code>Dataset.Read.All</code> / <code>Dataset.ReadWrite.All</code></td></tr>
+          <tr><td>ワークスペースのXMLAエンドポイント</td><td>要確認</td><td>読み書きするには Premium / PPU / Fabric 容量が必要。共有容量では TMDL の発行はできない</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <div class="note stop">
+        <div class="note-t"><span aria-hidden="true">🛑</span>導入前に社内確認を</div>
+        <p>Power BI Studio は<strong>組織の Power BI テナントに接続します</strong>。サインインと権限付与が必要になるため、利用可否を社内で確認してから使ってください。一方、<strong>TMDL拡張は通信を一切しない</strong>ので、ローカル編集だけなら単独で安全に使えます。</p>
+      </div>
+
+      <h3 id="ch1-2">1-2 PBIP の構造を先に理解する</h3>
+      <p>Power BI をテキストで管理する形式（PBIP）は、実際には次のように分かれています。TMDLで編集するのは <code>.SemanticModel</code> の中だけです。</p>
+      <div class="codeblock">
+        <div class="cap">litho-overlay-dashboard の実際の構成</div>
+        <button class="copy-btn" type="button" data-copy>コピー</button>
+        <pre><code>powerbi/
+├── litho-overlay.pbip                   ← 全体をまとめる入口ファイル
+├── litho-overlay.SemanticModel/         ← ★ここがTMDLの領域（データモデル）
+│   ├── definition.pbism
+│   └── definition/
+│       ├── model.tmdl                   ← モデル全体の設定・テーブル参照
+│       ├── relationships.tmdl           ← リレーション定義
+│       ├── expressions.tmdl             ← 共有パラメーター・M式
+│       ├── database.tmdl
+│       └── tables/
+│           ├── Measurements.tmdl        ← テーブル1つにつき1ファイル
+│           ├── ShotCorrections.tmdl
+│           ├── DimLot.tmdl
+│           ├── DimWafer.tmdl
+│           ├── Calendar.tmdl
+│           └── Parameters.tmdl
+├── litho-overlay.Report/                ← 見た目（PBIR形式・JSON）。TMDLではない
+└── theme/litho-light-theme.json</code></pre>
+        <p class="copy-msg" role="status" aria-live="polite"></p>
+      </div>
+      <div class="note warn">
+        <div class="note-t"><span aria-hidden="true">⚠️</span>よくある勘違い</div>
+        <p>TMDL が扱うのは<strong>データモデルだけ</strong>です。グラフの配置や色などのレポート側は <code>.Report</code> フォルダの JSON（PBIR形式）で、TMDL拡張の対象外です。「TMDLを直せば見た目も変わる」わけではありません。</p>
+      </div>
+    </section>
+
+    <!-- ===== 2 ===== -->
+    <section class="chapter" id="ch2">
+      <h2><span class="badge tmdl">TMDL</span> 2. TMDL拡張の使い方 <span class="ver">v1.6.5</span></h2>
+
+      <h3 id="ch2-1">2-1 この拡張がすること・しないこと</h3>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:50%">✅ してくれること</th><th>❌ しないこと</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>
+              <ul style="margin:0;padding-left:1.2em">
+                <li><code>.tmdl</code> / <code>.tmd</code> の構文を色分け</li>
+                <li>キーワードの入力補完</li>
+                <li>DAX式の整形</li>
+                <li>フォルダ全体をまたいだ構文チェック（要設定）</li>
+              </ul>
+            </td>
+            <td>
+              <ul style="margin:0;padding-left:1.2em">
+                <li>サーバーへの接続・発行（Power BI Studio の担当）</li>
+                <li>モデルの意味的な妥当性チェック</li>
+                <li>コマンドの提供（<strong>0個</strong>。設定と色分けだけ）</li>
+              </ul>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+      <p>つまり<strong>「TMDLを安全に手書きするための下地」</strong>です。入れるだけで効き、操作を覚える必要はありません。</p>
+
+      <h3 id="ch2-2">2-2 設定6項目と推奨値</h3>
+      <div class="tbl-wrap">
+      <table>
+        <caption>TMDL拡張の全設定</caption>
+        <thead><tr><th style="width:34%">設定キー</th><th style="width:14%">既定</th><th style="width:14%">推奨</th><th>理由</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>tmdlLanguageExtension.indentationStyle</code></td><td>Tabs</td><td><strong>Tabs のまま</strong></td>
+            <td>実際のリポジトリの全TMDLファイルがタブで統一されている（スペース行 0件）。ここを変えると既存ファイルと混在して事故になる</td>
+          </tr>
+          <tr>
+            <td><code>tmdlLanguageExtension.workspaceLevelParsing</code></td><td>Disable</td><td><strong>Enable</strong></td>
+            <td>既定ではファイル単位でしか見ない。有効にすると <code>relationships.tmdl</code> が参照する列名の誤りなど、<strong>ファイルをまたいだ矛盾</strong>に気づける</td>
+          </tr>
+          <tr>
+            <td><code>tmdlLanguageExtension.daxFormatter</code></td><td>Enable</td><td>Enable のまま</td><td>メジャーのDAXを整形できる</td>
+          </tr>
+          <tr>
+            <td><code>tmdlLanguageExtension.casingStyle</code></td><td>Camel</td><td>Camel のまま</td><td>補完時の大文字小文字の扱い</td>
+          </tr>
+          <tr>
+            <td><code>tmdlLanguageExtension.newlineStyle</code></td><td>Default</td><td>Default のまま</td><td>改行コード。Gitの差分を無用に増やさないため既定推奨</td>
+          </tr>
+          <tr>
+            <td><code>tmdlLanguageExtension.powerquery.general.locale</code></td><td>en-US</td><td>en-US のまま</td><td>M式の解釈ロケール。モデルの <code>culture: ja-JP</code> とは別物なので変更不要</td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h3 id="ch2-3">2-3 TMDLファイルの読み方</h3>
+      <p>TMDLは<strong>インデントで階層を表す</strong>形式です。「何が何にぶら下がっているか」だけ分かれば読めます。</p>
+      <div class="codeblock">
+        <div class="cap">model.tmdl（実物・抜粋）</div>
+        <button class="copy-btn" type="button" data-copy>コピー</button>
+        <pre><code>model Model
+	culture: ja-JP
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: ja-JP
+
+	annotation __PBI_TimeIntelligenceEnabled = 0
+
+ref table Measurements
+ref table ShotCorrections
+ref table DimLot
+ref table DimWafer
+ref table Calendar</code></pre>
+        <p class="copy-msg" role="status" aria-live="polite"></p>
+      </div>
+      <p><code>ref table</code> は「このテーブルは <code>tables/</code> の別ファイルに定義がある」という参照です。テーブルを追加するときは<strong>ファイルを作るだけでなく、ここに1行足す必要があります</strong>。忘れるとモデルに載りません。</p>
+
+      <h3 id="ch2-4">2-4 実物で読み解く：DimWafer.tmdl</h3>
+      <div class="codeblock">
+        <div class="cap">tables/DimWafer.tmdl（実物・全文。タブを見やすく空白表示にしています）</div>
+        <button class="copy-btn" type="button" data-copy>コピー</button>
+        <pre><code>table DimWafer
+
+    column WaferNo
+        dataType: int64
+        summarizeBy: none
+        sourceColumn: WaferNo
+        annotation SummarizationSetBy = Automatic
+
+    partition DimWafer = m
+        mode: import
+        source =
+                let
+                    Source = Csv.Document(File.Contents(DataFolder &amp; "measurements.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+                    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+                    Selected = Table.SelectColumns(Promoted, {"WaferNo"}),
+                    Grouped = Table.Distinct(Selected),
+                    Typed = Table.TransformColumnTypes(Grouped, {{"WaferNo", Int64.Type}})
+                in
+                    Typed</code></pre>
+        <p class="copy-msg" role="status" aria-live="polite"></p>
+      </div>
+      <div class="tbl-wrap">
+      <table>
+        <caption>各行の意味</caption>
+        <thead><tr><th style="width:30%">記述</th><th>意味</th></tr></thead>
+        <tbody>
+          <tr><td><code>table DimWafer</code></td><td>テーブル名の宣言。ここが最上位</td></tr>
+          <tr><td><code>column WaferNo</code></td><td>列の宣言。以下のインデントがこの列の属性</td></tr>
+          <tr><td><code>dataType: int64</code></td><td>データ型</td></tr>
+          <tr><td><code>summarizeBy: none</code></td><td>既定で合計などを取らない（IDや番号の列では必須級の設定）</td></tr>
+          <tr><td><code>sourceColumn: WaferNo</code></td><td>取り込み元の列名。<strong>計算列ではなく実データの列</strong>であることを示す</td></tr>
+          <tr><td><code>partition DimWafer = m</code></td><td>データの取得方法。<code>= m</code> は Power Query（M言語）で取り込むという意味</td></tr>
+          <tr><td><code>mode: import</code></td><td>取り込み方式（Import／DirectQuery の別）</td></tr>
+          <tr><td><code>source = let … in …</code></td><td>実際のM式。CSVを読み、列を選び、重複を除き、型を付けている</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h3 id="ch2-5">2-5 編集するときの3つの鉄則</h3>
+      <ol class="steps tmdl">
+        <li><strong>インデントは既存ファイルに完全に合わせる</strong><br>このリポジトリは全ファイルがタブです。スペースを混ぜると読み込みに失敗します。エディタの表示だけでは見分けにくいので、既存行をコピーして書き換えるのが安全です。</li>
+        <li><strong>テーブルを足したら <code>model.tmdl</code> に <code>ref table</code> を足す</strong><br>ファイルを作っただけではモデルに含まれません。</li>
+        <li><strong>1テーブル＝1ファイルを崩さない</strong><br><code>tables/</code> の構成はツール側の前提です。まとめたり分割したりしないでください。</li>
+      </ol>
+    </section>
+
+    <!-- ===== 3 ===== -->
+    <section class="chapter" id="ch3">
+      <h2><span class="badge pbis">Power BI Studio</span> 3. Power BI Studio の使い方 <span class="ver">v2.11.1</span></h2>
+
+      <h3 id="ch3-1">3-1 初期設定とサインイン</h3>
+      <ol class="steps pbis">
+        <li><strong>サイドバーの Power BI アイコンを開く</strong><br>初回はサインインを求められます。組織アカウントで認証します。</li>
+        <li><strong>ワークスペースが多い場合は絞り込む</strong><br>設定 <code>powerbi.workspaceFilter</code> に正規表現を入れると、一覧に出すワークスペースを限定できます。</li>
+        <li><strong>TMDL機能を使う場合は追加設定</strong><br><code>powerbi.TMDL.enabled</code> は既定で有効です。認証を VS Code 側に覚えさせたい場合のみ <code>powerbi.TMDL.clientId</code> を設定します（未設定でも毎回認証すれば使えます）。</li>
+        <li><strong>更新の監視間隔を調整する</strong><br><code>powerbi.datasetRefreshCheckInterval</code> は既定60秒。不要なら <code>0</code> で自動チェックを止められます。</li>
+      </ol>
+      <div class="note warn">
+        <div class="note-t"><span aria-hidden="true">⚠️</span><code>powerbi.cloud</code> は触らない</div>
+        <p>既定の <code>GlobalCloud</code> のままにしてください。これを変えるのは、政府向けなど特殊なクラウドに接続する場合だけです。</p>
+      </div>
+
+      <h3 id="ch3-2">3-2 4つのビュー</h3>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:24%">ビュー</th><th>見えるもの・できること</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Workspaces</strong></td><td>ワークスペース → データセット／レポート／データフロー／ダッシュボード。<strong>日常操作はほぼここ</strong></td></tr>
+          <tr><td><strong>Pipelines</strong></td><td>デプロイパイプライン（開発→テスト→本番）の確認と、選択項目のデプロイ</td></tr>
+          <tr><td><strong>Capacities</strong></td><td>容量の一覧とワークロード設定</td></tr>
+          <tr><td><strong>Gateways</strong></td><td>オンプレミスデータゲートウェイの一覧</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h3 id="ch3-3">3-3 TMDL連携 — この拡張の核心</h3>
+      <p>サービス上のモデルを、<strong>ダウンロードせずにVS Code上で直接編集</strong>できます。これが Mac 環境で最も効く機能です。</p>
+      <div class="flow">
+        <div class="flow-step"><span class="n">1</span><div><div class="t">Edit TMDL</div><div class="d">データセットを右クリック。<code>tmdl:/powerbi/&lt;ワークスペース&gt;/&lt;データセット&gt;</code> という仮想フォルダがVS Codeに追加され、モデル定義が開く</div></div></div>
+        <div class="flow-arrow" aria-hidden="true">▼</div>
+        <div class="flow-step"><span class="n">2</span><div><div class="t">編集する</div><div class="d">TMDL拡張の色分け・補完が効いた状態で、テーブルや列を編集する</div></div></div>
+        <div class="flow-arrow" aria-hidden="true">▼</div>
+        <div class="flow-step"><span class="n">3</span><div><div class="t">Validate TMDL</div><div class="d">発行前に構文と整合性を検証する。<strong>この段階で止めれば本番は無傷</strong></div></div></div>
+        <div class="flow-arrow" aria-hidden="true">▼</div>
+        <div class="flow-step"><span class="n">4</span><div><div class="t">Publish TMDL</div><div class="d">サービスへ反映する。既存モデルの更新にも、新規モデルの作成にも使える</div></div></div>
+      </div>
+      <div class="tbl-wrap">
+      <table>
+        <caption>TMDL関連コマンド（すべてコマンドパレットまたは右クリックから）</caption>
+        <thead><tr><th style="width:34%">コマンド</th><th>用途</th></tr></thead>
+        <tbody>
+          <tr><td><code>Edit TMDL</code></td><td>サービス上のデータセットを編集用に開く</td></tr>
+          <tr><td><code>Validate TMDL</code></td><td>発行せずに検証だけ行う（<strong>必ず先に実行する</strong>）</td></tr>
+          <tr><td><code>Publish TMDL</code></td><td>サービスへ反映する</td></tr>
+          <tr><td><code>(Re)Load TMDL from server</code></td><td>サーバー側の最新定義を読み直す。他の人が変更したときに使う</td></tr>
+          <tr><td><code>Save TMDL locally</code></td><td>サービス上の定義をローカルに保存する（Gitに入れたいとき）</td></tr>
+          <tr><td><code>Browse TMDL</code></td><td>ワークスペース単位で開き、複数データセットを一覧して選ぶ</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <div class="note tip">
+        <div class="note-t"><span aria-hidden="true">✅</span>ローカルのPBIPにも使える</div>
+        <p>サービス上のモデルだけでなく、<strong>手元の <code>.tmdl</code> ファイルを開いた状態でも Validate / Publish が使えます</strong>。つまりリポジトリの <code>litho-overlay.SemanticModel</code> をそのまま検証・発行できます。Windows実機がなくても構文の妥当性はMacで確認できる、ということです。</p>
+      </div>
+
+      <h3 id="ch3-4">3-4 データセットの運用操作</h3>
+      <div class="tbl-wrap">
+      <table>
+        <caption>データセットを右クリックして使う主な操作</caption>
+        <thead><tr><th style="width:32%">操作</th><th>用途</th></tr></thead>
+        <tbody>
+          <tr><td><code>Refresh</code> / <code>Show Refresh</code></td><td>更新の実行と、更新履歴の確認</td></tr>
+          <tr><td><code>Set / Enable / Disable Refresh Schedule</code></td><td>定期更新のスケジュール設定と有効・無効の切り替え</td></tr>
+          <tr><td><code>Update Parameters</code></td><td>モデルのパラメーター（接続先サーバー名など）をまとめて更新</td></tr>
+          <tr><td><code>Copy ConnectionString</code></td><td>XMLA接続文字列を取得。外部ツールから接続するときに使う</td></tr>
+          <tr><td><code>Take Over</code></td><td>データセットの所有権を自分に移す。更新が他人名義で失敗しているときに必要</td></tr>
+          <tr><td><code>Show Memory Statistics</code></td><td>メモリ使用量の確認。モデルが重いときの調査に</td></tr>
+          <tr><td><code>Load Column Statistics</code></td><td>テーブル配下で列ごとの統計を取得。不要な列の発見に役立つ</td></tr>
+          <tr><td><code>Backup</code> / <code>Restore</code> / <code>Restore Version</code></td><td>バックアップと復元</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h3 id="ch3-5">3-5 レポートの操作</h3>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:32%">操作</th><th>用途</th></tr></thead>
+        <tbody>
+          <tr><td><code>Download</code></td><td>レポートを手元に取得</td></tr>
+          <tr><td><code>Clone</code></td><td>複製を作る。改修前の退避に</td></tr>
+          <tr><td><code>Rebind</code></td><td><strong>レポートの接続先データセットを差し替える</strong>。サンプルデータ版から本番データ版へ切り替えるときに有効</td></tr>
+          <tr><td><code>Update Content</code></td><td>別レポートの内容で上書き</td></tr>
+          <tr><td><code>Edit PBIR</code></td><td>レポート定義（PBIR形式）を編集用に開く</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h3 id="ch3-6">3-6 Power BI ノートブック（<code>.pbinb</code>）</h3>
+      <p>コマンドパレットの <code>Open new Power BI Notebook</code> で、DAXやREST APIをセル単位で実行できるノートブックが開きます。セルの1行目に「マジックコマンド」を書いて種類を指定します。</p>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:18%">記述</th><th style="width:26%">種類</th><th>使いどころ</th></tr></thead>
+        <tbody>
+          <tr><td><code>%dax</code></td><td>DAXクエリ</td><td>メジャーの検証。<code>EVALUATE テーブル名</code> で結果を表で確認できる</td></tr>
+          <tr><td><code>%api</code></td><td>REST API呼び出し</td><td><code>GET /dashboards</code> のように記述。Fabric APIも実行可能</td></tr>
+          <tr><td><code>%tmsl</code></td><td>TMSLスクリプト</td><td>モデル操作のスクリプト実行</td></tr>
+          <tr><td><code>%cmd</code></td><td>変数の設定</td><td><code>API_PATH</code> などを設定し、以降のセルで相対パスを使う</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <div class="note info">
+        <div class="note-t"><span aria-hidden="true">💡</span>メジャー検証の実用例</div>
+        <p>DirectQuery化の検証では、<code>%dax</code> セルで <code>EVALUATE</code> を書いて実行し、想定どおりの行数・値が返るかをその場で確認できます。レポートを開いて目視するより速く、結果をノートブックに残せます。</p>
+      </div>
+
+      <h3 id="ch3-7">3-7 TMDL Proxy と、つまずいたときの見方</h3>
+      <p>TMDL機能を初めて使うと、VS Code のターミナルに <strong>TMDL Proxy</strong> というプロセスが自動で立ち上がります。これは異常ではありません。Power BI のTMDLライブラリが .NET製で、VS Code（JavaScript）から直接呼べないため、間に立つ補助プログラムです。</p>
+      <div class="tbl-wrap">
+      <table>
+        <caption>よくある困りごと</caption>
+        <thead><tr><th style="width:30%">症状</th><th style="width:28%">原因</th><th>対処</th></tr></thead>
+        <tbody>
+          <tr><td>TMDL関連の操作が動かない</td><td>.NET Runtime が見つからない</td><td>この環境は 10.0.11 が入っているので通常は問題なし。<code>Ensure TMDL Proxy</code> で起動を確認する</td></tr>
+          <tr><td>エラーの詳細が分からない</td><td>—</td><td><strong>TMDL Proxy のターミナルがログになっています</strong>。ここに個々の要求と結果が出る</td></tr>
+          <tr><td>毎回認証を求められる</td><td>認証をプロキシ側が担当しているため</td><td><code>powerbi.TMDL.clientId</code> にAADアプリのIDを設定すると、VS Codeが資格情報を保持する</td></tr>
+          <tr><td>ワークスペースが一覧に出ない</td><td>権限不足、またはフィルタ</td><td>API権限（<code>Workspace.Read.All</code> 等）と <code>powerbi.workspaceFilter</code> を確認</td></tr>
+          <tr><td>Publish が失敗する</td><td>XMLA書き込みは Premium / PPU / Fabric 容量が必要</td><td>共有容量のワークスペースでは発行できない。容量を確認する</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </section>
+
+    <!-- ===== 4 ===== -->
+    <section class="chapter" id="ch4">
+      <h2>4. 開発手順の2パターン</h2>
+      <p>この2拡張の組み合わせ方には2通りあります。<strong>どちらか一方ではなく、目的で使い分けます。</strong></p>
+
+      <h3>パターンA：ローカルPBIPをGitで管理する（現行の進め方）</h3>
+      <ol class="steps tmdl">
+        <li><strong>ブランチを切る</strong>（例：<code>feat/vertica-directquery</code>）</li>
+        <li><strong>VS Code で <code>.tmdl</code> を編集する</strong> — TMDL拡張の色分けと補完が効く。既存ファイルのインデントに合わせる</li>
+        <li><strong>Power BI Studio の <code>Validate TMDL</code> で検証する</strong> — Macのまま構文の妥当性を確認できる</li>
+        <li><strong>コミットしてPRを出す</strong> — 差分がテキストなので、意図しないリレーション変更などをレビューで発見できる</li>
+        <li><strong>Windows実機の Power BI Desktop で開いて確認する</strong> — 描画やDesktop固有の挙動はMacでは検証できない</li>
+        <li><strong>マージする</strong></li>
+      </ol>
+      <div class="note tip">
+        <div class="note-t"><span aria-hidden="true">✅</span>この形の利点</div>
+        <p>モデル定義の変更履歴がGitに残り、PRでレビューできます。既存の開発フロー（ブランチ→PR→確認→マージ）にそのまま乗ります。</p>
+      </div>
+
+      <h3>パターンB：サービス上のモデルを直接編集する（Macから完結）</h3>
+      <ol class="steps pbis">
+        <li><strong>Workspaces ビューでデータセットを右クリック → <code>Edit TMDL</code></strong></li>
+        <li><strong>編集する</strong></li>
+        <li><strong><code>Validate TMDL</code> で検証する</strong></li>
+        <li><strong><code>Publish TMDL</code> で反映する</strong></li>
+        <li><strong><code>Save TMDL locally</code> でローカルへ保存し、Gitへコミットする</strong>（履歴を残すため）</li>
+      </ol>
+      <div class="note warn">
+        <div class="note-t"><span aria-hidden="true">⚠️</span>パターンBの注意</div>
+        <p>直接発行するため、<strong>手順5を省くとGitに履歴が残りません</strong>。また本番ワークスペースで実行すると即座に反映されます。まず開発用ワークスペースで試すか、事前に <code>Backup</code> を取ってください。</p>
+      </div>
+
+      <div class="tbl-wrap">
+      <table>
+        <caption>使い分けの目安</caption>
+        <thead><tr><th style="width:34%">やりたいこと</th><th style="width:20%">選ぶパターン</th><th>理由</th></tr></thead>
+        <tbody>
+          <tr><td>モデルを本格的に改修する</td><td><strong>A</strong></td><td>レビューと履歴が必要</td></tr>
+          <tr><td>本番の設定を少し直したい</td><td><strong>B</strong></td><td>ダウンロード不要で速い。ただし後でGitへ保存する</td></tr>
+          <tr><td>既存モデルの中身を調べたい</td><td><strong>B</strong></td><td><code>Edit TMDL</code> で開くだけ。編集せず閉じれば影響なし</td></tr>
+          <tr><td>DAXメジャーを試したい</td><td><strong>B</strong></td><td>ノートブックの <code>%dax</code> が速い</td></tr>
+          <tr><td>他ワークスペースへモデルを複製したい</td><td><strong>B</strong></td><td>pbixの上げ下げ不要で、Validate → Publish でコピーできる</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </section>
+
+    <!-- ===== 5 ===== -->
+    <section class="chapter" id="ch5">
+      <h2>5. このプロジェクトで既に踏んだ地雷と回避策</h2>
+      <p>過去に litho-overlay-dashboard で実際に発生し、Windows実機で初めて発覚した問題です。<strong>同じ形の編集をする前に必ず確認してください。</strong></p>
+
+      <div class="note stop">
+        <div class="note-t"><span aria-hidden="true">🛑</span>地雷1：計算テーブルの列にリレーションを張らない</div>
+        <p>手書きの<strong>計算テーブル</strong>（<code>CALENDAR()</code> など）が作る列をリレーションの相手にすると、Windows の Power BI Desktop で「リレーションシップ … は無効な列IDを使用しています」となり<strong>ファイルが開けなくなります</strong>。</p>
+        <p><strong>回避策：</strong>リレーションに参加するディメンション（日付テーブル等）は、<code>partition X = m</code> の<strong>取り込み（M）テーブル</strong>で作り、列は通常の <code>sourceColumn</code> にします。実際に <code>Calendar.tmdl</code> は <code>List.Dates</code> を使ったMテーブルで作り直しています。なお、リレーションを持たない設定用の計算テーブル（<code>Parameters</code> の <code>DATATABLE</code>）は問題ありませんでした。</p>
+      </div>
+
+      <div class="note stop">
+        <div class="note-t"><span aria-hidden="true">🛑</span>地雷2：自動の日付/時刻（LocalDateTable）</div>
+        <p>日付列があり「自動の日付/時刻」が既定でオンだと、Windows の Desktop が開いた瞬間に <code>LocalDateTable_&lt;guid&gt;</code> を自動生成し、エラーで開けなくなります。<strong>リポジトリ側に該当ファイルが無くても、開いた時点で生成されて壊れる</strong>のが厄介な点です。</p>
+        <p><strong>回避策：</strong><code>model.tmdl</code> に次の注釈を入れて自動生成を止めます。専用のCalendarテーブルがあれば自動日付は不要です。</p>
+        <div class="codeblock" style="margin-top:var(--sp-3)">
+          <button class="copy-btn" type="button" data-copy>コピー</button>
+          <pre><code>	annotation __PBI_TimeIntelligenceEnabled = 0</code></pre>
+          <p class="copy-msg" role="status" aria-live="polite"></p>
+        </div>
+      </div>
+
+      <div class="note warn">
+        <div class="note-t"><span aria-hidden="true">⚠️</span>地雷3：Mac では描画とDesktop固有の挙動を検証できない</div>
+        <p>TMDLの構文チェックは <code>Validate TMDL</code> でMacからできますが、<strong>Desktopで開いたときの挙動までは分かりません</strong>。上の2つの地雷はどちらも構文的には正しく、実機で初めて発覚しました。</p>
+        <p><strong>回避策：</strong>公式スキーマや公式サンプル、既に動いている実ファイルで裏を取る。可能なら <code>tests/</code> に自動テストを追加して再発を防ぐ。モデル変更を含むPRは、マージ前にWindows実機での確認を挟む。</p>
+      </div>
+
+      <div class="note warn">
+        <div class="note-t"><span aria-hidden="true">⚠️</span>地雷4：資格情報をリポジトリに置かない</div>
+        <p>DirectQuery化で接続先を扱う際、サーバー名やデータベース名はパラメーターとして持てますが、<strong>資格情報はリポジトリに含めません</strong>。Power BI Desktop またはオンプレミスデータゲートウェイ側で設定します。Power BI Studio の <code>Update Parameters</code> は接続先の切り替えには使えますが、認証情報の保管場所ではありません。</p>
+      </div>
+    </section>
+
+    <!-- ===== 6 ===== -->
+    <section class="chapter" id="ch6">
+      <h2>6. 設定まとめ（コピペ用）</h2>
+      <p>コマンドパレットで <code>Preferences: Open User Settings (JSON)</code> を開き、いちばん外側の <code>{ }</code> の中に貼り付けてください。</p>
+      <div class="codeblock">
+        <button class="copy-btn" type="button" data-copy>コピー</button>
+        <pre><code>  // ===== TMDL 言語拡張 =====
+  // インデントはタブ。既存ファイルが全てタブなので変更しない
+  "tmdlLanguageExtension.indentationStyle": "Tabs",
+  // ファイルをまたいだ整合性チェックを有効化（既定はDisable）
+  "tmdlLanguageExtension.workspaceLevelParsing": "Enable",
+  "tmdlLanguageExtension.daxFormatter": "Enable",
+
+  // ===== Power BI Studio =====
+  // 一覧に出すワークスペースを名前で絞る（正規表現・任意）
+  "powerbi.workspaceFilter": null,
+  // 更新完了の自動チェック間隔（秒）。0で無効
+  "powerbi.datasetRefreshCheckInterval": 60,
+  "powerbi.TMDL.enabled": true
+
+  // 注意: powerbi.cloud は "GlobalCloud" のまま変更しないこと</code></pre>
+        <p class="copy-msg" role="status" aria-live="polite"></p>
+      </div>
+      <div class="note info">
+        <div class="note-t"><span aria-hidden="true">💡</span>リポジトリ単位で設定したい場合</div>
+        <p>Power BIリポジトリだけに適用したいときは、そのリポジトリの <code>.vscode/settings.json</code> に同じ内容を書きます。他のプロジェクトに影響しません。</p>
+      </div>
+    </section>
+
+    <!-- ===== 7 ===== -->
+    <section class="chapter" id="ch7">
+      <h2>7. コマンド早見表</h2>
+      <p>すべて <kbd>⌘</kbd>+<kbd>⇧</kbd>+<kbd>P</kbd>（コマンドパレット）または対象の右クリックから実行します。両拡張ともキーボードショートカットの割り当てはありません。</p>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:22%">場面</th><th style="width:34%">コマンド</th><th>ひとこと</th></tr></thead>
+        <tbody>
+          <tr><td>モデルを開く</td><td><code>Edit TMDL</code></td><td>サービス上のデータセットを右クリック</td></tr>
+          <tr><td>ワークスペースごと見る</td><td><code>Browse TMDL</code></td><td>複数データセットから選ぶ</td></tr>
+          <tr><td>発行前の検証</td><td><code>Validate TMDL</code></td><td><strong>必ず先に実行</strong></td></tr>
+          <tr><td>反映</td><td><code>Publish TMDL</code></td><td>Premium / PPU / Fabric 容量が必要</td></tr>
+          <tr><td>最新を取り直す</td><td><code>(Re)Load TMDL from server</code></td><td>他の人の変更を取り込む</td></tr>
+          <tr><td>Gitに残す</td><td><code>Save TMDL locally</code></td><td>パターンBで必須の後始末</td></tr>
+          <tr><td>更新を実行</td><td><code>Refresh</code> / <code>Show Refresh</code></td><td>履歴も確認できる</td></tr>
+          <tr><td>接続先を変える</td><td><code>Update Parameters</code></td><td>資格情報はここでは扱わない</td></tr>
+          <tr><td>DAXを試す</td><td><code>Open new Power BI Notebook</code> → <code>%dax</code></td><td>メジャー検証が速い</td></tr>
+          <tr><td>所有権を移す</td><td><code>Take Over</code></td><td>更新が他人名義で失敗するとき</td></tr>
+          <tr><td>プロキシの確認</td><td><code>Ensure TMDL Proxy</code></td><td>TMDL操作が動かないときの一次確認</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <div class="note tip">
+        <div class="note-t"><span aria-hidden="true">✅</span>最初にやること</div>
+        <p>まず <strong>TMDL拡張の設定3行</strong>を入れて、既存の <code>litho-overlay.SemanticModel</code> を開いてみてください。色分けが効いた状態でファイルを眺めるだけで、モデルの構造が読めるようになります。Power BI Studio のサインインは、社内での利用可否を確認してからで構いません。</p>
+      </div>
+    </section>
+  </main>
+</div>
+
+<button class="back-to-top" type="button" id="back-to-top" aria-label="ページ先頭へ戻る" title="ページ先頭へ戻る">
+  <span class="ic" aria-hidden="true">↑</span><span aria-hidden="true">先頭</span>
+</button>
+
+<script>
+(function () {
+  "use strict";
+  document.getElementById('back-to-top').addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    var t = document.getElementById('top');
+    if (t) { t.setAttribute('tabindex', '-1'); t.focus({ preventScroll: true }); }
+  });
+
+  var toggle = document.getElementById('toc-toggle');
+  var toc = document.getElementById('toc');
+  function applyWidth() {
+    if (window.matchMedia('(max-width: 900px)').matches) {
+      toc.hidden = toggle.getAttribute('aria-expanded') !== 'true';
+    } else { toc.hidden = false; }
+  }
+  toggle.addEventListener('click', function () {
+    var expanded = toggle.getAttribute('aria-expanded') === 'true';
+    toggle.setAttribute('aria-expanded', String(!expanded));
+    toggle.textContent = !expanded ? '目次を閉じる ▴' : '目次を開く ▾';
+    applyWidth();
+  });
+  window.addEventListener('resize', applyWidth);
+  applyWidth();
+
+  var links = Array.prototype.slice.call(document.querySelectorAll('a.toc-link'));
+  var targets = links.map(function (a) { return document.querySelector(a.getAttribute('href')); }).filter(Boolean);
+  function highlight() {
+    var pos = window.scrollY + 120, current = null;
+    targets.forEach(function (el) { if (el.offsetTop <= pos) { current = el.id; } });
+    links.forEach(function (a) {
+      if (a.getAttribute('href') === '#' + current) { a.setAttribute('aria-current', 'true'); }
+      else { a.removeAttribute('aria-current'); }
+    });
+  }
+  window.addEventListener('scroll', highlight, { passive: true });
+  highlight();
+
+  document.querySelectorAll('[data-copy]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var wrap = btn.closest('.codeblock');
+      var text = wrap.querySelector('code').innerText;
+      var msg = wrap.querySelector('.copy-msg');
+      function ok() { msg.textContent = 'コピーしました。設定ファイルに貼り付けてください。'; msg.className = 'copy-msg ok'; }
+      function ng() { msg.textContent = 'コピーできませんでした。ブラウザがこのページでのコピーを許可していないためです。コード部分を選択して手動でコピーしてください。'; msg.className = 'copy-msg ng'; }
+      function fallback() {
+        try {
+          var ta = document.createElement('textarea');
+          ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+          document.body.appendChild(ta); ta.select();
+          var done = document.execCommand('copy');
+          document.body.removeChild(ta);
+          done ? ok() : ng();
+        } catch (e) { ng(); }
+      }
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(ok).catch(fallback);
+      } else { fallback(); }
+    });
+  });
+})();
+</script>
+</body>
+</html>

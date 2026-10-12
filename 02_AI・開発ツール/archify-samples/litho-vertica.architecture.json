@@ -1,0 +1,190 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "litho-overlay-dashboard — Vertica DirectQuery 構成（雛形）",
+    "quality_profile": "showcase"
+  },
+  "layout": {
+    "mode": "grid",
+    "cols": 5,
+    "cellW": 150,
+    "cellH": 64,
+    "gapX": 120,
+    "gapY": 46
+  },
+  "components": [
+    {
+      "id": "report",
+      "type": "frontend",
+      "label": "Power BI レポート",
+      "sublabel": "Deneb ウェハ図ほか",
+      "col": 0,
+      "row": 1
+    },
+    {
+      "id": "model",
+      "type": "backend",
+      "label": "セマンティックモデル",
+      "sublabel": "複合モデル / TMDL 管理",
+      "col": 1,
+      "row": 1,
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "meas",
+      "type": "backend",
+      "label": "Measurements",
+      "sublabel": "DirectQuery",
+      "col": 2,
+      "row": 0
+    },
+    {
+      "id": "shot",
+      "type": "backend",
+      "label": "ShotCorrections",
+      "sublabel": "DirectQuery",
+      "col": 2,
+      "row": 1
+    },
+    {
+      "id": "dims",
+      "type": "backend",
+      "label": "dimensions",
+      "sublabel": "DimProcess を含む",
+      "col": 2,
+      "row": 2
+    },
+    {
+      "id": "calendar",
+      "type": "database",
+      "label": "Calendar",
+      "sublabel": "Import",
+      "col": 2,
+      "row": 3
+    },
+    {
+      "id": "gateway",
+      "type": "security",
+      "label": "データゲートウェイ",
+      "sublabel": "資格情報の設定先",
+      "col": 3,
+      "row": 1
+    },
+    {
+      "id": "vertica",
+      "type": "database",
+      "label": "Vertica",
+      "sublabel": "ポート 5433",
+      "col": 4,
+      "row": 1
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Power BI（PBIP / TMDL を Git 管理）",
+      "wraps": [
+        "report",
+        "model",
+        "meas",
+        "shot",
+        "dims",
+        "calendar"
+      ]
+    },
+    {
+      "kind": "security-group",
+      "label": "資格情報はリポジトリに置かない",
+      "wraps": [
+        "gateway",
+        "vertica"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "report-model",
+      "from": "report",
+      "to": "model",
+      "label": "スライサーの選択",
+      "variant": "emphasis"
+    },
+    {
+      "id": "model-meas",
+      "from": "model",
+      "to": "meas",
+      "label": "DirectQuery"
+    },
+    {
+      "id": "model-shot",
+      "from": "model",
+      "to": "shot"
+    },
+    {
+      "id": "model-dims",
+      "from": "model",
+      "to": "dims"
+    },
+    {
+      "id": "model-calendar",
+      "from": "model",
+      "to": "calendar",
+      "label": "Import",
+      "labelDx": -40
+    },
+    {
+      "id": "meas-gw",
+      "from": "meas",
+      "to": "gateway"
+    },
+    {
+      "id": "shot-gw",
+      "from": "shot",
+      "to": "gateway"
+    },
+    {
+      "id": "dims-gw",
+      "from": "dims",
+      "to": "gateway"
+    },
+    {
+      "id": "gw-vertica",
+      "from": "gateway",
+      "to": "vertica",
+      "label": "Vertica.Database",
+      "variant": "security"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "表示側",
+      "items": [
+        "スライサー（デバイス / 期間 / 装置 / 工程）の選択が WHERE 条件になる",
+        "Deneb のウェハ図は Lot × Wafer 1枚に絞る"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "モデル側",
+      "items": [
+        "表示データは Vertica から DirectQuery",
+        "Calendar は Import のままの複合モデル",
+        "工程名は Vertica の専用列（DimProcess）"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "未確定・注意",
+      "items": [
+        "雛形のみ（現行のサンプルCSVモデルは無傷）",
+        "column-mapping.md への実列名の記入待ち",
+        "TMDL 変更は Windows 実機での確認が必須"
+      ]
+    }
+  ]
+}

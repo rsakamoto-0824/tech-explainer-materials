@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CodexとClaude Code 企業導入ベストプラクティス</title>
+<style>
+  /* =========================================
+     Design Tokens
+     ========================================= */
+  :root {
+    /* Type scale (6段階) */
+    --fs-xs:   12px;
+    --fs-sm:   14px;
+    --fs-base: 16px;
+    --fs-md:   18px;
+    --fs-lg:   22px;
+    --fs-xl:   30px;
+
+    /* Spacing scale (4の倍数) */
+    --sp-1: 4px;
+    --sp-2: 8px;
+    --sp-3: 12px;
+    --sp-4: 16px;
+    --sp-6: 24px;
+    --sp-8: 32px;
+    --sp-12: 48px;
+    --sp-16: 64px;
+
+    /* Radius */
+    --r-sm: 6px;
+    --r-md: 10px;
+    --r-lg: 14px;
+
+    /* Colors — セマンティックのみ */
+    --c-bg:        #f6f7f9;
+    --c-card:      #ffffff;
+    --c-text:      #14181f;
+    --c-muted:     #5a6472;
+    --c-border:    #dfe3e8;
+    --c-accent:    #2f6feb;
+    --c-accent-soft:#eef3fc;
+    --c-bad:       #c62828;
+    --c-bad-soft:  #fff1ee;
+    --c-good:      #2e7d32;
+    --c-good-soft: #eef7ee;
+    --c-warn:      #8a5a00;
+    --c-warn-soft: #fff5d6;
+
+    --sidebar-w: 280px;
+
+    --shadow-sm: 0 1px 2px rgba(16,24,40,0.04);
+    --shadow-md: 0 4px 16px rgba(16,24,40,0.08);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: "Hiragino Sans", "Yu Gothic", "Meiryo", system-ui, -apple-system, sans-serif;
+    font-size: var(--fs-base);
+    line-height: 1.75;
+    color: var(--c-text);
+    background: var(--c-bg);
+    -webkit-font-smoothing: antialiased;
+    text-align: left;
+  }
+
+  :focus-visible {
+    outline: 3px solid #ffb300;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  code, pre, .mono {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  }
+
+  /* =========================================
+     Layout
+     ========================================= */
+  .layout {
+    display: grid;
+    grid-template-columns: var(--sidebar-w) 1fr;
+    min-height: 100vh;
+  }
+
+  /* =========================================
+     Sidebar (左目次)
+     ========================================= */
+  aside.sidebar {
+    background: #1c2230;
+    color: #cdd3dc;
+    padding: var(--sp-6) var(--sp-4);
+    position: sticky;
+    top: 0;
+    align-self: start;
+    height: 100vh;
+    overflow-y: auto;
+    border-right: 1px solid #2a3142;
+  }
+  .sidebar-title {
+    font-size: var(--fs-md);
+    color: #fff;
+    margin: 0 0 var(--sp-2);
+    line-height: 1.4;
+    font-weight: 700;
+  }
+  .sidebar-sub {
+    font-size: var(--fs-xs);
+    color: #8b95a7;
+    margin: 0 0 var(--sp-6);
+    line-height: 1.6;
+  }
+  .sidebar h2 {
+    font-size: var(--fs-xs);
+    letter-spacing: 0.14em;
+    color: #8b95a7;
+    margin: 0 0 var(--sp-3);
+  }
+  .sidebar ol { list-style: none; margin: 0; padding: 0; counter-reset: toc; }
+  .sidebar li { counter-increment: toc; margin: 0; }
+  .sidebar a {
+    display: block;
+    color: #cdd3dc;
+    text-decoration: none;
+    padding: var(--sp-2) var(--sp-3) var(--sp-2) var(--sp-8);
+    font-size: var(--fs-sm);
+    border-radius: var(--r-sm);
+    position: relative;
+    line-height: 1.5;
+    transition: background .15s, color .15s;
+    border-left: 3px solid transparent;
+  }
+  .sidebar a::before {
+    content: counter(toc);
+    position: absolute;
+    left: var(--sp-3);
+    color: #6d7787;
+    font-size: var(--fs-xs);
+    font-variant-numeric: tabular-nums;
+  }
+  .sidebar a:hover { background: #262e3f; color: #fff; }
+  .sidebar a.is-active {
+    background: #2b3548;
+    color: #fff;
+    border-left-color: #6f9bff;
+    font-weight: 700;
+  }
+
+  /* =========================================
+     Main
+     ========================================= */
+  main {
+    padding: var(--sp-12) var(--sp-8) var(--sp-16);
+    max-width: 980px;
+  }
+  .doc-head { margin-bottom: var(--sp-8); }
+  .doc-head h1 {
+    font-size: var(--fs-xl);
+    line-height: 1.35;
+    margin: 0 0 var(--sp-3);
+    letter-spacing: 0.01em;
+  }
+  .doc-meta {
+    font-size: var(--fs-sm);
+    color: var(--c-muted);
+    margin: 0;
+  }
+
+  section { margin-bottom: var(--sp-12); scroll-margin-top: var(--sp-4); }
+  section > h2 {
+    font-size: var(--fs-lg);
+    line-height: 1.4;
+    margin: 0 0 var(--sp-4);
+    padding: var(--sp-3) var(--sp-4);
+    background: var(--c-card);
+    border: 1px solid var(--c-border);
+    border-left: 4px solid var(--c-accent);
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-sm);
+  }
+  section > h2 .num {
+    display: inline-block;
+    min-width: 2.2em;
+    color: var(--c-accent);
+    font-variant-numeric: tabular-nums;
+  }
+  h3 {
+    font-size: var(--fs-md);
+    margin: var(--sp-8) 0 var(--sp-3);
+    padding-bottom: var(--sp-2);
+    border-bottom: 2px solid var(--c-border);
+  }
+  h4 { font-size: var(--fs-base); margin: var(--sp-6) 0 var(--sp-2); }
+  p { margin: 0 0 var(--sp-4); }
+  ul, ol { margin: 0 0 var(--sp-4); padding-left: 1.4em; }
+  li { margin-bottom: var(--sp-2); }
+  a { color: #1b56c4; }
+
+  .card {
+    background: var(--c-card);
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-md);
+    padding: var(--sp-4) var(--sp-6);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: var(--sp-4);
+  }
+  .lead {
+    background: var(--c-accent-soft);
+    border: 1px solid #cfdcf7;
+    border-radius: var(--r-md);
+    padding: var(--sp-4) var(--sp-6);
+    margin-bottom: var(--sp-6);
+  }
+  .note, .warn, .good {
+    border-radius: var(--r-md);
+    padding: var(--sp-3) var(--sp-4);
+    margin: 0 0 var(--sp-4);
+    border: 1px solid var(--c-border);
+    font-size: var(--fs-base);
+  }
+  .note { background: var(--c-accent-soft); border-color: #cfdcf7; }
+  .warn { background: var(--c-warn-soft); border-color: #f0dfa8; }
+  .good { background: var(--c-good-soft); border-color: #cfe6cf; }
+  .note strong, .warn strong, .good strong { display: inline-block; margin-right: var(--sp-2); }
+
+  /* Table */
+  .table-wrap { overflow-x: auto; margin-bottom: var(--sp-4); }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 560px;
+    background: var(--c-card);
+    font-size: var(--fs-sm);
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-md);
+  }
+  th, td {
+    border: 1px solid var(--c-border);
+    padding: var(--sp-2) var(--sp-3);
+    text-align: left;
+    vertical-align: top;
+    line-height: 1.65;
+  }
+  th { background: #eef1f5; font-weight: 700; }
+  caption {
+    caption-side: top;
+    text-align: left;
+    font-size: var(--fs-sm);
+    color: var(--c-muted);
+    padding-bottom: var(--sp-2);
+  }
+
+  /* Code block */
+  pre {
+    background: #1c2230;
+    color: #e6e9ef;
+    padding: var(--sp-4);
+    border-radius: var(--r-md);
+    overflow-x: auto;
+    font-size: var(--fs-sm);
+    line-height: 1.7;
+    margin: 0 0 var(--sp-4);
+  }
+  code:not(pre code) {
+    background: #eef1f5;
+    border: 1px solid var(--c-border);
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-size: 0.92em;
+    word-break: break-all;
+  }
+
+  /* BEFORE / AFTER */
+  .ba-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sp-4);
+    margin-bottom: var(--sp-6);
+    align-items: stretch;
+  }
+  .ba-box {
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-md);
+    padding: var(--sp-4);
+    background: var(--c-card);
+    display: flex;
+    flex-direction: column;
+  }
+  .ba-box.before { background: var(--c-bad-soft); border-color: #f3c9c1; }
+  .ba-box.after  { background: var(--c-good-soft); border-color: #cfe6cf; }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-1);
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    padding: 2px 10px;
+    border-radius: 999px;
+    margin-bottom: var(--sp-2);
+    align-self: flex-start;
+  }
+  .pill.before { background: var(--c-bad); color: #fff; }
+  .pill.after  { background: var(--c-good); color: #fff; }
+  .ba-box p:last-child, .ba-box ul:last-child { margin-bottom: 0; }
+
+  /* Tool badge */
+  .badge {
+    display: inline-block;
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: var(--r-sm);
+    border: 1px solid var(--c-border);
+    background: #eef1f5;
+    color: var(--c-text);
+    margin-right: var(--sp-2);
+    vertical-align: 2px;
+  }
+  .badge.cc  { background: #efe7ff; border-color: #d8c7fb; }
+  .badge.cdx { background: #e4f3ee; border-color: #bfe0d4; }
+
+  /* Steps */
+  .steps { counter-reset: step; list-style: none; padding-left: 0; }
+  .steps > li {
+    counter-increment: step;
+    position: relative;
+    padding: var(--sp-3) var(--sp-4) var(--sp-3) var(--sp-12);
+    background: var(--c-card);
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-md);
+    margin-bottom: var(--sp-3);
+  }
+  .steps > li::before {
+    content: "STEP " counter(step);
+    position: absolute;
+    left: var(--sp-3);
+    top: var(--sp-3);
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    color: var(--c-accent);
+    writing-mode: horizontal-tb;
+    width: 3em;
+    line-height: 1.3;
+  }
+
+  /* Checklist */
+  .check-item {
+    display: flex;
+    gap: var(--sp-3);
+    align-items: flex-start;
+    background: var(--c-card);
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-md);
+    padding: var(--sp-3) var(--sp-4);
+    margin-bottom: var(--sp-2);
+  }
+  .check-item input[type="checkbox"] {
+    width: 22px; height: 22px;
+    margin-top: 3px;
+    flex-shrink: 0;
+    accent-color: var(--c-accent);
+    cursor: pointer;
+  }
+  .check-item label { cursor: pointer; line-height: 1.7; }
+  .check-item.done { background: var(--c-good-soft); border-color: #cfe6cf; }
+  .check-item.done label { color: var(--c-muted); }
+  .check-progress {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+    background: var(--c-card);
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-md);
+    padding: var(--sp-3) var(--sp-4);
+    margin-bottom: var(--sp-4);
+    font-size: var(--fs-sm);
+  }
+  .check-progress .bar {
+    flex: 1;
+    height: 10px;
+    background: #e6e9ef;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .check-progress .bar > span {
+    display: block;
+    height: 100%;
+    width: 0%;
+    background: var(--c-good);
+    transition: width .2s;
+  }
+  .btn-reset {
+    font-size: var(--fs-sm);
+    padding: var(--sp-2) var(--sp-4);
+    border: 1px solid var(--c-border);
+    background: #fff;
+    color: var(--c-text);
+    border-radius: var(--r-sm);
+    cursor: pointer;
+    min-height: 44px;
+  }
+  .btn-reset:hover { background: #eef1f5; }
+
+  /* Back to top */
+  .to-top {
+    position: fixed;
+    right: var(--sp-6);
+    bottom: var(--sp-6);
+    min-width: 44px;
+    min-height: 44px;
+    padding: var(--sp-2) var(--sp-4);
+    background: var(--c-accent);
+    color: #fff;
+    border: none;
+    border-radius: 999px;
+    box-shadow: var(--shadow-md);
+    font-size: var(--fs-sm);
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-2);
+    text-decoration: none;
+    z-index: 50;
+  }
+  .to-top:hover { background: #2559c4; }
+
+  footer.doc-foot {
+    border-top: 1px solid var(--c-border);
+    padding-top: var(--sp-6);
+    color: var(--c-muted);
+    font-size: var(--fs-sm);
+  }
+
+  /* =========================================
+     Responsive
+     ========================================= */
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    aside.sidebar {
+      position: static;
+      height: auto;
+      border-right: none;
+      border-bottom: 1px solid #2a3142;
+      padding: var(--sp-4);
+    }
+    .sidebar details > summary {
+      cursor: pointer;
+      color: #fff;
+      font-size: var(--fs-base);
+      font-weight: 700;
+      padding: var(--sp-2) 0;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+    }
+    main { padding: var(--sp-6) var(--sp-4) var(--sp-16); }
+    .ba-grid { grid-template-columns: 1fr; }
+    .to-top { right: var(--sp-4); bottom: var(--sp-4); }
+  }
+  @media (min-width: 901px) {
+    .sidebar details > summary { display: none; }
+    .sidebar details { display: block; }
+  }
+  @media print {
+    aside.sidebar, .to-top { display: none; }
+    .layout { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- ============ 左目次 ============ -->
+  <aside class="sidebar">
+    <p class="sidebar-title">Codex &amp; Claude Code<br>企業導入ベストプラクティス</p>
+    <p class="sidebar-sub">情報システム部門・開発リーダー向け<br>2026年8月29日時点</p>
+    <details open>
+      <summary>目次を開く / 閉じる</summary>
+      <nav aria-label="目次">
+        <h2>目次</h2>
+        <ol>
+          <li><a href="#s1">このドキュメントの読み方</a></li>
+          <li><a href="#s2">2つのツールの全体像</a></li>
+          <li><a href="#s3">導入ロードマップ（5フェーズ）</a></li>
+          <li><a href="#s4">推進体制と役割分担</a></li>
+          <li><a href="#s5">契約プランと認証・アクセス管理</a></li>
+          <li><a href="#s6">セキュリティ設計の考え方</a></li>
+          <li><a href="#s7">集中管理設定（設定の強制）</a></li>
+          <li><a href="#s8">リポジトリ側の標準化</a></li>
+          <li><a href="#s9">機密情報とデータの取り扱い</a></li>
+          <li><a href="#s10">コスト管理と利用状況の可視化</a></li>
+          <li><a href="#s11">開発ワークフローへの組み込み</a></li>
+          <li><a href="#s12">教育と定着化</a></li>
+          <li><a href="#s13">効果測定のKPI</a></li>
+          <li><a href="#s14">よくある失敗と改善例</a></li>
+          <li><a href="#s15">導入チェックリスト</a></li>
+          <li><a href="#s16">参考リンク</a></li>
+        </ol>
+      </nav>
+    </details>
+  </aside>
+
+  <!-- ============ 本文 ============ -->
+  <main>
+    <div class="doc-head" id="top">
+      <h1>CodexとClaude Codeの企業導入ベストプラクティス</h1>
+      <p class="doc-meta">作成日: 2026年8月29日 ／ 対象: 情報システム部門・セキュリティ担当・開発リーダー ／ 出典: 各社公式ドキュメント（末尾の参考リンク）</p>
+    </div>
+
+    <div class="lead">
+      <p><strong>この資料の結論を先に書きます。</strong>AIコーディングエージェントの企業導入で成否を分けるのは、モデルの性能ではなく<strong>「権限設計」「リポジトリ側の情報整備」「小さく始める展開計画」</strong>の3点です。この3つを最初に決めておけば、後からツールを増やしても運用は崩れません。</p>
+      <p style="margin-bottom:0;">CodexとClaude Codeは、設定ファイルの名前こそ違いますが、<strong>管理者が守るべき考え方はほぼ同じ</strong>です。本資料は共通の考え方を軸にし、各ツール固有の設定名を対比して示します。</p>
+    </div>
+
+    <!-- ===== 1 ===== -->
+    <section id="s1">
+      <h2><span class="num">1.</span>このドキュメントの読み方</h2>
+
+      <h3>用語の整理（最小限）</h3>
+      <div class="table-wrap">
+        <table>
+          <caption>本資料で使う言葉</caption>
+          <thead>
+            <tr><th style="width:22%">用語</th><th>意味</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>コーディングエージェント</td><td>指示を受けて、自分でファイルを読み書きし、コマンドを実行して開発作業を進めるAI。チャット型AIとの最大の違いは「実際に手を動かす」点。</td></tr>
+            <tr><td>権限（パーミッション）</td><td>エージェントが「聞かずにやってよいこと」「聞いてからやること」「絶対にやらないこと」の区分。</td></tr>
+            <tr><td>サンドボックス</td><td>OSの機能で、書き込めるフォルダや接続先を物理的に制限する仕組み。権限設定を破られても被害を止める2枚目の壁。</td></tr>
+            <tr><td>管理設定（マネージド設定）</td><td>会社が配布し、利用者が上書きできない設定。統制の中心。</td></tr>
+            <tr><td>MCP</td><td>エージェントに社内システム（課題管理、ログ基盤など）を接続する共通規格。便利だが、接続先＝情報の出入り口なので審査が必要。</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>読む順番の目安</h3>
+      <ul>
+        <li><strong>これから検討する方</strong>: 2章 → 3章 → 15章（チェックリスト）</li>
+        <li><strong>セキュリティ担当</strong>: 6章 → 7章 → 9章</li>
+        <li><strong>すでに使っていて統制を整えたい方</strong>: 7章 → 10章 → 14章</li>
+      </ul>
+
+      <div class="warn">
+        <strong>注意</strong>設定キーや管理画面の名称は更新が速い領域です。本資料は2026年8月29日時点の公式ドキュメントに基づきます。実際に適用する前に、16章のリンクで最新の仕様を確認してください。
+      </div>
+    </section>
+
+    <!-- ===== 2 ===== -->
+    <section id="s2">
+      <h2><span class="num">2.</span>2つのツールの全体像</h2>
+
+      <p>どちらも「ターミナル・IDE拡張・デスクトップアプリで動くローカル版」と「クラウド上で動く非同期版」を持ちます。企業導入では、この<strong>ローカル版とクラウド版を別々に許可・制御する</strong>のが基本です。</p>
+
+      <div class="table-wrap">
+        <table>
+          <caption>管理者視点での対比（2026年8月時点）</caption>
+          <thead>
+            <tr><th style="width:20%">観点</th><th style="width:40%"><span class="badge cdx">Codex</span>OpenAI</th><th style="width:40%"><span class="badge cc">Claude Code</span>Anthropic</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>契約の入り口</td>
+              <td>ChatGPT Enterprise / Business のワークスペース。Platform API は別の組織境界として扱う。</td>
+              <td>Claude for Teams / Enterprise。ほかに Anthropic Console、Amazon Bedrock、Google Cloud の Agent Platform（旧 Vertex AI）、Microsoft Foundry 経由も選べる。</td>
+            </tr>
+            <tr>
+              <td>利用形態</td>
+              <td>Codex Local（デスクトップアプリ・CLI・IDE拡張）と Codex Cloud（ホスト環境、コードレビュー、Slack/Linear連携）を管理者が個別に有効化。</td>
+              <td>CLI・IDE拡張・デスクトップアプリと、Claude Code on the web（クラウドセッション）。組織共有のクラウド環境を管理画面から定義。</td>
+            </tr>
+            <tr>
+              <td>統制の中心</td>
+              <td>ワークスペース設定＋RBAC、および <code>managed_config.toml</code> による端末側の実行ポリシー。</td>
+              <td>管理コンソールからのサーバー管理設定、MDM/レジストリ、<code>managed-settings.json</code>。</td>
+            </tr>
+            <tr>
+              <td>実行の安全装置</td>
+              <td>サンドボックスモード（read-only / workspace-write / danger-full-access）＋承認ポリシー。ネットワークは既定オフ。</td>
+              <td>権限モード（手動・自動など）＋permission ルール（allow / ask / deny）＋OSレベルのサンドボックス。</td>
+            </tr>
+            <tr>
+              <td>リポジトリ規約ファイル</td>
+              <td><code>AGENTS.md</code>、<code>.codex/config.toml</code>、共有スキルは <code>.agents/skills</code>。</td>
+              <td><code>CLAUDE.md</code>、<code>.claude/settings.json</code>、MCPは <code>.mcp.json</code>。</td>
+            </tr>
+            <tr>
+              <td>可視化</td>
+              <td>Workspace Analytics、Analytics API、Compliance API。OpenTelemetry出力（既定オフ）。</td>
+              <td>分析ダッシュボード、Analytics API、OpenTelemetryによるメトリクス／イベント出力。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>両方を導入する場合の基本方針</h3>
+      <p>「どちらか一方に絞る」ことにこだわる必要はありません。実務では、<strong>ポリシーとリポジトリ規約は1本化し、ツール固有の設定だけを別に持つ</strong>のが管理コストを最小にします。</p>
+      <div class="ba-grid">
+        <div class="ba-box before">
+          <span class="pill before">BEFORE</span>
+          <p><strong>ツールごとに規約を二重管理</strong></p>
+          <ul style="margin-bottom:0">
+            <li><code>AGENTS.md</code> と <code>CLAUDE.md</code> に似て非なる内容を書く</li>
+            <li>片方だけ更新され、指示が食い違う</li>
+            <li>セキュリティ基準もツールごとにバラバラ</li>
+          </ul>
+        </div>
+        <div class="ba-box after">
+          <span class="pill after">AFTER</span>
+          <p><strong>正本1つ＋参照で同期</strong></p>
+          <ul style="margin-bottom:0">
+            <li>共通ルールの正本を1ファイルに置く</li>
+            <li>もう一方はそれを参照し、固有差分だけ書く</li>
+            <li>禁止コマンド・機密の扱い・レビュー基準は両ツール共通の1枚に集約</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 3 ===== -->
+    <section id="s3">
+      <h2><span class="num">3.</span>導入ロードマップ（5フェーズ）</h2>
+
+      <p>いきなり全社展開すると、権限事故・コスト超過・「使われないツール」の3つが同時に起きます。次の順で進めます。</p>
+
+      <ol class="steps">
+        <li>
+          <p style="margin:0 0 var(--sp-2)"><strong>フェーズ0: 前提整理（2〜4週間）</strong></p>
+          <ul style="margin-bottom:0">
+            <li>目的とKPIを先に決める（13章）。「開発を速くする」だけでは評価できない。</li>
+            <li>対象コードの機密区分を棚卸しし、<strong>エージェントに触らせてよいリポジトリ／だめなリポジトリ</strong>を線引きする。</li>
+            <li>法務・セキュリティのレビュー観点を確定（学習利用の有無、データ保持、監査ログ、委託先管理）。</li>
+          </ul>
+        </li>
+        <li>
+          <p style="margin:0 0 var(--sp-2)"><strong>フェーズ1: パイロット（4〜8週間、10〜50名）</strong></p>
+          <ul style="margin-bottom:0">
+            <li>影響が限定的で、テストが自動化されているリポジトリを2〜3個選ぶ。</li>
+            <li>権限は<strong>最も厳しい設定から開始</strong>（読み取り中心、書き込みは作業フォルダ限定、ネットワークは既定オフ）。</li>
+            <li>参加者は週次で使いどころ・詰まりどころを共有。ここで規約ファイル（8章）を育てる。</li>
+          </ul>
+        </li>
+        <li>
+          <p style="margin:0 0 var(--sp-2)"><strong>フェーズ2: 統制の作り込み（パイロットと並行）</strong></p>
+          <ul style="margin-bottom:0">
+            <li>管理設定を配布して<strong>利用者が緩められない状態</strong>を作る（7章）。</li>
+            <li>テレメトリ／分析を接続し、コストと利用状況が見える状態にする（10章）。</li>
+            <li>1クリックで導入できるインストーラ・手順を用意する（配布のしやすさが普及率を決める）。</li>
+          </ul>
+        </li>
+        <li>
+          <p style="margin:0 0 var(--sp-2)"><strong>フェーズ3: 部門展開（3〜6か月）</strong></p>
+          <ul style="margin-bottom:0">
+            <li>部門ごとに推進担当（チャンピオン）を1名置き、질問の一次受けを分散させる。</li>
+            <li>成功した使い方を「スキル」「定型プロンプト」として共有資産化する。</li>
+            <li>信頼できるリポジトリに限って、承認の自動化を段階的に緩める。</li>
+          </ul>
+        </li>
+        <li>
+          <p style="margin:0 0 var(--sp-2)"><strong>フェーズ4: 定常運用</strong></p>
+          <ul style="margin-bottom:0">
+            <li>四半期ごとに、権限・接続先（MCP／プラグイン）・コスト・KPIを棚卸し。</li>
+            <li>バージョン下限を定め、古いクライアントの利用を止める。</li>
+            <li>インシデント（誤削除、機密混入、想定外の外部通信）を記録し、ポリシーへ反映する。</li>
+          </ul>
+        </li>
+      </ol>
+
+      <div class="good">
+        <strong>ポイント</strong>パイロットの合格条件を数値で決めておきます（例:「参加者の70%が週3日以上利用」「レビュー指摘の再修正率が悪化しない」）。決めずに始めると、展開判断が政治的になります。
+      </div>
+    </section>
+
+    <!-- ===== 4 ===== -->
+    <section id="s4">
+      <h2><span class="num">4.</span>推進体制と役割分担</h2>
+
+      <p>両社の管理者向けドキュメントに共通するのは、<strong>「誰が何を決めるか」を先に割り当てる</strong>という指針です。役割が空白のまま進むと、権限緩和の判断が現場任せになります。</p>
+
+      <div class="table-wrap">
+        <table>
+          <caption>最低限置くべき役割（兼任可・1人1役ではない）</caption>
+          <thead>
+            <tr><th style="width:24%">役割</th><th style="width:38%">決めること</th><th style="width:38%">具体的な作業</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>ワークスペース管理者</td><td>誰が使えるか</td><td>SSO・SCIM連携、席（シート）割当、グループとロール設計、ローカル版／クラウド版の有効化</td></tr>
+            <tr><td>セキュリティ責任者</td><td>何をしてよいか</td><td>承認ポリシー、サンドボックス、禁止コマンド、ファイル読み取り制限、MCP・プラグインの審査</td></tr>
+            <tr><td>クラウド実行の管理者</td><td>どこで動かすか</td><td>クラウド環境の定義、接続するリポジトリと権限、ネットワーク許可範囲、セットアップスクリプト</td></tr>
+            <tr><td>分析・コンプライアンス担当</td><td>どう見えるか</td><td>分析API／監査ログの取り込み、KPIダッシュボード、コスト按分、監査対応</td></tr>
+            <tr><td>開発標準オーナー</td><td>どう書くか</td><td>リポジトリ規約ファイルの整備、レビュー基準、共有スキル・テンプレートの管理</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="note">
+        <strong>推奨</strong>「権限を緩めたい」という現場要望は必ず出ます。<strong>緩和の申請ルート（誰に、何を根拠に、どの範囲で）</strong>を最初に決めておくと、なし崩しの緩和を防げます。
+      </div>
+    </section>
+
+    <!-- ===== 5 ===== -->
+    <section id="s5">
+      <h2><span class="num">5.</span>契約プランと認証・アクセス管理</h2>
+
+      <h3>プラン選択の判断軸</h3>
+      <ul>
+        <li><strong>まず標準構成を検討する</strong>: 追加インフラ不要で、SSO・ロール管理・分析が一通り揃うのは各社の Enterprise プランです。Claude Code は Teams / Enterprise、Codex は ChatGPT Enterprise / Business が起点になります。</li>
+        <li><strong>既存クラウドの統制を継承したい場合</strong>: Claude Code は Amazon Bedrock、Google Cloud の Agent Platform、Microsoft Foundry 経由の構成が選べます。請求・IAM・監査ログを既存のクラウド統制に寄せられる一方、<strong>一部機能（Webセッション、コードレビュー、定期実行など）は claude.ai アカウントが前提</strong>になる点に注意します。</li>
+        <li><strong>APIキー運用は例外扱いに</strong>: 個人がAPIキーを持つ形は、退職時の失効や利用者特定が弱くなります。原則はSSO、必要な場合のみ短期のキーとします。</li>
+      </ul>
+
+      <h3>アクセス管理で必ず押さえる5点</h3>
+      <ol>
+        <li><strong>SSO＋SCIM</strong>で入退社に自動追随させる（手動の席管理は必ず漏れる）。</li>
+        <li><strong>ローカル版とクラウド版を別々に許可</strong>する。まずローカルのみ、クラウドは対象リポジトリを絞って後から。</li>
+        <li><strong>ログイン方法を固定する</strong>。Claude Code では <code>forceLoginMethod</code> / <code>forceLoginOrgUUID</code> で、会社組織以外のアカウントでのログインを防げます（個人アカウントでの業務利用を止める要）。</li>
+        <li><strong>リポジトリ接続の権限は最小に</strong>。クラウド実行は、書き込み可能なブランチや接続先リポジトリを限定します。</li>
+        <li><strong>クライアントのバージョン下限を決める</strong>。Claude Code は <code>minimumVersion</code>（ダウングレード防止）、<code>requiredMinimumVersion</code>／<code>requiredMaximumVersion</code>（範囲外なら起動しない）を管理設定で強制できます。</li>
+      </ol>
+    </section>
+
+    <!-- ===== 6 ===== -->
+    <section id="s6">
+      <h2><span class="num">6.</span>セキュリティ設計の考え方</h2>
+
+      <h3>安全は「二重の壁」で作る</h3>
+      <p>権限設定だけでは不十分です。<strong>権限ルール（何を許可するか）</strong>と<strong>サンドボックス（OSレベルで何ができないか）</strong>は守備範囲が違います。</p>
+      <div class="note">
+        <strong>典型例</strong>Web取得ツールを禁止しても、シェル実行が許可されていれば <code>curl</code> で外部へ接続できます。この穴を塞ぐのがサンドボックスのネットワーク許可リストです。「ツール単位の禁止」と「OS単位の遮断」は必ずセットで設計します。
+      </div>
+
+      <h3>推奨する既定値</h3>
+      <div class="table-wrap">
+        <table>
+          <caption>作業の種類ごとの初期設定（両ツール共通の考え方）</caption>
+          <thead>
+            <tr><th style="width:26%">場面</th><th style="width:37%">実行範囲</th><th style="width:37%">承認</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>調査・質問だけ（コードを読むだけ）</td><td>読み取り専用</td><td>変更・コマンド実行は都度承認</td></tr>
+            <tr><td>バージョン管理下の通常開発</td><td>作業フォルダ内のみ書き込み可（Codex の workspace-write 相当）</td><td>作業フォルダ外・ネットワークは承認</td></tr>
+            <tr><td>信頼できないコードやフォルダ</td><td>読み取り専用</td><td>原則すべて承認</td></tr>
+            <tr><td>CI・自動実行</td><td>読み取り専用または隔離環境</td><td>対話承認なし（＝実行できる範囲を極小にしておく）</td></tr>
+            <tr><td>全制限解除（danger-full-access／権限スキップ）</td><td colspan="2"><strong>原則禁止。</strong>使い捨ての隔離VM・コンテナ内に限る。管理設定でブロックする。</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>プロンプトインジェクションへの備え</h3>
+      <p>エージェントが読み込む外部情報（Webページ、課題チケット、ログ、他人のPR）には、<strong>AIへの指示文が仕込まれている可能性</strong>があります。両ツールとも対策機能を持ちますが、運用側でも次を徹底します。</p>
+      <ul>
+        <li>外部から取得した内容は<strong>「データであって指示ではない」</strong>と規約ファイルに明記する。</li>
+        <li>ネットワークは<strong>許可リスト方式</strong>にする（拒否ルールが許可より優先される設計が基本）。</li>
+        <li>認証情報・秘密鍵のあるパスは<strong>読み取り拒否</strong>に設定する（例: <code>.env</code>、<code>~/.ssh</code>）。</li>
+        <li>外部サービスを叩く作業は、使い捨ての隔離環境（開発コンテナ、専用VM）で行う。</li>
+        <li>自動承認を使う場合も、<strong>破壊的操作と外部送信は人間の確認を残す</strong>。</li>
+      </ul>
+
+      <div class="warn">
+        <strong>忘れやすい点</strong>Codex では <code>.git</code>、<code>.agents</code>、<code>.codex</code> のような設定・履歴領域が書き込み可モードでも保護されます。自社で同等の保護を作るなら、<strong>CI設定・デプロイ用の資格情報・ワークフロー定義</strong>を書き換え禁止に含めてください。エージェントによる設定改変は、権限昇格の典型経路です。
+      </div>
+    </section>
+
+    <!-- ===== 7 ===== -->
+    <section id="s7">
+      <h2><span class="num">7.</span>集中管理設定（設定の強制）</h2>
+
+      <p>企業導入の核心はここです。<strong>利用者のローカル設定より強い層</strong>にポリシーを置き、緩められないようにします。</p>
+
+      <h3><span class="badge cc">Claude Code</span>配布経路と優先順位</h3>
+      <div class="table-wrap">
+        <table>
+          <caption>管理設定の配信方法（上ほど優先度が高い）</caption>
+          <thead>
+            <tr><th style="width:26%">方式</th><th style="width:48%">配置場所</th><th style="width:26%">特徴</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>サーバー管理設定</td><td>claude.ai 管理コンソール（または自社ホストのゲートウェイ）</td><td>端末側の作業が不要。認証時に配布され、稼働中も定期更新</td></tr>
+            <tr><td>OSポリシー</td><td>macOS: <code>com.anthropic.claudecode</code> plist ／ Windows: <code>HKLM\SOFTWARE\Policies\ClaudeCode</code></td><td>管理者権限が必要＝改ざんに強い。Jamf・Intune・グループポリシーで配布</td></tr>
+            <tr><td>ファイル配置</td><td>macOS: <code>/Library/Application Support/ClaudeCode/managed-settings.json</code><br>Linux/WSL: <code>/etc/claude-code/managed-settings.json</code><br>Windows: <code>C:\Program Files\ClaudeCode\managed-settings.json</code></td><td>どのプロバイダー構成でも使える汎用手段</td></tr>
+            <tr><td>Windowsユーザーレジストリ</td><td><code>HKCU\SOFTWARE\Policies\ClaudeCode</code></td><td>昇格なしで書けるため<strong>強制手段としては使わない</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>設定の優先順位は<strong>管理設定 &gt; コマンドライン &gt; プロジェクト個人設定 &gt; プロジェクト共有設定 &gt; ユーザー設定</strong>です。<code>permissions.allow</code> / <code>permissions.deny</code> のような配列は各層が<strong>結合</strong>されるため、利用者は追加はできても管理者の指定を削除できません。</p>
+
+      <h4>管理設定の例（最小構成）</h4>
+      <pre><code>{
+  "permissions": {
+    "deny": [
+      "Read(./.env)",
+      "Read(./secrets/**)",
+      "Bash(curl:*)",
+      "Bash(rm -rf:*)"
+    ],
+    "defaultMode": "default",
+    "disableBypassPermissionsMode": "disable"
+  },
+  "allowManagedPermissionRulesOnly": false,
+  "sandbox": {
+    "enabled": true,
+    "network": { "allowedDomains": ["github.com", "registry.npmjs.org"] }
+  },
+  "allowManagedMcpServersOnly": true,
+  "forceLoginMethod": "claudeai",
+  "requiredMinimumVersion": "2.1.0",
+  "env": {
+    "CLAUDE_CODE_ENABLE_TELEMETRY": "1",
+    "OTEL_METRICS_EXPORTER": "otlp",
+    "OTEL_EXPORTER_OTLP_ENDPOINT": "http://collector.example.com:4317"
+  }
+}</code></pre>
+
+      <h4>統制できる主な項目</h4>
+      <ul>
+        <li><strong>権限の固定</strong>: <code>permissions.allow / deny</code>、<code>allowManagedPermissionRulesOnly</code>（管理者のルールのみ有効化）、<code>permissions.disableBypassPermissionsMode</code>（権限スキップの禁止）</li>
+        <li><strong>開始モードの指定</strong>: <code>permissions.defaultMode</code>、<code>permissions.disableAutoMode</code></li>
+        <li><strong>サンドボックス</strong>: <code>sandbox.enabled</code>、<code>sandbox.network.allowedDomains</code></li>
+        <li><strong>接続先の統制</strong>: <code>allowedMcpServers</code> / <code>deniedMcpServers</code> / <code>allowManagedMcpServersOnly</code>、プラグイン配布元の制限（<code>strictKnownMarketplaces</code> など）</li>
+        <li><strong>カスタマイズの制限</strong>: <code>strictPluginOnlyCustomization</code>（利用者が勝手にフック・エージェントを持ち込めない）、<code>allowManagedHooksOnly</code></li>
+        <li><strong>モデルの制限</strong>: <code>availableModels</code>、<code>enforceAvailableModels</code></li>
+        <li><strong>組織共通の指示書</strong>: 管理ポリシー用パスに <code>CLAUDE.md</code> を配置すると、全セッションで必ず読み込まれる</li>
+      </ul>
+      <div class="good">
+        <strong>適用確認</strong>配布後は端末で <code>/status</code> を実行し、<code>Setting sources</code> に「Enterprise managed settings」と配信元が表示されることを確認します。<strong>「配布したつもり」で効いていない</strong>のが最も多い事故です。
+      </div>
+
+      <h3><span class="badge cdx">Codex</span>管理設定の考え方</h3>
+      <p>Codex は「強制項目（requirements）」と「初期値（managed defaults）」を分けて設計されているのが特徴です。<strong>安全に関わるものは強制、使い勝手に関わるものは初期値</strong>という切り分けをそのまま踏襲すると設計が楽になります。</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th style="width:30%">区分</th><th>主な内容</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>配布方法</td><td>Unix系: <code>/etc/codex/managed_config.toml</code>、Windows: <code>~/.codex/managed_config.toml</code>、macOSはMDMプロファイル（<code>com.openai.codex</code>）、およびワークスペース設定からのポリシー配信。上位の層が下位を上書きする。</td></tr>
+            <tr><td>強制できる項目</td><td>承認ポリシー、サンドボックスモードの制限、ファイル読み書きの許可・拒否、機能フラグ（ブラウザ操作・プラグイン等）、MCPサーバーの許可リスト、プラグイン配布元の制限、実行禁止コマンド。</td></tr>
+            <tr><td>初期値のみ（利用者が変更可）</td><td>初期モデル、ネットワークアクセスの切り替え、テレメトリ、承認フローの既定。</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <pre><code># /etc/codex/managed_config.toml の例
+allowed_sandbox_modes = ["read-only", "workspace-write"]
+allowed_approval_policies = ["on-request"]
+
+[permissions.filesystem]
+deny_read = ["/**/*.env", "~/.ssh"]
+
+[rules]
+prefix_rules = [
+  { pattern = [{ token = "rm" }], decision = "forbidden" }
+]</code></pre>
+      <div class="note">
+        <strong>設計のコツ</strong>禁止コマンドを増やしすぎると、日常作業のたびに承認が出て、利用者は「とりあえず全部許可」に流れます。<strong>日常的で無害なコマンドは承認不要にし、危険なものだけ確実に止める</strong>——これが公式ガイドの推奨であり、実務でも定着率が最も高い設計です。
+      </div>
+    </section>
+
+    <!-- ===== 8 ===== -->
+    <section id="s8">
+      <h2><span class="num">8.</span>リポジトリ側の標準化</h2>
+
+      <p>ツールの設定と同じくらい効果が大きいのが、<strong>リポジトリに置く「エージェント向け説明書」</strong>です。ここが空だと、エージェントは毎回コードベースを推測し、品質が安定しません。</p>
+
+      <h3>規約ファイルに書くこと</h3>
+      <ul>
+        <li>リポジトリの構成と、どこに何があるか</li>
+        <li>ビルド・テスト・起動のコマンド（そのままコピーして動く形で）</li>
+        <li>命名規約、使ってよいライブラリ、避けるべき書き方</li>
+        <li>触ってはいけないファイル・ディレクトリ</li>
+        <li>「完了」の定義（テストが通る、リンタが通る、ドキュメントを更新する 等）</li>
+        <li>レビュー基準（Codex では <code>code_review.md</code> を用意し、規約ファイルから参照する形が推奨されています）</li>
+      </ul>
+
+      <div class="ba-grid">
+        <div class="ba-box before">
+          <span class="pill before">BEFORE</span>
+          <p><strong>説明書なし・各自の口頭指示</strong></p>
+          <ul style="margin-bottom:0">
+            <li>毎回「テストはどう動かす？」から始まる</li>
+            <li>人によって生成されるコードの流儀が違う</li>
+            <li>レビューで同じ指摘が繰り返される</li>
+          </ul>
+        </div>
+        <div class="ba-box after">
+          <span class="pill after">AFTER</span>
+          <p><strong>規約ファイルをコミットして共有</strong></p>
+          <ul style="margin-bottom:0">
+            <li>初回から正しいコマンドとルールで動く</li>
+            <li>指摘事項は規約ファイルに追記して再発防止</li>
+            <li>新メンバーのオンボーディング資料も兼ねる</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>階層の使い分け</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th style="width:22%">階層</th><th style="width:39%">置き場所</th><th style="width:39%">書く内容</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>全社</td><td>管理ポリシー用のシステムパス（Claude Code は <code>/Library/Application Support/ClaudeCode/CLAUDE.md</code>、<code>/etc/claude-code/CLAUDE.md</code>、<code>C:\Program Files\ClaudeCode\CLAUDE.md</code>）</td><td>セキュリティ原則、機密の扱い、共通の禁止事項</td></tr>
+            <tr><td>リポジトリ</td><td>リポジトリ直下の <code>CLAUDE.md</code> / <code>AGENTS.md</code>（バージョン管理へコミット）</td><td>構成、コマンド、コーディング規約、完了条件</td></tr>
+            <tr><td>チーム共有設定</td><td><code>.claude/settings.json</code> / <code>.codex/config.toml</code>（コミット）</td><td>権限、フック、テレメトリ、プロジェクト固有の既定</td></tr>
+            <tr><td>個人</td><td>ユーザー設定・ローカル設定（コミットしない）</td><td>個人の好み。ポリシーを緩める用途には使わせない</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>MCP・スキル・プラグインの扱い</h3>
+      <ul>
+        <li><strong>接続先は中央で審査し、設定をリポジトリにコミットする</strong>。Claude Code なら <code>.mcp.json</code> を1チームが整備して全員が使う形が推奨されています。</li>
+        <li>各自が自由にサーバーを追加できる状態は、<strong>情報の出口が管理外に増える</strong>ことを意味します。許可リスト方式にします。</li>
+        <li>繰り返す作業は「スキル」「定型プロンプト」として資産化し、共有リポジトリで配布します（Codex は <code>.agents/skills</code>）。</li>
+        <li>最初の1つは、<strong>手作業のループを丸ごと消せる接続</strong>（課題管理、CI結果、ログ検索など）から始めると効果が見えやすいです。</li>
+      </ul>
+    </section>
+
+    <!-- ===== 9 ===== -->
+    <section id="s9">
+      <h2><span class="num">9.</span>機密情報とデータの取り扱い</h2>
+
+      <h3>まず確認すべき契約上の論点</h3>
+      <ul>
+        <li><strong>学習利用の有無</strong>: 法人向けプラン（Team／Enterprise／API、クラウド事業者経由）では、入力したコードやプロンプトがモデルの学習に使われない旨が明示されています。個人向けプランとは条件が異なるため、<strong>業務利用を法人アカウントに限定</strong>することが前提になります。</li>
+        <li><strong>データ保持期間</strong>: 保持の長さと、監査・不正利用検知のための保存範囲を確認します。要件が厳しい場合、Claude では Enterprise の適格アカウント向けに、リクエスト完了後に保存しない Zero Data Retention の選択肢があります。</li>
+        <li><strong>監査ログ</strong>: 誰がいつ何をしたかを取得できるか。Codex は Compliance API、Claude Code は分析API／OpenTelemetry、クラウド事業者経由なら CloudTrail 等の既存監査基盤が使えます。</li>
+      </ul>
+
+      <h3>運用で守ること（技術的対策）</h3>
+      <ol>
+        <li><strong>秘密情報をエージェントに渡さない設計にする</strong>。プロンプトへの貼り付けを禁じるだけでなく、<code>.env</code> や鍵ファイルを<strong>読み取り拒否</strong>に設定し、機械的に防ぎます。</li>
+        <li><strong>認証情報はシークレット管理へ</strong>。ソースコード・設定ファイル・ログに直書きしない、という既存ルールをそのまま適用します。</li>
+        <li><strong>ログの粒度を意図的に決める</strong>。テレメトリはプロンプト本文や応答本文まで送れますが、<strong>既定では伏せられます</strong>。監査目的で本文を残すなら、保存先の権限・保持期間・閲覧者を先に決めてから有効化します。</li>
+        <li><strong>通信経路を1本にまとめる</strong>。プロキシやLLMゲートウェイを挟むと、リクエスト単位の監査ログ、利用者単位の上限、送信先の制御が一箇所でできます。</li>
+        <li><strong>クラウド実行のネットワークを絞る</strong>。既定で外部接続を制限し、必要なドメインだけ許可します。</li>
+      </ol>
+
+      <div class="warn">
+        <strong>社内ルールとの接続</strong>「機密情報・個人情報を外部サービスへ送信しない」という既存ポリシーがある場合、AIエージェントは<strong>例外ではなく対象</strong>です。対象リポジトリの機密区分（5章の棚卸し）と、送信先・保持条件をセットで承認記録に残してください。
+      </div>
+    </section>
+
+    <!-- ===== 10 ===== -->
+    <section id="s10">
+      <h2><span class="num">10.</span>コスト管理と利用状況の可視化</h2>
+
+      <p>コストが見えないまま展開すると、「高い割に効果が分からない」で止まります。<strong>導入と同時に計測を始める</strong>のが鉄則です。</p>
+
+      <h3>3層で見る</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th style="width:24%">層</th><th style="width:38%">何が分かるか</th><th style="width:38%">手段</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>請求・上限</td><td>組織全体と個人の支出、上限超過の防止</td><td>管理画面の支出レポートと上限設定。クラウド事業者経由なら AWS Cost Explorer / GCP Billing / Azure Cost Management</td></tr>
+            <tr><td>採用・活用</td><td>誰がどれだけ使っているか、どの機能が使われているか</td><td>分析ダッシュボード、Analytics API（Codex は Workspace Analytics ＋ Analytics API）</td></tr>
+            <tr><td>実行の詳細</td><td>セッション数、トークン、コスト、変更行数、コミット・PR数、承認／却下の判断</td><td>OpenTelemetry で自社の監視基盤へ出力</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h4>テレメトリ設定の例（Claude Code・管理設定で全社適用）</h4>
+      <pre><code>{
+  "env": {
+    "CLAUDE_CODE_ENABLE_TELEMETRY": "1",
+    "OTEL_METRICS_EXPORTER": "otlp",
+    "OTEL_LOGS_EXPORTER": "otlp",
+    "OTEL_EXPORTER_OTLP_PROTOCOL": "grpc",
+    "OTEL_EXPORTER_OTLP_ENDPOINT": "http://collector.example.com:4317"
+  }
+}</code></pre>
+      <p>主なメトリクスは <code>claude_code.session.count</code>（セッション数）、<code>claude_code.token.usage</code>（トークン）、<code>claude_code.cost.usage</code>（コスト）、<code>claude_code.lines_of_code.count</code>（変更行数）、<code>claude_code.commit.count</code> / <code>claude_code.pull_request.count</code>、<code>claude_code.code_edit_tool.decision</code>（編集の承認・却下）です。Codex も OpenTelemetry 出力に対応していますが<strong>既定では無効</strong>のため、必要なら明示的に有効化します。</p>
+
+      <h3>コストを抑える実務的な工夫</h3>
+      <ul>
+        <li><strong>モデルを固定する</strong>。クラウド事業者経由で使う場合、モデル名を明示的に固定しておくと、想定外のモデルに切り替わることを防げます（Claude Code は <code>ANTHROPIC_DEFAULT_OPUS_MODEL</code> などの環境変数、あるいは <code>availableModels</code>）。</li>
+        <li><strong>タスクに合わせて使い分ける</strong>。定型作業や小さな修正まで最上位モデルを使う必要はありません。</li>
+        <li><strong>個人単位の上限を設ける</strong>。上限は「止めるため」ではなく「異常に気づくため」に置きます。</li>
+        <li><strong>失敗の再実行を減らす</strong>。規約ファイルとテスト整備は、結果的にトークン消費を最も減らします。</li>
+      </ul>
+    </section>
+
+    <!-- ===== 11 ===== -->
+    <section id="s11">
+      <h2><span class="num">11.</span>開発ワークフローへの組み込み</h2>
+
+      <h3>人間のレビューは外さない</h3>
+      <p>エージェントの生成物も、<strong>人が書いたコードと同じ経路</strong>でレビュー・CI・承認を通します。「AIが書いたから簡単に通す」も「AIが書いたから疑ってかかる」も運用が続きません。判定基準はコードの中身に置きます。</p>
+      <ul>
+        <li>直接の本流ブランチへのコミットは禁止し、必ずブランチ＋プルリクエストにする。</li>
+        <li>CI（テスト、静的解析、脆弱性スキャン）を通過しないものはマージ不可にする。</li>
+        <li>重要ファイル（認証、決済、インフラ定義）には所有者レビューを必須にする。</li>
+        <li>コミットに<strong>エージェント利用の痕跡を残す</strong>（共同作成者表記など）と、後追い調査が容易になります。</li>
+      </ul>
+
+      <h3>効果が出やすい使いどころ</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th style="width:30%">用途</th><th>備考</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>コードベースの質問応答</td><td>最初の一歩に最適。書き込み権限なしで価値が出る。オンボーディング短縮に直結</td></tr>
+            <tr><td>小さなバグ修正・リファクタ</td><td>テストが揃っている領域から。差分が小さくレビューしやすい</td></tr>
+            <tr><td>テストの追加</td><td>既存挙動の保護。失敗しても被害が小さい</td></tr>
+            <tr><td>プルリクエストの一次レビュー</td><td>人のレビュー前に定型指摘を潰す。両ツールともレビュー機能を提供</td></tr>
+            <tr><td>定型作業の自動化・定期実行</td><td>安定した手順のみ。新規性の高い作業は自動化しない</td></tr>
+            <tr><td>移行・一括修正</td><td>機械的な変更が大量にある場面。ただし段階的に分割してレビュー可能な単位に</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>指示の出し方を社内標準にする</h3>
+      <p>Codex の公式ガイドが挙げる4要素は、そのまま社内テンプレートに使えます。</p>
+      <div class="card">
+        <p style="margin-bottom:var(--sp-2)"><strong>目的</strong>: 何を変えるのか<br>
+        <strong>文脈</strong>: 関係するファイル・仕様・背景<br>
+        <strong>制約</strong>: 守るべき規約・触ってはいけない範囲<br>
+        <strong>完了条件</strong>: 何をもって完了とするか（テストが通る、画面が表示される 等）</p>
+        <p style="margin-bottom:0">複雑な作業では、いきなり実装させず<strong>先に計画を出させて人が確認</strong>します。曖昧な要件は、エージェントに逆質問させてから着手すると手戻りが減ります。</p>
+      </div>
+    </section>
+
+    <!-- ===== 12 ===== -->
+    <section id="s12">
+      <h2><span class="num">12.</span>教育と定着化</h2>
+
+      <ul>
+        <li><strong>導入のしやすさを最優先</strong>。公式ガイドも「1クリックで入る仕組みが普及率を決める」と明言しています。手順書が10ページある時点で、使わない人が生まれます。</li>
+        <li><strong>最初の課題を用意する</strong>。「自分の担当リポジトリについて質問してみる」「小さなバグを1件直す」など、30分で終わる体験を最初に置きます。</li>
+        <li><strong>部門ごとにチャンピオンを置く</strong>。困りごとの一次受けと、成功事例の収集役を兼ねます。</li>
+        <li><strong>失敗事例も共有する</strong>。「こう指示したら暴走した」「この確認を飛ばして事故った」は、成功事例より学習効果が高い情報です。</li>
+        <li><strong>公式の学習コンテンツを活用する</strong>。自社で一から教材を作るより早く、更新も追随します。</li>
+        <li><strong>規約ファイルを「生きた資料」にする</strong>。レビューで同じ指摘が2回出たら、規約ファイルに追記するルールにします。</li>
+      </ul>
+
+      <div class="note">
+        <strong>非エンジニア部門への展開</strong>データ集計、資料作成、ログ調査などにも使えますが、<strong>権限は開発者より厳しく</strong>設定し、扱えるフォルダを限定してください。書き込み先が広いほど、事故時の影響範囲が広がります。
+      </div>
+    </section>
+
+    <!-- ===== 13 ===== -->
+    <section id="s13">
+      <h2><span class="num">13.</span>効果測定のKPI</h2>
+
+      <p>「体感で速くなった」では稟議も更新も通りません。導入前にベースラインを取っておきます。</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th style="width:22%">分類</th><th style="width:38%">指標</th><th style="width:40%">注意点</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>採用</td><td>週次アクティブ利用率、1人あたり利用日数</td><td>導入直後は高く、2か月目に落ちるのが普通。3か月目の水準で判断する</td></tr>
+            <tr><td>速度</td><td>PRのリードタイム、レビュー待ち時間、初回レビューまでの時間</td><td>件数だけ増えてレビューが詰まる「見せかけの高速化」に注意</td></tr>
+            <tr><td>品質</td><td>CI失敗率、マージ後の不具合率、再修正の割合</td><td>悪化していないことの確認が主目的。改善はボーナス</td></tr>
+            <tr><td>コスト</td><td>開発者あたり月額、1PRあたりコスト</td><td>人件費削減分と比較して判断する</td></tr>
+            <tr><td>安全</td><td>権限拒否の発生数、ポリシー違反の検知数、インシデント件数</td><td>拒否が多すぎる＝設定が業務に合っていないサイン。見直しの入力に使う</td></tr>
+            <tr><td>定性</td><td>オンボーディング期間、開発者満足度</td><td>四半期アンケート。数値化しにくい効果はここで拾う</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="warn">
+        <strong>使ってはいけない指標</strong>「AIが書いた行数」「生成コードの割合」を目標値にすると、不要なコードが量産されます。<strong>成果（届いた価値）で測り、生成量では測らない</strong>のが原則です。
+      </div>
+    </section>
+
+    <!-- ===== 14 ===== -->
+    <section id="s14">
+      <h2><span class="num">14.</span>よくある失敗と改善例</h2>
+
+      <h3>失敗1: 全社一斉展開</h3>
+      <div class="ba-grid">
+        <div class="ba-box before">
+          <span class="pill before">BEFORE</span>
+          <p>全開発者に一斉配布。問い合わせが情シスに集中し、権限設定は現場任せ。3か月後には一部の人しか使っていない。</p>
+        </div>
+        <div class="ba-box after">
+          <span class="pill after">AFTER</span>
+          <p>10〜50名のパイロットで規約・権限・教材を固めてから部門展開。展開時には「動く設定」と「よくある質問」が揃っている。</p>
+        </div>
+      </div>
+
+      <h3>失敗2: 権限を全解除して使う</h3>
+      <div class="ba-grid">
+        <div class="ba-box before">
+          <span class="pill before">BEFORE</span>
+          <p>承認プロンプトが煩わしいので、全員が制限解除モードで実行。誤削除や意図しない外部通信のリスクを常時抱える。</p>
+        </div>
+        <div class="ba-box after">
+          <span class="pill after">AFTER</span>
+          <p>日常的で無害なコマンドは承認不要にして煩わしさを解消し、危険な操作だけ確実に止める。制限解除モードは管理設定でブロックし、必要な場合は隔離環境に限定する。</p>
+        </div>
+      </div>
+
+      <h3>失敗3: 接続先（MCP・プラグイン）の野放し</h3>
+      <div class="ba-grid">
+        <div class="ba-box before">
+          <span class="pill before">BEFORE</span>
+          <p>各自が便利なサーバーやプラグインを自由に追加。どこに何が送られているか把握できない。</p>
+        </div>
+        <div class="ba-box after">
+          <span class="pill after">AFTER</span>
+          <p>許可リスト方式にし、承認済みの接続設定をリポジトリにコミットして全員が同じものを使う。追加要望は申請ルートで審査。</p>
+        </div>
+      </div>
+
+      <h3>失敗4: 計測なしの導入</h3>
+      <div class="ba-grid">
+        <div class="ba-box before">
+          <span class="pill before">BEFORE</span>
+          <p>請求書の合計金額しか分からない。誰がどう使い、何が改善したかを説明できず、更新時に予算が切られる。</p>
+        </div>
+        <div class="ba-box after">
+          <span class="pill after">AFTER</span>
+          <p>初日からテレメトリと分析を接続。採用率・リードタイム・コストを月次で報告し、投資判断の材料にする。</p>
+        </div>
+      </div>
+
+      <h3>失敗5: 規約ファイルを作らない</h3>
+      <div class="ba-grid">
+        <div class="ba-box before">
+          <span class="pill before">BEFORE</span>
+          <p>各自が毎回長いプロンプトで前提を説明。品質も流儀も人によってばらばら。</p>
+        </div>
+        <div class="ba-box after">
+          <span class="pill after">AFTER</span>
+          <p>リポジトリごとに規約ファイルを整備してコミット。レビュー指摘は規約に反映し、資産として蓄積する。</p>
+        </div>
+      </div>
+
+      <h3>失敗6: 個人アカウントでの業務利用</h3>
+      <div class="ba-grid">
+        <div class="ba-box before">
+          <span class="pill before">BEFORE</span>
+          <p>会社が契約する前に、個人契約で業務コードを扱う人が出る。データの取り扱い条件も退職時の失効も管理外。</p>
+        </div>
+        <div class="ba-box after">
+          <span class="pill after">AFTER</span>
+          <p>ログイン方法と組織を管理設定で強制し、法人アカウント以外では起動しない状態にする。導入前でも暫定ルールを周知する。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 15 ===== -->
+    <section id="s15">
+      <h2><span class="num">15.</span>導入チェックリスト</h2>
+      <p>チェック状態はこのブラウザに保存されます（他の人には共有されません）。</p>
+
+      <div class="check-progress">
+        <span id="progress-text" aria-live="polite">0 / 0 完了</span>
+        <span class="bar"><span id="progress-bar"></span></span>
+        <button type="button" class="btn-reset" id="reset-checks">チェックをすべて解除</button>
+      </div>
+
+      <div id="checklist">
+        <h3>準備フェーズ</h3>
+        <div class="check-item"><input type="checkbox" id="c01"><label for="c01">導入目的とKPI（測る指標とベースライン）を文書化した</label></div>
+        <div class="check-item"><input type="checkbox" id="c02"><label for="c02">対象リポジトリの機密区分を棚卸しし、利用可否を線引きした</label></div>
+        <div class="check-item"><input type="checkbox" id="c03"><label for="c03">5つの役割（ワークスペース／セキュリティ／クラウド／分析／開発標準）の担当者を決めた</label></div>
+        <div class="check-item"><input type="checkbox" id="c04"><label for="c04">学習利用の有無・データ保持・監査ログの条件を法務／セキュリティが確認した</label></div>
+
+        <h3>アクセス管理</h3>
+        <div class="check-item"><input type="checkbox" id="c05"><label for="c05">SSO と SCIM を連携し、入退社に自動追随する状態にした</label></div>
+        <div class="check-item"><input type="checkbox" id="c06"><label for="c06">ローカル版とクラウド版を分けて有効化し、対象者を限定した</label></div>
+        <div class="check-item"><input type="checkbox" id="c07"><label for="c07">ログイン方法と所属組織を強制し、個人アカウントでの利用を防いだ</label></div>
+        <div class="check-item"><input type="checkbox" id="c08"><label for="c08">クライアントのバージョン下限を設定した</label></div>
+
+        <h3>セキュリティ</h3>
+        <div class="check-item"><input type="checkbox" id="c09"><label for="c09">管理設定を配布し、利用者が緩められない状態にした</label></div>
+        <div class="check-item"><input type="checkbox" id="c10"><label for="c10">端末で適用状況を実際に確認した（Claude Code は <code>/status</code> の Setting sources）</label></div>
+        <div class="check-item"><input type="checkbox" id="c11"><label for="c11">制限解除モード（権限スキップ／full-access）をブロックした</label></div>
+        <div class="check-item"><input type="checkbox" id="c12"><label for="c12">サンドボックスを有効化し、ネットワークを許可リスト方式にした</label></div>
+        <div class="check-item"><input type="checkbox" id="c13"><label for="c13">秘密情報のパス（.env、鍵ファイル等）を読み取り拒否に設定した</label></div>
+        <div class="check-item"><input type="checkbox" id="c14"><label for="c14">MCPサーバー・プラグインを許可リスト方式にし、審査ルートを決めた</label></div>
+        <div class="check-item"><input type="checkbox" id="c15"><label for="c15">CI設定・デプロイ資格情報など、設定領域の書き換えを禁止した</label></div>
+
+        <h3>リポジトリ整備</h3>
+        <div class="check-item"><input type="checkbox" id="c16"><label for="c16">対象リポジトリに規約ファイル（CLAUDE.md / AGENTS.md）を作成しコミットした</label></div>
+        <div class="check-item"><input type="checkbox" id="c17"><label for="c17">全社共通の指示書を管理ポリシー用パスに配置した</label></div>
+        <div class="check-item"><input type="checkbox" id="c18"><label for="c18">レビュー基準を文書化し、規約ファイルから参照させた</label></div>
+        <div class="check-item"><input type="checkbox" id="c19"><label for="c19">両ツールを併用する場合、共通ルールの正本を1つに定めた</label></div>
+
+        <h3>可視化と運用</h3>
+        <div class="check-item"><input type="checkbox" id="c20"><label for="c20">テレメトリを自社の監視基盤へ接続した（ログ本文の扱いも決定済み）</label></div>
+        <div class="check-item"><input type="checkbox" id="c21"><label for="c21">支出の上限とアラートを設定した</label></div>
+        <div class="check-item"><input type="checkbox" id="c22"><label for="c22">分析ダッシュボード／APIから月次レポートを出せるようにした</label></div>
+        <div class="check-item"><input type="checkbox" id="c23"><label for="c23">本流ブランチへの直接コミットを禁止し、PR＋CI必須にした</label></div>
+
+        <h3>展開と定着</h3>
+        <div class="check-item"><input type="checkbox" id="c24"><label for="c24">1クリックに近い導入手順を用意した</label></div>
+        <div class="check-item"><input type="checkbox" id="c25"><label for="c25">パイロットの合格条件を数値で決めた</label></div>
+        <div class="check-item"><input type="checkbox" id="c26"><label for="c26">部門ごとの推進担当を決め、質問の受け口を作った</label></div>
+        <div class="check-item"><input type="checkbox" id="c27"><label for="c27">四半期ごとの棚卸し（権限・接続先・コスト・KPI）を予定に入れた</label></div>
+      </div>
+    </section>
+
+    <!-- ===== 16 ===== -->
+    <section id="s16">
+      <h2><span class="num">16.</span>参考リンク</h2>
+      <p>いずれも2026年8月29日に確認した公式情報です。設定キーや画面名は更新されるため、適用前に最新版を参照してください。</p>
+
+      <h3>Codex（OpenAI）</h3>
+      <ul>
+        <li><a href="https://developers.openai.com/codex/enterprise/admin-setup">管理者向けロールアウトガイド</a> — 役割分担、展開手順、ガバナンス</li>
+        <li><a href="https://developers.openai.com/codex/enterprise/managed-configuration">管理構成（managed configuration）</a> — 強制項目と初期値、配布方法</li>
+        <li><a href="https://developers.openai.com/codex/agent-approvals-security">承認とセキュリティ</a> — サンドボックスモード、ネットワークポリシー</li>
+        <li><a href="https://developers.openai.com/codex/learn/best-practices/">ベストプラクティス</a> — AGENTS.md、プロンプト設計、レビュー運用</li>
+        <li><a href="https://openai.com/index/running-codex-safely/">Running Codex safely</a> — OpenAI社内での安全運用</li>
+      </ul>
+
+      <h3>Claude Code（Anthropic）</h3>
+      <ul>
+        <li><a href="https://code.claude.com/docs/en/admin-setup">組織向けセットアップ</a> — プロバイダー選定、配信方式、強制項目の一覧</li>
+        <li><a href="https://code.claude.com/docs/en/third-party-integrations">エンタープライズ導入の概要</a> — プラン比較、プロキシ／ゲートウェイ、組織向けベストプラクティス</li>
+        <li><a href="https://code.claude.com/docs/en/settings">設定と優先順位</a> — 管理設定・プロジェクト設定・ユーザー設定の関係</li>
+        <li><a href="https://code.claude.com/docs/en/security">セキュリティ</a> — 権限モデル、サンドボックス、プロンプトインジェクション対策</li>
+        <li><a href="https://code.claude.com/docs/en/monitoring-usage">利用状況の監視</a> — OpenTelemetryのメトリクスとイベント</li>
+        <li><a href="https://www.anthropic.com/news/claude-code-on-team-and-enterprise">Team／Enterprise向けの管理機能</a></li>
+      </ul>
+
+      <footer class="doc-foot">
+        <p>本資料は公開ドキュメントの要約と一般的な導入知見に基づく参考情報です。実際の契約条件・機能提供範囲は、各社の最新の規約と管理画面を確認してください。</p>
+      </footer>
+    </section>
+  </main>
+</div>
+
+<a href="#top" class="to-top" id="toTop">↑ トップへ戻る</a>
+
+<script>
+  // ---- 目次のスクロール連動（現在地表示） ----
+  (function () {
+    var links = Array.prototype.slice.call(document.querySelectorAll('.sidebar a[href^="#s"]'));
+    var map = {};
+    links.forEach(function (a) { map[a.getAttribute('href').slice(1)] = a; });
+
+    var sections = Array.prototype.slice.call(document.querySelectorAll('main section[id]'));
+    if (!('IntersectionObserver' in window) || sections.length === 0) return;
+
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        links.forEach(function (a) { a.classList.remove('is-active'); });
+        var active = map[entry.target.id];
+        if (active) {
+          active.classList.add('is-active');
+          active.setAttribute('aria-current', 'true');
+          links.forEach(function (a) { if (a !== active) a.removeAttribute('aria-current'); });
+        }
+      });
+    }, { rootMargin: '-10% 0px -70% 0px', threshold: 0 });
+
+    sections.forEach(function (s) { observer.observe(s); });
+  })();
+
+  // ---- チェックリストの保存（localStorage） ----
+  (function () {
+    var STORAGE_KEY = 'codex-cc-enterprise-checklist-v1';
+    var list = document.getElementById('checklist');
+    if (!list) return;
+
+    var boxes = Array.prototype.slice.call(list.querySelectorAll('input[type="checkbox"]'));
+    var bar = document.getElementById('progress-bar');
+    var text = document.getElementById('progress-text');
+
+    function load() {
+      try {
+        var raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : {};
+      } catch (e) { return {}; }
+    }
+    function save(state) {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) { /* 保存できない環境では無視 */ }
+    }
+    function paint() {
+      var done = 0;
+      boxes.forEach(function (b) {
+        var item = b.closest('.check-item');
+        if (b.checked) { done++; item.classList.add('done'); }
+        else { item.classList.remove('done'); }
+      });
+      var pct = boxes.length ? Math.round(done / boxes.length * 100) : 0;
+      if (bar) bar.style.width = pct + '%';
+      if (text) text.textContent = done + ' / ' + boxes.length + ' 完了（' + pct + '%）';
+    }
+
+    var state = load();
+    boxes.forEach(function (b) {
+      if (state[b.id]) b.checked = true;
+      b.addEventListener('change', function () {
+        state[b.id] = b.checked;
+        save(state);
+        paint();
+      });
+    });
+    paint();
+
+    var reset = document.getElementById('reset-checks');
+    if (reset) {
+      reset.addEventListener('click', function () {
+        boxes.forEach(function (b) { b.checked = false; });
+        state = {};
+        save(state);
+        paint();
+      });
+    }
+  })();
+</script>
+</body>
+</html>

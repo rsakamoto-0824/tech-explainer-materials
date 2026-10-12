@@ -1,0 +1,1187 @@
+{
+ "base": "/Users/sakamoto/04_プログラミング/ClaudeCode/GitHub/技術解説資料/04_露光・Overlay/重ね合わせ制御の進化と展望_ロードマップ_src",
+ "case_collection": "2026-09-26_重ね合わせ制御ロードマップ",
+ "unread_tag": "未読",
+ "items": [
+  {
+   "key": "slonaker1988",
+   "itemType": "conferencePaper",
+   "title": "Enhanced global alignment for production optical lithography",
+   "collection": "01_半導体プロセス",
+   "tags": [
+    "種別/論文",
+    "掲載誌/SPIE Proceedings",
+    "分野/オーバーレイ・EPE",
+    "所属/Nikon"
+   ],
+   "creators": [
+    {
+     "lastName": "Slonaker",
+     "firstName": "Steve",
+     "creatorType": "author"
+    },
+    {
+     "lastName": "McNamara",
+     "firstName": "Sean",
+     "creatorType": "author"
+    },
+    {
+     "lastName": "Konno",
+     "firstName": "Kunio",
+     "creatorType": "author"
+    },
+    {
+     "lastName": "Miller",
+     "firstName": "Ron",
+     "creatorType": "author"
+    },
+    {
+     "lastName": "Magome",
+     "firstName": "Nobutaka",
+     "creatorType": "author"
+    },
+    {
+     "lastName": "Umatate",
+     "firstName": "Toshikazu",
+     "creatorType": "author"
+    },
+    {
+     "lastName": "Tateno",
+     "firstName": "Hiroki",
+     "creatorType": "author"
+    },
+    {
+     "lastName": "Lin",
+     "firstName": "Burn J.",
+     "creatorType": "author"
+    }
+   ],
+   "date": "1988",
+   "fields": {
+    "proceedingsTitle": "Optical/Laser Microlithography (Proc. SPIE 922)",
+    "volume": "922",
+    "pages": "73-81",
+    "DOI": "10.1117/12.968404",
+    "publisher": "SPIE"
+   },
+   "importId": "ovl-roadmap:slonaker1988"
+  },
+  {
+   "key": "kohno2010",
+   "itemType": "conferencePaper",
+   "title": "Latest performance of immersion scanner S620D with the Streamlign platform for the double patterning generation",
+   "collection": "01_半導体プロセス",
+   "tags": [
+    "種別/論文",
+    "掲載誌/SPIE Proceedings",
+    "分野/オーバーレイ・EPE",
+    "所属/Nikon"
+   ],
+   "creators": [
+    {
+     "lastName": "Kohno",
+     "firstName": "Hirotaka",
+     "creatorType": "author"
+    },
+    {
+     "lastName": "Shibazaki",
+     "firstName": "Yuichi",
+     "creatorType": "author"
+    },
+    {
+     "lastName": "Ishikawa",
+     "firstName": "Jun",
+     "creatorType": "author"
+    },
+    {
+     "lastName": "Kosugi",
+     "firstName": "Junichi",
+     "creatorType": "author"
+    },
+    {
+     "lastName": "Iriuchijima",
+     "firstName": "Yasuhiro",
+     "creatorType": "author"
+    },
+    {
+     "lastName": "Hamatani",
+     "firstName": "Masato",
+     "creatorType": "author"
+    }
+   ],
+   "date": "2010-03-11",
+   "fields": {
+    "proceedingsTitle": "Optical Microlithography XXIII (Proc. SPIE 7640)",
+    "volume": "7640",
+    "pages": "76401O",
+    "DOI": "10.1117/12.846485",
+    "publisher": "SPIE"
+   },
+   "importId": "ovl-roadmap:kohno2010"
+  },
+  {
+   "key": "maas2011",
+   "itemType": "conferencePaper",
+   "title": "YieldStar: a new metrology platform for advanced lithography control",
+   "collection": "01_半導体プロセス",
+   "tags": [
+    "種別/論文",
+    "掲載誌/SPIE Proceedings",
+    "分野/オーバーレイ・EPE",
+    "所属/ASML"
+   ],
+   "creators": [
+    {
+     "lastName": "Maas",
+     "firstName": "Jos",
+     "creatorType": "author"
+    },
+    {
+     "lastName": "Ebert",
+     "firstName": "Martin",
+     "creatorType": "author"
+    },
+    {
+     "lastName": "Bhattacharyya",
+     "firstName": "Kaustuve",
+     "creatorType": "author"
+    },
+    {
+     "lastName": "Cramer",
+     "firstName": "Hugo",
+     "creatorType": "author"
+    },
+    {
+     "lastName": "Becht",
+     "firstName": "Arthur",
+     "creatorType": "author"
+    },
+    {
+     "lastName": "Keij",
+     "firstName": "Stefan",
+     "creatorType": "author"
+    },
+    {
+     "lastName": "Plug",
+     "firstName": "Reinder",
+     "creatorType": "author"
+    },
+    {
+     "lastName": "Fuchs",
+     "firstName": "Andreas",
+     "creatorType": "author"
+    },
+    {
+     "lastName": "Kubis",
+     "firstName": "Michael",
+     "creatorType": "author"
+    },
+    {
+     "lastName": "Hoogenboom",
+     "firstName": "Tom",
+     "creatorType": "author"
+    },
+    {
+     "lastName": "Vaenkatesan",
+     "firstName": "Vidya",
+     "creatorType": "author"
+    }
+   ],
+   "date": "2011-02-02",
+   "fields": {
+    "proceedingsTitle": "27th European Mask and Lithography Conference (Proc. SPIE 7985)",
+    "volume": "7985",
+    "pages": "79850H",
+    "DOI": "10.1117/12.896902",
+    "publisher": "SPIE"
+   },
+   "importId": "ovl-roadmap:maas2011"
+  },
+  {
+   "key": "vandekerkhof2017",
+   "itemType": "conferencePaper",
+   "title": "Enabling sub-10nm node lithography: presenting the NXE:3400B EUV scanner",
+   "collection": "01_半導体プロセス",
+   "tags": [
+    "種別/論文",
+    "掲載誌/SPIE Proceedings",
+    "分野/リソグラフィ",
+    "所属/ASML"
+   ],
+   "creators": [
+    {
+     "lastName": "van de Kerkhof",
+     "firstName": "Mark",
+     "creatorType": "author"
+    },
+    {
+     "lastName": "Jasper",
+     "firstName": "Hans",
+     "creatorType": "author"
+    },
+    {
+     "lastName": "Levasier",
+     "firstName": "Leon",
+     "creatorType": "author"
+    },
+    {
+     "lastName": "Peeters",
+     "firstName": "Rudy",
+     "creatorType": "author"
+    },
+    {
+     "lastName": "van Es",
+     "firstName": "Roderik",
+     "creatorType": "author"
+    },
+    {
+     "lastName": "Bosker",
+     "firstName": "Jan-Willem",
+     "creatorType": "author"
+    },
+    {
+     "lastName": "Zdravkov",
+     "firstName": "Alexander",
+     "creatorType": "author"
+    },
+    {
+     "lastName": "Lenderink",
+     "firstName": "Egbert",
+     "creatorType": "author"
+    },
+    {
+     "lastName": "Evangelista",
+     "firstName": "Fabrizio",
+     "creatorType": "author"
+    },
+    {
+     "lastName": "Broman",
+     "firstName": "Par",
+     "creatorType": "author"
+    },
+    {
+     "lastName": "Bilski",
+     "firstName": "Bartosz",
+     "creatorType": "author"
+    },
+    {
+     "lastName": "Last",
+     "firstName": "Thorsten",
+     "creatorType": "author"
+    }
+   ],
+   "date": "2017-03-24",
+   "fields": {
+    "proceedingsTitle": "Extreme Ultraviolet (EUV) Lithography VIII (Proc. SPIE 10143)",
+    "volume": "10143",
+    "pages": "101430D",
+    "DOI": "10.1117/12.2258025",
+    "publisher": "SPIE"
+   },
+   "importId": "ovl-roadmap:vandekerkhof2017"
+  },
+  {
+   "key": "mack2005",
+   "itemType": "document",
+   "title": "Milestones in Optical Lithography Tool Suppliers",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ"
+   ],
+   "creators": [
+    {
+     "lastName": "Mack",
+     "firstName": "Chris A.",
+     "creatorType": "author"
+    }
+   ],
+   "date": "2005",
+   "fields": {
+    "publisher": "lithoguru.com",
+    "url": "https://lithoguru.com/scientist/litho_history/milestones_tools.pdf",
+    "accessDate": "2026-09-26"
+   },
+   "file": "sources/2005_lithoguru_Milestones in Optical Lithography Tool Suppliers.pdf",
+   "importId": "ovl-roadmap:ba3e8ec40a08c4bbec3340666694033a601e2b87d93238839cb8efaa16cce409"
+  },
+  {
+   "key": "kato2007",
+   "itemType": "document",
+   "title": "Chronology of Lithography Milestones, Version 0.9",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ"
+   ],
+   "creators": [
+    {
+     "lastName": "Kato",
+     "firstName": "Atsuhiko",
+     "creatorType": "author"
+    }
+   ],
+   "date": "2007-05",
+   "fields": {
+    "publisher": "lithoguru.com",
+    "url": "https://www.lithoguru.com/scientist/litho_history/Kato_Litho_History.pdf",
+    "accessDate": "2026-09-26"
+   },
+   "file": "sources/2007_lithoguru_Chronology of Lithography Milestones.pdf",
+   "importId": "ovl-roadmap:12fc29c536d413c9277b1757eff60415f360337daa9885eb85dd184aef97fdba"
+  },
+  {
+   "key": "itrs2007",
+   "itemType": "report",
+   "title": "International Technology Roadmap for Semiconductors 2007 Edition: Lithography",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "分野/オーバーレイ・EPE"
+   ],
+   "creators": [],
+   "date": "2007",
+   "fields": {
+    "institution": "ITRS",
+    "reportType": "Roadmap",
+    "url": "https://www.semiconductors.org/wp-content/uploads/2018/08/2007Lithography.pdf",
+    "accessDate": "2026-09-26"
+   },
+   "file": "sources/2007_ITRS_Lithography.pdf",
+   "importId": "ovl-roadmap:2ad995b62726859343e71158bd5f7b09c206cfde8219620f1ed11488df2c6edb"
+  },
+  {
+   "key": "irds2021",
+   "itemType": "report",
+   "title": "International Roadmap for Devices and Systems 2021 Edition: Lithography",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "分野/オーバーレイ・EPE"
+   ],
+   "creators": [],
+   "date": "2021",
+   "fields": {
+    "institution": "IEEE",
+    "reportType": "Roadmap",
+    "url": "https://irds.ieee.org/images/files/pdf/2021/2021IRDS_Litho.pdf",
+    "accessDate": "2026-09-26"
+   },
+   "file": "sources/2021_IEEE IRDS_Lithography.pdf",
+   "importId": "ovl-roadmap:11be3df91383148945782cbe0443f53335a814151298ba54fc80b8554e7249a2"
+  },
+  {
+   "key": "irds2022",
+   "itemType": "report",
+   "title": "International Roadmap for Devices and Systems 2022 Edition: Lithography",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "分野/オーバーレイ・EPE"
+   ],
+   "creators": [],
+   "date": "2022",
+   "fields": {
+    "institution": "IEEE",
+    "reportType": "Roadmap",
+    "url": "https://irds.ieee.org/images/files/pdf/2022/2022IRDS_Litho.pdf",
+    "accessDate": "2026-09-26"
+   },
+   "file": "sources/2022_IEEE IRDS_Lithography.pdf",
+   "importId": "ovl-roadmap:b60871934d5907e50ffa9121e1fba7c2af56df2dcbb64a2c12f081043d4b6326"
+  },
+  {
+   "key": "irds2023",
+   "itemType": "report",
+   "title": "International Roadmap for Devices and Systems 2023 Edition: Lithography",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "分野/オーバーレイ・EPE"
+   ],
+   "creators": [],
+   "date": "2023",
+   "fields": {
+    "institution": "IEEE",
+    "reportType": "Roadmap",
+    "url": "https://irds.ieee.org/images/files/pdf/2023/2023IRDS_Litho.pdf",
+    "accessDate": "2026-09-26"
+   },
+   "file": "sources/2023_IEEE IRDS_Lithography.pdf",
+   "importId": "ovl-roadmap:7b5c7adffdb417054a11856c0d1b90e23d3c5f3e7a8b4bd74f0bbee664185aec"
+  },
+  {
+   "key": "us10444639",
+   "itemType": "patent",
+   "title": "Layer-to-layer feedforward overlay control with alignment corrections",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/オーバーレイ・EPE",
+    "所属/KLA"
+   ],
+   "creators": [
+    {
+     "lastName": "Demirer",
+     "firstName": "Onur Nihat",
+     "creatorType": "inventor"
+    },
+    {
+     "lastName": "Pierson",
+     "firstName": "William",
+     "creatorType": "inventor"
+    },
+    {
+     "lastName": "Smith",
+     "firstName": "Mark D.",
+     "creatorType": "inventor"
+    },
+    {
+     "lastName": "Nabeth",
+     "firstName": "Jeremy S.",
+     "creatorType": "inventor"
+    },
+    {
+     "lastName": "Garcia-Medina",
+     "firstName": "Miguel",
+     "creatorType": "inventor"
+    },
+    {
+     "lastName": "Yap",
+     "firstName": "Lipkong",
+     "creatorType": "inventor"
+    }
+   ],
+   "fields": {
+    "patentNumber": "US 10,444,639 B2",
+    "assignee": "KLA-Tencor Corporation",
+    "country": "US",
+    "url": "https://patents.google.com/patent/US10444639B2/en",
+    "issueDate": "2019-10-15"
+   },
+   "file": "sources/2019_KLA_US10444639B2 Layer-to-layer feedforward overlay control with alignment corrections.pdf",
+   "importId": "ovl-roadmap:3923be629b74c96fbc87815c4d9939445d729c4b6f5689501b9015cef0c7c8f5",
+   "date": null
+  },
+  {
+   "key": "us11221561",
+   "itemType": "patent",
+   "title": "System and method for wafer-by-wafer overlay feedforward and lot-to-lot feedback control",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/オーバーレイ・EPE",
+    "所属/KLA"
+   ],
+   "creators": [
+    {
+     "lastName": "Demirer",
+     "firstName": "Onur Nihat",
+     "creatorType": "inventor"
+    },
+    {
+     "lastName": "Anis",
+     "firstName": "Fatima",
+     "creatorType": "inventor"
+    },
+    {
+     "lastName": "Smith",
+     "firstName": "Mark D.",
+     "creatorType": "inventor"
+    }
+   ],
+   "fields": {
+    "patentNumber": "US 11,221,561 B2",
+    "assignee": "KLA Corporation",
+    "country": "US",
+    "url": "https://patents.google.com/patent/US11221561B2/en",
+    "issueDate": "2022-01-11"
+   },
+   "file": "sources/2022_KLA_US11221561B2 Wafer-by-wafer overlay feedforward and lot-to-lot feedback control.pdf",
+   "importId": "ovl-roadmap:3b5391e689f5a405c78d4760274bf028d44b5248ed2b865e6d4b1cb1835f7ead",
+   "date": null
+  },
+  {
+   "key": "us5493402",
+   "itemType": "patent",
+   "title": "EGA alignment method using a plurality of weighting coefficients",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/オーバーレイ・EPE",
+    "所属/Nikon"
+   ],
+   "creators": [
+    {
+     "lastName": "Hirukawa",
+     "firstName": "Shigeru",
+     "creatorType": "inventor"
+    }
+   ],
+   "fields": {
+    "patentNumber": "US 5,493,402 A",
+    "assignee": "Nikon Corp",
+    "country": "US",
+    "url": "https://patents.google.com/patent/US5493402A/en",
+    "issueDate": "1996-02-20"
+   },
+   "file": "sources/web/1996_Nikon_US5493402A EGA alignment method (Google Patents).html",
+   "importId": "ovl-roadmap:012ba7ba3553bd2d0ea17d890acb529ffcbe0e0e0f280f9fe77caa5ebe6d3d33",
+   "date": null
+  },
+  {
+   "key": "asml_investorday2024",
+   "itemType": "presentation",
+   "title": "EUV Products and Business opportunity (ASML Investor Day 2024)",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/ASML"
+   ],
+   "creators": [
+    {
+     "lastName": "Vanoppen",
+     "firstName": "Peter",
+     "creatorType": "presenter"
+    }
+   ],
+   "date": "2024-11-14",
+   "fields": {
+    "meetingName": "ASML Investor Day",
+    "place": "Veldhoven",
+    "url": "https://www.sec.gov/Archives/edgar/data/937966/000093796624000026/exhibit994.htm",
+    "accessDate": "2026-09-26"
+   },
+   "importId": "ovl-roadmap:asml_investorday2024"
+  },
+  {
+   "key": "asml_nxt1950i_2008",
+   "itemType": "webpage",
+   "title": "ASML launches TWINSCAN NXT:1950i immersion lithography system | ASML",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/ASML"
+   ],
+   "creators": [],
+   "date": "2008",
+   "fields": {
+    "url": "https://www.asml.com/en/news/press-releases/2008/asml-launches-the-twinscan-nxt1950i-immersion-lithography-system",
+    "accessDate": "2026-09-26"
+   },
+   "file": "sources/web/2008_ASML_NXT1950i launch press release.html",
+   "importId": "ovl-roadmap:e9ac134384cef122ed6422b0999ab2c2ab91490cc4a3c2b84ffab5917749871e"
+  },
+  {
+   "key": "asml_holistic_2010",
+   "itemType": "webpage",
+   "title": "Chipmakers adopt ASML's holistic lithography to continue Moore's Law | ASML",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/ASML"
+   ],
+   "creators": [],
+   "date": "2010-07-13",
+   "fields": {
+    "url": "https://www.asml.com/en/news/press-releases/2010/chip-makers-adopt-asml-holistic-lithography-to-continue-moore-law",
+    "accessDate": "2026-09-26"
+   },
+   "file": "sources/web/2010_ASML_Holistic lithography press release.html",
+   "importId": "ovl-roadmap:6ddacc1b49798bb486c1d81f0e315d00dc60054eb7d17ac53df507ffc76864ac"
+  },
+  {
+   "key": "asml_nxt1980di_2015",
+   "itemType": "webpage",
+   "title": "ASML ships new TWINSCAN NXT immersion lithography platform | ASML",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/ASML"
+   ],
+   "creators": [],
+   "date": "2015-09-29",
+   "fields": {
+    "url": "https://www.asml.com/en/news/press-releases/2015/asml-ships-new-twinscan-nxt-immersion-lithography-platform",
+    "accessDate": "2026-09-26"
+   },
+   "file": "sources/web/2015_ASML_NXT1980Di press release.html",
+   "importId": "ovl-roadmap:7fb711167aaf8ebb666739b10b3013953cd69742d6f4e33090ebac4df562dec6"
+  },
+  {
+   "key": "asml_twinscan20_2021",
+   "itemType": "webpage",
+   "title": "TWINSCAN: 20 years of lithography innovation - Stories | ASML",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/ASML"
+   ],
+   "creators": [],
+   "date": "2021",
+   "fields": {
+    "url": "https://www.asml.com/en/company/stories/2021/twinscan-20-years-innovation",
+    "accessDate": "2026-09-26"
+   },
+   "file": "sources/web/2021_ASML_TWINSCAN 20 years story.html",
+   "importId": "ovl-roadmap:e9c73bba690d8eb5900ab5cb1febfe0c25a74ba6f7a5cd907b6358adacbfc126"
+  },
+  {
+   "key": "asml_history",
+   "itemType": "webpage",
+   "title": "Our history | ASML - Supplying the semiconductor industry",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/ASML"
+   ],
+   "creators": [],
+   "date": null,
+   "fields": {
+    "url": "https://www.asml.com/en/company/about-asml/history",
+    "accessDate": "2026-09-26"
+   },
+   "file": "sources/web/2026_ASML_History page.html",
+   "importId": "ovl-roadmap:e3f1921bb805d1f4dc65af52e94958c7e90b055bf3643bb775ef79ad5e2b0416"
+  },
+  {
+   "key": "asml_nxe3400b",
+   "itemType": "webpage",
+   "title": "TWINSCAN NXE:3400B - EUV lithography systems",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/ASML"
+   ],
+   "creators": [],
+   "date": null,
+   "fields": {
+    "url": "https://www.asml.com/en/products/euv-lithography-systems/twinscan-nxe3400b",
+    "accessDate": "2026-09-26"
+   },
+   "file": "sources/web/2026_ASML_NXE3400B product page.html",
+   "importId": "ovl-roadmap:ad4871fad0cab666e1f951a933127f76a88d97558d53b699d9124449845dd518"
+  },
+  {
+   "key": "asml_nxt2000i",
+   "itemType": "webpage",
+   "title": "TWINSCAN NXT:2000i - DUV lithography systems | ASML",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/ASML"
+   ],
+   "creators": [],
+   "date": null,
+   "fields": {
+    "url": "https://www.asml.com/en/products/duv-lithography-systems/twinscan-nxt2000i",
+    "accessDate": "2026-09-26"
+   },
+   "file": "sources/web/2026_ASML_NXT2000i product page.html",
+   "importId": "ovl-roadmap:ad78b0906f79e5c014427051913c70599404d1d05582d9c1f0c6ea8b7d1103a8"
+  },
+  {
+   "key": "asml_nxt2050i",
+   "itemType": "webpage",
+   "title": "TWINSCAN NXT:2050i - DUV lithography machines | ASML",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/ASML"
+   ],
+   "creators": [],
+   "date": null,
+   "fields": {
+    "url": "https://www.asml.com/en/products/duv-lithography-systems/twinscan-nxt2050i",
+    "accessDate": "2026-09-26"
+   },
+   "file": "sources/web/2026_ASML_NXT2050i product page.html",
+   "importId": "ovl-roadmap:cff6a3978a4db7ef99c9003a8e26a5bcfb7913e97828df42f562e9dfc23dcb68"
+  },
+  {
+   "key": "asml_nxt2100i",
+   "itemType": "webpage",
+   "title": "TWINSCAN NXT:2100i - DUV lithography machines | ASML",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/ASML"
+   ],
+   "creators": [],
+   "date": null,
+   "fields": {
+    "url": "https://www.asml.com/en/products/duv-lithography-systems/twinscan-nxt2100i",
+    "accessDate": "2026-09-26"
+   },
+   "file": "sources/web/2026_ASML_NXT2100i product page.html",
+   "importId": "ovl-roadmap:42854958fb2b496b46156f711b5b8c758547561319141a6e805e25451beb9b1c"
+  },
+  {
+   "key": "asml_q3_2022",
+   "itemType": "webpage",
+   "title": "Q3 2022 financial results | ASML",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/ASML"
+   ],
+   "creators": [],
+   "date": "2022-10-19",
+   "fields": {
+    "url": "https://www.asml.com/en/news/press-releases/2022/q3-2022-financial-results",
+    "accessDate": "2026-09-26"
+   },
+   "file": "sources/web/2022_ASML_Q3 2022 financial results.html",
+   "importId": "ovl-roadmap:6bcef1feee71ede53039bfe50c21d4b8b489280bc9ef55410c3110d3c64bf0c4"
+  },
+  {
+   "key": "asml_highna_2024",
+   "itemType": "webpage",
+   "title": "5 things you should know about High NA EUV lithography",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/ASML"
+   ],
+   "creators": [],
+   "date": "2024",
+   "fields": {
+    "url": "https://www.asml.com/en/news/stories/2024/5-things-high-na-euv",
+    "accessDate": "2026-09-26"
+   },
+   "file": "sources/web/2024_ASML_5 things about High NA EUV.html",
+   "importId": "ovl-roadmap:21fd32de7e0b6b68cb192e0935b271fafecad04b1f83e051f08404c441611f43"
+  },
+  {
+   "key": "asml_ar2021",
+   "itemType": "webpage",
+   "title": "Highlights - Annual Report 2021 | ASML",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/ASML"
+   ],
+   "creators": [],
+   "date": "2022",
+   "fields": {
+    "url": "https://www.asml.com/en/en/investors/annual-report/2021/highlights",
+    "accessDate": "2026-09-26"
+   },
+   "file": "sources/web/2021_ASML_Annual Report 2021 highlights.html",
+   "importId": "ovl-roadmap:e64f4ca4544dadc218b7732f5169ce30017de2e3b356363a723248eabbeb1858"
+  },
+  {
+   "key": "nikon_s636e_product",
+   "itemType": "webpage",
+   "title": "NSR-S636E ArF immersion scanner",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/Nikon"
+   ],
+   "creators": [],
+   "date": null,
+   "fields": {
+    "url": "https://www.nikonprecision.com/products-and-technology/immersion-and-multiple-patterning/nsr-s636e/",
+    "accessDate": "2026-09-26"
+   },
+   "file": "sources/web/2026_Nikon_NSR-S636E product page.html",
+   "importId": "ovl-roadmap:091b1c8d26570ea88c7c299143219bb0d3cc9667653d0c57460a838e94c82a05"
+  },
+  {
+   "key": "nikon_s636e_2023",
+   "itemType": "webpage",
+   "title": "Nikon Releases the NSR-S636E ArF Immersion Scanner | News | Nikon About Us",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/Nikon"
+   ],
+   "creators": [],
+   "date": "2023-12-06",
+   "fields": {
+    "url": "https://www.nikon.com/company/news/2023/1206_01/",
+    "accessDate": "2026-09-26"
+   },
+   "file": "sources/web/2023_Nikon_NSR-S636E release news.html",
+   "importId": "ovl-roadmap:96759c6b19399355a16bf18a5ddac2f1b03faeebb5ff9b767407506a5532a6a8"
+  },
+  {
+   "key": "nikon_s635e_story",
+   "itemType": "webpage",
+   "title": "5. The NSR-S635E immersion scanner realizes ultra-high precision and productivity | Semiconductor Technology | Nikon Business",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/Nikon"
+   ],
+   "creators": [],
+   "date": null,
+   "fields": {
+    "url": "https://www.nikon.com/business/semi/technology/story05.html",
+    "accessDate": "2026-09-26"
+   },
+   "file": "sources/web/2018_Nikon_NSR-S635E technology story.html",
+   "importId": "ovl-roadmap:b15abb8834791629d06216978fdbee62890f118cf2385057fb6aea43317f5dc2"
+  },
+  {
+   "key": "nikon_lb1000_2025",
+   "itemType": "webpage",
+   "title": "Nikon Introduces the Litho Booster 1000, a Next-Generation Alignment Station Designed to Facilitate Breakthrough Overlay Accuracy for Advanced 3D Devices | News | Nikon About Us",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/Nikon"
+   ],
+   "creators": [],
+   "date": "2025-12-11",
+   "fields": {
+    "url": "https://www.nikon.com/company/news/2025/1211_01/",
+    "accessDate": "2026-09-26"
+   },
+   "file": "sources/web/2025_Nikon_Litho Booster 1000 announcement.html",
+   "importId": "ovl-roadmap:a4a24f3725beff2537bcd57b8f10734cd99f3444ecb4d63816d5745044e7a60b"
+  },
+  {
+   "key": "nikon_lb1000_2026",
+   "itemType": "webpage",
+   "title": "Litho Booster 1000 Enables Highly Accurate Overlay Correction in Wafer-to-Wafer Bonding Processes for 3D Semiconductor Structures | News | Nikon About Us",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/Nikon"
+   ],
+   "creators": [],
+   "date": "2026-07-29",
+   "fields": {
+    "url": "https://www.nikon.com/company/news/2026/0729_01/",
+    "accessDate": "2026-09-26"
+   },
+   "file": "sources/web/2026_Nikon_Litho Booster 1000 W2W bonding.html",
+   "importId": "ovl-roadmap:de800d3c81f029ef77a9d82d56b2207ba6383981a2cb731a811431a51af67e6e"
+  },
+  {
+   "key": "canon_nil_2023",
+   "itemType": "webpage",
+   "title": "Nanoimprint lithography semiconductor manufacturing system that covers diverse applications with simple patterning mechanism | Canon Global",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/Canon"
+   ],
+   "creators": [],
+   "date": "2023-10-13",
+   "fields": {
+    "url": "https://global.canon/en/news/2023/20231013.html",
+    "accessDate": "2026-09-26"
+   },
+   "file": "sources/web/2023_Canon_FPA-1200NZ2C nanoimprint launch.html",
+   "importId": "ovl-roadmap:06519ec467290963c7e0285e3745c0ef372cc116711254166a68b704d3a1320f"
+  },
+  {
+   "key": "kla_pwg2_2017",
+   "itemType": "webpage",
+   "title": "KLA-Tencor Introduces New Metrology Systems for Leading-Edge Integrated Circuit Device Technologies :: KLA Corporation (KLAC)",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/KLA"
+   ],
+   "creators": [],
+   "date": "2017-02-22",
+   "fields": {
+    "url": "https://ir.kla.com/news-events/press-releases/detail/106/kla-tencor-introduces-new-metrology-systems-for",
+    "accessDate": "2026-09-26"
+   },
+   "file": "sources/web/2017_KLA_WaferSight PWG2 press release.html",
+   "importId": "ovl-roadmap:56dabd72cd7c95c0d5fa852c94069d13450d39f863d7bbb48d5c20b09d6a8a90"
+  },
+  {
+   "key": "3dincites_pwg5_2020",
+   "itemType": "webpage",
+   "title": "KLA Introduces Two New Systems that Take On Semiconductor Manufacturing’s Toughest Problems - IMAPS 3D InCites Content Platform",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/KLA"
+   ],
+   "creators": [],
+   "date": "2020-12-10",
+   "fields": {
+    "url": "https://www.3dincites.com/2020/12/kla-introduces-two-new-systems-that-take-on-semiconductor-manufacturings-toughest-problems/",
+    "accessDate": "2026-09-26"
+   },
+   "file": "sources/web/2020_3D InCites_KLA PWG5.html",
+   "importId": "ovl-roadmap:227296f1df14e27afc42d2b05ab890d20c6b1a0fca2cca8365eca4b5c2377511"
+  },
+  {
+   "key": "bitschips_2025",
+   "itemType": "webpage",
+   "title": "Intel completes acceptance testing of ASML’s EXE:5200B high-NA EUV scanner - Bits&Chips",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/Intel"
+   ],
+   "creators": [],
+   "date": "2025-12-16",
+   "fields": {
+    "url": "https://bits-chips.com/article/intel-begins-acceptance-testing-of-asmls-exe5200b-high-na-euv-scanner/",
+    "accessDate": "2026-09-26"
+   },
+   "file": "sources/web/2025_Bits&Chips_Intel EXE5200B acceptance.html",
+   "importId": "ovl-roadmap:68f84e52659766e3738cf852d567de0fd7dbc7de4cead1bcc59454dbb7db4ef6"
+  },
+  {
+   "key": "siliconangle_2026",
+   "itemType": "webpage",
+   "title": "Intel starts using ASML’s High NA EUV technology to produce chips - SiliconANGLE",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/Intel"
+   ],
+   "creators": [],
+   "date": "2026-07-15",
+   "fields": {
+    "url": "https://siliconangle.com/2026/07/15/intel-starts-using-asmls-high-na-euv-technology-produce-chips/",
+    "accessDate": "2026-09-26"
+   },
+   "file": "sources/web/2026_SiliconANGLE_Intel High NA production.html",
+   "importId": "ovl-roadmap:4973da3830f8a2c2786e17bd72dae0e146eaa8627c6d28ee80c189cee91514e6"
+  },
+  {
+   "key": "trendforce_2024",
+   "itemType": "webpage",
+   "title": "[News] TSMC Is On Track for A16 Mass Production in Late 2026 with Advanced Backside Power Delivery",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ"
+   ],
+   "creators": [],
+   "date": "2024-11-26",
+   "fields": {
+    "url": "https://www.trendforce.com/news/2024/11/26/news-tsmc-is-on-track-for-a16-mass-production-in-late-2026-with-advanced-backside-power-delivery/",
+    "accessDate": "2026-09-26"
+   },
+   "file": "sources/web/2024_TrendForce_TSMC A16 late 2026.html",
+   "importId": "ovl-roadmap:7b440b6bb13afb191f53fbffa62dd213785c92d3c97f65fea8b1bb5b90765757"
+  },
+  {
+   "key": "asml_h1_2024",
+   "itemType": "webpage",
+   "title": "ASML Statutory Interim Report 2024 (Form 6-K)",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/ASML"
+   ],
+   "creators": [],
+   "date": "2024",
+   "fields": {
+    "url": "https://www.sec.gov/Archives/edgar/data/937966/000093796624000019/asmlstatutoryinterimrepo.htm",
+    "accessDate": "2026-09-26"
+   },
+   "importId": "ovl-roadmap:asml_h1_2024"
+  },
+  {
+   "key": "intel_10k_fy2025",
+   "itemType": "webpage",
+   "title": "Intel Corporation Form 10-K (fiscal year 2025)",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/Intel"
+   ],
+   "creators": [],
+   "date": "2026",
+   "fields": {
+    "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000011/intc-20251227.htm",
+    "accessDate": "2026-09-26"
+   },
+   "importId": "ovl-roadmap:intel_10k_fy2025"
+  },
+  {
+   "key": "lam_vectordt_2019",
+   "itemType": "webpage",
+   "title": "Lam Research Adds Global Wafer Stress Management Solutions to Portfolio for 3D NAND Scaling",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ"
+   ],
+   "creators": [],
+   "date": "2019-08-07",
+   "fields": {
+    "url": "https://www.globenewswire.com/news-release/2019/08/07/1898426/0/en/Lam-Research-Adds-Global-Wafer-Stress-Management-Solutions-to-Portfolio-for-3D-NAND-Scaling.html",
+    "accessDate": "2026-09-26"
+   },
+   "importId": "ovl-roadmap:lam_vectordt_2019"
+  },
+  {
+   "key": "edn_aim_2003",
+   "itemType": "webpage",
+   "title": "KLA-Tencor's Archer Takes AIM",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/KLA"
+   ],
+   "creators": [],
+   "date": "2003-02-19",
+   "fields": {
+    "url": "https://www.edn.com/kla-tencors-archer-takes-aim/",
+    "accessDate": "2026-09-26"
+   },
+   "importId": "ovl-roadmap:edn_aim_2003"
+  }
+ ],
+ "existing_references": [
+  {
+   "key": "macmillen1982",
+   "doi": "10.1117/12.933563",
+   "title": "Analysis of image field placement deviations of a 5x microlithographic reduction lens"
+  },
+  {
+   "key": "adel2007",
+   "doi": "10.1117/12.778457",
+   "title": "The challenges of transitioning from linear to high-order overlay control in advanced lithography"
+  },
+  {
+   "key": "huang2009",
+   "doi": "10.1117/12.813628",
+   "title": "Using intrafield high-order correction to achieve overlay requirement beyond sub-40nm node"
+  },
+  {
+   "key": "matsuyama2015",
+   "doi": "10.1515/aot-2015-0026",
+   "title": "Exposure tool control for advanced semiconductor lithography"
+  },
+  {
+   "key": "ju2016",
+   "doi": "10.1117/12.2219739",
+   "title": "Application of overlay modeling and control with Zernike polynomials in an HVM environment"
+  },
+  {
+   "key": "park2018",
+   "doi": "10.1117/12.2297094",
+   "title": "Unique method for controlling device level overlay with high-NA optical overlay technique using YieldStar in a DRAM HVM environment"
+  },
+  {
+   "key": "daniel2018",
+   "doi": "10.1117/12.2303487",
+   "title": "Understanding overlay signatures using machine learning on non-lithography context information"
+  },
+  {
+   "key": "vanharen2019",
+   "doi": "10.1117/12.2535900",
+   "title": "The impact of the reticle and wafer alignment mark placement accuracy on the intra-field mask-to-mask overlay"
+  },
+  {
+   "key": "chang2022",
+   "doi": "10.1117/12.2613193",
+   "title": "In device overlay control with multiple overlay metrology in 3D-NAND process"
+  },
+  {
+   "key": "ip2023",
+   "doi": "10.1117/12.2654679",
+   "title": "Overlay performance in permanent bonded wafer integration schemes"
+  },
+  {
+   "key": "kwak2023",
+   "doi": "10.1117/12.2658274",
+   "title": "EPE-aware process optimization for scanner dose and overlay in DRAM use case"
+  },
+  {
+   "key": "kim2023",
+   "doi": "10.1117/12.2657678",
+   "title": "Enhancement of overlay metrology accuracy by multi-wavelength scatterometry with rotated quadrupole illumination"
+  },
+  {
+   "key": "goto2024",
+   "doi": "10.1117/12.3010317",
+   "title": "Advanced overlay metrology for wafer bonding applications"
+  },
+  {
+   "key": "roy2024",
+   "doi": "10.1117/12.3010036",
+   "title": "Advanced processing control for wafer-to-wafer hybrid bonding"
+  },
+  {
+   "key": "schelcher2024",
+   "doi": "10.1117/12.3010421",
+   "title": "Feature grouping to enable edge placement error-aware process control in multi-feature logic use case"
+  },
+  {
+   "key": "park2025",
+   "doi": "10.1117/12.3051382",
+   "title": "A grid mapping-based U-net algorithm for photolithography overlay virtual metrology"
+  },
+  {
+   "key": "ehrlich2025",
+   "doi": "10.1117/12.3051064",
+   "title": "Cherry-picking: automated model term selection for precise overlay and CD process control"
+  },
+  {
+   "key": "gabor2026",
+   "doi": "10.1117/12.3091000",
+   "title": "IBM lithography roadmap: shorter-wavelength lithography, resist and mask requirements to reduce stochastic defects"
+  },
+  {
+   "key": "katz2026",
+   "doi": "10.1117/12.3090568",
+   "title": "Optical overlay metrology challenges in next-gen semiconductor nodes"
+  },
+  {
+   "key": "klein2026",
+   "doi": "10.1117/12.3090660",
+   "title": "Overlay metrology performance specification challenge entering the sub-nanometer overlay era"
+  },
+  {
+   "key": "lee2026",
+   "doi": "10.1117/12.3089745",
+   "title": "Edge placement error-aware through-stack overlay optimization for a FLASH multilayer product stack"
+  },
+  {
+   "key": "mohammad2026",
+   "doi": "10.1117/12.3090685",
+   "title": "Leveraging principal component analysis for overlay variation and root cause discovery in high-volume manufacturing"
+  },
+  {
+   "key": "choi2026",
+   "doi": "10.1117/12.3089595",
+   "title": "GRACE: a gradient-based model-agnostic explainability framework for photolithography overlay virtual metrology"
+  }
+ ]
+}

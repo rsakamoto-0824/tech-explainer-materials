@@ -1,0 +1,818 @@
+{
+ "base": "/Users/sakamoto/04_プログラミング/ClaudeCode/GitHub/技術解説資料/08_企業・業界分析/ASML_SWOT・PEST分析とサプライチェーン・AI活用_src",
+ "case_collection": "2026-10-10_ASML分析",
+ "unread_tag": "未読",
+ "items": [
+  {
+   "key": "asml_q4_2025_pr",
+   "itemType": "report",
+   "title": "ASML reports €32.7 billion total net sales and €9.6 billion net income in 2025",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/ASML"
+   ],
+   "creators": [],
+   "date": "2026-01-28",
+   "fields": {
+    "url": "https://ourbrand.asml.com/m/c416bb685db46ca0/original/ASML-Press-Release-Q4-and-full-year-2025-financial-results.pdf",
+    "accessDate": "2026-10-10",
+    "institution": "ASML",
+    "reportType": "決算発表（プレスリリース）"
+   },
+   "files": [
+    "sources/2026_ASML_Press release Q4 and full year 2025 financial results.pdf"
+   ],
+   "importId": "asml-swot:b3cf875fe5116cbbd0bfd1a514708cf50e3e96dfa9539f64badda7cf1bb67ce1"
+  },
+  {
+   "key": "asml_ir_q4_2025",
+   "itemType": "presentation",
+   "title": "Investor Relations presentation Q4 2025",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/ASML"
+   ],
+   "creators": [],
+   "date": "2026-01-28",
+   "fields": {
+    "url": "https://ourbrand.asml.com/m/3136300aa4999bc1/original/2026_01_28_Presentation-Investor-Relations-Q4-2025.pdf",
+    "accessDate": "2026-10-10",
+    "presentationType": "投資家向け資料（ASML）"
+   },
+   "files": [
+    "sources/2026_ASML_Investor Relations presentation Q4 2025.pdf"
+   ],
+   "importId": "asml-swot:49d409ebd1b9a933a1ea3473a9588d605280c7d4d042ea53e6fad1d0f7eb9630"
+  },
+  {
+   "key": "asml_ar2025_strategic",
+   "itemType": "report",
+   "title": "Annual Report 2025: Strategic report section",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/ASML"
+   ],
+   "creators": [],
+   "date": "2026-02-25",
+   "fields": {
+    "url": "https://ourbrand.asml.com/m/8ab959d4926657b/original/asml-2025-annual-report-strategic-report-section.pdf",
+    "accessDate": "2026-10-10",
+    "institution": "ASML",
+    "reportType": "年次報告書（戦略報告の章）"
+   },
+   "files": [
+    "sources/2026_ASML_Annual Report 2025 strategic report section.pdf"
+   ],
+   "importId": "asml-swot:c0f7e89e095de1347471c4d4df676e50fe538d335cc08faab8ef77b5c357486f"
+  },
+  {
+   "key": "asml_ar2025_esef",
+   "itemType": "report",
+   "title": "Annual Report 2025 (IFRS-EU, ESEF)",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/ASML"
+   ],
+   "creators": [],
+   "date": "2026-02-25",
+   "fields": {
+    "url": "https://filings.xbrl.org/724500Y6DUVHQD6OXN27/2025-12-31/ESEF/NL/0/asml-2025-12-31-1-en/reports/asml-2025-12-31-1-en.xhtml",
+    "accessDate": "2026-10-10",
+    "institution": "ASML",
+    "reportType": "年次報告書（全文、ESEF形式）"
+   },
+   "files": [
+    "sources/2026_ASML_Annual Report 2025 (IFRS-EU, ESEF).xhtml"
+   ],
+   "importId": "asml-swot:5bbf0d792a951cfc14940a168c945e29d5e0e8c69fc8fe9702ca5d2347085d73"
+  },
+  {
+   "key": "asml_q1_2026_pr",
+   "itemType": "report",
+   "title": "ASML reports €8.8 billion total net sales and €2.8 billion net income in Q1 2026",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/ASML"
+   ],
+   "creators": [],
+   "date": "2026-04-15",
+   "fields": {
+    "url": "https://mfn.se/one/a/asml-holding/asml-reports-eu8-8-billion-total-net-sales-and-eu2-8-billion-net-income-in-q1-2026-cdb323f9",
+    "accessDate": "2026-10-10",
+    "institution": "ASML",
+    "reportType": "決算発表（プレスリリース）"
+   },
+   "files": [
+    "sources/web/2026_ASML_Q1 2026 financial results (MFN).html"
+   ],
+   "importId": "asml-swot:b1dbc0ad2d904cbbf125fd749640f3703ae64d58de15687b04c9415adfdd8df3"
+  },
+  {
+   "key": "asml_ir_q1_2026",
+   "itemType": "presentation",
+   "title": "Investor Relations presentation Q1 2026",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/ASML"
+   ],
+   "creators": [],
+   "date": "2026-04-15",
+   "fields": {
+    "url": "https://ourbrand.asml.com/asset/d7b914e6-fdd1-4262-b805-d80f3efcb39a/2026_04_15_Presentation-Investor-Relations-Q1-2026.pdf",
+    "accessDate": "2026-10-10",
+    "presentationType": "投資家向け資料（ASML）"
+   },
+   "files": [
+    "sources/2026_ASML_Investor Relations presentation Q1 2026.pdf"
+   ],
+   "importId": "asml-swot:afbf1b2aa8b932dea675e8c9170aa3786e859faea4f971867bbb4003533e070b"
+  },
+  {
+   "key": "asml_q2_2026_pr",
+   "itemType": "report",
+   "title": "ASML reports €9.3 billion total net sales and €2.9 billion net income in Q2 2026",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/ASML"
+   ],
+   "creators": [],
+   "date": "2026-07-15",
+   "fields": {
+    "url": "https://ourbrand.asml.com/asset/c8dbf3fc-4c5e-4406-83f6-27694b138245/Press-Release-Financial-Results-Q2-2026.pdf",
+    "accessDate": "2026-10-10",
+    "institution": "ASML",
+    "reportType": "決算発表（プレスリリース）"
+   },
+   "files": [
+    "sources/2026_ASML_Press release Q2 2026 financial results.pdf"
+   ],
+   "importId": "asml-swot:46af30754d38cb88805d48143479abf87746798b4642407580781d8292d8331a"
+  },
+  {
+   "key": "asml_ir_q2_2026",
+   "itemType": "presentation",
+   "title": "Investor Relations presentation Q2 2026",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/ASML"
+   ],
+   "creators": [],
+   "date": "2026-07-15",
+   "fields": {
+    "url": "https://ourbrand.asml.com/asset/9078cf4d-91fd-4dd9-a5d5-d1caab6dc046/2026_07_15_Presentation-Investor-Relations-Q2-2026.pdf",
+    "accessDate": "2026-10-10",
+    "presentationType": "投資家向け資料（ASML）"
+   },
+   "files": [
+    "sources/2026_ASML_Investor Relations presentation Q2 2026.pdf"
+   ],
+   "importId": "asml-swot:5b3e05ace2b6d760e16d1ec0b84ca68db68961d4f5ead229516860333e4cdc88"
+  },
+  {
+   "key": "asml_call_q2_2026",
+   "itemType": "report",
+   "title": "Transcript investor call Q2 2026",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/ASML"
+   ],
+   "creators": [],
+   "date": "2026-07-15",
+   "fields": {
+    "url": "https://ourbrand.asml.com/asset/1fd3908a-0381-47b5-9b69-a3094f656651/2026_07_15-ASML-Transcript-investor-call-Q2-2026.pdf",
+    "accessDate": "2026-10-10",
+    "institution": "ASML",
+    "reportType": "決算説明会の書き起こし"
+   },
+   "files": [
+    "sources/2026_ASML_Transcript investor call Q2 2026.pdf"
+   ],
+   "importId": "asml-swot:4d091fc8d1e3e7d48c941537b321c23ca2f14d6df69ffd4480e338c3c13d3719"
+  },
+  {
+   "key": "asml_high_na_2026",
+   "itemType": "webpage",
+   "title": "High NA EUV reaches new readiness milestone with first high-volume Logic product",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/ASML"
+   ],
+   "creators": [],
+   "date": "2026-07-15",
+   "fields": {
+    "url": "https://mfn.se/one/a/asml-holding/high-na-euv-reaches-new-readiness-milestone-with-first-high-volume-logic-product-dd245453",
+    "accessDate": "2026-10-10",
+    "websiteTitle": "ASML"
+   },
+   "files": [
+    "sources/web/2026_ASML_High NA EUV reaches new readiness milestone (MFN).html"
+   ],
+   "importId": "asml-swot:2349f5a341fbf9f0eaa79dd2b3eace857062ac9787e86af7372c85685055a86d"
+  },
+  {
+   "key": "asml_bic_north_2026",
+   "itemType": "webpage",
+   "title": "ASML begins construction of new Eindhoven campus, strengthening its presence in the Brainport region",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/ASML"
+   ],
+   "creators": [],
+   "date": "2026-09-08",
+   "fields": {
+    "url": "https://mfn.se/one/a/asml-holding/asml-begins-construction-of-new-eindhoven-campus-strengthening-its-presence-in-the-brainport-region-2a2db7dd",
+    "accessDate": "2026-10-10",
+    "websiteTitle": "ASML"
+   },
+   "files": [
+    "sources/web/2026_ASML_Construction of new Eindhoven campus BIC North (MFN).html"
+   ],
+   "importId": "asml-swot:b548faba36f1a468efba6b937b20e0c6b83c2389c7035fc89566ddf0692e6226"
+  },
+  {
+   "key": "asml_mistral_2025",
+   "itemType": "webpage",
+   "title": "ASML, Mistral AI enter strategic partnership",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/ASML"
+   ],
+   "creators": [],
+   "date": "2025-09-09",
+   "fields": {
+    "url": "https://www.nasdaq.com/press-release/asml-mistral-ai-enter-strategic-partnership-2025-09-09",
+    "accessDate": "2026-10-10",
+    "websiteTitle": "ASML"
+   },
+   "files": [
+    "sources/web/2025_ASML_ASML and Mistral AI enter strategic partnership (Nasdaq).html"
+   ],
+   "importId": "asml-swot:a60cccb644eeddab82e66f3ceeb1b4d84e2e35a0aa97f0f59ba344624fc88c4f"
+  },
+  {
+   "key": "mistral_asml_2026",
+   "itemType": "webpage",
+   "title": "ASML accelerates advanced semiconductor lithography with Mistral",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/Mistral AI"
+   ],
+   "creators": [],
+   "date": "2026-04-24",
+   "fields": {
+    "url": "https://mistral.ai/customers/asml/",
+    "accessDate": "2026-10-10",
+    "websiteTitle": "Mistral AI"
+   },
+   "files": [
+    "sources/web/2026_Mistral AI_ASML customer story.html"
+   ],
+   "importId": "asml-swot:b8548cd456b29fa499b64ccd1828855f31d40535185a7e07b651d7f8235e09e3"
+  },
+  {
+   "key": "electrooptics_2018",
+   "itemType": "webpage",
+   "title": "Driving Moore's law with CO2 lasers",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/TRUMPF"
+   ],
+   "creators": [],
+   "date": "2018-06-14",
+   "fields": {
+    "url": "https://www.electrooptics.com/analysis-opinion/driving-moore-s-law-co2-lasers",
+    "accessDate": "2026-10-10",
+    "websiteTitle": "Electro Optics"
+   },
+   "files": [
+    "sources/web/2018_Electro Optics_Driving Moore's law with CO2 lasers (TRUMPF).html"
+   ],
+   "importId": "asml-swot:648b196f7fe1bc58ef420bf18bec670766d52af0b8e04caec5f809da1b858eda"
+  },
+  {
+   "key": "homburger_2020",
+   "itemType": "webpage",
+   "title": "Homburger advises ASML on the planned acquisition of all shares of Berliner Glas",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/ASML"
+   ],
+   "creators": [],
+   "date": "2020-07-16",
+   "fields": {
+    "url": "https://www.homburger.ch/de/aktuell/asml-planned-acquisition-shares-berliner-glas/",
+    "accessDate": "2026-10-10",
+    "websiteTitle": "Homburger"
+   },
+   "files": [
+    "sources/web/2020_Homburger_ASML planned acquisition of all shares of Berliner Glas.html"
+   ],
+   "importId": "asml-swot:4a67bd5985ec23a2f8f7705a051cea0121313c8c4d431f1b245f7d8f73c4969b"
+  },
+  {
+   "key": "fhi_2021",
+   "itemType": "webpage",
+   "title": "VDL wins prizes during ASML Supplier Day",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/VDL"
+   ],
+   "creators": [],
+   "date": "2021-11-09",
+   "fields": {
+    "url": "https://fhi.nl/en/news/vdl-in-de-prijzen-tijdens-supplier-day-asml",
+    "accessDate": "2026-10-10",
+    "websiteTitle": "FHI"
+   },
+   "files": [
+    "sources/web/2021_FHI_VDL wins prizes during ASML Supplier Day.html"
+   ],
+   "importId": "asml-swot:964d99bafc38549fe62509382b5eb1f6e1a81738da74e38f79d1d1275a0f88f5"
+  },
+  {
+   "key": "govnl_2025_01",
+   "itemType": "webpage",
+   "title": "Klever: export controls on advanced semiconductor manufacturing equipment to be tightened",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/オランダ政府"
+   ],
+   "creators": [],
+   "date": "2025-01-15",
+   "fields": {
+    "url": "https://www.government.nl/latest/news/2025/01/15/klever-export-controls-on-advanced-semiconductor-manufacturing-equipment-to-be-tightened",
+    "accessDate": "2026-10-10",
+    "websiteTitle": "Government of the Netherlands"
+   },
+   "files": [
+    "sources/web/2025_Government of the Netherlands_Export controls on advanced semiconductor manufacturing equipment to be tightened.html"
+   ],
+   "importId": "asml-swot:eafa1027ef9487c5f7c46941a361d9b4d51345580267a4ec336b8ace81c9e333"
+  },
+  {
+   "key": "fool_2026_04",
+   "itemType": "webpage",
+   "title": "ASML Just Got Hit by a New China Export Threat. Is This a Buying Opportunity or a Red Flag?",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ"
+   ],
+   "creators": [],
+   "date": "2026-04-20",
+   "fields": {
+    "url": "https://www.fool.com/investing/2026/04/20/asml-just-got-hit-by-a-new-china-export-threat-is/",
+    "accessDate": "2026-10-10",
+    "websiteTitle": "The Motley Fool"
+   },
+   "files": [
+    "sources/web/2026_The Motley Fool_ASML just got hit by a new China export threat.html"
+   ],
+   "importId": "asml-swot:55c30c520fc360aacd59232bda41a80d0653b2ee0406e4f800c87cb288bd77b2"
+  },
+  {
+   "key": "trendforce_2026_08",
+   "itemType": "webpage",
+   "title": "U.S. May Push Near-Total ASML China Ban on DUV Sales and Servicing Amid China Domestic Lithography Push",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ"
+   ],
+   "creators": [],
+   "date": "2026-08-25",
+   "fields": {
+    "url": "https://www.trendforce.com/news/2026/08/25/news-u-s-may-push-near-total-asml-china-ban-on-duv-sales-and-servicing-amid-chinas-domestic-lithography-push/",
+    "accessDate": "2026-10-10",
+    "websiteTitle": "TrendForce"
+   },
+   "files": [
+    "sources/web/2026_TrendForce_US may push near-total ASML China ban on DUV sales and servicing.html"
+   ],
+   "importId": "asml-swot:63991b72423ece809b205e7b394d8c25c0a5478616602bb1107460d28a663e98"
+  },
+  {
+   "key": "dutchnews_2026_06",
+   "itemType": "webpage",
+   "title": "ASML denies US accusation an advanced machine reached China",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ"
+   ],
+   "creators": [],
+   "date": "2026-06-19",
+   "fields": {
+    "url": "https://www.dutchnews.nl/2026/06/asml-denies-us-accusation-an-advanced-machine-reached-china/",
+    "accessDate": "2026-10-10",
+    "websiteTitle": "DutchNews"
+   },
+   "files": [
+    "sources/web/2026_DutchNews_ASML denies US accusation an advanced machine reached China.html"
+   ],
+   "importId": "asml-swot:2d77df967b84f16264be45fee61c2a9257fea9f0e3bbe08f80ce2692cd47b9ff"
+  },
+  {
+   "key": "techrepublic_2025_12",
+   "itemType": "webpage",
+   "title": "China Secretly Builds Its Own EUV Chipmaking Machine",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ"
+   ],
+   "creators": [],
+   "date": "2025-12-18",
+   "fields": {
+    "url": "https://www.techrepublic.com/article/news-china-euv-prototype/",
+    "accessDate": "2026-10-10",
+    "websiteTitle": "TechRepublic"
+   },
+   "files": [
+    "sources/web/2025_TechRepublic_China EUV prototype (Reuters report).html"
+   ],
+   "importId": "asml-swot:135c4513ffd243d76fdd91fa7469327398ad707e151bfe8fa9f6cca566ad4c48"
+  },
+  {
+   "key": "thompsonhine_2025_11",
+   "itemType": "webpage",
+   "title": "White House Announces One-Year Suspension of the BIS “Affiliates Rule”",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/米国政府"
+   ],
+   "creators": [],
+   "date": "2025-11-04",
+   "fields": {
+    "url": "https://www.thompsonhinesmartrade.com/2025/11/white-house-announces-one-year-suspension-of-the-bis-affiliates-rule/",
+    "accessDate": "2026-10-10",
+    "websiteTitle": "Thompson Hine"
+   },
+   "files": [
+    "sources/web/2025_Thompson Hine_White House announces one-year suspension of the BIS Affiliates Rule.html"
+   ],
+   "importId": "asml-swot:cf7e8d257bf3e05f90488b32dda550d4840eb3b8644cff266294e402e09acf32"
+  },
+  {
+   "key": "clarkhill_2025_11",
+   "itemType": "webpage",
+   "title": "China Hits “Pause” on Rare-Earth Export Controls and What it Means for Supply Chains",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/中国政府"
+   ],
+   "creators": [],
+   "date": "2025-11-24",
+   "fields": {
+    "url": "https://clarkhill.com/news-events/news/china-hits-pause-on-rare-earth-export-controls-and-what-it-means-for-supply-chains",
+    "accessDate": "2026-10-10",
+    "websiteTitle": "Clark Hill"
+   },
+   "files": [
+    "sources/web/2025_Clark Hill_China hits pause on rare-earth export controls.html"
+   ],
+   "importId": "asml-swot:a97319525160652776d9931852868bed9069ac489e198d8ece3a742ba308f383"
+  },
+  {
+   "key": "register_2025_08",
+   "itemType": "webpage",
+   "title": "Transatlantic chip war fizzles as EU and US framework confirms 15% tariff cap",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ"
+   ],
+   "creators": [],
+   "date": "2025-08-21",
+   "fields": {
+    "url": "https://www.theregister.com/2025/08/21/eu_us_15_percent_tariff_cap/",
+    "accessDate": "2026-10-10",
+    "websiteTitle": "The Register"
+   },
+   "files": [
+    "sources/web/2025_The Register_EU and US framework confirms 15 percent tariff cap.html"
+   ],
+   "importId": "asml-swot:6093d52ed3cade61bdc270c59318a3663dc8a8455448270e1b2eab18cee0010f"
+  },
+  {
+   "key": "skadden_2026_02",
+   "itemType": "webpage",
+   "title": "The Supreme Court Ends IEEPA Tariffs, Bringing Fresh Uncertainty for Companies",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ"
+   ],
+   "creators": [],
+   "date": "2026-02-24",
+   "fields": {
+    "url": "https://www.skadden.com/insights/publications/2026/02/the-supreme-court-ends-ieepa-tariffs",
+    "accessDate": "2026-10-10",
+    "websiteTitle": "Skadden"
+   },
+   "files": [
+    "sources/web/2026_Skadden_The Supreme Court ends IEEPA tariffs.html"
+   ],
+   "importId": "asml-swot:8eeab53734f496d8d8f5e0b07926dc77343dae72427d39e7b4a9fac0f37b5ac2"
+  },
+  {
+   "key": "strtrade_232",
+   "itemType": "webpage",
+   "title": "Section 232 Tariffs on Semiconductors",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ"
+   ],
+   "creators": [],
+   "date": "2026-09",
+   "fields": {
+    "url": "https://www.strtrade.com/trade-news-resources/tariff-actions-resources/section-232-investigation-semiconductors",
+    "accessDate": "2026-10-10",
+    "websiteTitle": "Sandler, Travis & Rosenberg"
+   },
+   "files": [
+    "sources/web/2026_Sandler Travis & Rosenberg_Section 232 tariffs on semiconductors.html"
+   ],
+   "importId": "asml-swot:a6467831e4e2b580e26e8ca4be3815e9f407d2d756eb49162ec3d899a30ace8f"
+  },
+  {
+   "key": "ec_chips_act2_2026",
+   "itemType": "webpage",
+   "title": "Proposal for a Chips Act 2.0",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/欧州委員会"
+   ],
+   "creators": [],
+   "date": "2026-06-03",
+   "fields": {
+    "url": "https://digital-strategy.ec.europa.eu/en/library/proposal-chips-act-20",
+    "accessDate": "2026-10-10",
+    "websiteTitle": "European Commission"
+   },
+   "files": [
+    "sources/web/2026_European Commission_Proposal for a Chips Act 2.0.html"
+   ],
+   "importId": "asml-swot:a22388f62ffafa0fe84adf5a07ccbe0b98dab3add786e58bb783cca592e8f271"
+  },
+  {
+   "key": "nltimes_2024_03",
+   "itemType": "webpage",
+   "title": "Over €2.5 billion confirmed for Eindhoven area, technical education in bid to keep ASML",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/オランダ政府"
+   ],
+   "creators": [],
+   "date": "2024-03-28",
+   "fields": {
+    "url": "https://nltimes.nl/node/71993",
+    "accessDate": "2026-10-10",
+    "websiteTitle": "NL Times"
+   },
+   "files": [
+    "sources/web/2024_NL Times_Over 2.5 billion euros confirmed for Eindhoven area to keep ASML.html"
+   ],
+   "importId": "asml-swot:1d15e04caa045cc6597892b60ac4509ab7ecb05843bc34ebc68ce0b6e87756a8"
+  },
+  {
+   "key": "dutchnews_2026_01",
+   "itemType": "webpage",
+   "title": "After record year, ASML is to cut 1,700 jobs, mainly in NL",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/ASML"
+   ],
+   "creators": [],
+   "date": "2026-01-28",
+   "fields": {
+    "url": "https://www.dutchnews.nl/2026/01/after-record-year-asml-is-to-cut-1700-jobs-mainly-in-nl/",
+    "accessDate": "2026-10-10",
+    "websiteTitle": "DutchNews"
+   },
+   "files": [
+    "sources/web/2026_DutchNews_After record year ASML is to cut 1700 jobs.html"
+   ],
+   "importId": "asml-swot:49aa633c2468ebff97b3351664de1076b7eb752c6076fd53090f33ae8f1b61ae"
+  },
+  {
+   "key": "dutchnews_2026_09",
+   "itemType": "webpage",
+   "title": "Mind the gap: how 30% ruling changes may affect your paycheck",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/オランダ政府"
+   ],
+   "creators": [],
+   "date": "2026-09-08",
+   "fields": {
+    "url": "https://www.dutchnews.nl/2026/09/mind-the-gap-how-30-ruling-changes-may-affect-your-paycheck/",
+    "accessDate": "2026-10-10",
+    "websiteTitle": "DutchNews"
+   },
+   "files": [
+    "sources/web/2026_DutchNews_How 30 percent ruling changes may affect your paycheck.html"
+   ],
+   "importId": "asml-swot:1ace2e66cb1c251e7e3f5ea4f54166dfa336588d81ba859d1948725d315d1fde"
+  },
+  {
+   "key": "nltimes_2026_05",
+   "itemType": "webpage",
+   "title": "Business leaders call on cabinet to fix power grid congestion",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ"
+   ],
+   "creators": [],
+   "date": "2026-05-18",
+   "fields": {
+    "url": "https://nltimes.nl/2026/05/18/business-leaders-call-cabinet-fix-power-grid-congestion",
+    "accessDate": "2026-10-10",
+    "websiteTitle": "NL Times"
+   },
+   "files": [
+    "sources/web/2026_NL Times_Business leaders call on cabinet to fix power grid congestion.html"
+   ],
+   "importId": "asml-swot:dd5ade743fb60a75f35a92260d46ad60ce1a971f5874632a7484413e66c952e8"
+  },
+  {
+   "key": "semi_2026_07",
+   "itemType": "webpage",
+   "title": "Global Semiconductor Equipment Sales Forecast to Reach a Record $229 Billion in 2028, SEMI Reports",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/SEMI"
+   ],
+   "creators": [],
+   "date": "2026-07-14",
+   "fields": {
+    "url": "https://www.semi.org/en/semi-press-release/global-semiconductor-equipment-sales-forecast-to-reach-a-record-229-billion-dollars-in-2028-semi-reports",
+    "accessDate": "2026-10-10",
+    "websiteTitle": "SEMI"
+   },
+   "files": [
+    "sources/web/2026_SEMI_Global semiconductor equipment sales forecast to reach a record 229 billion dollars in 2028.html"
+   ],
+   "importId": "asml-swot:d128255ec19f41dd9809f3a5a08f61b82d2418089c2ec075eed4527f9303788c"
+  },
+  {
+   "key": "trendforce_2026_07",
+   "itemType": "webpage",
+   "title": "TSMC After Earnings Call: Foreign Brokerages See EUV-Driven CapEx Surge and 2027 Price Hikes",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/TSMC"
+   ],
+   "creators": [],
+   "date": "2026-07-17",
+   "fields": {
+    "url": "https://www.trendforce.com/news/2026/07/17/news-tsmc-after-earnings-call-foreign-brokerages-see-euv-driven-capex-surge-and-2027-price-hikes/",
+    "accessDate": "2026-10-10",
+    "websiteTitle": "TrendForce"
+   },
+   "files": [
+    "sources/web/2026_TrendForce_TSMC after earnings call EUV-driven capex surge.html"
+   ],
+   "importId": "asml-swot:2f48bff32bc582d197c534bdd2d3a7fe3203ea5dd2e1a6885680b64657d3222d"
+  },
+  {
+   "key": "trendforce_2026_02",
+   "itemType": "webpage",
+   "title": "ASML’s High-NA EUV for 2027-28: Which Giants Are Betting Big—Intel, Samsung, SK hynix or TSMC?",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ"
+   ],
+   "creators": [],
+   "date": "2026-02-16",
+   "fields": {
+    "url": "https://www.trendforce.com/news/2026/02/16/news-asmls-high-na-euv-for-2027-28-which-giants-are-betting-big-intel-samsung-sk-hynix-or-tsmc/",
+    "accessDate": "2026-10-10",
+    "websiteTitle": "TrendForce"
+   },
+   "files": [
+    "sources/web/2026_TrendForce_ASML High-NA EUV for 2027-28 which giants are betting big.html"
+   ],
+   "importId": "asml-swot:d83a41b2b17841b30ac33803c5013dd68bc30aa830d659f4ac4dab9afab7b6ad"
+  },
+  {
+   "key": "tomshardware_2025_12",
+   "itemType": "webpage",
+   "title": "U.S. government awards Gelsinger-backed EUV developer xLight with $150 million in federal incentives",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ"
+   ],
+   "creators": [],
+   "date": "2025-12-02",
+   "fields": {
+    "url": "https://www.tomshardware.com/tech-industry/semiconductors/u-s-government-awards-gelsinger-backed-euv-developer-xlight-with-usd150-million-in-federal-incentives-company-to-develop-new-electron-based-light-source-for-lithography-tools",
+    "accessDate": "2026-10-10",
+    "websiteTitle": "Tom's Hardware"
+   },
+   "files": [
+    "sources/web/2025_Tom's Hardware_US government awards xLight 150 million dollars.html"
+   ],
+   "importId": "asml-swot:ef19516135f03d976d8ccacc9156243409c6c5d7a389962423fb0f5882cd92bd"
+  },
+  {
+   "key": "canon_2024_09",
+   "itemType": "webpage",
+   "title": "Canon delivers FPA-1200NZ2C nanoimprint lithography system for semiconductor manufacturing to the Texas Institute for Electronics",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/キヤノン"
+   ],
+   "creators": [],
+   "date": "2024-09-26",
+   "fields": {
+    "url": "https://global.canon/en/news/2024/20240926.html",
+    "accessDate": "2026-10-10",
+    "websiteTitle": "Canon"
+   },
+   "files": [
+    "sources/web/2024_Canon_Canon ships nanoimprint lithography system to Texas Institute for Electronics.html"
+   ],
+   "importId": "asml-swot:3a4a4c6152a48011baa89825b7e34373699f9f693abbb0f75d19b4eb22d4424d"
+  },
+  {
+   "key": "asml_ir_quarterly_results",
+   "itemType": "webpage",
+   "title": "Quarterly results (Q3 2026 results announcement date)",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/リソグラフィ",
+    "所属/ASML"
+   ],
+   "creators": [],
+   "date": "2026-10",
+   "fields": {
+    "url": "https://investor.asml.com/quarterly-results",
+    "accessDate": "2026-10-10",
+    "websiteTitle": "ASML"
+   },
+   "files": [
+    "sources/web/2026_ASML_Quarterly results page (browser view 2026-10-10).txt"
+   ],
+   "importId": "asml-swot:0d643a22db0f7d3e019c8fac2935a6f54fd2c64ae5b9848473116293d5d820f9"
+  }
+ ],
+ "existing_references": []
+}

@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>おすすめエージェントスキル調査レポート — Claude Code / Codex</title>
+<style>
+  :root {
+    --fs-xs: 13px; --fs-sm: 14px; --fs-base: 16px; --fs-md: 18px; --fs-lg: 22px; --fs-xl: 30px;
+    --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px; --sp-6: 24px; --sp-8: 32px; --sp-12: 48px; --sp-16: 64px;
+    --r-sm: 6px; --r-md: 10px; --r-lg: 14px;
+    --c-bg: #f6f7f9; --c-card: #ffffff; --c-text: #14181f; --c-muted: #5a6472; --c-border: #dfe3e8;
+    --c-accent: #2f6feb; --c-accent-soft: #eef3fc;
+    --c-bad: #c62828; --c-bad-soft: #fff1ee;
+    --c-good: #2e7d32; --c-good-soft: #eef7ee;
+    --c-warn: #8a5a00; --c-warn-soft: #fff5d6;
+    --c-code-bg: #1c2230; --c-code-text: #e3e8ef;
+    --c-office: #0b6fb4; --c-matlab: #b5502a; --c-pbi: #C9922A; --c-flow: #6e4bb8; --c-sec: #a8365b;
+    --sidebar-w: 280px;
+    --shadow-sm: 0 1px 2px rgba(16,24,40,.05);
+    --shadow-md: 0 4px 16px rgba(16,24,40,.08);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: var(--sp-4); }
+  body { margin: 0; font-family: "Hiragino Sans", "Yu Gothic", "Meiryo", system-ui, -apple-system, sans-serif;
+    font-size: var(--fs-base); line-height: 1.75; color: var(--c-text); background: var(--c-bg); -webkit-font-smoothing: antialiased; }
+  :focus-visible { outline: 3px solid #ffb300; outline-offset: 2px; border-radius: 4px; }
+  .skip-link { position: absolute; left: var(--sp-2); top: -60px; z-index: 100; background: var(--c-accent); color: #fff;
+    padding: var(--sp-3) var(--sp-4); border-radius: var(--r-sm); text-decoration: none; transition: top .15s; }
+  .skip-link:focus { top: var(--sp-2); }
+
+  .layout { display: grid; grid-template-columns: var(--sidebar-w) 1fr; min-height: 100vh; }
+  aside.sidebar { background: #1c2230; color: #cdd3dc; padding: var(--sp-6) var(--sp-4); position: sticky; top: 0; align-self: start; height: 100vh; overflow-y: auto; }
+  .sidebar-title { display: flex; gap: var(--sp-3); align-items: flex-start; color: #fff; text-decoration: none; padding: var(--sp-3);
+    border-radius: var(--r-md); background: rgba(255,255,255,.06); margin-bottom: var(--sp-6); min-height: 44px; }
+  .sidebar-title:hover { background: rgba(255,255,255,.12); }
+  .sidebar-title .lbl { font-weight: 700; font-size: var(--fs-sm); line-height: 1.5; }
+  .sidebar-title small { display: block; font-weight: 400; color: #9aa4b2; font-size: var(--fs-xs); }
+  aside.sidebar h2 { font-size: var(--fs-xs); letter-spacing: .08em; color: #8b94a3; margin: 0 0 var(--sp-3); text-transform: uppercase; }
+  aside.sidebar ol { list-style: none; margin: 0; padding: 0; }
+  aside.sidebar li { margin-bottom: var(--sp-1); }
+  aside.sidebar a.toc-link { display: block; color: #cdd3dc; text-decoration: none; font-size: var(--fs-sm); padding: 10px var(--sp-3); border-radius: var(--r-sm); line-height: 1.45; }
+  aside.sidebar a.toc-link:hover { background: rgba(255,255,255,.09); color: #fff; }
+  aside.sidebar a.toc-link[aria-current="true"] { background: var(--c-accent); color: #fff; font-weight: 700; }
+  aside.sidebar .toc-sub { padding-left: var(--sp-4); font-size: var(--fs-xs); }
+
+  main { padding: var(--sp-12) var(--sp-8) var(--sp-16); max-width: 1040px; }
+  header.top { margin-bottom: var(--sp-12); }
+  header.top h1 { font-size: var(--fs-xl); line-height: 1.35; margin: 0 0 var(--sp-4); }
+  .lead { font-size: var(--fs-md); color: var(--c-muted); margin: 0 0 var(--sp-6); max-width: 78ch; }
+  .env { background: var(--c-card); border: 1px solid var(--c-border); border-radius: var(--r-md); padding: var(--sp-4) var(--sp-6); box-shadow: var(--shadow-sm); }
+  .env dl { display: grid; grid-template-columns: max-content 1fr; gap: var(--sp-2) var(--sp-6); margin: 0; font-size: var(--fs-sm); }
+  .env dt { color: var(--c-muted); } .env dd { margin: 0; font-weight: 600; }
+
+  section.chapter { margin-bottom: var(--sp-16); scroll-margin-top: var(--sp-4); }
+  section.chapter > h2 { font-size: var(--fs-lg); margin: 0 0 var(--sp-4); padding-bottom: var(--sp-3); border-bottom: 2px solid var(--c-border); }
+  h3 { font-size: var(--fs-md); margin: var(--sp-8) 0 var(--sp-3); display: flex; align-items: center; gap: var(--sp-3); flex-wrap: wrap; }
+  h4 { font-size: var(--fs-base); margin: var(--sp-6) 0 var(--sp-2); }
+  p, li { max-width: 84ch; }
+
+  .badge { display: inline-flex; align-items: center; gap: 6px; font-size: var(--fs-xs); font-weight: 700; color: #fff; padding: 3px 10px; border-radius: 999px; white-space: nowrap; }
+  .b-off { background: var(--c-good); } .b-com { background: var(--c-muted); }
+  .b-office { background: var(--c-office); } .b-matlab { background: var(--c-matlab); }
+  .b-pbi { background: var(--c-pbi); } .b-flow { background: var(--c-flow); } .b-sec { background: var(--c-sec); }
+  .pri { font-size: var(--fs-xs); font-weight: 700; color: var(--c-warn); }
+
+  .note { border-radius: var(--r-md); padding: var(--sp-4) var(--sp-6); margin: var(--sp-4) 0; border: 1px solid transparent; }
+  .note .note-t { font-weight: 700; display: flex; align-items: center; gap: var(--sp-2); margin-bottom: var(--sp-2); }
+  .note p:last-child, .note ul:last-child, .note ol:last-child { margin-bottom: 0; }
+  .note.tip { background: var(--c-good-soft); border-color: #bcd9bd; } .note.tip .note-t { color: var(--c-good); }
+  .note.warn { background: var(--c-warn-soft); border-color: #e6d391; } .note.warn .note-t { color: var(--c-warn); }
+  .note.stop { background: var(--c-bad-soft); border-color: #f0c3ba; } .note.stop .note-t { color: var(--c-bad); }
+  .note.info { background: var(--c-accent-soft); border-color: #c3d7f5; } .note.info .note-t { color: var(--c-accent); }
+
+  table { width: 100%; border-collapse: collapse; margin: var(--sp-4) 0; font-size: var(--fs-sm); background: var(--c-card); }
+  caption { text-align: left; font-weight: 700; padding-bottom: var(--sp-2); font-size: var(--fs-base); }
+  th, td { border: 1px solid var(--c-border); padding: 10px var(--sp-3); text-align: left; vertical-align: top; line-height: 1.65; }
+  thead th { background: #eef1f5; font-weight: 700; }
+  tbody tr:nth-child(even) { background: #fafbfc; }
+  .tbl-wrap { overflow-x: auto; }
+  code { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: .93em; background: #eef1f5; padding: 2px 6px; border-radius: 4px; word-break: break-word; }
+
+  .codeblock { position: relative; margin: var(--sp-4) 0; }
+  .codeblock .cap { font-size: var(--fs-xs); color: var(--c-muted); margin-bottom: var(--sp-2); }
+  .codeblock pre { background: var(--c-code-bg); color: var(--c-code-text); padding: var(--sp-6); padding-right: 108px;
+    border-radius: var(--r-md); overflow-x: auto; margin: 0; line-height: 1.7; font-size: var(--fs-sm); }
+  .codeblock pre code { background: none; padding: 0; color: inherit; }
+  .copy-btn { position: absolute; top: 10px; right: 10px; min-height: 36px; min-width: 84px; background: #38445a; color: #fff;
+    border: 1px solid #4c5a74; border-radius: var(--r-sm); font-size: var(--fs-xs); cursor: pointer; font-family: inherit; padding: 0 var(--sp-3); }
+  .copy-btn:hover { background: #46536d; }
+  .copy-msg { font-size: var(--fs-xs); margin-top: var(--sp-2); min-height: 1.2em; }
+  .copy-msg.ok { color: var(--c-good); } .copy-msg.ng { color: var(--c-bad); }
+
+  .skill { background: var(--c-card); border: 1px solid var(--c-border); border-radius: var(--r-md); padding: var(--sp-6); margin-bottom: var(--sp-4); box-shadow: var(--shadow-sm); }
+  .skill h4 { margin-top: 0; font-size: var(--fs-md); }
+  .skill .id { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: var(--fs-xs); color: var(--c-muted); margin: 0 0 var(--sp-3); word-break: break-all; }
+  .skill .meta { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin-bottom: var(--sp-3); }
+  .usecase { background: var(--c-code-bg); color: #e3e8ef; border-radius: var(--r-sm); padding: var(--sp-3) var(--sp-4); font-size: var(--fs-sm); margin-top: var(--sp-3); line-height: 1.65; }
+  .usecase .h { display: block; font-size: var(--fs-xs); color: #8fa3bf; margin-bottom: 4px; }
+
+  .back-to-top { position: fixed; right: var(--sp-6); bottom: var(--sp-6); z-index: 50; width: 56px; height: 56px; border-radius: 50%;
+    border: 1px solid var(--c-border); background: var(--c-card); color: var(--c-text); box-shadow: var(--shadow-md); cursor: pointer;
+    font-size: var(--fs-xs); font-family: inherit; line-height: 1.2; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; }
+  .back-to-top:hover { background: var(--c-accent); color: #fff; border-color: var(--c-accent); }
+  .back-to-top .ic { font-size: var(--fs-base); }
+  .toc-toggle { display: none; }
+  .src-list { font-size: var(--fs-sm); } .src-list li { margin-bottom: var(--sp-2); }
+
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    aside.sidebar { position: static; height: auto; padding: var(--sp-4); }
+    .toc-toggle { display: block; width: 100%; min-height: 44px; background: rgba(255,255,255,.1); color: #fff;
+      border: 1px solid rgba(255,255,255,.2); border-radius: var(--r-sm); font-size: var(--fs-sm); font-family: inherit; cursor: pointer; margin-bottom: var(--sp-3); }
+    aside.sidebar ol[hidden] { display: none; }
+    aside.sidebar h2 { display: none; }
+    main { padding: var(--sp-6) var(--sp-4) var(--sp-16); }
+    header.top h1 { font-size: var(--fs-lg); }
+    .env dl { grid-template-columns: 1fr; gap: 2px var(--sp-2); }
+    .env dt { margin-top: var(--sp-2); }
+    .back-to-top { right: var(--sp-3); bottom: var(--sp-3); width: 52px; height: 52px; }
+    .codeblock pre { padding-right: var(--sp-4); padding-top: 52px; }
+  }
+  @media print { aside.sidebar, .back-to-top, .copy-btn { display: none; } .layout { grid-template-columns: 1fr; } body { background: #fff; } }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">本文へスキップ</a>
+<div class="layout">
+  <aside class="sidebar" aria-label="目次">
+    <a href="#top" class="sidebar-title">
+      <span aria-hidden="true">🧩</span>
+      <span class="lbl">おすすめスキル調査<small>クリックで先頭へ戻る</small></span>
+    </a>
+    <button class="toc-toggle" type="button" id="toc-toggle" aria-expanded="false" aria-controls="toc">目次を開く ▾</button>
+    <h2>目次</h2>
+    <ol id="toc">
+      <li><a class="toc-link" href="#ch0">0. 調査方法と選定基準</a></li>
+      <li><a class="toc-link" href="#ch1">1. 結論：優先度つき一覧</a></li>
+      <li><a class="toc-link" href="#ch2">2. Office文書（最優先）</a></li>
+      <li><a class="toc-link" href="#ch3">3. MATLAB（MathWorks公式）</a></li>
+      <li><a class="toc-link" href="#ch4">4. Power BI / Fabric</a></li>
+      <li><a class="toc-link" href="#ch5">5. データ分析・ノートブック</a></li>
+      <li><a class="toc-link" href="#ch6">6. 開発フロー・品質</a></li>
+      <li><a class="toc-link" href="#ch7">7. セキュリティ</a></li>
+      <li><a class="toc-link" href="#ch8">8. 導入手順</a></li>
+      <li><a class="toc-link" href="#ch9">9. 注意点と見送り判断</a></li>
+      <li><a class="toc-link" href="#src">出典</a></li>
+    </ol>
+  </aside>
+
+  <main id="main">
+    <header class="top" id="top">
+      <h1>おすすめエージェントスキル<br>調査レポート</h1>
+      <p class="lead">
+        Archify に続いて導入を検討する価値のあるスキルを、実際のレジストリ検索と発行元の検証にもとづいて選定しました。
+        「何ができるか」だけでなく、<strong>手元のリポジトリでどう頼むか</strong>まで具体例を添えています。
+      </p>
+      <div class="env">
+        <dl>
+          <dt>調査日</dt><dd>2026年9月6日</dd>
+          <dt>調査方法</dt><dd>公式CLI <code>npx skills find</code> による横断検索 ＋ GitHub API による発行元・実績の検証</dd>
+          <dt>現在の導入状況</dt><dd>ユーザー領域に10件（archify を含む）／ Codex システム同梱6件</dd>
+          <dt>共有の仕組み</dt><dd><code>~/.claude/skills</code> → <code>~/.codex/skills</code> のシンボリックリンクにより、1回の導入で両エージェントに反映</dd>
+        </dl>
+      </div>
+    </header>
+
+    <!-- 0 -->
+    <section class="chapter" id="ch0">
+      <h2>0. 調査方法と選定基準</h2>
+      <p>「人気そうなもの」を並べるのではなく、次の手順で絞り込みました。</p>
+      <ol>
+        <li>公式CLIの検索機能で、実際の作業領域（Power BI、Excel、データ分析、Git運用、コードレビュー、テスト、SQL、調査、計画、デバッグ、リファクタリング、MATLAB、日本語、セキュリティ、技術文書）を横断検索</li>
+        <li>候補リポジトリを GitHub API で検証（発行元の種別、スター数、ライセンス、最終更新日、Issue数）</li>
+        <li>既に導入済みの10件と<strong>機能が重複するものを除外</strong></li>
+        <li>実際のリポジトリ構成・開発ルールに照らして、使う場面が具体的に描けるものだけを残す</li>
+      </ol>
+      <div class="tbl-wrap">
+      <table>
+        <caption>採用したリポジトリの検証結果（すべて実測値）</caption>
+        <thead><tr><th style="width:26%">リポジトリ</th><th style="width:16%">発行元</th><th style="width:12%">スター</th><th style="width:14%">ライセンス</th><th>最終更新</th></tr></thead>
+        <tbody>
+          <tr><td><code>anthropics/skills</code></td><td>Anthropic（組織）</td><td>174,639</td><td>表記なし</td><td>2026-09-03</td></tr>
+          <tr><td><code>openai/skills</code></td><td>OpenAI（組織）</td><td>25,464</td><td>表記なし</td><td>2026-07-14</td></tr>
+          <tr><td><code>matlab/matlab-agentic-toolkit</code></td><td>MathWorks（組織）</td><td>1,012</td><td>独自（要確認）</td><td>2026-08-27</td></tr>
+          <tr><td><code>microsoft/skills-for-fabric</code></td><td>Microsoft（組織）</td><td>1,111</td><td>MIT</td><td>2026-09-04</td></tr>
+          <tr><td><code>github/awesome-copilot</code></td><td>GitHub（組織）</td><td>38,675</td><td>MIT</td><td>2026-09-06</td></tr>
+          <tr><td><code>obra/superpowers</code></td><td>個人</td><td>282,150</td><td>MIT</td><td>2026-09-04</td></tr>
+          <tr><td><code>mattpocock/skills</code></td><td>個人</td><td>253,021</td><td>MIT</td><td>2026-09-04</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <div class="note info">
+        <div class="note-t"><span aria-hidden="true">💡</span>自分でも探せます</div>
+        <p>調査に使ったのは次のコマンドです。気になる分野があれば同じように検索できます。</p>
+        <p style="margin-top:var(--sp-2)"><code>npx skills find "検索語"</code> ／ 発行元で絞るなら <code>npx skills find "検索語" --owner github</code></p>
+      </div>
+    </section>
+
+    <!-- 1 -->
+    <section class="chapter" id="ch1">
+      <h2>1. 結論：優先度つき一覧</h2>
+      <div class="tbl-wrap">
+      <table>
+        <caption>推奨スキル（★★★ = すぐ入れたい／★★ = その作業が来たら）</caption>
+        <thead><tr><th style="width:7%">優先</th><th style="width:26%">スキル</th><th style="width:15%">発行元</th><th>効く場面</th></tr></thead>
+        <tbody>
+          <tr><td class="pri">★★★</td><td><code>anthropics/skills@xlsx</code></td><td>Anthropic</td><td>Excel の読み書き。Codex 側にこの機能が無い</td></tr>
+          <tr><td class="pri">★★★</td><td><code>anthropics/skills@docx</code></td><td>Anthropic</td><td>Word 文書の作成・編集。同上</td></tr>
+          <tr><td class="pri">★★★</td><td><code>anthropics/skills@pptx</code></td><td>Anthropic</td><td>PowerPoint の作成・編集。同上</td></tr>
+          <tr><td class="pri">★★★</td><td><code>matlab/…@matlab-model-optics</code> ほか</td><td>MathWorks</td><td>MATLAB。開発方針の検討順1位の言語</td></tr>
+          <tr><td class="pri">★★★</td><td><code>microsoft/…@semantic-model-authoring</code></td><td>Microsoft</td><td>Power BI セマンティックモデルの作成（TMDL作業に直結）</td></tr>
+          <tr><td class="pri">★★★</td><td><code>obra/superpowers@systematic-debugging</code></td><td>個人</td><td>原因が分からない不具合の切り分け</td></tr>
+          <tr><td class="pri">★★</td><td><code>openai/skills@jupyter-notebook</code></td><td>OpenAI</td><td>ノートブックでの解析</td></tr>
+          <tr><td class="pri">★★</td><td><code>github/…@powerbi-modeling</code></td><td>GitHub</td><td>Power BI のモデル設計</td></tr>
+          <tr><td class="pri">★★</td><td><code>github/…@power-bi-dax-optimization</code></td><td>GitHub</td><td>DAX メジャーの改善</td></tr>
+          <tr><td class="pri">★★</td><td><code>microsoft/…@powerbi-report-design</code></td><td>Microsoft</td><td>レポートの見せ方の設計</td></tr>
+          <tr><td class="pri">★★</td><td><code>openai/skills@security-best-practices</code></td><td>OpenAI</td><td>公開前のセキュリティ確認</td></tr>
+          <tr><td class="pri">★★</td><td><code>openai/skills@gh-address-comments</code></td><td>OpenAI</td><td>PR のレビュー指摘対応</td></tr>
+          <tr><td class="pri">★★</td><td><code>anthropics/skills@doc-coauthoring</code></td><td>Anthropic</td><td>design.md / requirements.md の作成</td></tr>
+          <tr><td class="pri">★★</td><td><code>mattpocock/skills@request-refactor-plan</code></td><td>個人</td><td>大きくなったコードの整理方針</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section class="chapter" id="ch2">
+      <h2>2. Office文書 — いちばん大きな穴</h2>
+      <div class="note stop">
+        <div class="note-t"><span aria-hidden="true">🛑</span>今回の調査で見つかった最重要の発見</div>
+        <p>Excel・Word・PowerPoint を扱うスキルは、<strong>Claude Code 側にはプラグインとして存在しますが、Codex 側には存在しません</strong>。実際、Codex のシステム同梱スキルは imagegen / openai-docs / plugin-creator / review-agent / skill-creator / skill-installer の6件のみで、Office文書系は含まれていません。</p>
+        <p><strong>つまり、同じ「資料を作って」という依頼でも、Codex では実行できない</strong>状態です。共有スキルフォルダに入れれば、両方で同じことができるようになります。</p>
+      </div>
+
+      <div class="skill">
+        <h4><span class="badge b-office">Office</span> xlsx — 表計算ファイル</h4>
+        <p class="id">anthropics/skills@xlsx</p>
+        <p>.xlsx / .xlsm / .csv / .tsv の読み書き、数式・書式の設定、グラフ作成、崩れた表データの整形まで扱います。</p>
+        <div class="usecase"><span class="h">想定利用方法</span>「計測結果のエクスポート CSV を読んで、ウェハ別の RMSE をまとめた Excel を作って。半径150mm以上の点は除外して、シートは工程ごとに分けて」</div>
+      </div>
+      <div class="skill">
+        <h4><span class="badge b-office">Office</span> docx — Word文書</h4>
+        <p class="id">anthropics/skills@docx</p>
+        <p>目次・見出し・ページ番号を持つ体裁の整った Word 文書の作成と編集。既存 .docx からの抽出や差し替えにも対応します。</p>
+        <div class="usecase"><span class="h">想定利用方法</span>「この design.md をもとに、社内提出用の Word 版を作って。目次と見出し番号を付けて、図は SVG から貼り込んで」</div>
+      </div>
+      <div class="skill">
+        <h4><span class="badge b-office">Office</span> pptx — PowerPoint</h4>
+        <p class="id">anthropics/skills@pptx</p>
+        <p>スライドの新規作成、既存 .pptx の読み取り・編集、テンプレート（.potx）やノートの扱い。</p>
+        <div class="usecase"><span class="h">想定利用方法</span>「先週作った Transformer 構成図の PPTX を読んで、スライド2の図だけを差し替えて。他のページはそのまま」</div>
+      </div>
+      <div class="note tip">
+        <div class="note-t"><span aria-hidden="true">✅</span>まとめて入れられます</div>
+        <p>この3つは同じリポジトリにあるので、1コマンドで同時に導入できます（導入手順は8章）。</p>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section class="chapter" id="ch3">
+      <h2>3. MATLAB — MathWorks 公式</h2>
+      <p>開発方針で「実現可能性を検討する順番の1位」が MATLAB であることを踏まえると、この発見はかなり大きいはずです。<strong>MathWorks 自身が公開している</strong>スキル集で、140件以上が含まれています。</p>
+      <div class="note warn">
+        <div class="note-t"><span aria-hidden="true">⚠️</span>まとめて入れないこと</div>
+        <p>航空宇宙・自動運転・PCB設計・無線通信など、使わない分野のスキルも大量に含まれます。<strong>全部入れると一覧が埋まってしまう</strong>ので、必要なものだけを <code>--skill</code> で個別に指定してください。</p>
+      </div>
+      <div class="tbl-wrap">
+      <table>
+        <caption>この環境で効きそうなもの（140件以上から抜粋）</caption>
+        <thead><tr><th style="width:34%">スキル名</th><th>用途と、効きそうな理由</th></tr></thead>
+        <tbody>
+          <tr><td><code>matlab-model-optics</code></td><td><strong>光学モデリング</strong>。画素の集光特性やリソグラフィ関連の検討と直結する</td></tr>
+          <tr><td><code>matlab-fit-curve</code></td><td>曲線・曲面のフィッティング。Zernike 分解や面内分布の当てはめに使える</td></tr>
+          <tr><td><code>matlab-solve-optimization</code></td><td>最適化問題。パラメータ最適化のツールを作っている領域と重なる</td></tr>
+          <tr><td><code>matlab-create-experiment</code></td><td>パラメータスイープの実験設計。条件比較を体系立てて回せる</td></tr>
+          <tr><td><code>matlab-analyze-data</code> / <code>matlab-import-export-data</code></td><td>計測データの取り込みと解析</td></tr>
+          <tr><td><code>matlab-call-python</code></td><td>MATLAB から Python を呼ぶ。既存の Python 資産と接続できる</td></tr>
+          <tr><td><code>matlab-secure-credentials</code></td><td><strong>資格情報の安全な扱い</strong>。「認証情報をコードに書かない」という方針にそのまま対応</td></tr>
+          <tr><td><code>matlab-review-code</code> / <code>matlab-debug-code</code> / <code>matlab-write-test</code></td><td>レビュー・デバッグ・テスト作成</td></tr>
+          <tr><td><code>matlab-optimize-performance</code> / <code>matlab-modernize-code</code></td><td>速度改善と、古い書き方の現代化</td></tr>
+          <tr><td><code>matlab-generate-report</code></td><td>解析結果のレポート化</td></tr>
+          <tr><td><code>matlab-use-spreadsheet-link</code></td><td>Excel との連携</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <div class="usecase" style="max-width:none">
+        <span class="h">想定利用方法</span>
+        「optical-scatterometry の .m を <code>matlab-review-code</code> で見て、古い書き方があれば <code>matlab-modernize-code</code> の観点で直す案を出して。実行はまだしないで、変更点だけ先に見せて」
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section class="chapter" id="ch4">
+      <h2>4. Power BI / Fabric</h2>
+      <p>Microsoft 公式の <code>skills-for-fabric</code> には、Power BI に直接効くスキルが揃っています。TMDL を手で書いている現状と噛み合います。</p>
+
+      <div class="skill">
+        <h4><span class="badge b-pbi">Power BI</span> セマンティックモデルの作成</h4>
+        <p class="id">microsoft/skills-for-fabric@semantic-model-authoring</p>
+        <p>モデル定義の作成を支援します。TMDL を編集する作業そのものが対象です。</p>
+        <div class="usecase"><span class="h">想定利用方法</span>「litho-overlay の SemanticModel に、DimProcess テーブルを DirectQuery で追加したい。既存の TMDL の書き方（タブ字下げ、ref table の追加）に合わせて草案を作って」</div>
+      </div>
+      <div class="skill">
+        <h4><span class="badge b-pbi">Power BI</span> レポートの設計・管理・計画</h4>
+        <p class="id">microsoft/skills-for-fabric@powerbi-report-design / powerbi-report-management / powerbi-report-planning / powerbi-report-authoring</p>
+        <p>レポートの見せ方の設計、運用管理、事前の計画づくり。4つに分かれているので必要なものだけ選べます。</p>
+        <div class="usecase"><span class="h">想定利用方法</span>「ウェハマップとトレンドを1画面に載せたい。スライサーは4つ。<code>powerbi-report-design</code> の観点でページ構成案を3つ出して」</div>
+      </div>
+      <div class="skill">
+        <h4><span class="badge b-pbi">Power BI</span> モデリングと DAX 最適化</h4>
+        <p class="id">github/awesome-copilot@powerbi-modeling ／ @power-bi-dax-optimization</p>
+        <p>GitHub 公式リポジトリ収録。前者はモデル設計の指針、後者は DAX メジャーの改善に特化しています。</p>
+        <div class="usecase"><span class="h">想定利用方法</span>「このメジャーが DirectQuery で遅い。<code>power-bi-dax-optimization</code> の観点で書き換え案と、なぜ速くなるかを説明して」</div>
+      </div>
+      <div class="note info">
+        <div class="note-t"><span aria-hidden="true">💡</span>Git 連携もあります</div>
+        <p><code>git-integration-operations-cli</code> と <code>deployment-pipelines-authoring-cli</code> も同じリポジトリに含まれます。将来 Fabric 側の Git 連携やデプロイパイプラインを使う段階になったら候補になります。</p>
+      </div>
+    </section>
+
+    <!-- 5 -->
+    <section class="chapter" id="ch5">
+      <h2>5. データ分析・ノートブック</h2>
+      <div class="skill">
+        <h4><span class="badge b-off">OpenAI公式</span> jupyter-notebook</h4>
+        <p class="id">openai/skills@jupyter-notebook</p>
+        <p>ノートブックの作成・編集を扱います。統計学習の教材や Kaggle 的な解析でノートブックを使う場面に向きます。</p>
+        <div class="usecase"><span class="h">想定利用方法</span>「Data Wrangler で出した前処理コードを起点に、ウェハ面内のばらつきを可視化するノートブックを作って。セルごとに何をしているか日本語のコメントを入れて」</div>
+      </div>
+      <div class="note tip">
+        <div class="note-t"><span aria-hidden="true">✅</span>導入済みの機能で足りている部分</div>
+        <p>CSV の中身確認は Data Wrangler と Rainbow CSV（VS Code 拡張）で足りています。pandas 系のスキルは複数見つかりましたが、<strong>役割が重なるため今回は推奨しません</strong>。</p>
+      </div>
+    </section>
+
+    <!-- 6 -->
+    <section class="chapter" id="ch6">
+      <h2>6. 開発フロー・品質</h2>
+      <div class="skill">
+        <h4><span class="badge b-flow">フロー</span> systematic-debugging（体系的なデバッグ）</h4>
+        <p class="id">obra/superpowers@systematic-debugging</p>
+        <p>当てずっぽうで直すのではなく、仮説を立てて切り分ける手順を踏ませるスキルです。今回の調査で見つけたデバッグ系の中で最も採用されています。</p>
+        <div class="usecase"><span class="h">想定利用方法</span>「Windows 実機で PBIP が開けない。エラーは出るが原因が分からない。<code>systematic-debugging</code> の手順で切り分けて、次に試すことを1つずつ提示して」</div>
+      </div>
+      <div class="skill">
+        <h4><span class="badge b-flow">フロー</span> request-refactor-plan（整理方針の作成）</h4>
+        <p class="id">mattpocock/skills@request-refactor-plan</p>
+        <p>いきなり書き換えるのではなく、<strong>先に整理の計画を出させる</strong>スキルです。「変更前に方針を確認したい」という進め方と相性が良いです。</p>
+        <div class="usecase"><span class="h">想定利用方法</span>「regression-analyzer の app が1ファイルに集まりすぎている。<code>request-refactor-plan</code> で分割案を作って。実装はまだしないで」</div>
+      </div>
+      <div class="skill">
+        <h4><span class="badge b-off">OpenAI公式</span> gh-address-comments ／ gh-fix-ci</h4>
+        <p class="id">openai/skills@gh-address-comments ／ @gh-fix-ci</p>
+        <p>前者は PR に付いたレビュー指摘への対応、後者は CI の失敗対応。<code>gh</code> コマンドを使い、認証状態も先に確認してくれます。</p>
+        <div class="usecase"><span class="h">想定利用方法</span>「いまのブランチの PR に付いたコメントを読んで、対応方針を一覧にして。修正は承認してから」</div>
+      </div>
+      <div class="skill">
+        <h4><span class="badge b-off">Anthropic公式</span> doc-coauthoring（文書の共同執筆）</h4>
+        <p class="id">anthropics/skills@doc-coauthoring</p>
+        <p>設計文書・仕様・提案書を、いきなり書き始めずに構成から詰めていく進め方を提供します。<code>requirements.md</code> や <code>design.md</code> を書く場面に合います。</p>
+        <div class="usecase"><span class="h">想定利用方法</span>「新しい計測解析ツールの requirements.md を作りたい。<code>doc-coauthoring</code> の流れで、まず私に質問して要件を引き出してから書いて」</div>
+      </div>
+      <div class="note info">
+        <div class="note-t"><span aria-hidden="true">💡</span>コードレビュー系は既に持っています</div>
+        <p>採用数の多いレビュー系スキルが複数ありましたが、自作の <code>readable-code-review</code> が既にあります。<strong>方針が競合するため追加は推奨しません。</strong></p>
+      </div>
+    </section>
+
+    <!-- 7 -->
+    <section class="chapter" id="ch7">
+      <h2>7. セキュリティ</h2>
+      <p>「外部公開前に認証・公開範囲・機密情報の混入を確認する」という方針を、機械的に支援できます。</p>
+      <div class="skill">
+        <h4><span class="badge b-sec">セキュリティ</span> security-best-practices ／ security-threat-model</h4>
+        <p class="id">openai/skills@security-best-practices ／ @security-threat-model ／ @security-ownership-map</p>
+        <p>実装上の基本的な注意点の確認と、脅威モデルの整理。OpenAI 公式リポジトリに3種類が用意されています。</p>
+        <div class="usecase"><span class="h">想定利用方法</span>「この社内 Web アプリを IIS で公開する前に、<code>security-best-practices</code> の観点で確認して。認証・公開範囲・設定ファイルへの認証情報混入を重点的に」</div>
+      </div>
+    </section>
+
+    <!-- 8 -->
+    <section class="chapter" id="ch8">
+      <h2>8. 導入手順</h2>
+      <p>導入先は <code>~/.agents/skills/</code> になります。Archify のときと同様、既存の運用場所（<code>~/.codex/skills</code>）から見えるようにリンクを張る必要があります。</p>
+
+      <h3>手順1：まず最優先の3つ（Office文書）</h3>
+      <div class="codeblock">
+        <button class="copy-btn" type="button" data-copy>コピー</button>
+        <pre><code>npx -y skills add anthropics/skills --skill xlsx,docx,pptx --agent codex --global --copy --yes</code></pre>
+        <p class="copy-msg" role="status" aria-live="polite"></p>
+      </div>
+
+      <h3>手順2：既存の運用場所から見えるようにする</h3>
+      <div class="codeblock">
+        <div class="cap">Archify と同じ方法。1本ずつリンクを張れば Claude Code / Codex の両方から使えます</div>
+        <button class="copy-btn" type="button" data-copy>コピー</button>
+        <pre><code>for s in xlsx docx pptx; do
+  ln -s "$HOME/.agents/skills/$s" "$HOME/.codex/skills/$s"
+done
+ls -l "$HOME/.codex/skills"</code></pre>
+        <p class="copy-msg" role="status" aria-live="polite"></p>
+      </div>
+
+      <h3>手順3：必要になったら追加する</h3>
+      <div class="codeblock">
+        <div class="cap">MATLAB は必要なスキルだけを指定（全部入れない）</div>
+        <button class="copy-btn" type="button" data-copy>コピー</button>
+        <pre><code>npx -y skills add matlab/matlab-agentic-toolkit \
+  --skill matlab-model-optics,matlab-fit-curve,matlab-solve-optimization,matlab-review-code \
+  --agent codex --global --copy --yes</code></pre>
+        <p class="copy-msg" role="status" aria-live="polite"></p>
+      </div>
+      <div class="codeblock">
+        <div class="cap">Power BI / Fabric</div>
+        <button class="copy-btn" type="button" data-copy>コピー</button>
+        <pre><code>npx -y skills add microsoft/skills-for-fabric \
+  --skill semantic-model-authoring,powerbi-report-design \
+  --agent codex --global --copy --yes</code></pre>
+        <p class="copy-msg" role="status" aria-live="polite"></p>
+      </div>
+      <div class="note tip">
+        <div class="note-t"><span aria-hidden="true">✅</span>試してから決められます</div>
+        <p>インストールせずに動きを確認したい場合は <code>npx skills use &lt;owner/repo&gt;@&lt;skill&gt; --agent codex</code> が使えます。Archify のときと同じやり方です。</p>
+      </div>
+    </section>
+
+    <!-- 9 -->
+    <section class="chapter" id="ch9">
+      <h2>9. 注意点と、見送った判断</h2>
+
+      <div class="note stop">
+        <div class="note-t"><span aria-hidden="true">🛑</span>スキルはエージェントの全権限で動きます</div>
+        <p>インストール時に CLI 自身がこう警告します — 使う前に中身を確認すること、そしてスキルは<strong>エージェントと同じ権限で実行される</strong>こと。第三者が書いた指示をエージェントが読んで従う仕組みである以上、<strong>発行元の確認は必須</strong>です。本レポートで公式リポジトリを中心に選んだのはこのためです。</p>
+      </div>
+
+      <div class="tbl-wrap">
+      <table>
+        <caption>見送ったもの と その理由</caption>
+        <thead><tr><th style="width:30%">対象</th><th>見送った理由</th></tr></thead>
+        <tbody>
+          <tr><td>コードレビュー系スキル全般</td><td>自作の <code>readable-code-review</code> と方針が競合する</td></tr>
+          <tr><td>pandas / CSV 系スキル</td><td>Data Wrangler と Rainbow CSV で足りている</td></tr>
+          <tr><td>PDF 系スキル</td><td>すでに <code>pdf</code> スキルを持っている</td></tr>
+          <tr><td>日本語ライティング系スキル</td><td>検索で見つかったものは採用数が2桁台と少なく、自作の <code>document-antipattern-check</code> の方が要件に合っている</td></tr>
+          <tr><td>技術文書テンプレート集（個人リポジトリ）</td><td>スター15件と実績が乏しく、社内利用の判断材料として弱い</td></tr>
+          <tr><td>Figma 関連（openai/skills に多数）</td><td>デザインツールを使う作業が見当たらない</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <div class="note warn">
+        <div class="note-t"><span aria-hidden="true">⚠️</span>ライセンスの確認が必要なもの</div>
+        <ul>
+          <li><strong>MathWorks の toolkit</strong>：ライセンス表記が標準形式ではありません（GitHub API では「NOASSERTION」）。<strong>業務利用の前にリポジトリの LICENSE を確認</strong>してください</li>
+          <li><strong>anthropics/skills・openai/skills</strong>：API 上はライセンス欄が空でした。個々のスキルにライセンス表記がある場合があります（Archify は MIT と明記されていました）</li>
+        </ul>
+      </div>
+
+      <div class="note info">
+        <div class="note-t"><span aria-hidden="true">💡</span>入れすぎない</div>
+        <p>スキルは増えるほど、エージェントが「どれを使うか」を判断する負担が増えます。<strong>まず Office文書の3つだけ入れて、しばらく使ってから次を足す</strong>のが確実です。Archify のときと同じ進め方です。</p>
+      </div>
+    </section>
+
+    <section class="chapter" id="src">
+      <h2>出典</h2>
+      <ul class="src-list">
+        <li>スキル検索：公式CLI <code>npx skills find</code>（検索結果ページ <a href="https://skills.sh/">skills.sh</a>）</li>
+        <li><a href="https://github.com/anthropics/skills">anthropics/skills</a> ／ <a href="https://github.com/openai/skills">openai/skills</a></li>
+        <li><a href="https://github.com/matlab/matlab-agentic-toolkit">matlab/matlab-agentic-toolkit</a>（MathWorks）</li>
+        <li><a href="https://github.com/microsoft/skills-for-fabric">microsoft/skills-for-fabric</a> ／ <a href="https://github.com/github/awesome-copilot">github/awesome-copilot</a></li>
+        <li><a href="https://github.com/obra/superpowers">obra/superpowers</a> ／ <a href="https://github.com/mattpocock/skills">mattpocock/skills</a></li>
+      </ul>
+      <p style="font-size:var(--fs-sm);color:var(--c-muted)">
+        スター数・ライセンス・最終更新日は 2026年9月6日に GitHub API から取得した実測値です。採用数（installs）は公式CLIの検索結果に表示された値です。
+        スキルの説明は各リポジトリの定義ファイルの記述にもとづいています。
+      </p>
+    </section>
+  </main>
+</div>
+
+<button class="back-to-top" type="button" id="back-to-top" aria-label="ページ先頭へ戻る" title="ページ先頭へ戻る">
+  <span class="ic" aria-hidden="true">↑</span><span aria-hidden="true">先頭</span>
+</button>
+
+<script>
+(function () {
+  "use strict";
+  document.getElementById('back-to-top').addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    var t = document.getElementById('top');
+    if (t) { t.setAttribute('tabindex', '-1'); t.focus({ preventScroll: true }); }
+  });
+  var toggle = document.getElementById('toc-toggle'), toc = document.getElementById('toc');
+  function applyWidth() {
+    if (window.matchMedia('(max-width: 900px)').matches) { toc.hidden = toggle.getAttribute('aria-expanded') !== 'true'; }
+    else { toc.hidden = false; }
+  }
+  toggle.addEventListener('click', function () {
+    var e = toggle.getAttribute('aria-expanded') === 'true';
+    toggle.setAttribute('aria-expanded', String(!e));
+    toggle.textContent = !e ? '目次を閉じる ▴' : '目次を開く ▾';
+    applyWidth();
+  });
+  window.addEventListener('resize', applyWidth); applyWidth();
+  var links = Array.prototype.slice.call(document.querySelectorAll('a.toc-link'));
+  var targets = links.map(function (a) { return document.querySelector(a.getAttribute('href')); }).filter(Boolean);
+  function highlight() {
+    var pos = window.scrollY + 120, cur = null;
+    targets.forEach(function (el) { if (el.offsetTop <= pos) { cur = el.id; } });
+    links.forEach(function (a) {
+      if (a.getAttribute('href') === '#' + cur) { a.setAttribute('aria-current', 'true'); } else { a.removeAttribute('aria-current'); }
+    });
+  }
+  window.addEventListener('scroll', highlight, { passive: true }); highlight();
+  document.querySelectorAll('[data-copy]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var wrap = btn.closest('.codeblock'), text = wrap.querySelector('code').innerText, msg = wrap.querySelector('.copy-msg');
+      function ok() { msg.textContent = 'コピーしました。'; msg.className = 'copy-msg ok'; }
+      function ng() { msg.textContent = 'コピーできませんでした。ブラウザがこのページでのコピーを許可していないためです。コード部分を選択して手動でコピーしてください。'; msg.className = 'copy-msg ng'; }
+      function fb() {
+        try {
+          var ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+          document.body.appendChild(ta); ta.select();
+          var d = document.execCommand('copy'); document.body.removeChild(ta); d ? ok() : ng();
+        } catch (e) { ng(); }
+      }
+      if (navigator.clipboard && window.isSecureContext) { navigator.clipboard.writeText(text).then(ok).catch(fb); } else { fb(); }
+    });
+  });
+})();
+</script>
+</body>
+</html>

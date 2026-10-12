@@ -1,0 +1,1530 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI活用 英語学習ベストプラクティス（TOEIC L&amp;R対策）</title>
+<style>
+  /* =========================================
+     Design Tokens
+     ========================================= */
+  :root {
+    --fs-xs:   12px;
+    --fs-sm:   14px;
+    --fs-base: 16px;
+    --fs-md:   18px;
+    --fs-lg:   22px;
+    --fs-xl:   30px;
+
+    --sp-1: 4px;
+    --sp-2: 8px;
+    --sp-3: 12px;
+    --sp-4: 16px;
+    --sp-6: 24px;
+    --sp-8: 32px;
+    --sp-12: 48px;
+    --sp-16: 64px;
+
+    --r-sm: 6px;
+    --r-md: 10px;
+    --r-lg: 14px;
+
+    --c-bg:        #f6f7f9;
+    --c-card:      #ffffff;
+    --c-text:      #14181f;
+    --c-muted:     #5a6472;
+    --c-border:    #dfe3e8;
+    --c-accent:    #2f6feb;
+    --c-accent-soft:#eef3fc;
+    --c-bad:       #c62828;
+    --c-bad-soft:  #fff1ee;
+    --c-good:      #2e7d32;
+    --c-good-soft: #eef7ee;
+    --c-warn:      #8a5a00;
+    --c-warn-soft: #fff5d6;
+
+    --sidebar-w: 280px;
+
+    --shadow-sm: 0 1px 2px rgba(16,24,40,0.04);
+    --shadow-md: 0 4px 16px rgba(16,24,40,0.08);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: "Hiragino Sans", "Yu Gothic", "Meiryo", system-ui, -apple-system, sans-serif;
+    font-size: var(--fs-base);
+    line-height: 1.75;
+    color: var(--c-text);
+    background: var(--c-bg);
+    -webkit-font-smoothing: antialiased;
+    text-align: left;
+  }
+  :focus-visible {
+    outline: 3px solid #ffb300;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  code, pre, .mono {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: var(--sidebar-w) 1fr;
+    min-height: 100vh;
+  }
+
+  /* ---- Sidebar ---- */
+  aside.sidebar {
+    background: #1c2230;
+    color: #cdd3dc;
+    padding: var(--sp-6) var(--sp-4);
+    position: sticky;
+    top: 0;
+    align-self: start;
+    height: 100vh;
+    overflow-y: auto;
+    border-right: 1px solid #2a3142;
+  }
+  .sidebar-title {
+    font-size: var(--fs-md);
+    color: #fff;
+    margin: 0 0 var(--sp-2);
+    line-height: 1.4;
+    font-weight: 700;
+  }
+  .sidebar-sub {
+    font-size: var(--fs-xs);
+    color: #8b95a7;
+    margin: 0 0 var(--sp-6);
+    line-height: 1.6;
+  }
+  .sidebar h2 {
+    font-size: var(--fs-xs);
+    letter-spacing: 0.14em;
+    color: #8b95a7;
+    margin: 0 0 var(--sp-3);
+  }
+  .sidebar ol { list-style: none; margin: 0; padding: 0; counter-reset: toc; }
+  .sidebar li { counter-increment: toc; margin: 0; }
+  .sidebar a {
+    display: block;
+    color: #cdd3dc;
+    text-decoration: none;
+    padding: var(--sp-2) var(--sp-3) var(--sp-2) var(--sp-8);
+    font-size: var(--fs-sm);
+    border-radius: var(--r-sm);
+    position: relative;
+    line-height: 1.5;
+    transition: background .15s, color .15s;
+    border-left: 3px solid transparent;
+  }
+  .sidebar a::before {
+    content: counter(toc);
+    position: absolute;
+    left: var(--sp-3);
+    color: #6d7787;
+    font-size: var(--fs-xs);
+    font-variant-numeric: tabular-nums;
+  }
+  .sidebar a:hover { background: #262e3f; color: #fff; }
+  .sidebar a.is-active {
+    background: #2b3548;
+    color: #fff;
+    border-left-color: #6f9bff;
+    font-weight: 700;
+  }
+
+  /* ---- Main ---- */
+  main {
+    padding: var(--sp-12) var(--sp-8) var(--sp-16);
+    max-width: 980px;
+  }
+  .doc-head { margin-bottom: var(--sp-8); }
+  .doc-head h1 {
+    font-size: var(--fs-xl);
+    line-height: 1.35;
+    margin: 0 0 var(--sp-3);
+  }
+  .doc-meta { font-size: var(--fs-sm); color: var(--c-muted); margin: 0; }
+
+  section { margin-bottom: var(--sp-12); scroll-margin-top: var(--sp-4); }
+  section > h2 {
+    font-size: var(--fs-lg);
+    line-height: 1.4;
+    margin: 0 0 var(--sp-4);
+    padding: var(--sp-3) var(--sp-4);
+    background: var(--c-card);
+    border: 1px solid var(--c-border);
+    border-left: 4px solid var(--c-accent);
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-sm);
+  }
+  section > h2 .num {
+    display: inline-block;
+    min-width: 2.2em;
+    color: var(--c-accent);
+    font-variant-numeric: tabular-nums;
+  }
+  h3 {
+    font-size: var(--fs-md);
+    margin: var(--sp-8) 0 var(--sp-3);
+    padding-bottom: var(--sp-2);
+    border-bottom: 2px solid var(--c-border);
+  }
+  h4 { font-size: var(--fs-base); margin: var(--sp-6) 0 var(--sp-2); }
+  p { margin: 0 0 var(--sp-4); }
+  ul, ol { margin: 0 0 var(--sp-4); padding-left: 1.4em; }
+  li { margin-bottom: var(--sp-2); }
+  a { color: #1b56c4; }
+
+  .card {
+    background: var(--c-card);
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-md);
+    padding: var(--sp-4) var(--sp-6);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: var(--sp-4);
+  }
+  .lead {
+    background: var(--c-accent-soft);
+    border: 1px solid #cfdcf7;
+    border-radius: var(--r-md);
+    padding: var(--sp-4) var(--sp-6);
+    margin-bottom: var(--sp-6);
+  }
+  .note, .warn, .good {
+    border-radius: var(--r-md);
+    padding: var(--sp-3) var(--sp-4);
+    margin: 0 0 var(--sp-4);
+    border: 1px solid var(--c-border);
+  }
+  .note { background: var(--c-accent-soft); border-color: #cfdcf7; }
+  .warn { background: var(--c-warn-soft); border-color: #f0dfa8; }
+  .good { background: var(--c-good-soft); border-color: #cfe6cf; }
+  .note strong, .warn strong, .good strong { display: inline-block; margin-right: var(--sp-2); }
+
+  .table-wrap { overflow-x: auto; margin-bottom: var(--sp-4); }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 560px;
+    background: var(--c-card);
+    font-size: var(--fs-sm);
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-md);
+  }
+  th, td {
+    border: 1px solid var(--c-border);
+    padding: var(--sp-2) var(--sp-3);
+    text-align: left;
+    vertical-align: top;
+    line-height: 1.65;
+  }
+  th { background: #eef1f5; font-weight: 700; }
+  caption {
+    caption-side: top;
+    text-align: left;
+    font-size: var(--fs-sm);
+    color: var(--c-muted);
+    padding-bottom: var(--sp-2);
+  }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+  pre {
+    background: #1c2230;
+    color: #e6e9ef;
+    padding: var(--sp-4);
+    border-radius: var(--r-md);
+    overflow-x: auto;
+    font-size: var(--fs-sm);
+    line-height: 1.7;
+    margin: 0 0 var(--sp-4);
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  code:not(pre code) {
+    background: #eef1f5;
+    border: 1px solid var(--c-border);
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-size: 0.92em;
+  }
+
+  /* ---- Prompt block ---- */
+  .prompt {
+    background: var(--c-card);
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-md);
+    padding: var(--sp-4);
+    margin-bottom: var(--sp-6);
+    box-shadow: var(--shadow-sm);
+  }
+  .prompt-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-3);
+    flex-wrap: wrap;
+    margin-bottom: var(--sp-3);
+  }
+  .prompt-head h4 { margin: 0; font-size: var(--fs-base); }
+  .prompt-use {
+    font-size: var(--fs-sm);
+    color: var(--c-muted);
+    margin: 0 0 var(--sp-3);
+  }
+  .btn-copy {
+    font-size: var(--fs-sm);
+    font-weight: 700;
+    padding: var(--sp-2) var(--sp-4);
+    min-height: 44px;
+    border: 1px solid var(--c-border);
+    background: #fff;
+    color: var(--c-text);
+    border-radius: var(--r-sm);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .btn-copy:hover { background: #eef1f5; }
+  .btn-copy.copied { background: var(--c-good-soft); border-color: #cfe6cf; color: var(--c-good); }
+  .prompt pre { margin-bottom: 0; }
+
+  /* ---- BEFORE / AFTER ---- */
+  .ba-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sp-4);
+    margin-bottom: var(--sp-6);
+    align-items: stretch;
+  }
+  .ba-box {
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-md);
+    padding: var(--sp-4);
+    background: var(--c-card);
+    display: flex;
+    flex-direction: column;
+  }
+  .ba-box.before { background: var(--c-bad-soft); border-color: #f3c9c1; }
+  .ba-box.after  { background: var(--c-good-soft); border-color: #cfe6cf; }
+  .pill {
+    display: inline-flex;
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    padding: 2px 10px;
+    border-radius: 999px;
+    margin-bottom: var(--sp-2);
+    align-self: flex-start;
+  }
+  .pill.before { background: var(--c-bad); color: #fff; }
+  .pill.after  { background: var(--c-good); color: #fff; }
+  .ba-box p:last-child, .ba-box ul:last-child { margin-bottom: 0; }
+
+  .badge {
+    display: inline-block;
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: var(--r-sm);
+    border: 1px solid var(--c-border);
+    background: #eef1f5;
+    margin-right: var(--sp-2);
+    vertical-align: 2px;
+  }
+  .badge.l { background: #efe7ff; border-color: #d8c7fb; }
+  .badge.r { background: #e4f3ee; border-color: #bfe0d4; }
+
+  .steps { counter-reset: step; list-style: none; padding-left: 0; }
+  .steps > li {
+    counter-increment: step;
+    position: relative;
+    padding: var(--sp-3) var(--sp-4) var(--sp-3) var(--sp-12);
+    background: var(--c-card);
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-md);
+    margin-bottom: var(--sp-3);
+  }
+  .steps > li::before {
+    content: "STEP " counter(step);
+    position: absolute;
+    left: var(--sp-3);
+    top: var(--sp-3);
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    color: var(--c-accent);
+    width: 3em;
+    line-height: 1.3;
+  }
+
+  /* ---- Checklist ---- */
+  .check-item {
+    display: flex;
+    gap: var(--sp-3);
+    align-items: flex-start;
+    background: var(--c-card);
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-md);
+    padding: var(--sp-3) var(--sp-4);
+    margin-bottom: var(--sp-2);
+  }
+  .check-item input[type="checkbox"] {
+    width: 22px; height: 22px;
+    margin-top: 3px;
+    flex-shrink: 0;
+    accent-color: var(--c-accent);
+    cursor: pointer;
+  }
+  .check-item label { cursor: pointer; line-height: 1.7; }
+  .check-item.done { background: var(--c-good-soft); border-color: #cfe6cf; }
+  .check-item.done label { color: var(--c-muted); }
+  .check-progress {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+    background: var(--c-card);
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-md);
+    padding: var(--sp-3) var(--sp-4);
+    margin-bottom: var(--sp-4);
+    font-size: var(--fs-sm);
+    flex-wrap: wrap;
+  }
+  .check-progress .bar {
+    flex: 1;
+    min-width: 120px;
+    height: 10px;
+    background: #e6e9ef;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .check-progress .bar > span {
+    display: block;
+    height: 100%;
+    width: 0%;
+    background: var(--c-good);
+    transition: width .2s;
+  }
+  .btn-reset {
+    font-size: var(--fs-sm);
+    padding: var(--sp-2) var(--sp-4);
+    border: 1px solid var(--c-border);
+    background: #fff;
+    color: var(--c-text);
+    border-radius: var(--r-sm);
+    cursor: pointer;
+    min-height: 44px;
+  }
+  .btn-reset:hover { background: #eef1f5; }
+
+  .to-top {
+    position: fixed;
+    right: var(--sp-6);
+    bottom: var(--sp-6);
+    min-width: 44px;
+    min-height: 44px;
+    padding: var(--sp-2) var(--sp-4);
+    background: var(--c-accent);
+    color: #fff;
+    border: none;
+    border-radius: 999px;
+    box-shadow: var(--shadow-md);
+    font-size: var(--fs-sm);
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    z-index: 50;
+  }
+  .to-top:hover { background: #2559c4; }
+
+  footer.doc-foot {
+    border-top: 1px solid var(--c-border);
+    padding-top: var(--sp-6);
+    color: var(--c-muted);
+    font-size: var(--fs-sm);
+  }
+
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    aside.sidebar {
+      position: static;
+      height: auto;
+      border-right: none;
+      border-bottom: 1px solid #2a3142;
+      padding: var(--sp-4);
+    }
+    .sidebar details > summary {
+      cursor: pointer;
+      color: #fff;
+      font-size: var(--fs-base);
+      font-weight: 700;
+      padding: var(--sp-2) 0;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+    }
+    main { padding: var(--sp-6) var(--sp-4) var(--sp-16); }
+    .ba-grid { grid-template-columns: 1fr; }
+    .to-top { right: var(--sp-4); bottom: var(--sp-4); }
+  }
+  @media (min-width: 901px) {
+    .sidebar details > summary { display: none; }
+  }
+  @media print {
+    aside.sidebar, .to-top, .btn-copy, .btn-reset { display: none; }
+    .layout { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- ============ 左目次 ============ -->
+  <aside class="sidebar">
+    <p class="sidebar-title">AI活用 英語学習<br>ベストプラクティス</p>
+    <p class="sidebar-sub">TOEIC L&amp;R スコアアップ編<br>2026年8月29日作成</p>
+    <details open>
+      <summary>目次を開く / 閉じる</summary>
+      <nav aria-label="目次">
+        <h2>目次</h2>
+        <ol>
+          <li><a href="#s1">この資料の使い方</a></li>
+          <li><a href="#s2">TOEIC L&amp;Rの構造を知る</a></li>
+          <li><a href="#s3">AIに任せること・任せないこと</a></li>
+          <li><a href="#s4">現在地の測定と目標設定</a></li>
+          <li><a href="#s5">スコア帯別ロードマップ</a></li>
+          <li><a href="#s6">語彙をAIで固める</a></li>
+          <li><a href="#s7">文法とPart 5・6</a></li>
+          <li><a href="#s8">リスニング Part 1〜4</a></li>
+          <li><a href="#s9">リーディング Part 7</a></li>
+          <li><a href="#s10">弱点分析ループ（中核）</a></li>
+          <li><a href="#s11">本番の時間配分と戦略</a></li>
+          <li><a href="#s12">そのまま使えるプロンプト集</a></li>
+          <li><a href="#s13">やりがちな失敗と改善例</a></li>
+          <li><a href="#s14">12週間の学習計画</a></li>
+          <li><a href="#s15">習慣チェックリスト</a></li>
+          <li><a href="#s16">参考リンク</a></li>
+        </ol>
+      </nav>
+    </details>
+  </aside>
+
+  <!-- ============ 本文 ============ -->
+  <main>
+    <div class="doc-head" id="top">
+      <h1>AIを活用した英語学習ベストプラクティス<br>― TOEIC L&amp;R スコアアップ編</h1>
+      <p class="doc-meta">作成日: 2026年8月29日 ／ 対象: 独学でTOEIC L&amp;Rのスコアを上げたい社会人 ／ 出題形式の出典: IIBC公式サイト（16章）</p>
+    </div>
+
+    <div class="lead">
+      <p><strong>結論を先に書きます。</strong>AIは「無限に付き合ってくれる練習相手」であり「弱点を言語化してくれる分析役」です。逆に、<strong>本番そっくりの問題を作る役には向きません</strong>。ここを取り違えると、勉強した気になるのにスコアが動かない、という状態に陥ります。</p>
+      <p style="margin-bottom:0;">正しい役割分担は<strong>「問題は公式教材、分析と反復練習はAI」</strong>。この資料は、その具体的な回し方を、パート別の手順とコピペで使えるプロンプトまで落とし込んだものです。</p>
+    </div>
+
+    <!-- ===== 1 ===== -->
+    <section id="s1">
+      <h2><span class="num">1.</span>この資料の使い方</h2>
+
+      <h3>3つの原則</h3>
+      <ol>
+        <li><strong>測る → 直す → 確かめる、を1週間で1周させる。</strong>やりっぱなしの学習は、量をこなしてもスコアに変換されません。</li>
+        <li><strong>AIには「解かせる」のではなく「説明させる」。</strong>正解を教わるより、<strong>なぜ自分が間違えたか</strong>を言語化させるほうが伸びます。</li>
+        <li><strong>公式問題集を正本にする。</strong>AI生成問題は練習量の確保には便利ですが、難易度と出題傾向は本番とずれます。実力判定は必ず公式教材で行います。</li>
+      </ol>
+
+      <h3>読む順番の目安</h3>
+      <ul>
+        <li><strong>まず何をすればいいか知りたい</strong>: 2章 → 4章 → 5章 → 14章</li>
+        <li><strong>リスニングを上げたい</strong>: 8章 → 10章 → 12章</li>
+        <li><strong>リーディングが時間内に終わらない</strong>: 9章 → 11章 → 7章</li>
+        <li><strong>今すぐAIを使い始めたい</strong>: 12章のプロンプト集</li>
+      </ul>
+
+      <div class="note">
+        <strong>前提</strong>この資料でいう「AI」は、ChatGPT・Claude などの対話型AIを指します。有料・無料を問わず使えますが、<strong>音声の読み上げ（TTS）機能があるもの</strong>を選ぶとリスニング学習の幅が広がります。
+      </div>
+    </section>
+
+    <!-- ===== 2 ===== -->
+    <section id="s2">
+      <h2><span class="num">2.</span>TOEIC L&amp;Rの構造を知る</h2>
+
+      <p>対策の前に、点の配分を把握します。<strong>どこに時間を投じると点が動くか</strong>は、この表だけで半分決まります。</p>
+
+      <div class="table-wrap">
+        <table>
+          <caption>TOEIC Listening &amp; Reading Test の構成（IIBC公式による。合計200問・約2時間）</caption>
+          <thead>
+            <tr>
+              <th style="width:9%">Part</th>
+              <th style="width:19%">形式</th>
+              <th class="num" style="width:10%">問題数</th>
+              <th style="width:31%">特徴</th>
+              <th style="width:31%">対策の優先度</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td>写真描写</td><td class="num">6</td><td>写真1枚に説明文4つ。1回だけ放送</td><td>低（問題数が少ない。基本語彙で取り切る）</td></tr>
+            <tr><td>2</td><td>応答問題</td><td class="num">25</td><td>質問文＋応答3つ。<strong>選択肢が3つだけ</strong></td><td><strong>高</strong>（選択肢が少なく伸びやすい。最優先の1つ）</td></tr>
+            <tr><td>3</td><td>会話問題</td><td class="num">39</td><td>2〜3人の会話に設問3問ずつ</td><td><strong>最高</strong>（リスニング最大の配点。先読みが効く）</td></tr>
+            <tr><td>4</td><td>説明文問題</td><td class="num">30</td><td>アナウンス等のミニトークに設問3問ずつ</td><td>高（Part 3と対策が共通）</td></tr>
+            <tr><td>5</td><td>短文穴埋め</td><td class="num">30</td><td>4択の文法・語彙問題</td><td><strong>高</strong>（短時間で解けて即効性がある）</td></tr>
+            <tr><td>6</td><td>長文穴埋め</td><td class="num">16</td><td>1文書につき4問。文挿入問題を含む</td><td>中（Part 5と7の中間。文脈判断の練習に）</td></tr>
+            <tr><td>7</td><td>読解</td><td class="num">54</td><td>1つの文書29問＋複数の文書25問</td><td><strong>最高</strong>（全体の最大配点。時間切れが起きる場所）</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>スコアの仕組み</h3>
+      <ul>
+        <li>リスニング <strong>5〜495点</strong>、リーディング <strong>5〜495点</strong>、合計 <strong>10〜990点</strong>（5点刻み）。</li>
+        <li>正答数がそのまま点数になるのではなく、<strong>統計処理を経て換算</strong>されます。回ごとの難易度差が調整されるため、「1問=5点」といった単純計算は目安にすぎません。</li>
+        <li>減点はありません。<strong>分からなくても必ずマークする</strong>のが鉄則です。</li>
+      </ul>
+
+      <div class="good">
+        <strong>時間の性質が違う</strong>リスニングは音声のペースに従うため<strong>時間配分の自由がありません</strong>。一方リーディングは75分を自分で配る必要があり、多くの人がPart 7で時間切れになります。つまり<strong>リスニングは「聞き取る力」、リーディングは「処理速度」</strong>が課題になりやすい、と最初に理解しておくと対策を誤りません。
+      </div>
+    </section>
+
+    <!-- ===== 3 ===== -->
+    <section id="s3">
+      <h2><span class="num">3.</span>AIに任せること・任せないこと</h2>
+
+      <div class="table-wrap">
+        <table>
+          <caption>役割分担の整理</caption>
+          <thead>
+            <tr><th style="width:50%">AIが得意（積極的に任せる）</th><th style="width:50%">AIが苦手（任せない・確認が必要）</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <ul style="margin-bottom:0">
+                  <li>間違えた理由の分析と類型化</li>
+                  <li>語彙の例文・コロケーション・語源の説明</li>
+                  <li>英文の言い換え（パラフレーズ）を大量に作る</li>
+                  <li>自分の書いた英文・書き取りの添削</li>
+                  <li>文法の「なぜ他の選択肢が違うか」の説明</li>
+                  <li>学習計画の作成と週次の見直し</li>
+                  <li>音読・シャドーイング用のスクリプト作成</li>
+                </ul>
+              </td>
+              <td>
+                <ul style="margin-bottom:0">
+                  <li><strong>本番相当の模擬問題を作ること</strong>（難易度・出題傾向がずれる）</li>
+                  <li><strong>スコアの予測</strong>（換算は非公開の統計処理）</li>
+                  <li>実際の試験問題の再現（著作物であり、再現は不正確）</li>
+                  <li>細かい事実（単語の頻出度ランキング等）の断定</li>
+                  <li>音声の細部（本番のナレーター、話速、訛りの再現）</li>
+                </ul>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="warn">
+        <strong>もっとも重要な注意</strong>AIは<strong>もっともらしい誤りを自信たっぷりに出力します</strong>。特に「この文法説明」「この単語の使い分け」は、8割正しくて2割ずれる、という形で混ざります。<strong>公式問題集の解説と食い違ったら公式が正</strong>。AIの説明は「理解の補助線」として使い、暗記の対象にはしないでください。
+      </div>
+
+      <h3>AI生成問題の正しい使い方</h3>
+      <p>「本番の代わり」ではなく「<strong>特定の弱点を集中的に叩くドリル</strong>」として使います。</p>
+      <div class="ba-grid">
+        <div class="ba-box before">
+          <span class="pill before">やりがち</span>
+          <p><strong>「TOEIC模試を作って」と丸投げ</strong></p>
+          <ul style="margin-bottom:0">
+            <li>本番より簡単、または不自然な英語になる</li>
+            <li>解いても実力が測れない</li>
+            <li>解説の誤りに気づけず、誤った知識が定着する</li>
+          </ul>
+        </div>
+        <div class="ba-box after">
+          <span class="pill after">効果的</span>
+          <p><strong>弱点を指定してドリルを作らせる</strong></p>
+          <ul style="margin-bottom:0">
+            <li>「前置詞 vs 接続詞の識別だけ10問」のように限定する</li>
+            <li>目的は<strong>判断の型を反復すること</strong>で、実力測定ではない</li>
+            <li>測定は公式問題集の模試で行う</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 4 ===== -->
+    <section id="s4">
+      <h2><span class="num">4.</span>現在地の測定と目標設定</h2>
+
+      <ol class="steps">
+        <li>
+          <p style="margin:0 0 var(--sp-2)"><strong>公式問題集を1回分、本番と同じ条件で解く</strong></p>
+          <p style="margin:0">時間を計り、途中で止めず、答えを見ない。ここで妥協すると、以降の分析がすべて狂います。</p>
+        </li>
+        <li>
+          <p style="margin:0 0 var(--sp-2)"><strong>パート別の正答率を記録する</strong></p>
+          <p style="margin:0">合計点ではなく<strong>パート別</strong>が重要です。「Part 3が62%、Part 5が80%、Part 7が45%（うち未回答12問）」のように、未回答数も分けて数えます。</p>
+        </li>
+        <li>
+          <p style="margin:0 0 var(--sp-2)"><strong>「解けなかった」を4つに分類する</strong></p>
+          <ul style="margin-bottom:0">
+            <li><strong>知識不足</strong>: 単語・文法を知らなかった</li>
+            <li><strong>処理速度</strong>: 分かるが間に合わなかった</li>
+            <li><strong>集中の切れ</strong>: 聞き逃した・読み飛ばした</li>
+            <li><strong>解き方</strong>: 設問の読み違い、選択肢の罠にかかった</li>
+          </ul>
+        </li>
+        <li>
+          <p style="margin:0 0 var(--sp-2)"><strong>AIに分析させて優先順位を出す</strong></p>
+          <p style="margin:0">12章のプロンプト1を使い、集計結果を貼り付けます。<strong>人間は自分の弱点を過小評価しがち</strong>なので、数字を渡して客観的に整理させるのが目的です。</p>
+        </li>
+        <li>
+          <p style="margin:0 0 var(--sp-2)"><strong>目標と期限を決める</strong></p>
+          <p style="margin:0">「3か月で+100点」程度が現実的な目安です。ただし伸び幅はスコア帯によって大きく変わります（5章）。<strong>目標は受験日から逆算</strong>し、日付を先に押さえてください。</p>
+        </li>
+      </ol>
+
+      <div class="note">
+        <strong>記録の作り方</strong>表計算ソフトに「日付／教材／パート／正答数／分母／未回答数／気づき」の列を作るだけで十分です。この記録が、10章の弱点分析ループの燃料になります。
+      </div>
+    </section>
+
+    <!-- ===== 5 ===== -->
+    <section id="s5">
+      <h2><span class="num">5.</span>スコア帯別ロードマップ</h2>
+
+      <p>同じ「TOEIC対策」でも、400点の人と800点の人ではやるべきことが正反対です。<strong>今の帯の課題だけをやる</strong>のが最短経路です。</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:14%">現在のスコア</th>
+              <th style="width:29%">主な課題</th>
+              <th style="width:29%">最優先の学習</th>
+              <th style="width:28%">AIの使いどころ</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>〜500</strong></td>
+              <td>語彙と基本文法の不足。英文を「読める」段階に達していない</td>
+              <td>基本語彙2000〜3000語、中学〜高校基礎文法の総復習、Part 1・2の得点化</td>
+              <td>文法の疑問をその場で質問。例文を大量に作らせて用法を体に入れる</td>
+            </tr>
+            <tr>
+              <td><strong>500〜700</strong></td>
+              <td>知識はあるが処理が遅い。Part 3・4の細部と、Part 7の後半が落ちる</td>
+              <td>Part 3・4の先読み習慣化、Part 5の即答化（1問20秒）、音読とシャドーイング</td>
+              <td>誤答の原因分析、パラフレーズ訓練、シャドーイング用スクリプト生成</td>
+            </tr>
+            <tr>
+              <td><strong>700〜860</strong></td>
+              <td>取りこぼしが分散。Part 7の複数文書、Part 2のひねった応答が課題</td>
+              <td>時間内完答（塗り絵ゼロ）、複数文書のクロス参照、語彙の精度向上</td>
+              <td>間違いの類型化、紛らわしい語の使い分け説明、弱点特化ドリル</td>
+            </tr>
+            <tr>
+              <td><strong>860〜</strong></td>
+              <td>ミスがほぼランダム。速度と集中の持続が壁</td>
+              <td>本番形式での実戦、低頻度語彙、5〜10分の余裕を作る速度</td>
+              <td>難語の語源・ニュアンス整理、時事英文での多読素材づくり</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="good">
+        <strong>共通の優先順位</strong>迷ったら<strong>Part 3（39問）とPart 7（54問）</strong>から手を付けます。この2つで全体の約46%を占めます。<strong>Part 2（25問）は選択肢が3つ</strong>しかないため、投じた時間に対する回収が最も早いパートです。
+      </div>
+    </section>
+
+    <!-- ===== 6 ===== -->
+    <section id="s6">
+      <h2><span class="num">6.</span>語彙をAIで固める</h2>
+
+      <h3>覚え方の原則</h3>
+      <ul>
+        <li><strong>単語単体で覚えない。</strong>TOEICは文脈で問われます。<code>submit</code> なら「提出する」ではなく <code>submit an application by Friday</code> の形で覚えます（コロケーション＝相性のよい語の組み合わせ）。</li>
+        <li><strong>間隔をあけて何度も思い出す。</strong>1回で完璧に覚えるより、翌日・3日後・1週間後に<strong>思い出す試み</strong>をするほうが定着します（想起練習）。</li>
+        <li><strong>自分が間違えた語を優先する。</strong>市販の単語帳を頭から回すより、模試で落とした語のほうが優先度が高いです。</li>
+        <li><strong>TOEIC頻出の場面に紐づける。</strong>オフィス、会議、出張、請求、採用、物流。同じ語でもこの文脈での意味が問われます。</li>
+      </ul>
+
+      <h3>AIを使った語彙カードの作り方</h3>
+      <p>間違えた単語のリストを渡し、<strong>暗記カード用のデータに変換させる</strong>のが効率的です（12章プロンプト3）。1語につき次の要素を揃えます。</p>
+      <div class="card">
+        <p style="margin-bottom:var(--sp-2)"><strong>意味（TOEIC文脈での訳）／品詞／コロケーション2〜3個／TOEIC風の例文1つ／紛らわしい語との違い</strong></p>
+        <p style="margin-bottom:0">出力形式をCSVやタブ区切りで指定すれば、暗記アプリにそのまま取り込めます。<strong>手で作らないこと</strong>——カード作成は作業であって学習ではありません。</p>
+      </div>
+
+      <div class="warn">
+        <strong>確認の習慣</strong>AIが作る例文は自然でも、<strong>まれに不自然な語の組み合わせが混ざります</strong>。重要語は辞書（英英辞典やコーパス系の辞書）で1回裏を取ってください。特に前置詞との組み合わせは要注意です。
+      </div>
+    </section>
+
+    <!-- ===== 7 ===== -->
+    <section id="s7">
+      <h2><span class="num">7.</span>文法とPart 5・6</h2>
+
+      <h3>Part 5は「解く」より「見分ける」</h3>
+      <p>Part 5の30問は、<strong>1問20秒</strong>で処理してPart 7に時間を送るのが基本設計です。そのために、選択肢を見た瞬間に問題の型を判別します。</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th style="width:24%">選択肢の見た目</th><th style="width:30%">問われていること</th><th style="width:46%">判断の手順</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>同じ語の変化形（-tion / -ive / -ly など）</td><td>品詞</td><td>空所の前後だけ見て、必要な品詞を決める。文全体を読む必要はない</td></tr>
+            <tr><td>動詞の活用形が並ぶ</td><td>時制・態・主述の一致</td><td>時を表す語句と主語を探す。受動か能動かを目的語の有無で判断</td></tr>
+            <tr><td>前置詞と接続詞が混在</td><td>後ろに続く形</td><td>空所の後が「文（主語＋動詞）」か「名詞のかたまり」かを見る</td></tr>
+            <tr><td>意味の異なる単語が並ぶ</td><td>語彙</td><td>文意を取る必要がある。<strong>時間がかかるので後回しでよい</strong></td></tr>
+            <tr><td>代名詞・関係詞</td><td>指すもの・つなぎ方</td><td>先行詞と、空所の後ろで欠けている要素を確認</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>AIの使い方: 「なぜ他が違うか」を説明させる</h3>
+      <p>正解の理由だけ聞いても伸びません。<strong>誤答3つそれぞれについて、どういう条件なら正解になるか</strong>を説明させると、判断基準が立体的になります。</p>
+      <div class="ba-grid">
+        <div class="ba-box before">
+          <span class="pill before">BEFORE</span>
+          <p><strong>「答えは？」と聞く</strong></p>
+          <p style="margin-bottom:0">「正解は(B)です。副詞が必要だからです」→ 読んで納得して終わり。次に同じ形が出ても選べない。</p>
+        </div>
+        <div class="ba-box after">
+          <span class="pill after">AFTER</span>
+          <p><strong>「4択それぞれを説明して」と聞く</strong></p>
+          <p style="margin-bottom:0">「(A)は名詞なので〜という文なら正解、(C)は形容詞で〜の位置なら正解」→ <strong>見分ける条件</strong>が手に入り、再現できる。</p>
+        </div>
+      </div>
+
+      <h3>Part 6（長文穴埋め）の注意</h3>
+      <ul>
+        <li>Part 5と同じ感覚で<strong>空所の周辺だけ見ると落とします</strong>。時制や指示語は、前後の文を読まないと決まりません。</li>
+        <li><strong>文挿入問題</strong>は、挿入文の中の代名詞・接続表現（<code>However</code>, <code>Therefore</code>, <code>this</code> など）が手がかりです。前の文とのつながりを確認します。</li>
+        <li>AIには「この空所を解くために、どこまで読む必要があったか」を説明させると、読む範囲の感覚が育ちます。</li>
+      </ul>
+    </section>
+
+    <!-- ===== 8 ===== -->
+    <section id="s8">
+      <h2><span class="num">8.</span>リスニング Part 1〜4</h2>
+
+      <h3>聞き取れない原因は3つ</h3>
+      <p>対策の前に、自分がどれで詰まっているかを切り分けます。<strong>スクリプトを読めば分かる</strong>なら、原因は1か2です。</p>
+      <ol>
+        <li><strong>音の変化に対応できない</strong>: 単語同士がつながる、脱落する（<code>want to</code> → ワナ、<code>check it out</code> → チェキラゥ）</li>
+        <li><strong>処理が追いつかない</strong>: 1語ずつ日本語に訳しているため、音声の速度に負ける</li>
+        <li><strong>そもそも知らない</strong>: 語彙・表現を知らない（この場合はリスニングでなく語彙の問題）</li>
+      </ol>
+
+      <h3>シャドーイングとディクテーションの手順</h3>
+      <p>この2つが、リスニング学習で最も効果が確認しやすい方法です。<strong>教材は公式問題集の音声</strong>を使い、1つの素材を繰り返します。</p>
+      <ol class="steps">
+        <li><p style="margin:0"><strong>解く</strong>。まず普通に問題として解き、答え合わせをする。</p></li>
+        <li><p style="margin:0"><strong>ディクテーション（書き取り）</strong>。スクリプトを見ずに、聞こえた通りに書き出す。1文ずつ止めてよい。</p></li>
+        <li><p style="margin:0"><strong>答え合わせ</strong>。スクリプトと突き合わせ、<strong>書けなかった箇所に印</strong>を付ける。ここが自分の弱点そのもの。</p></li>
+        <li><p style="margin:0"><strong>原因分析</strong>。AIに自分の書き取りと正解を渡し、「音の変化」「語彙不足」「文法」のどれが原因かを分類させる（プロンプト6）。</p></li>
+        <li><p style="margin:0"><strong>オーバーラッピング</strong>。スクリプトを見ながら音声に重ねて音読。速度と発音を合わせる。</p></li>
+        <li><p style="margin:0"><strong>シャドーイング</strong>。スクリプトを見ずに、音声の少し後を追って声に出す。<strong>意味を意識しながら</strong>言えるまで繰り返す。</p></li>
+      </ol>
+      <div class="note">
+        <strong>1日の目安</strong>新しい素材を毎日増やすより、<strong>同じ1分の音声を1週間かけて完璧にする</strong>ほうが伸びます。目安は1日15〜20分。声を出せない環境では、口だけ動かす「マンブリング」でも効果があります。
+      </div>
+
+      <h3>Part別のポイント</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th style="width:12%">Part</th><th style="width:44%">攻略の要点</th><th style="width:44%">AI活用</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="badge l">1</span></td>
+              <td>人物の動作、物の位置、受動態の進行形（<code>is being placed</code>）に注意。写真にない物が聞こえたら消去</td>
+              <td>写真描写でよく使う動詞・前置詞のリストを作らせ、例文で音読する</td>
+            </tr>
+            <tr>
+              <td><span class="badge l">2</span></td>
+              <td><strong>最初の疑問詞を絶対に聞き逃さない</strong>。同じ音・似た音の語を含む選択肢は引っかけの可能性が高い。素直な応答が正解とは限らない</td>
+              <td>疑問文に対する「ひねった応答」のパターンを列挙させ、慣れておく</td>
+            </tr>
+            <tr>
+              <td><span class="badge l">3</span></td>
+              <td><strong>設問の先読み</strong>が生命線。音声が流れる前に3つの設問に目を通し、何を待ち受けるか決める。図表問題は図を先に見る</td>
+              <td>設問だけ渡して「会話で何が話される可能性が高いか」を予測させる訓練（プロンプト5）</td>
+            </tr>
+            <tr>
+              <td><span class="badge l">4</span></td>
+              <td>冒頭で場面（留守電・館内放送・広告など）を特定すると展開が読める。数字・固有名詞は設問になりやすい</td>
+              <td>場面別の定型表現集を作らせる。TTSで読み上げてシャドーイング素材にする</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="warn">
+        <strong>TTSの限界</strong>AIの読み上げ音声は、本番のナレーター（米・英・加・豪の4種）とは話し方が異なります。<strong>速度に慣れる練習には使えますが、耳を作る主教材は公式音声</strong>にしてください。AI音声は補助（自作スクリプトの音読チェックなど）に留めます。
+      </div>
+    </section>
+
+    <!-- ===== 9 ===== -->
+    <section id="s9">
+      <h2><span class="num">9.</span>リーディング Part 7</h2>
+
+      <h3>時間切れの正体は「読む速度」</h3>
+      <p>Part 7が終わらない人の大半は、読解力ではなく<strong>処理速度</strong>で負けています。まず自分の速度を測ります。</p>
+      <div class="card">
+        <p style="margin-bottom:var(--sp-2)"><strong>WPM（1分あたりの語数）の測り方</strong></p>
+        <p style="margin-bottom:0">公式問題集の長文1つを、辞書を引かずに読み、かかった秒数を記録します。<strong>語数 ÷ 秒数 × 60 = WPM</strong>。目安は、600点前後で100〜120、800点以上で150前後。まず<strong>今の数値を知る</strong>ことが出発点です。</p>
+      </div>
+
+      <h3>速く読むための3つの習慣</h3>
+      <ol>
+        <li><strong>返り読みをやめる</strong>。日本語の語順に直そうとすると必ず戻ります。英語の語順のまま、意味のかたまり（チャンク）で前から処理します。音読とシャドーイングは、この癖を直すのにも効きます。</li>
+        <li><strong>設問を先に読む</strong>。何を探すか決めてから本文に入ります。ただし<strong>選択肢まで読むと時間を食う</strong>ので、設問文だけにします。</li>
+        <li><strong>探す読み（スキャニング）と通読を使い分ける</strong>。固有名詞・日付・数字を問う設問は該当箇所だけ拾えば済みます。一方、<strong>「文書の目的は？」「示唆されていることは？」</strong>は全体を読む必要があります。</li>
+      </ol>
+
+      <h3>最重要スキル: パラフレーズに気づく</h3>
+      <p>Part 7の正解選択肢は、本文の表現がそのまま使われることはほとんどありません。<strong>言い換えられています</strong>。</p>
+      <div class="card">
+        <p style="margin-bottom:var(--sp-2)">本文: <code>The shipment will be delayed due to inclement weather.</code></p>
+        <p style="margin-bottom:0">正解: <code>A delivery will arrive later than expected because of bad weather.</code>（<code>shipment</code>→<code>delivery</code>、<code>inclement weather</code>→<code>bad weather</code>）</p>
+      </div>
+      <p><strong>この言い換えを見抜く力は、AIで直接鍛えられます。</strong>本文の1文を渡し、言い換えを3通り作らせる。逆に、AIが作った言い換え文が本文と同義かどうかを自分で判定する。これを繰り返すと、選択肢の見え方が変わります（プロンプト7）。</p>
+
+      <h3>複数文書問題（25問）</h3>
+      <ul>
+        <li>2〜3の文書を<strong>横断して情報を組み合わせる</strong>設問が必ず含まれます（例: メールの日付＋スケジュール表を突き合わせる）。</li>
+        <li>各文書の<strong>種類と役割</strong>（案内、返信メール、請求書、日程表）を最初に把握すると、どこに何があるか予測できます。</li>
+        <li>1つの文書だけで答えが出る設問と、組み合わせが必要な設問を見分けるのがコツです。</li>
+      </ul>
+    </section>
+
+    <!-- ===== 10 ===== -->
+    <section id="s10">
+      <h2><span class="num">10.</span>弱点分析ループ（この資料の中核）</h2>
+
+      <p>ここがAI活用の本丸です。<strong>週1回30分</strong>、次のループを回します。これをやるかどうかで、同じ学習時間でも結果が変わります。</p>
+
+      <ol class="steps">
+        <li>
+          <p style="margin:0 0 var(--sp-2)"><strong>集める（毎日3分）</strong></p>
+          <p style="margin:0">間違えた問題を記録します。記録するのは<strong>「問題番号・自分の答え・正解・なぜ間違えたか（一言）」</strong>の4つだけ。完璧な記録より、続く記録を優先します。</p>
+        </li>
+        <li>
+          <p style="margin:0 0 var(--sp-2)"><strong>分析させる（週1回）</strong></p>
+          <p style="margin:0">1週間分の記録をまとめてAIに貼り、<strong>誤答の共通パターンを3つ</strong>挙げさせます（プロンプト2）。自分では「なんとなく苦手」としか言えないものが、「時制の判断」「関係詞の先行詞」「Part 3の3問目（示唆・推測）」のように具体化されます。</p>
+        </li>
+        <li>
+          <p style="margin:0 0 var(--sp-2)"><strong>叩く（翌週）</strong></p>
+          <p style="margin:0">特定された弱点だけを狙ったドリルをAIに作らせ、集中的に反復します。<strong>幅広くやらない</strong>のがポイントです。</p>
+        </li>
+        <li>
+          <p style="margin:0 0 var(--sp-2)"><strong>確かめる（2〜4週に1回）</strong></p>
+          <p style="margin:0">公式問題集で該当パートを解き、<strong>正答率が実際に上がったか</strong>を確認します。上がっていなければ、原因の切り分け（4章の4分類）が間違っていた可能性があります。</p>
+        </li>
+      </ol>
+
+      <div class="good">
+        <strong>なぜ効くのか</strong>独学の最大の弱点は「自分の弱点が見えないこと」です。学校や講師がいれば指摘してもらえますが、独学では気づけません。<strong>AIはこの「指摘役」を、いつでも無料に近いコストで務められます</strong>。逆に言えば、この使い方をしないなら、AIを使う価値は半減します。
+      </div>
+    </section>
+
+    <!-- ===== 11 ===== -->
+    <section id="s11">
+      <h2><span class="num">11.</span>本番の時間配分と戦略</h2>
+
+      <h3>リーディング75分の配分</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th style="width:16%">Part</th><th class="num" style="width:14%">問題数</th><th class="num" style="width:20%">目標時間</th><th style="width:50%">1問あたりの目安</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Part 5</td><td class="num">30</td><td class="num">10分</td><td>1問20秒。悩んだら印を付けて即座に次へ</td></tr>
+            <tr><td>Part 6</td><td class="num">16</td><td class="num">8分</td><td>1文書2分。文挿入は最後に判断</td></tr>
+            <tr><td>Part 7（1つの文書）</td><td class="num">29</td><td class="num">25分</td><td>1文書あたり3〜4分</td></tr>
+            <tr><td>Part 7（複数の文書）</td><td class="num">25</td><td class="num">30分</td><td>1セット5〜6分。最後まで到達することを最優先</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>合計73分。<strong>2分の余白</strong>を残す設計です。実際には多少ずれるので、<strong>Part 5を早く終えて貯金を作る</strong>のが定石になります。</p>
+
+      <h3>本番で守る5つのルール</h3>
+      <ol>
+        <li><strong>迷ったら20秒で切る。</strong>1問に1分かけると、後半の3問を失います。</li>
+        <li><strong>塗り絵（未回答）をゼロにする。</strong>減点はありません。残り5分で全部埋める、を前提に時計を見ます。</li>
+        <li><strong>リスニング中に先読みを続ける。</strong>Part 3・4は、設問を読む時間を音声の合間に確保します。1つの設問に固執して次の先読みを潰さないこと。</li>
+        <li><strong>分からない問題を引きずらない。</strong>直前の1問を考え続けると、次の会話を丸ごと落とします。<strong>切り替えが最大の得点源</strong>です。</li>
+        <li><strong>マークずれを防ぐ。</strong>パートの切れ目で番号を確認します。ずれに気づかないと大量失点になります。</li>
+      </ol>
+
+      <div class="note">
+        <strong>直前1週間</strong>新しい教材に手を出さないでください。<strong>やってきた素材の復習と、本番形式で1回通す</strong>だけで十分です。睡眠時間を削ると、リスニングの集中力が最初に落ちます。
+      </div>
+    </section>
+
+    <!-- ===== 12 ===== -->
+    <section id="s12">
+      <h2><span class="num">12.</span>そのまま使えるプロンプト集</h2>
+      <p>コピーボタンで貼り付けて、【】の部分を自分の情報に置き換えて使ってください。</p>
+
+      <div class="prompt">
+        <div class="prompt-head">
+          <h4>プロンプト1: 診断と学習計画</h4>
+          <button type="button" class="btn-copy">コピー</button>
+        </div>
+        <p class="prompt-use">使う場面: 模試を1回解いた直後。パート別の結果から優先順位を決める。</p>
+        <pre>あなたはTOEIC L&amp;R対策の指導者です。以下は私が公式問題集を本番と同じ条件で解いた結果です。
+
+【Part 1: 5/6　Part 2: 18/25　Part 3: 24/39　Part 4: 19/30
+　Part 5: 22/30　Part 6: 10/16　Part 7: 25/54（うち未回答12問）】
+現在のスコア: 【555点（L 295 / R 260）】
+目標: 【3か月後に700点】
+学習に使える時間: 【平日1時間、週末2時間】
+
+次の4点を、専門用語を避けて答えてください。
+1. パート別の正答率から読み取れる、私の弱点トップ3（根拠となる数字も示す）
+2. その弱点は「語彙・文法の知識不足」「処理速度」「解き方」のどれが主因か
+3. 最初の4週間で取り組むべきことを、優先度順に3つだけ
+4. 逆に、今はやらなくてよいことを2つ（理由も）</pre>
+      </div>
+
+      <div class="prompt">
+        <div class="prompt-head">
+          <h4>プロンプト2: 週次の誤答パターン分析</h4>
+          <button type="button" class="btn-copy">コピー</button>
+        </div>
+        <p class="prompt-use">使う場面: 毎週の振り返り。10章のループの中心。</p>
+        <pre>以下は今週、私がTOEICの問題で間違えた記録です。1行が1問で、
+「パート / 自分の答え / 正解 / 間違えた理由（自分の感覚）」の順です。
+
+【Part5 / B / D / 品詞が分からなかった
+　Part5 / A / C / 時制を間違えた
+　Part3 / C / A / 聞き取れなかった
+　Part7 / B / D / 本文にそう書いてあると思った
+　…（10〜20問分を貼る）】
+
+次を答えてください。
+1. 間違いに共通するパターンを3つに整理し、それぞれ何問が該当するか
+2. 各パターンについて、根本原因の仮説（知識・速度・解き方のどれか）
+3. 来週1週間で、そのパターンを潰すための具体的な練習メニュー
+4. 私が「理由」として書いた説明のうち、原因の捉え方がずれていそうなもの
+
+厳しくて構いません。慰めや励ましは不要です。</pre>
+      </div>
+
+      <div class="prompt">
+        <div class="prompt-head">
+          <h4>プロンプト3: 語彙カードの自動生成</h4>
+          <button type="button" class="btn-copy">コピー</button>
+        </div>
+        <p class="prompt-use">使う場面: 模試や問題集で知らなかった単語をまとめて処理する。</p>
+        <pre>以下の英単語について、TOEIC学習用の暗記カードを作ってください。
+
+【単語リスト: appliance, itinerary, reimburse, tentative, verify, ...】
+
+出力はタブ区切りで、1行1語、列は次の順にしてください。
+単語 / 品詞 / TOEIC文脈での意味（日本語） / よく一緒に使う表現2つ / TOEIC風の例文（12語程度） / 例文の訳 / 紛らわしい語との違い
+
+条件:
+- 例文はオフィス、出張、請求、採用、物流など、TOEICに出る場面にする
+- 一般的でない用法や、実際にはあまり使われない組み合わせは書かない
+- 自信がない項目には行末に「※要確認」と付ける</pre>
+      </div>
+
+      <div class="prompt">
+        <div class="prompt-head">
+          <h4>プロンプト4: Part 5の徹底解説（4択すべて）</h4>
+          <button type="button" class="btn-copy">コピー</button>
+        </div>
+        <p class="prompt-use">使う場面: 間違えた文法問題を、次に同じ型が出たら解ける状態にする。</p>
+        <pre>次のTOEIC Part 5形式の問題について解説してください。
+
+【問題文と4つの選択肢を貼る】
+私が選んだ答え: 【B】　正解: 【D】
+
+次の順で説明してください。
+1. この問題が何を問うているか（品詞・時制・前置詞と接続詞の識別など、型の名前）
+2. 正解の根拠を、文中のどの語句から判断できるかで示す
+3. 誤答3つそれぞれについて「どういう文なら正解になるか」を例文付きで
+4. 本番で同じ型を20秒以内に解くための、判断手順を3ステップで
+5. 私が【B】を選んだのは、どんな勘違いが原因だと考えられるか</pre>
+      </div>
+
+      <div class="prompt">
+        <div class="prompt-head">
+          <h4>プロンプト5: Part 3・4の先読み訓練</h4>
+          <button type="button" class="btn-copy">コピー</button>
+        </div>
+        <p class="prompt-use">使う場面: 音声を聞く前に「何を待ち受けるか」を決める練習。</p>
+        <pre>TOEIC Part 3の設問を3つ渡します。音声を聞く前の「先読み」の練習をしたいです。
+
+【設問1: What is the conversation mainly about?
+　設問2: What does the man ask the woman to do?
+　設問3: What will the woman probably do next?】
+
+次を教えてください。
+1. この3問から予測できる、会話の場面と登場人物の関係
+2. 各設問について、音声のどのあたり（前半・中盤・後半）に答えが来る可能性が高いか
+3. 聞くときに特に注意すべき表現（依頼の言い方、次の行動を示す表現など）
+4. この3問を10秒で先読みするとき、どの語に目を留めるべきか</pre>
+      </div>
+
+      <div class="prompt">
+        <div class="prompt-head">
+          <h4>プロンプト6: ディクテーションの原因分析</h4>
+          <button type="button" class="btn-copy">コピー</button>
+        </div>
+        <p class="prompt-use">使う場面: 書き取りをした後。「なぜ聞こえなかったか」を特定する。</p>
+        <pre>リスニングのディクテーション（書き取り）をしました。原因を分析してください。
+
+正しいスクリプト:
+【The revised budget proposal will be distributed before the meeting.】
+
+私が書き取った内容:
+【The revised budget proposal will be distribute for the meeting.】
+
+次を答えてください。
+1. 聞き取れなかった箇所を列挙し、それぞれの原因を分類する
+   （a: 音の変化・連結　b: 語彙を知らない　c: 文法知識　d: 集中の切れ）
+2. 音の変化が原因のものは、実際にどう発音されるかをカタカナと説明で
+3. 私が同じ間違いを繰り返さないための、練習方法を2つ
+4. この文をシャドーイングするときに、意識すべき区切り位置</pre>
+      </div>
+
+      <div class="prompt">
+        <div class="prompt-head">
+          <h4>プロンプト7: パラフレーズ訓練（Part 7対策）</h4>
+          <button type="button" class="btn-copy">コピー</button>
+        </div>
+        <p class="prompt-use">使う場面: Part 7の正解選択肢の「言い換え」に気づく力を鍛える。</p>
+        <pre>TOEIC Part 7の言い換え（パラフレーズ）を見抜く練習をします。
+
+次の英文を渡します。
+【All employees must submit their expense reports by the end of the month.】
+
+次をしてください。
+1. この文の言い換えを3つ作る（TOEICの選択肢に出そうな自然な英語で）
+2. さらに、一見正しそうだが実は内容がずれている「引っかけの選択肢」を2つ作り、
+   どこがずれているかを説明する
+3. 本文と選択肢を照合するときに、真っ先に確認すべき語を教える
+
+その後、同じ形式の練習問題を5セット出してください。
+私が答えるので、採点と解説をお願いします。</pre>
+      </div>
+
+      <div class="prompt">
+        <div class="prompt-head">
+          <h4>プロンプト8: 弱点特化ドリルの作成</h4>
+          <button type="button" class="btn-copy">コピー</button>
+        </div>
+        <p class="prompt-use">使う場面: 分析で判明した弱点だけを集中的に反復する。</p>
+        <pre>私の弱点は【前置詞と接続詞の識別】です。ここだけを狙った練習問題を10問作ってください。
+
+条件:
+- TOEIC Part 5と同じ形式（4択、1文）
+- ビジネスの場面設定にする
+- 難易度は【600点レベル】
+- まず問題だけを10問出す。解説は私が答えてから出す
+- 選択肢には、私が引っかかりやすい紛らわしい語を必ず混ぜる
+
+採点のときは、正解の根拠に加えて「20秒で解くための着眼点」も教えてください。</pre>
+        <div class="warn" style="margin:var(--sp-3) 0 0;">
+          <strong>注意</strong>このドリルは<strong>判断の型を反復するため</strong>のものです。ここでの点数は実力の指標になりません。実力測定は必ず公式問題集で行ってください。
+        </div>
+      </div>
+
+      <div class="prompt">
+        <div class="prompt-head">
+          <h4>プロンプト9: シャドーイング用スクリプトの作成</h4>
+          <button type="button" class="btn-copy">コピー</button>
+        </div>
+        <p class="prompt-use">使う場面: 公式音声を一通りやり尽くした後の、補助教材づくり。</p>
+        <pre>シャドーイング用の英文スクリプトを作ってください。
+
+条件:
+- TOEIC Part 4に出る【空港の搭乗案内】の場面
+- 長さは【約80語】（音読して40秒程度）
+- TOEICで頻出の表現と定型フレーズを自然に含める
+- 難しすぎる単語は使わない
+
+あわせて次も出してください。
+1. 意味のかたまり（チャンク）ごとにスラッシュを入れた版
+2. 音がつながる・消える箇所の説明
+3. この文で覚えておくべき表現5つとその意味</pre>
+      </div>
+
+      <div class="prompt">
+        <div class="prompt-head">
+          <h4>プロンプト10: 月次の振り返りと計画修正</h4>
+          <button type="button" class="btn-copy">コピー</button>
+        </div>
+        <p class="prompt-use">使う場面: 1か月ごと。計画が現実と合っているかを点検する。</p>
+        <pre>1か月の学習を振り返ります。
+
+先月の計画: 【毎日単語30語、週2回シャドーイング、週1回Part 5を30問】
+実際にできたこと: 【単語は週4日、シャドーイングは週1回、Part 5は毎週実施】
+模試の変化: 【Part 5: 22/30 → 25/30、Part 3: 24/39 → 26/39、Part 7: 25/54 → 31/54】
+今の課題感: 【リスニングが伸びている実感がない】
+
+次を答えてください。
+1. 数字から見て、実際に改善した領域と、していない領域
+2. 計画どおりにできなかった項目について、計画自体に無理がなかったか
+3. 来月の計画（実行可能性を優先し、項目は3つまで）
+4. 「伸びている実感がない」という感覚と、数字のずれをどう解釈すべきか</pre>
+      </div>
+    </section>
+
+    <!-- ===== 13 ===== -->
+    <section id="s13">
+      <h2><span class="num">13.</span>やりがちな失敗と改善例</h2>
+
+      <h3>失敗1: AIに解いてもらって満足する</h3>
+      <div class="ba-grid">
+        <div class="ba-box before">
+          <span class="pill before">BEFORE</span>
+          <p>分からない問題をAIに解かせ、解説を読んで「なるほど」で終わる。読んでいる間は理解できるが、翌週の模試で同じ形の問題をまた落とす。</p>
+        </div>
+        <div class="ba-box after">
+          <span class="pill after">AFTER</span>
+          <p>解説を読んだ後、<strong>その場で自分の言葉で説明し直す</strong>。AIに「私の理解が正しいか採点して」と投げる。理解の穴が可視化され、記憶にも残る。</p>
+        </div>
+      </div>
+
+      <h3>失敗2: AI生成問題ばかり解く</h3>
+      <div class="ba-grid">
+        <div class="ba-box before">
+          <span class="pill before">BEFORE</span>
+          <p>手軽なのでAIに作らせた問題を毎日解く。正答率は高いのに、本番では点が伸びない。本番の英文の長さ・速度・ひねり方に慣れていないため。</p>
+        </div>
+        <div class="ba-box after">
+          <span class="pill after">AFTER</span>
+          <p><strong>公式問題集が主食、AI生成は副菜</strong>。AI問題は「弱点の反復」に限定し、実力確認は必ず公式で行う。</p>
+        </div>
+      </div>
+
+      <h3>失敗3: 単語帳を何周もする</h3>
+      <div class="ba-grid">
+        <div class="ba-box before">
+          <span class="pill before">BEFORE</span>
+          <p>単語帳を最初から順に何周もする。知っている語にも同じ時間をかけ、覚えられない語は何周しても覚えられない。</p>
+        </div>
+        <div class="ba-box after">
+          <span class="pill after">AFTER</span>
+          <p>間違えた語だけを抽出し、AIに例文・コロケーション付きのカードを作らせる。<strong>間隔をあけて思い出す</strong>形にし、覚えた語は回さない。</p>
+        </div>
+      </div>
+
+      <h3>失敗4: 聞き流しをリスニング対策だと思う</h3>
+      <div class="ba-grid">
+        <div class="ba-box before">
+          <span class="pill before">BEFORE</span>
+          <p>通勤中に英語音声を流す。数か月続けても、Part 3の正答率は変わらない。<strong>意味を処理していない音は、何時間聞いても処理速度を上げません。</strong></p>
+        </div>
+        <div class="ba-box after">
+          <span class="pill after">AFTER</span>
+          <p>同じ音声で<strong>ディクテーション → 原因分析 → シャドーイング</strong>まで行う。1日15分でも、聞き流し2時間より確実に効く。</p>
+        </div>
+      </div>
+
+      <h3>失敗5: 苦手なパートを避ける</h3>
+      <div class="ba-grid">
+        <div class="ba-box before">
+          <span class="pill before">BEFORE</span>
+          <p>得意なPart 5ばかり解いて、Part 7には手を付けない。やっていて気持ちがよいが、<strong>配点の最も大きい場所が放置される</strong>。</p>
+        </div>
+        <div class="ba-box after">
+          <span class="pill after">AFTER</span>
+          <p>週の学習時間を<strong>配点比率に近づけて配分</strong>する。苦手パートは1回の量を小さく（長文1つだけ等）して、着手のハードルを下げる。</p>
+        </div>
+      </div>
+
+      <h3>失敗6: 計画が壮大すぎて続かない</h3>
+      <div class="ba-grid">
+        <div class="ba-box before">
+          <span class="pill before">BEFORE</span>
+          <p>「毎日3時間」の計画を立て、3日で崩れる。崩れた罪悪感で1週間手が止まる。</p>
+        </div>
+        <div class="ba-box after">
+          <span class="pill after">AFTER</span>
+          <p><strong>平日は最低ラインを15分</strong>に設定し、できたら上乗せする。継続日数のほうがスコアに効きます。計画はAIに「実行可能性優先で」と条件を付けて作らせる。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 14 ===== -->
+    <section id="s14">
+      <h2><span class="num">14.</span>12週間の学習計画</h2>
+
+      <p>500〜700点の人が700点台を狙う場合の例です。<strong>自分のスコア帯に合わせて中身を差し替えて</strong>使ってください。</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th style="width:14%">時期</th><th style="width:30%">目的</th><th style="width:56%">主な内容</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>第1週</strong></td>
+              <td>現在地の把握</td>
+              <td>公式問題集を本番条件で1回。パート別に集計し、プロンプト1で分析。記録用の表を作る</td>
+            </tr>
+            <tr>
+              <td><strong>第2〜4週</strong></td>
+              <td>土台づくり</td>
+              <td>語彙（毎日20〜30語、間違えた語中心）／Part 5を毎日10問＋プロンプト4で解説／シャドーイング1素材を週5日</td>
+            </tr>
+            <tr>
+              <td><strong>第5〜8週</strong></td>
+              <td>弱点の集中攻撃</td>
+              <td>週次でプロンプト2の分析→弱点ドリル（プロンプト8）／Part 3・4の先読み訓練／Part 7を毎日1〜2セット、WPMを記録</td>
+            </tr>
+            <tr>
+              <td><strong>第9〜10週</strong></td>
+              <td>速度と通し練習</td>
+              <td>リーディング75分を通しで2回／Part 5を10分で30問／パラフレーズ訓練（プロンプト7）</td>
+            </tr>
+            <tr>
+              <td><strong>第11週</strong></td>
+              <td>総仕上げ</td>
+              <td>公式問題集で本番形式1回。第1週の結果と比較し、残った弱点を1つに絞って対策</td>
+            </tr>
+            <tr>
+              <td><strong>第12週</strong></td>
+              <td>調整</td>
+              <td>新しい教材は入れない。既習素材の復習、シャドーイング、睡眠の確保</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>1週間の型（平日1時間・週末2時間の場合）</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th style="width:16%">曜日</th><th style="width:42%">午前・すきま時間</th><th style="width:42%">まとまった時間</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>月・水・金</td><td>語彙15分（暗記アプリ）</td><td>Part 5を10問（10分）＋シャドーイング20分＋Part 7を1セット（15分）</td></tr>
+            <tr><td>火・木</td><td>語彙15分</td><td>Part 3または4を1セット＋ディクテーションと原因分析（45分）</td></tr>
+            <tr><td>土</td><td>—</td><td>Part 7をまとめて（60分）＋パラフレーズ訓練（30分）</td></tr>
+            <tr><td>日</td><td>—</td><td><strong>週次の振り返り（プロンプト2）30分</strong>＋弱点ドリル60分＋来週の計画</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="note">
+        <strong>崩れたときの原則</strong>予定どおりに進まない週は必ずあります。そのときは<strong>語彙とシャドーイングだけ死守</strong>してください。この2つは中断の影響が最も大きい項目です。
+      </div>
+    </section>
+
+    <!-- ===== 15 ===== -->
+    <section id="s15">
+      <h2><span class="num">15.</span>習慣チェックリスト</h2>
+      <p>週に1回、自分の学習を点検してください。チェック状態はこのブラウザに保存されます。</p>
+
+      <div class="check-progress">
+        <span id="progress-text" aria-live="polite">0 / 0 完了</span>
+        <span class="bar"><span id="progress-bar"></span></span>
+        <button type="button" class="btn-reset" id="reset-checks">チェックをすべて解除</button>
+      </div>
+
+      <div id="checklist">
+        <h3>準備できているか</h3>
+        <div class="check-item"><input type="checkbox" id="t01"><label for="t01">公式問題集を1冊以上持っている（AI生成問題を主教材にしていない）</label></div>
+        <div class="check-item"><input type="checkbox" id="t02"><label for="t02">受験日を決めて申し込みを済ませた</label></div>
+        <div class="check-item"><input type="checkbox" id="t03"><label for="t03">パート別の正答率を記録する表を作った</label></div>
+        <div class="check-item"><input type="checkbox" id="t04"><label for="t04">今の自分のスコア帯（5章）に合った課題を選んでいる</label></div>
+
+        <h3>毎日の学習</h3>
+        <div class="check-item"><input type="checkbox" id="t05"><label for="t05">語彙は「間違えた語」を中心に、間隔をあけて復習している</label></div>
+        <div class="check-item"><input type="checkbox" id="t06"><label for="t06">単語を単体でなく、例文とコロケーションで覚えている</label></div>
+        <div class="check-item"><input type="checkbox" id="t07"><label for="t07">シャドーイングまたは音読を、声（または口の動き）を使って行っている</label></div>
+        <div class="check-item"><input type="checkbox" id="t08"><label for="t08">聞き流しではなく、意味を処理しながら聞いている</label></div>
+        <div class="check-item"><input type="checkbox" id="t09"><label for="t09">Part 5は時間を計り、1問20秒を意識して解いている</label></div>
+        <div class="check-item"><input type="checkbox" id="t10"><label for="t10">間違えた問題を4項目（問題番号・自分の答え・正解・理由）で記録している</label></div>
+
+        <h3>AIの使い方</h3>
+        <div class="check-item"><input type="checkbox" id="t11"><label for="t11">答えを聞くだけでなく「誤答3つがなぜ違うか」を説明させている</label></div>
+        <div class="check-item"><input type="checkbox" id="t12"><label for="t12">週1回、誤答記録をまとめてAIに分析させている</label></div>
+        <div class="check-item"><input type="checkbox" id="t13"><label for="t13">AIの説明が公式解説と食い違ったとき、公式を優先している</label></div>
+        <div class="check-item"><input type="checkbox" id="t14"><label for="t14">AI生成問題を「弱点ドリル」に限定し、実力測定に使っていない</label></div>
+        <div class="check-item"><input type="checkbox" id="t15"><label for="t15">理解した内容を自分の言葉で説明し直し、AIに確認させている</label></div>
+
+        <h3>パート別の対策</h3>
+        <div class="check-item"><input type="checkbox" id="t16"><label for="t16">Part 2で、最初の疑問詞を聞き取ることを最優先にしている</label></div>
+        <div class="check-item"><input type="checkbox" id="t17"><label for="t17">Part 3・4で、音声が始まる前に設問を先読みできている</label></div>
+        <div class="check-item"><input type="checkbox" id="t18"><label for="t18">分からない問題を引きずらず、次の設問に切り替えられている</label></div>
+        <div class="check-item"><input type="checkbox" id="t19"><label for="t19">Part 7で、本文と選択肢の「言い換え」を意識して照合している</label></div>
+        <div class="check-item"><input type="checkbox" id="t20"><label for="t20">自分のWPM（読む速度）を測ったことがある</label></div>
+        <div class="check-item"><input type="checkbox" id="t21"><label for="t21">返り読み（英文を後ろから訳す読み方）をやめる意識がある</label></div>
+
+        <h3>本番対策</h3>
+        <div class="check-item"><input type="checkbox" id="t22"><label for="t22">リーディング75分の時間配分を決めてある（11章）</label></div>
+        <div class="check-item"><input type="checkbox" id="t23"><label for="t23">未回答をゼロにする（必ずマークする）と決めている</label></div>
+        <div class="check-item"><input type="checkbox" id="t24"><label for="t24">本番と同じ2時間通しの練習を、直前までに最低1回はやる予定がある</label></div>
+
+        <h3>継続の仕組み</h3>
+        <div class="check-item"><input type="checkbox" id="t25"><label for="t25">平日の最低ライン（15分など）を決めてある</label></div>
+        <div class="check-item"><input type="checkbox" id="t26"><label for="t26">週1回の振り返り時間を予定に入れてある</label></div>
+        <div class="check-item"><input type="checkbox" id="t27"><label for="t27">2〜4週に1回、公式問題集で効果を確認している</label></div>
+      </div>
+    </section>
+
+    <!-- ===== 16 ===== -->
+    <section id="s16">
+      <h2><span class="num">16.</span>参考リンク</h2>
+      <p>出題形式・スコアに関する記述は、以下の公式情報（2026年8月29日確認）に基づいています。</p>
+      <ul>
+        <li><a href="https://www.iibc-global.org/toeic/test/lr/about/format.html">テストの形式と構成 ｜ TOEIC Listening &amp; Reading Test（IIBC公式）</a> — 各パートの問題数と形式</li>
+        <li><a href="https://www.iibc-global.org/toeic/test/lr/about/format/sample01.html">サンプル問題（IIBC公式）</a> — パートごとの実際の出題例</li>
+        <li><a href="https://www.iibc-global.org/toeic/support/prep.html">公式教材・問題集（IIBC公式）</a> — 主教材として使うべき公式問題集の一覧</li>
+        <li><a href="https://www.iibc-global.org/toeic/test/lr.html">TOEIC Listening &amp; Reading Test 概要（IIBC公式）</a> — 申込・日程・スコアの位置づけ</li>
+      </ul>
+
+      <div class="warn">
+        <strong>形式変更の噂について</strong>2026年8月時点で、IIBCから<strong>出題形式の大規模な改訂は発表されていません</strong>。受験要領や認定証のデザインなど運用面の変更はあるため、受験前に公式サイトの最新の案内を確認してください。
+      </div>
+
+      <footer class="doc-foot">
+        <p>本資料は公開情報と一般的な学習方法の知見に基づく参考情報です。学習効果には個人差があります。スコア換算の仕組みや試験の詳細は、必ずIIBC公式サイトの最新情報を確認してください。</p>
+      </footer>
+    </section>
+  </main>
+</div>
+
+<a href="#top" class="to-top" id="toTop">↑ トップへ戻る</a>
+
+<script>
+  // ---- 目次のスクロール連動 ----
+  (function () {
+    var links = Array.prototype.slice.call(document.querySelectorAll('.sidebar a[href^="#s"]'));
+    var map = {};
+    links.forEach(function (a) { map[a.getAttribute('href').slice(1)] = a; });
+
+    var sections = Array.prototype.slice.call(document.querySelectorAll('main section[id]'));
+    if (!('IntersectionObserver' in window) || sections.length === 0) return;
+
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        links.forEach(function (a) { a.classList.remove('is-active'); a.removeAttribute('aria-current'); });
+        var active = map[entry.target.id];
+        if (active) {
+          active.classList.add('is-active');
+          active.setAttribute('aria-current', 'true');
+        }
+      });
+    }, { rootMargin: '-10% 0px -70% 0px', threshold: 0 });
+
+    sections.forEach(function (s) { observer.observe(s); });
+  })();
+
+  // ---- プロンプトのコピー ----
+  (function () {
+    var buttons = Array.prototype.slice.call(document.querySelectorAll('.btn-copy'));
+    buttons.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var block = btn.closest('.prompt');
+        if (!block) return;
+        var pre = block.querySelector('pre');
+        if (!pre) return;
+        var text = pre.textContent;
+
+        function done(ok) {
+          btn.textContent = ok ? 'コピーしました' : '手動で選択してください';
+          btn.classList.toggle('copied', ok);
+          setTimeout(function () {
+            btn.textContent = 'コピー';
+            btn.classList.remove('copied');
+          }, 2000);
+        }
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(function () { done(true); }, function () { fallback(); });
+        } else {
+          fallback();
+        }
+
+        function fallback() {
+          // クリップボードAPIが使えない環境向け
+          try {
+            var ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            var ok = document.execCommand('copy');
+            document.body.removeChild(ta);
+            done(ok);
+          } catch (e) { done(false); }
+        }
+      });
+    });
+  })();
+
+  // ---- チェックリストの保存 ----
+  (function () {
+    var STORAGE_KEY = 'toeic-ai-checklist-v1';
+    var list = document.getElementById('checklist');
+    if (!list) return;
+
+    var boxes = Array.prototype.slice.call(list.querySelectorAll('input[type="checkbox"]'));
+    var bar = document.getElementById('progress-bar');
+    var text = document.getElementById('progress-text');
+
+    function load() {
+      try {
+        var raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : {};
+      } catch (e) { return {}; }
+    }
+    function save(state) {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) { /* 保存不可の環境では無視 */ }
+    }
+    function paint() {
+      var done = 0;
+      boxes.forEach(function (b) {
+        var item = b.closest('.check-item');
+        if (b.checked) { done++; item.classList.add('done'); }
+        else { item.classList.remove('done'); }
+      });
+      var pct = boxes.length ? Math.round(done / boxes.length * 100) : 0;
+      if (bar) bar.style.width = pct + '%';
+      if (text) text.textContent = done + ' / ' + boxes.length + ' 完了（' + pct + '%）';
+    }
+
+    var state = load();
+    boxes.forEach(function (b) {
+      if (state[b.id]) b.checked = true;
+      b.addEventListener('change', function () {
+        state[b.id] = b.checked;
+        save(state);
+        paint();
+      });
+    });
+    paint();
+
+    var reset = document.getElementById('reset-checks');
+    if (reset) {
+      reset.addEventListener('click', function () {
+        boxes.forEach(function (b) { b.checked = false; });
+        state = {};
+        save(state);
+        paint();
+      });
+    }
+  })();
+</script>
+</body>
+</html>

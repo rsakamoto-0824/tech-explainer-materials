@@ -1,0 +1,2291 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C#の条件付きコンパイル 総合ガイド</title>
+<style>
+  /* =========================================
+     Design Tokens
+     ========================================= */
+  :root {
+    --fs-xs:   12px;
+    --fs-sm:   14px;
+    --fs-base: 16px;
+    --fs-md:   18px;
+    --fs-lg:   22px;
+    --fs-xl:   30px;
+
+    --sp-1: 4px;
+    --sp-2: 8px;
+    --sp-3: 12px;
+    --sp-4: 16px;
+    --sp-6: 24px;
+    --sp-8: 32px;
+    --sp-12: 48px;
+    --sp-16: 64px;
+
+    --r-sm: 6px;
+    --r-md: 10px;
+    --r-lg: 14px;
+
+    --c-bg:        #f5f6f9;
+    --c-card:      #ffffff;
+    --c-text:      #15181f;
+    --c-muted:     #59616f;
+    --c-border:    #dee2e8;
+    --c-accent:    #5b3fa8;
+    --c-accent-soft:#f0ebfb;
+    --c-bad:       #c1372c;
+    --c-bad-soft:  #fdf0ee;
+    --c-good:      #26714a;
+    --c-good-soft: #ecf6f0;
+    --c-warn:      #8a5a00;
+    --c-warn-soft: #fff6dd;
+    --c-info:      #12557e;
+    --c-info-soft: #eaf3fa;
+
+    --c-code-bg:   #1b2130;
+    --sidebar-w:   282px;
+
+    --shadow-sm: 0 1px 2px rgba(16,24,40,0.05);
+    --shadow-md: 0 6px 20px rgba(16,24,40,0.10);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: var(--sp-4); }
+  body {
+    margin: 0;
+    font-family: "Hiragino Sans", "Yu Gothic", "Meiryo", system-ui, -apple-system, sans-serif;
+    font-size: var(--fs-base);
+    line-height: 1.8;
+    color: var(--c-text);
+    background: var(--c-bg);
+    -webkit-font-smoothing: antialiased;
+  }
+  :focus-visible {
+    outline: 3px solid #ffb300;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* =========================================
+     Layout
+     ========================================= */
+  .layout {
+    display: grid;
+    grid-template-columns: var(--sidebar-w) 1fr;
+    min-height: 100vh;
+  }
+
+  /* =========================================
+     Sidebar (左目次)
+     ========================================= */
+  aside.sidebar {
+    background: #1a2030;
+    color: #cbd1da;
+    padding: var(--sp-6) var(--sp-4);
+    position: sticky;
+    top: 0;
+    align-self: start;
+    height: 100vh;
+    overflow-y: auto;
+    border-right: 1px solid #293143;
+  }
+  .sidebar-title {
+    font-size: var(--fs-sm);
+    color: #fff;
+    margin: 0 0 var(--sp-1);
+    padding: 0 var(--sp-1);
+    line-height: 1.5;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+  .sidebar-sub {
+    font-size: 11px;
+    color: #7d8798;
+    margin: 0 0 var(--sp-6);
+    padding: 0 var(--sp-1);
+    line-height: 1.6;
+  }
+  .sidebar h2 {
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    color: #808b9d;
+    margin: 0 0 var(--sp-3);
+    text-transform: uppercase;
+    background: none;
+    border: none;
+    padding: 0 var(--sp-1);
+    font-weight: 700;
+  }
+  .sidebar ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    counter-reset: toc;
+  }
+  .sidebar li { counter-increment: toc; margin: 0; }
+  .sidebar a {
+    display: block;
+    color: #cbd1da;
+    text-decoration: none;
+    padding: var(--sp-2) var(--sp-3) var(--sp-2) var(--sp-8);
+    font-size: var(--fs-sm);
+    border-radius: var(--r-sm);
+    position: relative;
+    line-height: 1.45;
+    transition: background .15s, color .15s;
+    border-left: 3px solid transparent;
+    margin-left: -3px;
+  }
+  .sidebar a::before {
+    content: counter(toc, decimal-leading-zero);
+    position: absolute;
+    left: var(--sp-3);
+    top: var(--sp-2);
+    color: #69748a;
+    font-size: 11px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  .sidebar a:hover { background: #252d3e; color: #fff; }
+  .sidebar a.active {
+    background: #252d3e;
+    color: #fff;
+    border-left-color: #9b7ce6;
+  }
+  .sidebar a.active::before { color: #fff; }
+
+  /* =========================================
+     Main
+     ========================================= */
+  main {
+    padding: var(--sp-8) var(--sp-12) var(--sp-16);
+    max-width: 1060px;
+  }
+  header.top {
+    border-bottom: 1px solid var(--c-border);
+    padding-bottom: var(--sp-4);
+    margin-bottom: var(--sp-6);
+  }
+  header.top h1 {
+    font-size: var(--fs-xl);
+    margin: 0 0 var(--sp-2);
+    letter-spacing: 0.01em;
+    line-height: 1.35;
+  }
+  header.top p.lead {
+    margin: 0 0 var(--sp-2);
+    color: var(--c-muted);
+    font-size: var(--fs-sm);
+  }
+  .meta {
+    font-size: var(--fs-xs);
+    color: var(--c-muted);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2) var(--sp-4);
+  }
+  .meta span { white-space: nowrap; }
+
+  h2 {
+    font-size: var(--fs-lg);
+    margin: var(--sp-16) 0 var(--sp-4);
+    padding: var(--sp-3) var(--sp-4);
+    background: linear-gradient(90deg, var(--c-accent-soft) 0%, transparent 92%);
+    border-left: 4px solid var(--c-accent);
+    border-radius: var(--r-sm);
+    line-height: 1.35;
+    scroll-margin-top: var(--sp-4);
+  }
+  h3 {
+    font-size: var(--fs-md);
+    margin: var(--sp-8) 0 var(--sp-2);
+    line-height: 1.45;
+    padding-bottom: var(--sp-1);
+    border-bottom: 2px solid var(--c-border);
+  }
+  h4 {
+    font-size: var(--fs-base);
+    margin: var(--sp-4) 0 var(--sp-1);
+    line-height: 1.5;
+    color: var(--c-text);
+  }
+  p { margin: var(--sp-2) 0 var(--sp-3); }
+  ul, ol.body-list { padding-left: var(--sp-6); }
+  li { margin-bottom: var(--sp-1); }
+  strong { font-weight: 700; }
+
+  code.inline {
+    font-family: "SFMono-Regular", "Menlo", "Consolas", monospace;
+    font-size: 0.88em;
+    background: #eceef2;
+    border: 1px solid #dde0e6;
+    border-radius: 4px;
+    padding: 1px 5px;
+    color: #2c3446;
+    white-space: nowrap;
+  }
+
+  /* =========================================
+     Callouts
+     ========================================= */
+  .box {
+    padding: var(--sp-3) var(--sp-4);
+    border-radius: var(--r-sm);
+    margin: var(--sp-4) 0;
+    font-size: var(--fs-sm);
+    line-height: 1.75;
+  }
+  .box p:first-child { margin-top: 0; }
+  .box p:last-child, .box ul:last-child { margin-bottom: 0; }
+  .box::before {
+    display: block;
+    font-weight: 700;
+    font-size: var(--fs-xs);
+    letter-spacing: 0.08em;
+    margin-bottom: var(--sp-1);
+  }
+  .box-note   { background: var(--c-info-soft); border: 1px solid #bcd6e8; border-left: 4px solid var(--c-info); color: #10394f; }
+  .box-note::before   { content: "補足"; color: var(--c-info); }
+  .box-warn   { background: var(--c-warn-soft); border: 1px solid #e8d7a2; border-left: 4px solid #c19400; color: #4a3800; }
+  .box-warn::before   { content: "注意"; color: #8a5a00; }
+  .box-danger { background: var(--c-bad-soft);  border: 1px solid #f0c6c0; border-left: 4px solid var(--c-bad); color: #5c1d16; }
+  .box-danger::before { content: "落とし穴"; color: var(--c-bad); }
+  .box-good   { background: var(--c-good-soft); border: 1px solid #bcdcc9; border-left: 4px solid var(--c-good); color: #14402a; }
+  .box-good::before   { content: "推奨"; color: var(--c-good); }
+  .box-key    { background: var(--c-accent-soft); border: 1px solid #d3c4f0; border-left: 4px solid var(--c-accent); color: #2f1f5c; }
+  .box-key::before    { content: "この章の要点"; color: var(--c-accent); }
+
+  /* =========================================
+     Code
+     ========================================= */
+  .code {
+    background: var(--c-code-bg);
+    color: #dfe4ee;
+    border-radius: var(--r-md);
+    margin: var(--sp-3) 0 var(--sp-4);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+  .code .cap {
+    background: #131826;
+    color: #93a0b8;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    padding: var(--sp-2) var(--sp-4);
+    border-bottom: 1px solid #2a3244;
+    font-weight: 700;
+  }
+  .code pre {
+    margin: 0;
+    padding: var(--sp-3) var(--sp-4);
+    overflow-x: auto;
+    font-family: "SFMono-Regular", "Menlo", "Consolas", monospace;
+    font-size: 13px;
+    line-height: 1.75;
+    tab-size: 4;
+  }
+  .code .pp { color: #f0a35e; }      /* プリプロセッサ指令 */
+  .code .cm { color: #7f8ea8; font-style: italic; }  /* コメント */
+  .code .kw { color: #83b7ff; }      /* キーワード */
+  .code .st { color: #9ede9a; }      /* 文字列 */
+  .code .at { color: #e6c86e; }      /* 属性・タグ */
+  .code .hl { background: rgba(155,124,230,0.20); display: inline-block; width: 100%; }
+
+  /* =========================================
+     Tables
+     ========================================= */
+  .table-wrap { overflow-x: auto; margin: var(--sp-3) 0 var(--sp-4); }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 560px;
+    background: var(--c-card);
+    font-size: var(--fs-sm);
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+  th, td {
+    border-bottom: 1px solid var(--c-border);
+    padding: var(--sp-2) var(--sp-3);
+    text-align: left;
+    vertical-align: top;
+    line-height: 1.7;
+  }
+  th {
+    background: #eef0f4;
+    font-weight: 700;
+    font-size: var(--fs-xs);
+    letter-spacing: 0.04em;
+    color: #333c4d;
+    white-space: nowrap;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:nth-child(even) { background: #fafbfc; }
+  td code.inline { white-space: normal; }
+  .col-lang { font-weight: 700; white-space: nowrap; }
+
+  /* =========================================
+     Compare
+     ========================================= */
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sp-3);
+    margin: var(--sp-3) 0 var(--sp-4);
+  }
+  .compare > div {
+    border-radius: var(--r-md);
+    padding: var(--sp-4);
+    font-size: var(--fs-sm);
+  }
+  .compare > div > *:first-child { margin-top: 0; }
+  .compare > div > *:last-child { margin-bottom: 0; }
+  .bad-box  { background: var(--c-bad-soft);  border: 1px solid #f0c6c0; }
+  .good-box { background: var(--c-good-soft); border: 1px solid #bcdcc9; }
+  .compare > div::before {
+    display: inline-flex;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    margin-bottom: var(--sp-2);
+    padding: 3px var(--sp-2);
+    border-radius: 999px;
+  }
+  .bad-box::before  { content: "✗  やりがちな書き方"; background: var(--c-bad); color: #fff; }
+  .good-box::before { content: "✓  こうする"; background: var(--c-good); color: #fff; }
+  .compare .code { margin-bottom: 0; }
+
+  /* =========================================
+     Cards / checklist
+     ========================================= */
+  .card {
+    background: var(--c-card);
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-md);
+    padding: var(--sp-4) var(--sp-6);
+    margin: var(--sp-3) 0;
+    box-shadow: var(--shadow-sm);
+  }
+  .card > *:first-child { margin-top: 0; }
+  .card > *:last-child { margin-bottom: 0; }
+  .card h4 { border: none; }
+
+  ul.check { list-style: none; padding-left: 0; }
+  ul.check li {
+    position: relative;
+    padding: var(--sp-1) 0 var(--sp-1) var(--sp-8);
+    border-bottom: 1px dashed var(--c-border);
+    font-size: var(--fs-sm);
+    line-height: 1.7;
+  }
+  ul.check li:last-child { border-bottom: none; }
+  ul.check li::before {
+    content: "";
+    position: absolute;
+    left: var(--sp-2);
+    top: 12px;
+    width: 15px; height: 15px;
+    border: 2px solid var(--c-accent);
+    border-radius: 3px;
+    background: #fff;
+  }
+
+  .badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 1px var(--sp-2);
+    border-radius: 999px;
+    letter-spacing: 0.04em;
+    vertical-align: middle;
+    margin-right: var(--sp-1);
+  }
+  .b-fw   { background: #e3e7ef; color: #33405c; }
+  .b-core { background: #ddeaf7; color: #14547d; }
+  .b-both { background: #e7e0f7; color: #4a2f8c; }
+
+  /* =========================================
+     Diagram (同名DLLロード図)
+     ========================================= */
+  .diagram {
+    background: var(--c-card);
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-md);
+    padding: var(--sp-6) var(--sp-4);
+    margin: var(--sp-4) 0;
+    box-shadow: var(--shadow-sm);
+    overflow-x: auto;
+  }
+  .proc-title {
+    text-align: center;
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    color: var(--c-muted);
+    letter-spacing: 0.1em;
+    margin-bottom: var(--sp-4);
+  }
+  .ctx-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sp-4);
+    min-width: 480px;
+  }
+  .ctx {
+    border: 2px dashed #b9c0cd;
+    border-radius: var(--r-md);
+    padding: var(--sp-3);
+    background: #fbfcfd;
+  }
+  .ctx-name {
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    color: var(--c-muted);
+    margin-bottom: var(--sp-2);
+    text-align: center;
+  }
+  .asm {
+    background: #fff;
+    border: 1px solid var(--c-border);
+    border-left: 4px solid var(--c-accent);
+    border-radius: var(--r-sm);
+    padding: var(--sp-2) var(--sp-3);
+    font-size: var(--fs-xs);
+    line-height: 1.6;
+    box-shadow: var(--shadow-sm);
+  }
+  .asm b { display: block; font-size: var(--fs-sm); }
+  .asm .path { color: var(--c-muted); font-family: "SFMono-Regular","Menlo","Consolas",monospace; font-size: 11px; word-break: break-all; }
+  .asm .tag { display: inline-block; margin-top: 4px; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 999px; background: var(--c-accent-soft); color: var(--c-accent); }
+  .arrow-note {
+    text-align: center;
+    margin-top: var(--sp-4);
+    font-size: var(--fs-sm);
+    color: var(--c-bad);
+    font-weight: 700;
+  }
+
+  /* =========================================
+     Back to top
+     ========================================= */
+  .to-top {
+    position: fixed;
+    right: var(--sp-6);
+    bottom: var(--sp-6);
+    z-index: 50;
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    background: var(--c-accent);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1.1;
+    box-shadow: var(--shadow-md);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: opacity .2s, transform .2s, visibility .2s, background .15s;
+  }
+  .to-top .caret { font-size: 15px; display: block; margin-bottom: 1px; }
+  .to-top.show { opacity: 1; visibility: visible; transform: translateY(0); }
+  .to-top:hover { background: #4a3190; }
+
+  /* =========================================
+     Responsive — 目次とボタンが本文を隠さない
+     ========================================= */
+  @media (max-width: 980px) {
+    .layout { grid-template-columns: 1fr; }
+    aside.sidebar {
+      position: static;
+      height: auto;
+      max-height: none;
+      border-right: none;
+      border-bottom: 1px solid #293143;
+      padding: var(--sp-4);
+    }
+    .sidebar nav {
+      max-height: 240px;
+      overflow-y: auto;
+      border: 1px solid #2b3345;
+      border-radius: var(--r-sm);
+      padding: var(--sp-1);
+    }
+    .sidebar-sub { margin-bottom: var(--sp-3); }
+    main { padding: var(--sp-6) var(--sp-4) var(--sp-16); max-width: none; }
+    h2 { margin-top: var(--sp-12); }
+    .compare, .ctx-row { grid-template-columns: 1fr; }
+    .ctx-row { min-width: 0; }
+    .to-top {
+      right: var(--sp-3);
+      bottom: var(--sp-3);
+      width: 44px; height: 44px;
+    }
+  }
+
+  @media print {
+    aside.sidebar, .to-top { display: none; }
+    .layout { display: block; }
+    main { max-width: none; padding: 0; }
+    .code { box-shadow: none; }
+  }
+</style>
+</head>
+<body id="top">
+<div class="layout">
+
+  <aside class="sidebar">
+    <p class="sidebar-title">C#の条件付きコンパイル 総合ガイド</p>
+    <p class="sidebar-sub">機能解説／他言語との違い／DLLデプロイ／同名DLLの多重ロード</p>
+    <h2>目次</h2>
+    <nav aria-label="目次">
+      <ol>
+        <li><a href="#s1">3分でわかる要点</a></li>
+        <li><a href="#s2">条件付きコンパイルの基本</a></li>
+        <li><a href="#s3">シンボルはどこで定義されるか</a></li>
+        <li><a href="#s4">[Conditional]属性 — #ifとの決定的な違い</a></li>
+        <li><a href="#s5">言語仕様レベルの落とし穴</a></li>
+        <li><a href="#s6">他言語との違い</a></li>
+        <li><a href="#s7">#ifを使わない選択肢</a></li>
+        <li><a href="#s8">DLLをデプロイするうえでの注意点</a></li>
+        <li><a href="#s9">同名DLLが複数メモリ展開されるとどうなるか</a></li>
+        <li><a href="#s10">診断とトラブルシュート</a></li>
+        <li><a href="#s11">実務チェックリスト</a></li>
+        <li><a href="#s12">用語集</a></li>
+      </ol>
+    </nav>
+  </aside>
+
+  <main>
+    <header class="top">
+      <h1>C#の条件付きコンパイル 総合ガイド</h1>
+      <p class="lead">
+        <code class="inline">#if</code> と <code class="inline">[Conditional]</code> の仕組みから、
+        他言語との設計思想の違い、DLL配布で踏みやすい地雷、
+        そして同名アセンブリが1プロセスに二重ロードされたときの挙動までを1本にまとめた資料です。
+      </p>
+      <p class="meta">
+        <span>作成日: 2026-09-05</span>
+        <span>対象: .NET Framework 4.x / .NET 5以降（.NET Core系）</span>
+        <span>想定読者: C#でDLLを作って配布する人</span>
+      </p>
+    </header>
+
+    <!-- ============ 1 ============ -->
+    <h2 id="s1">1. 3分でわかる要点</h2>
+
+    <div class="box box-key">
+      <ul>
+        <li><code class="inline">#if</code> は<strong>ビルド時に片方のコードを丸ごと捨てる</strong>仕組み。DLLには残った側しか入らない。</li>
+        <li>C#のプリプロセッサは<strong>値を持つマクロを持たない</strong>。C/C++の <code class="inline">#define MAX 100</code> のような使い方はできない。</li>
+        <li><code class="inline">[Conditional("DEBUG")]</code> は <code class="inline">#if</code> と似て非なるもの。
+            <strong>呼び出す側のビルド設定で有効/無効が決まる</strong>。DLL配布ではこの違いが決定的。</li>
+        <li>DLLのアイデンティティは「名前＋バージョン＋カルチャ＋公開キー」だけ。
+            <strong>どのシンボルでビルドしたかはアイデンティティに現れない</strong>。
+            つまり「同名・同バージョンなのに中身が違うDLL」が作れてしまう。</li>
+        <li>同名DLLが別々のロードコンテキストに2つ乗ると、CLRはそれを<strong>別の型として扱う</strong>。
+            <code class="inline">InvalidCastException: 型 'Foo' を型 'Foo' にキャストできません</code> という一見矛盾したエラーはこれ。
+            <code class="inline">static</code> フィールドも2つに分裂する。</li>
+      </ul>
+    </div>
+
+    <p>
+      この4点が結びつくと、実務で一番厄介な事故が起きます。
+      <strong>「同名・同バージョン・中身違い（デバッグ版と製品版）のDLLが、同じプロセスに同時に載っている」</strong>という状態です。
+      アセンブリ名もバージョンも同じなので、ログを見ても気づけません。第9章でこの状態を詳しく扱います。
+    </p>
+
+    <!-- ============ 2 ============ -->
+    <h2 id="s2">2. 条件付きコンパイルの基本</h2>
+
+    <h3>2.1 何をするものか</h3>
+    <p>
+      条件付きコンパイルとは、<strong>コンパイラがソースを読む段階で、条件に合わない部分を「無かったこと」にする</strong>機能です。
+      実行時の <code class="inline">if</code> 文とは根本的に違い、条件に合わなかったコードは
+      IL（中間言語）にすら変換されず、生成されるDLL/EXEに一切含まれません。
+    </p>
+
+    <div class="code">
+      <div class="cap">最小の例</div>
+<pre><span class="pp">#define</span> VERBOSE_LOG          <span class="cm">// ← ファイルの一番先頭にしか書けない</span>
+
+<span class="kw">using</span> System;
+
+<span class="kw">class</span> Sample
+{
+    <span class="kw">public void</span> Run()
+    {
+        Console.WriteLine(<span class="st">"処理を開始します"</span>);
+
+<span class="pp">#if</span> VERBOSE_LOG
+        Console.WriteLine(<span class="st">"[詳細] 内部状態をダンプしました"</span>);   <span class="cm">// VERBOSE_LOG 定義時だけコンパイルされる</span>
+<span class="pp">#elif</span> MINIMAL_LOG
+        Console.WriteLine(<span class="st">"[簡易]"</span>);
+<span class="pp">#else</span>
+        <span class="cm">// 何も出さない</span>
+<span class="pp">#endif</span>
+    }
+}</pre>
+    </div>
+
+    <h3>2.2 使える指令の一覧</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>指令</th><th>役割</th><th>書ける場所・制約</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code class="inline">#define</code> / <code class="inline">#undef</code></td>
+            <td>シンボルを定義／定義解除する</td>
+            <td><strong>ファイルの先頭のみ</strong>（<code class="inline">using</code> や実コードより前）。効果はそのファイル内だけ。値は持てない</td>
+          </tr>
+          <tr>
+            <td><code class="inline">#if</code> / <code class="inline">#elif</code> / <code class="inline">#else</code> / <code class="inline">#endif</code></td>
+            <td>条件でコード領域を取捨する</td>
+            <td>どこでも可。式には <code class="inline">!</code> <code class="inline">&amp;&amp;</code> <code class="inline">||</code> <code class="inline">==</code> <code class="inline">!=</code> <code class="inline">()</code> と <code class="inline">true</code>/<code class="inline">false</code> のみ</td>
+          </tr>
+          <tr>
+            <td><code class="inline">#error</code> / <code class="inline">#warning</code></td>
+            <td>コンパイルエラー／警告を意図的に出す</td>
+            <td>「想定外の構成でビルドされた」ことを早期に潰すのに有効</td>
+          </tr>
+          <tr>
+            <td><code class="inline">#region</code> / <code class="inline">#endregion</code></td>
+            <td>エディタ上の折りたたみ領域</td>
+            <td>コンパイル結果には影響しない</td>
+          </tr>
+          <tr>
+            <td><code class="inline">#pragma warning</code></td>
+            <td>警告の抑制／復帰</td>
+            <td><code class="inline">disable</code> したら必ず <code class="inline">restore</code> で戻す</td>
+          </tr>
+          <tr>
+            <td><code class="inline">#nullable</code></td>
+            <td>null許容参照型の文脈切り替え</td>
+            <td><code class="inline">enable</code> / <code class="inline">disable</code> / <code class="inline">restore</code></td>
+          </tr>
+          <tr>
+            <td><code class="inline">#line</code></td>
+            <td>エラー報告の行番号・ファイル名を差し替える</td>
+            <td>コード生成ツール向け。手書きコードではまず使わない</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="box box-warn">
+      <p>
+        C#には <code class="inline">#include</code> がありません。他のファイルで <code class="inline">#define</code> したシンボルは
+        <strong>そのファイルの外には一切伝わりません</strong>。
+        プロジェクト全体で効かせたいシンボルは、必ずビルド設定（csproj）側で定義します（第3章）。
+      </p>
+    </div>
+
+    <h3>2.3 条件式の書き方</h3>
+    <p>
+      シンボルは「定義されている＝true」「されていない＝false」の真偽値としてのみ評価されます。
+      値の比較（<code class="inline">#if VERSION &gt; 3</code> のような書き方）はできません。
+    </p>
+
+    <div class="code">
+      <div class="cap">条件式の可否</div>
+<pre><span class="pp">#if</span> DEBUG &amp;&amp; !UNIT_TEST          <span class="cm">// OK: 論理演算子は使える</span>
+<span class="pp">#if</span> (NET48 || NET8_0) &amp;&amp; WINDOWS <span class="cm">// OK: カッコによるグループ化も可</span>
+<span class="pp">#if</span> DEBUG == true                <span class="cm">// OK（ただし冗長。ふつうは書かない）</span>
+
+<span class="pp">#if</span> VERSION &gt; 3                  <span class="cm">// NG: 大小比較は不可</span>
+<span class="pp">#if</span> defined(DEBUG)               <span class="cm">// NG: C/C++の defined 演算子は存在しない</span>
+<span class="pp">#define</span> MAX_RETRY 3               <span class="cm">// NG: 値付きマクロは作れない</span></pre>
+    </div>
+
+    <p>
+      定数を切り替えたい場合は、シンボルで <code class="inline">const</code> の定義そのものを切り替えます。
+    </p>
+
+    <div class="code">
+      <div class="cap">値を切り替えたいときの定石</div>
+<pre><span class="kw">internal static class</span> Limits
+{
+<span class="pp">#if</span> STRESS_TEST
+    <span class="kw">public const int</span> MaxRetryCount = 100;
+<span class="pp">#else</span>
+    <span class="kw">public const int</span> MaxRetryCount = 3;
+<span class="pp">#endif</span>
+}</pre>
+    </div>
+
+    <!-- ============ 3 ============ -->
+    <h2 id="s3">3. シンボルはどこで定義されるか</h2>
+
+    <p>
+      条件付きコンパイルのトラブルの大半は、「そのシンボル、本当に定義されてる？」の確認漏れです。
+      定義経路は4つあります。
+    </p>
+
+    <h3>3.1 定義の4経路</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>経路</th><th>書き方</th><th>有効範囲</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>ソース内</td>
+            <td><code class="inline">#define FOO</code></td>
+            <td>そのファイルのみ。しかもファイル先頭限定</td>
+          </tr>
+          <tr>
+            <td>プロジェクトファイル</td>
+            <td><code class="inline">&lt;DefineConstants&gt;</code></td>
+            <td>そのプロジェクトの全ソース。実務ではこれが主役</td>
+          </tr>
+          <tr>
+            <td>SDKの暗黙定義</td>
+            <td>（自動）</td>
+            <td>ターゲットフレームワークとOSに応じて自動で付く</td>
+          </tr>
+          <tr>
+            <td>コマンドライン</td>
+            <td><code class="inline">csc /define:FOO</code><br><code class="inline">dotnet build -p:DefineConstants=FOO</code></td>
+            <td>そのビルド実行のみ。CIでの一時切り替えに使う</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="code">
+      <div class="cap">csproj — 追記形式にするのが安全</div>
+<pre><span class="at">&lt;Project</span> Sdk=<span class="st">"Microsoft.NET.Sdk"</span><span class="at">&gt;</span>
+
+  <span class="at">&lt;PropertyGroup&gt;</span>
+    <span class="at">&lt;TargetFrameworks&gt;</span>net48;net8.0<span class="at">&lt;/TargetFrameworks&gt;</span>
+  <span class="at">&lt;/PropertyGroup&gt;</span>
+
+  <span class="cm">&lt;!-- 良い: 既存の DEBUG / TRACE を消さずに足す --&gt;</span>
+  <span class="at">&lt;PropertyGroup&gt;</span>
+    <span class="at">&lt;DefineConstants&gt;</span>$(DefineConstants);COMPANY_INTERNAL<span class="at">&lt;/DefineConstants&gt;</span>
+  <span class="at">&lt;/PropertyGroup&gt;</span>
+
+  <span class="cm">&lt;!-- 構成ごとに変える場合 --&gt;</span>
+  <span class="at">&lt;PropertyGroup</span> Condition=<span class="st">"'$(Configuration)' == 'Release'"</span><span class="at">&gt;</span>
+    <span class="at">&lt;DefineConstants&gt;</span>$(DefineConstants);PRODUCTION<span class="at">&lt;/DefineConstants&gt;</span>
+  <span class="at">&lt;/PropertyGroup&gt;</span>
+
+<span class="at">&lt;/Project&gt;</span></pre>
+    </div>
+
+    <div class="box box-danger">
+      <p>
+        <code class="inline">&lt;DefineConstants&gt;COMPANY_INTERNAL&lt;/DefineConstants&gt;</code> と
+        <code class="inline">$(DefineConstants)</code> を付けずに書くと、
+        SDKが用意した <code class="inline">DEBUG</code> や <code class="inline">TRACE</code> が<strong>まるごと消えます</strong>。
+        <code class="inline">Debug.WriteLine</code> が急に効かなくなる原因の定番です。
+      </p>
+    </div>
+
+    <h3>3.2 SDKが自動で定義するシンボル</h3>
+    <p>
+      .NET SDK形式のプロジェクトでは、ターゲットフレームワークに応じたシンボルが自動で定義されます。
+      マルチターゲット（<code class="inline">&lt;TargetFrameworks&gt;</code>）でAPI差を吸収する際の主役です。
+    </p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>ターゲット</th><th>自動定義されるシンボル（抜粋）</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code class="inline">net48</code></td>
+            <td><code class="inline">NETFRAMEWORK</code>, <code class="inline">NET48</code>, <code class="inline">NET48_OR_GREATER</code>, <code class="inline">NET472_OR_GREATER</code> …（下位すべて）</td>
+          </tr>
+          <tr>
+            <td><code class="inline">netstandard2.0</code></td>
+            <td><code class="inline">NETSTANDARD</code>, <code class="inline">NETSTANDARD2_0</code>, <code class="inline">NETSTANDARD2_0_OR_GREATER</code>, <code class="inline">NETSTANDARD1_6_OR_GREATER</code> …</td>
+          </tr>
+          <tr>
+            <td><code class="inline">net8.0</code></td>
+            <td><code class="inline">NET</code>, <code class="inline">NET8_0</code>, <code class="inline">NET8_0_OR_GREATER</code>, <code class="inline">NET6_0_OR_GREATER</code> …, <code class="inline">NETCOREAPP</code>, <code class="inline">NETCOREAPP3_1_OR_GREATER</code></td>
+          </tr>
+          <tr>
+            <td><code class="inline">net8.0-windows</code></td>
+            <td>上記に加えて <code class="inline">WINDOWS</code>, <code class="inline">WINDOWS7_0_OR_GREATER</code> など（OS版の指定に応じる）</td>
+          </tr>
+          <tr>
+            <td>構成（Configuration）</td>
+            <td>Debug: <code class="inline">DEBUG</code> と <code class="inline">TRACE</code>／Release: <code class="inline">TRACE</code> のみ</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="box box-danger">
+      <p>
+        <strong><code class="inline">RELEASE</code> というシンボルは自動定義されません。</strong>
+        Visual StudioでRelease構成を選んでいても <code class="inline">#if RELEASE</code> は<strong>常にfalse</strong>で、
+        中のコードは永遠にビルドされません。しかも警告も出ません。正しくは <code class="inline">#if !DEBUG</code> と書きます。
+      </p>
+    </div>
+
+    <div class="compare">
+      <div class="bad-box">
+        <div class="code" style="margin-top:0">
+          <div class="cap">常にfalse。中身は死んでいる</div>
+<pre><span class="pp">#if</span> RELEASE
+    SendTelemetry();
+<span class="pp">#endif</span></pre>
+        </div>
+      </div>
+      <div class="good-box">
+        <div class="code" style="margin-top:0">
+          <div class="cap">DEBUGの否定で表現する</div>
+<pre><span class="pp">#if</span> !DEBUG
+    SendTelemetry();
+<span class="pp">#endif</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <p>
+      「意図しない構成でビルドされていないか」を機械的に検出したいときは、<code class="inline">#error</code> が有効です。
+    </p>
+
+    <div class="code">
+      <div class="cap">想定外の組み合わせをビルド時に落とす</div>
+<pre><span class="pp">#if</span> DEBUG &amp;&amp; PRODUCTION
+<span class="pp">#error</span> DEBUG と PRODUCTION を同時に定義することはできません。ビルド構成を確認してください。
+<span class="pp">#endif</span>
+
+<span class="pp">#if</span> !NETFRAMEWORK &amp;&amp; !NET
+<span class="pp">#error</span> 想定外のターゲットフレームワークです。
+<span class="pp">#endif</span></pre>
+    </div>
+
+    <!-- ============ 4 ============ -->
+    <h2 id="s4">4. <code class="inline" style="font-size:0.8em">[Conditional]</code>属性 — <code class="inline" style="font-size:0.8em">#if</code>との決定的な違い</h2>
+
+    <p>
+      <code class="inline">System.Diagnostics.ConditionalAttribute</code> は、
+      条件付きコンパイルのもう一つの顔です。DLLを配布する立場では、こちらの理解のほうが重要になります。
+    </p>
+
+    <div class="box box-key">
+      <p>
+        <code class="inline">#if</code> は<strong>そのコードを書いた側のビルド設定</strong>で決まる。<br>
+        <code class="inline">[Conditional]</code> は<strong>そのメソッドを呼ぶ側のビルド設定</strong>で決まる。
+      </p>
+    </div>
+
+    <h3>4.1 動作の仕組み</h3>
+    <p>
+      <code class="inline">[Conditional("DEBUG")]</code> が付いたメソッドは、
+      <strong>呼び出し側をコンパイルするときに <code class="inline">DEBUG</code> が定義されていなければ、その呼び出し文ごと消えます</strong>。
+      引数の評価も含めて消えます。一方、<strong>メソッド本体はDLLに残ります</strong>。消えるのは呼び出し側です。
+    </p>
+
+    <div class="code">
+      <div class="cap">ライブラリ側（MyLib.dll / Releaseビルド）</div>
+<pre><span class="kw">using</span> System.Diagnostics;
+
+<span class="kw">public static class</span> Diag
+{
+    <span class="at">[Conditional(</span><span class="st">"DEBUG"</span><span class="at">)]</span>
+    <span class="kw">public static void</span> Log(<span class="kw">string</span> message)
+    {
+        <span class="cm">// このメソッド本体は Release ビルドの MyLib.dll にも「残る」</span>
+        Console.WriteLine(<span class="st">$"[DIAG] {message}"</span>);
+    }
+
+    <span class="kw">public static int</span> Calc()
+    {
+<span class="pp">#if</span> DEBUG
+        <span class="kw">return</span> 1;   <span class="cm">// ← Release ビルドでは DLL に含まれない（消える側）</span>
+<span class="pp">#else</span>
+        <span class="kw">return</span> 2;   <span class="cm">// ← Release ビルドの MyLib.dll に焼き付く</span>
+<span class="pp">#endif</span>
+    }
+}</pre>
+    </div>
+
+    <div class="code">
+      <div class="cap">利用側アプリ（Debugビルド）— 同じ Release版 MyLib.dll を参照</div>
+<pre>Diag.Log(BuildExpensiveMessage());
+<span class="cm">// → 利用側が Debug ビルドなので、この呼び出しは生き残り、実際に出力される。</span>
+<span class="cm">//   ライブラリが Release でビルドされていたかどうかは無関係。</span>
+
+<span class="kw">int</span> v = Diag.Calc();
+<span class="cm">// → 常に 2。ライブラリのビルド時に確定済みで、利用側の構成では変えられない。</span></pre>
+    </div>
+
+    <div class="box box-note">
+      <p>
+        <code class="inline">Debug.WriteLine</code> や <code class="inline">Debug.Assert</code> は
+        <code class="inline">[Conditional("DEBUG")]</code>、<code class="inline">Trace.WriteLine</code> は
+        <code class="inline">[Conditional("TRACE")]</code> で作られています。
+        「Releaseにしたら <code class="inline">Debug.WriteLine</code> が消える」のは、
+        .NETのDLLが差し替わるからではなく、<strong>あなたのコードのコンパイル時に呼び出しが削除されるから</strong>です。
+      </p>
+    </div>
+
+    <h3>4.2 引数が評価されないという副作用</h3>
+    <div class="box box-danger">
+      <p>
+        呼び出しが消えるということは、<strong>引数の式も実行されない</strong>ということです。
+        引数に副作用を書くと、構成によって挙動が変わるバグになります。
+      </p>
+    </div>
+
+    <div class="compare">
+      <div class="bad-box">
+        <div class="code" style="margin-top:0">
+          <div class="cap">Releaseでは Remove が実行されない</div>
+<pre>Debug.Assert(list.Remove(item));
+Debug.Assert(++counter &lt; Max);</pre>
+        </div>
+      </div>
+      <div class="good-box">
+        <div class="code" style="margin-top:0">
+          <div class="cap">副作用は外に出す</div>
+<pre><span class="kw">bool</span> removed = list.Remove(item);
+Debug.Assert(removed);
+
+counter++;
+Debug.Assert(counter &lt; Max);</pre>
+        </div>
+      </div>
+    </div>
+
+    <h3>4.3 <code class="inline">[Conditional]</code>を付けられる条件</h3>
+    <p>「呼び出しを丸ごと消す」という性質上、消しても意味が通る形にしか付けられません。</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>制約</th><th>理由</th><th>違反時のエラー</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>戻り値は <code class="inline">void</code> のみ</td><td>呼び出しを消したら戻り値を作れない</td><td>CS0578</td></tr>
+          <tr><td><code class="inline">out</code> パラメータ不可</td><td>消したら未代入変数が残る</td><td>CS0685</td></tr>
+          <tr><td><code class="inline">override</code> メソッド不可</td><td>基底の宣言で決まるべきものだから</td><td>CS0243</td></tr>
+          <tr><td>インターフェースのメンバーに付けられない／インターフェース実装にも付けられない</td><td>インターフェース越しの呼び出しは実行時に解決されるため消しようがない</td><td>CS0582 / CS0629</td></tr>
+          <tr><td>コンストラクター、デストラクター、演算子、明示的実装は不可</td><td>同上</td><td>CS0577</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="box box-warn">
+      <p>
+        <strong>インターフェース越しの呼び出しでは効きません。</strong>
+        <code class="inline">ILogger.Log</code> のようにインターフェース経由で呼ぶ設計にしていると、
+        <code class="inline">[Conditional]</code> による削除は一切働きません。静的メソッドへの直接呼び出しが前提の機能です。
+      </p>
+    </div>
+
+    <h3>4.4 属性クラスに付けるパターン</h3>
+    <p>
+      <code class="inline">[Conditional]</code> は属性クラスにも付けられます。
+      シンボルが定義されていない場合、その属性は<strong>メタデータに書き込まれません</strong>。
+      デバッグ専用のマーカー属性を製品版から消す用途に使えます。
+    </p>
+
+    <div class="code">
+      <div class="cap">DEBUGビルドのときだけメタデータに残る属性</div>
+<pre><span class="at">[Conditional(</span><span class="st">"DEBUG"</span><span class="at">)]</span>
+<span class="at">[AttributeUsage(</span>AttributeTargets.Class | AttributeTargets.Method<span class="at">)]</span>
+<span class="kw">public sealed class</span> InternalOnlyAttribute : Attribute { }</pre>
+    </div>
+
+    <!-- ============ 5 ============ -->
+    <h2 id="s5">5. 言語仕様レベルの落とし穴</h2>
+
+    <h3>5.1 無効ブロックはコンパイルされない＝壊れていても気づけない</h3>
+    <p>
+      <code class="inline">#if</code> は字句（トークン）レベルで働きます。
+      条件が偽になった領域は<strong>構文解析も型チェックも参照解決も行われません</strong>。
+      その結果、無効側のコードが壊れたままビルドが通ってしまいます。
+    </p>
+
+    <div class="code">
+      <div class="cap">これは Release ビルドで通ってしまう</div>
+<pre><span class="pp">#if</span> DEBUG
+    <span class="cm">// Release ビルドではこの行は一切検査されない。</span>
+    <span class="cm">// 存在しないメソッドを呼んでいてもエラーにならず、</span>
+    <span class="cm">// Debug ビルドに切り替えた瞬間に初めて壊れる。</span>
+    Logger.WriteVerboseDump(state, alreadyRenamedParameter);
+<span class="pp">#endif</span></pre>
+    </div>
+
+    <div class="box box-danger">
+      <p>
+        これは単なる理屈ではなく、<strong>IDEのリファクタリングが無効ブロックに届かない</strong>という実害があります。
+        変数名の一括リネーム、メソッドのシグネチャ変更、参照の検索、静的解析、コードカバレッジ ——
+        いずれも無効ブロックを素通りします。<code class="inline">#if</code> の中のコードは「腐る」前提で扱ってください。
+      </p>
+    </div>
+
+    <div class="box box-good">
+      <p>
+        <strong>対策:</strong> CIで<strong>全構成をビルドする</strong>ことです。
+        Releaseだけでなく Debug も、マルチターゲットなら全TFMを毎回ビルドすれば、無効ブロックの腐敗を検出できます。
+      </p>
+    </div>
+
+    <h3>5.2 組み合わせが爆発する</h3>
+    <p>
+      独立したシンボルが N 個あると、理論上のビルド構成は 2<sup>N</sup> 通りになります。
+      5個で32通り、10個で1024通り。もちろん全部はテストされません。
+      <strong>実際にビルドし、テストする構成だけを定義する</strong>のが鉄則です。
+    </p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>シンボル数</th><th>理論上の構成数</th><th>現実</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1（DEBUG のみ）</td><td>2</td><td>両方テストされる</td></tr>
+          <tr><td>3</td><td>8</td><td>2〜3構成しかテストしていないことが多い</td></tr>
+          <tr><td>6以上</td><td>64以上</td><td>「そのフラグ、まだ動く？」が誰にも分からない状態</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>5.3 ネストと巨大ブロック</h3>
+    <div class="compare">
+      <div class="bad-box">
+        <div class="code" style="margin-top:0">
+          <div class="cap">読めない・追えない</div>
+<pre><span class="pp">#if</span> NETFRAMEWORK
+  <span class="pp">#if</span> DEBUG
+    <span class="pp">#if</span> !UNIT_TEST
+      ...200行...
+    <span class="pp">#endif</span>
+  <span class="pp">#else</span>
+      ...150行...
+  <span class="pp">#endif</span>
+<span class="pp">#endif</span></pre>
+        </div>
+      </div>
+      <div class="good-box">
+        <div class="code" style="margin-top:0">
+          <div class="cap">差分を1メソッドに閉じ込める</div>
+<pre><span class="kw">static string</span> GetTempRoot()
+{
+<span class="pp">#if</span> NETFRAMEWORK
+    <span class="kw">return</span> Path.GetTempPath();
+<span class="pp">#else</span>
+    <span class="kw">return</span> Path.Combine(
+        Environment.GetFolderPath(
+            Environment.SpecialFolder.LocalApplicationData),
+        <span class="st">"tmp"</span>);
+<span class="pp">#endif</span>
+}</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="box box-good">
+      <p>
+        <code class="inline">#if</code> は<strong>「短く」「メソッド単位で」「1箇所に集約して」</strong>使うのが原則です。
+        差分が大きいなら、ファイルごと分ける方法（第7章）に切り替えます。
+      </p>
+    </div>
+
+    <h3>5.4 公開APIの形を <code class="inline">#if</code> で変えない</h3>
+    <p>
+      これはDLL配布に直結する最重要ルールなので、第8章で改めて扱います。
+      ひとことで言えば、<strong>publicなメンバーの有無・シグネチャ・フィールドの並びを <code class="inline">#if</code> で変えると、
+      ビルド構成によってDLLの「契約」そのものが変わってしまう</strong>ということです。
+    </p>
+
+    <!-- ============ 6 ============ -->
+    <h2 id="s6">6. 他言語との違い</h2>
+
+    <p>
+      「条件付きコンパイル」という言葉は多くの言語にありますが、
+      <strong>どの段階で・何の単位で切り替えるか</strong>が言語ごとに違います。
+      この違いを押さえると、C#の <code class="inline">#if</code> の性格がはっきりします。
+    </p>
+
+    <h3>6.1 早見表</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>言語</th><th>主な仕組み</th><th>処理の段階</th>
+            <th>値付きマクロ</th><th>切り替えの単位</th><th>無効側の構文チェック</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="col-lang">C / C++</td>
+            <td><code class="inline">#if</code> / <code class="inline">#define</code>（独立したプリプロセッサ）</td>
+            <td>コンパイル前のテキスト処理</td>
+            <td>あり（関数形式も可）</td>
+            <td>任意のテキスト範囲。<code class="inline">#include</code> で伝播</td>
+            <td>されない</td>
+          </tr>
+          <tr>
+            <td class="col-lang">C#</td>
+            <td><code class="inline">#if</code> ＋ <code class="inline">[Conditional]</code></td>
+            <td>コンパイラ内部の字句解析</td>
+            <td><strong>なし</strong></td>
+            <td>ファイル内の任意範囲。シンボルはファイル or プロジェクト単位</td>
+            <td>されない</td>
+          </tr>
+          <tr>
+            <td class="col-lang">Java</td>
+            <td>言語機能としては<strong>なし</strong>。<code class="inline">static final boolean</code> の定数畳み込みが慣用</td>
+            <td>コンパイル時の最適化</td>
+            <td>なし</td>
+            <td>if文の単位</td>
+            <td><strong>される</strong>（普通のコードなので）</td>
+          </tr>
+          <tr>
+            <td class="col-lang">Rust</td>
+            <td><code class="inline">#[cfg(...)]</code> 属性、<code class="inline">cfg!()</code> マクロ、Cargo の feature</td>
+            <td>パース後の構文木処理</td>
+            <td>featureは真偽値。値は <code class="inline">env!</code> 等で別途</td>
+            <td><strong>構文要素（関数・モジュール・フィールド）単位</strong></td>
+            <td>される（構文的に正しい必要あり）</td>
+          </tr>
+          <tr>
+            <td class="col-lang">Go</td>
+            <td>ビルドタグ <code class="inline">//go:build</code>、ファイル名の <code class="inline">_windows.go</code> サフィックス</td>
+            <td>ビルド対象ファイルの選択</td>
+            <td>なし</td>
+            <td><strong>ファイル単位のみ</strong></td>
+            <td>選ばれなければ検査されない</td>
+          </tr>
+          <tr>
+            <td class="col-lang">Swift</td>
+            <td><code class="inline">#if</code> ＋ <code class="inline">-D</code>、実行時判定は <code class="inline">#available</code></td>
+            <td>コンパイル時（宣言・文の単位）</td>
+            <td>なし</td>
+            <td>宣言や文の単位</td>
+            <td>C#より厳しく、部分的に検査される</td>
+          </tr>
+          <tr>
+            <td class="col-lang">Python</td>
+            <td>なし。<code class="inline">if sys.platform == ...</code> の実行時分岐</td>
+            <td>実行時</td>
+            <td>—</td>
+            <td>—</td>
+            <td>される（構文エラーは常に検出）</td>
+          </tr>
+          <tr>
+            <td class="col-lang">TypeScript / JS</td>
+            <td>バンドラの定数置換（<code class="inline">process.env.NODE_ENV</code> 等）＋ tree shaking</td>
+            <td>バンドル時</td>
+            <td>あり（テキスト置換）</td>
+            <td>式の単位</td>
+            <td>される（型チェックは全体に及ぶ）</td>
+          </tr>
+          <tr>
+            <td class="col-lang">MATLAB</td>
+            <td>なし。<code class="inline">ispc</code> / <code class="inline">ismac</code> 等の実行時分岐</td>
+            <td>実行時</td>
+            <td>—</td>
+            <td>—</td>
+            <td>される</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>6.2 C/C++との違い — ここが一番誤解される</h3>
+    <p>
+      C#の <code class="inline">#</code> 指令は「プリプロセッサ」と呼ばれますが、
+      <strong>C/C++のような独立した前処理プログラムは存在しません</strong>。
+      コンパイラが字句解析するときに一体で処理されるだけです。結果として、次の機能がまるごと存在しません。
+    </p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>C/C++ にあるもの</th><th>C# での扱い</th><th>C# での代替</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code class="inline">#define PI 3.14</code>（値付き）</td>
+            <td>存在しない</td>
+            <td><code class="inline">const double Pi = 3.14;</code></td>
+          </tr>
+          <tr>
+            <td><code class="inline">#define MAX(a,b) ...</code>（関数形式マクロ）</td>
+            <td>存在しない</td>
+            <td>ジェネリックメソッド、<code class="inline">[MethodImpl(MethodImplOptions.AggressiveInlining)]</code></td>
+          </tr>
+          <tr>
+            <td><code class="inline">#include "header.h"</code></td>
+            <td>存在しない</td>
+            <td>アセンブリ参照 <code class="inline">&lt;ProjectReference&gt;</code> / <code class="inline">&lt;PackageReference&gt;</code>、<code class="inline">global using</code></td>
+          </tr>
+          <tr>
+            <td>インクルードガード <code class="inline">#ifndef X_H</code></td>
+            <td>不要（そもそもテキスト展開しない）</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td><code class="inline">defined(X)</code> 演算子</td>
+            <td>存在しない</td>
+            <td>シンボル名をそのまま真偽値として書く</td>
+          </tr>
+          <tr>
+            <td><code class="inline">__FILE__</code> / <code class="inline">__LINE__</code></td>
+            <td>存在しない</td>
+            <td><code class="inline">[CallerFilePath]</code> / <code class="inline">[CallerLineNumber]</code>（コンパイラが引数に埋める）</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="box box-note">
+      <p>
+        C#が値付きマクロを持たないのは「意図的な制限」です。
+        マクロによる意味の書き換えを禁じることで、<strong>ソースコードの見た目と実際の意味を一致させる</strong>ことを優先しています。
+        C++から移ってきた人が最初に戸惑うポイントですが、
+        代替（<code class="inline">const</code>、ジェネリクス、<code class="inline">[Caller*]</code> 属性）が用意されています。
+      </p>
+    </div>
+
+    <h3>6.3 Rustとの違い — 字句 vs 構文木</h3>
+    <p>
+      Rustの <code class="inline">#[cfg]</code> は<strong>構文木の要素に付ける属性</strong>です。
+      条件が偽でも、そのコードは<strong>パースされる必要があります</strong>。
+      つまり構文エラーはちゃんと検出されます。C#の <code class="inline">#if</code> にはこの安全網がありません（第5.1節）。
+    </p>
+
+    <div class="compare">
+      <div class="bad-box" style="background:#f4f5f8;border-color:var(--c-border)">
+        <div class="code" style="margin-top:0">
+          <div class="cap">C# — 無効側は検査されない</div>
+<pre><span class="pp">#if</span> WINDOWS
+    this is not valid csharp at all
+<span class="pp">#endif</span>
+<span class="cm">// WINDOWS 未定義ならビルドは通ってしまう</span></pre>
+        </div>
+      </div>
+      <div class="good-box" style="background:#f4f5f8;border-color:var(--c-border)">
+        <div class="code" style="margin-top:0">
+          <div class="cap">Rust — 無効側もパースされる</div>
+<pre><span class="at">#[cfg(</span>target_os = <span class="st">"windows"</span><span class="at">)]</span>
+<span class="kw">fn</span> platform_init() { <span class="cm">/* ... */</span> }
+
+<span class="cm">// 構文が壊れていれば cfg が偽でもコンパイルエラー</span></pre>
+        </div>
+      </div>
+    </div>
+    <p style="font-size:var(--fs-xs);color:var(--c-muted);margin-top:calc(var(--sp-2) * -1)">
+      ※ 上の比較は「安全網の有無」を示すためのもので、良し悪しの対比ではありません（両側とも灰色にしています）。
+    </p>
+
+    <h3>6.4 Goとの違い — ファイル単位という割り切り</h3>
+    <p>
+      Goには <code class="inline">#if</code> がなく、<strong>ファイルごと切り替える</strong>方式に一本化されています。
+      <code class="inline">store_windows.go</code> と <code class="inline">store_linux.go</code> を置けば、
+      ビルド対象のファイルが自動で選ばれます。差分がファイル境界で明確になり、
+      「同じ関数の中に2つの実装が混ざる」ことが起きません。
+    </p>
+    <p>
+      C#でも同じ設計は再現できます。csprojで <code class="inline">Compile</code> 項目を条件付きにする方法です（第7.4節）。
+      差分が大きいときは <code class="inline">#if</code> より読みやすくなります。
+    </p>
+
+    <h3>6.5 Javaとの違い — 「機能がない」ことの意味</h3>
+    <p>
+      Javaには条件付きコンパイル構文がありません。代わりに
+      <code class="inline">static final boolean DEBUG = false;</code> のような定数で <code class="inline">if</code> を書くと、
+      javacが定数畳み込みして到達不能ブロックを除去します。
+      C#の <code class="inline">[Conditional]</code> と発想は近いですが、
+      Javaのやり方は<strong>コードが普通のJavaなので構文・型チェックが常に効く</strong>点が違います。
+      C#でも同等のことを <code class="inline">const bool</code> で書けます。
+    </p>
+
+    <div class="code">
+      <div class="cap">C#でも「常に検査される分岐」は書ける</div>
+<pre><span class="kw">internal static class</span> Features
+{
+<span class="pp">#if</span> DEBUG
+    <span class="kw">public const bool</span> VerboseDiagnostics = <span class="kw">true</span>;
+<span class="pp">#else</span>
+    <span class="kw">public const bool</span> VerboseDiagnostics = <span class="kw">false</span>;
+<span class="pp">#endif</span>
+}
+
+<span class="cm">// 呼び出し側は普通のif。型チェックもリネームも効く。</span>
+<span class="cm">// const が false ならコンパイラが到達不能コードとして除去する（CS0162 の警告付き）。</span>
+<span class="kw">if</span> (Features.VerboseDiagnostics)
+{
+    DumpInternalState();
+}</pre>
+    </div>
+
+    <div class="box box-good">
+      <p>
+        <code class="inline">#if</code> のブロックを広範囲に散らすくらいなら、
+        <strong><code class="inline">#if</code> は「const 1個の定義」だけに限定し、あとは普通の <code class="inline">if</code> で書く</strong>
+        ほうが保守しやすくなります。IDEのリネームも静的解析もカバレッジも効きます。
+      </p>
+    </div>
+
+    <!-- ============ 7 ============ -->
+    <h2 id="s7">7. <code class="inline" style="font-size:0.8em">#if</code>を使わない選択肢</h2>
+
+    <p>
+      <code class="inline">#if</code> が本当に必要な場面は、実は多くありません。
+      「そのAPIがそもそも存在しない」「そのプラットフォーム向けにコンパイルできない」場合に限られます。
+      それ以外は、より安全な手段があります。
+    </p>
+
+    <h3>7.1 判断の順序</h3>
+    <div class="card">
+      <h4>Q1. 切り替えたい内容は、実行時に決めても間に合うか？</h4>
+      <p>→ <strong>YES</strong>: 設定ファイル、環境変数、DI（依存性注入）、フィーチャーフラグで実行時に切り替える。<br>
+         同じバイナリを全環境に配れるので、第8章・第9章の事故がまるごと消えます。<strong>これが第一候補です。</strong></p>
+
+      <h4>Q2. OSやランタイムの違いが理由か？</h4>
+      <p>→ <code class="inline">OperatingSystem.IsWindows()</code> / <code class="inline">RuntimeInformation.IsOSPlatform(...)</code> を使う。<br>
+         .NET 5以降の <code class="inline">OperatingSystem.IsXxx()</code> はJITが定数として畳み込み、不要な分岐を除去します。
+         さらにプラットフォーム互換性アナライザ（CA1416）が「このAPIはWindows専用」を静的に検査してくれます。</p>
+
+      <h4>Q3. 対象フレームワークにそのAPIが存在しないのか？</h4>
+      <p>→ ここで初めて <code class="inline">#if NETFRAMEWORK</code> 等の出番。<strong>差分は小さなメソッド1つに閉じ込める。</strong></p>
+
+      <h4>Q4. 差分がクラス丸ごと・数百行規模か？</h4>
+      <p>→ <code class="inline">#if</code> ではなく<strong>ファイルを分ける</strong>（7.4節）。</p>
+    </div>
+
+    <h3>7.2 実行時判定（OS・ランタイム）</h3>
+    <div class="compare">
+      <div class="bad-box">
+        <div class="code" style="margin-top:0">
+          <div class="cap">無効側が検査されない</div>
+<pre><span class="pp">#if</span> WINDOWS
+    RegistryHelper.Write(key, value);
+<span class="pp">#else</span>
+    FileHelper.Write(path, value);
+<span class="pp">#endif</span></pre>
+        </div>
+      </div>
+      <div class="good-box">
+        <div class="code" style="margin-top:0">
+          <div class="cap">両方が常に検査される</div>
+<pre><span class="kw">if</span> (OperatingSystem.IsWindows())
+    RegistryHelper.Write(key, value);
+<span class="kw">else</span>
+    FileHelper.Write(path, value);</pre>
+        </div>
+      </div>
+    </div>
+    <p>
+      ただし、<code class="inline">net8.0</code>（OS指定なし）ではWindows専用APIをそもそも参照できない場合があります。
+      「コンパイルが通らない」場合だけ <code class="inline">#if</code> に落とします。
+    </p>
+
+    <h3>7.3 フィーチャーフラグ／設定による切り替え</h3>
+    <div class="code">
+      <div class="cap">設定で切り替える（同一バイナリを全環境に配れる）</div>
+<pre><span class="kw">public sealed class</span> DiagnosticsOptions
+{
+    <span class="kw">public bool</span> VerboseLogging { <span class="kw">get</span>; <span class="kw">init</span>; }
+    <span class="kw">public bool</span> EnableInternalEndpoints { <span class="kw">get</span>; <span class="kw">init</span>; }
+}
+
+<span class="cm">// appsettings.json / 環境変数 / DBなどから読む。</span>
+<span class="cm">// 検証環境と本番で「同じDLL」を使いながら挙動だけ変えられる。</span></pre>
+    </div>
+
+    <h3>7.4 ファイルごと切り替える（Go方式）</h3>
+    <p>
+      差分が大きいときは、実装ファイルを分けてcsprojで選択します。
+      <code class="inline">partial class</code> と組み合わせると自然に書けます。
+    </p>
+
+    <div class="code">
+      <div class="cap">csproj — TFMごとに別ファイルをコンパイル</div>
+<pre><span class="at">&lt;ItemGroup&gt;</span>
+  <span class="cm">&lt;!-- 既定の全ファイル取り込みから外す --&gt;</span>
+  <span class="at">&lt;Compile</span> Remove=<span class="st">"Platform\**\*.cs"</span> <span class="at">/&gt;</span>
+<span class="at">&lt;/ItemGroup&gt;</span>
+
+<span class="at">&lt;ItemGroup</span> Condition=<span class="st">"'$(TargetFramework)' == 'net48'"</span><span class="at">&gt;</span>
+  <span class="at">&lt;Compile</span> Include=<span class="st">"Platform\FileStore.NetFramework.cs"</span> <span class="at">/&gt;</span>
+<span class="at">&lt;/ItemGroup&gt;</span>
+
+<span class="at">&lt;ItemGroup</span> Condition=<span class="st">"'$(TargetFramework)' == 'net8.0'"</span><span class="at">&gt;</span>
+  <span class="at">&lt;Compile</span> Include=<span class="st">"Platform\FileStore.Net8.cs"</span> <span class="at">/&gt;</span>
+<span class="at">&lt;/ItemGroup&gt;</span></pre>
+    </div>
+
+    <div class="code">
+      <div class="cap">partial で共通部分と差分を分離</div>
+<pre><span class="cm">// FileStore.cs（共通・常にコンパイル）</span>
+<span class="kw">public partial class</span> FileStore
+{
+    <span class="kw">public void</span> Save(<span class="kw">string</span> name, <span class="kw">byte</span>[] data)
+    {
+        <span class="kw">var</span> root = GetRootPath();   <span class="cm">// ← 実装は差分ファイル側</span>
+        File.WriteAllBytes(Path.Combine(root, name), data);
+    }
+
+    <span class="kw">private partial string</span> GetRootPath();
+}
+
+<span class="cm">// FileStore.Net8.cs（net8.0 のときだけコンパイル）</span>
+<span class="kw">public partial class</span> FileStore
+{
+    <span class="kw">private partial string</span> GetRootPath()
+        =&gt; Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+}</pre>
+    </div>
+
+    <div class="box box-note">
+      <p>
+        この方式の利点は、<strong>選ばれなかったファイルも普通のC#として書ける</strong>ことです。
+        エディタ上では対象TFMを切り替えれば、それぞれが正しく検査されます。
+        欠点は、共通部分と差分を跨いだ変更が2ファイルに散ることです。
+        <strong>差分が10行未満なら <code class="inline">#if</code>、それ以上ならファイル分割</strong>、が実用的な目安です。
+      </p>
+    </div>
+
+    <!-- ============ 8 ============ -->
+    <h2 id="s8">8. DLLをデプロイするうえでの注意点</h2>
+
+    <div class="box box-key">
+      <p>
+        <code class="inline">#if</code> の結果はDLLに<strong>焼き付いて</strong>しまい、
+        しかも<strong>DLLのアイデンティティには現れません</strong>。
+        「見た目が同じで中身が違うDLL」を作れてしまうことが、デプロイ事故の根本原因です。
+      </p>
+    </div>
+
+    <h3>8.1 アセンブリのアイデンティティに含まれるもの</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>要素</th><th>例</th><th>アイデンティティに含まれるか</th></tr></thead>
+        <tbody>
+          <tr><td>単純名（Simple Name）</td><td><code class="inline">MyCompany.Core</code></td><td>✅ 含まれる</td></tr>
+          <tr><td>アセンブリバージョン</td><td><code class="inline">2.1.0.0</code></td><td>✅ 含まれる</td></tr>
+          <tr><td>カルチャ</td><td><code class="inline">neutral</code></td><td>✅ 含まれる</td></tr>
+          <tr><td>公開キートークン</td><td><code class="inline">b03f5f7f11d50a3a</code></td><td>✅ 含まれる（署名時）</td></tr>
+          <tr><td><strong>ビルド構成（Debug/Release）</strong></td><td>Debug</td><td>❌ <strong>含まれない</strong></td></tr>
+          <tr><td><strong>DefineConstants の内容</strong></td><td><code class="inline">TRACE;PRODUCTION</code></td><td>❌ <strong>含まれない</strong></td></tr>
+          <tr><td>ファイルバージョン</td><td><code class="inline">2.1.37.0</code></td><td>❌ 含まれない（表示用）</td></tr>
+          <tr><td>InformationalVersion</td><td><code class="inline">2.1.0+9f6091</code></td><td>❌ 含まれない（表示用）</td></tr>
+          <tr><td>MVID（モジュールGUID）</td><td><code class="inline">6f3a…</code></td><td>❌ 含まれない（ただし一意に近い識別子として使える）</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      つまり、<strong>Debugビルドの <code class="inline">MyCompany.Core.dll 2.1.0.0</code> と
+      Releaseビルドの <code class="inline">MyCompany.Core.dll 2.1.0.0</code> は、.NETから見て完全に同一のアセンブリ</strong>です。
+      どちらを配置しても差し替えは成立し、警告も出ません。
+    </p>
+
+    <h3>8.2 事故パターン1: Debugビルドが本番に混入する</h3>
+    <p>Debugビルドは単に <code class="inline">DEBUG</code> シンボルが付くだけでなく、実行時特性も変わります。</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>観点</th><th>Debugビルド</th><th>Releaseビルド</th></tr></thead>
+        <tbody>
+          <tr><td>DEBUGシンボル</td><td>定義される</td><td>定義されない</td></tr>
+          <tr><td>C#コンパイラの最適化</td><td>無効</td><td>有効</td></tr>
+          <tr><td>JIT最適化</td><td><code class="inline">[Debuggable]</code>属性により抑制される</td><td>通常どおり実施</td></tr>
+          <tr><td>性能</td><td>数十%〜数倍遅くなることがある</td><td>基準</td></tr>
+          <tr><td>スタックトレース</td><td>インライン化されず読みやすい</td><td>インライン化で行が飛ぶことがある</td></tr>
+          <tr><td>診断コード</td><td><code class="inline">#if DEBUG</code>のコードが含まれる</td><td>含まれない</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>配置済みDLLの構成を実行時に確認する</h4>
+    <p>
+      <code class="inline">AssemblyConfiguration</code> 属性はSDK形式プロジェクトが自動生成するため、
+      これを読めば「配置されているDLLがDebugかRelease」かを判定できます。
+    </p>
+
+    <div class="code">
+      <div class="cap">C# — 読み込み済みアセンブリのビルド構成を一覧する</div>
+<pre><span class="kw">using</span> System;
+<span class="kw">using</span> System.Linq;
+<span class="kw">using</span> System.Reflection;
+
+<span class="kw">foreach</span> (<span class="kw">var</span> asm <span class="kw">in</span> AppDomain.CurrentDomain.GetAssemblies()
+                            .Where(a =&gt; !a.IsDynamic)
+                            .OrderBy(a =&gt; a.GetName().Name))
+{
+    <span class="kw">var</span> config = asm.GetCustomAttribute&lt;AssemblyConfigurationAttribute&gt;()?.Configuration ?? <span class="st">"(不明)"</span>;
+    <span class="kw">var</span> info   = asm.GetCustomAttribute&lt;AssemblyInformationalVersionAttribute&gt;()?.InformationalVersion ?? <span class="st">"-"</span>;
+
+    Console.WriteLine(<span class="st">$"{asm.GetName().Name,-40} {asm.GetName().Version} "</span> +
+                      <span class="st">$"構成={config,-8} 情報版={info}"</span>);
+    Console.WriteLine(<span class="st">$"    場所 : {asm.Location}"</span>);
+    Console.WriteLine(<span class="st">$"    MVID: {asm.ManifestModule.ModuleVersionId}"</span>);
+}</pre>
+    </div>
+
+    <div class="code">
+      <div class="cap">PowerShell — 配置済みDLLをプロセス起動なしで調べる</div>
+<pre><span class="cm"># 対象フォルダのDLLの構成・バージョンを一覧</span>
+Get-ChildItem <span class="st">'C:\inetpub\myapp\bin'</span> -Filter *.dll | ForEach-Object {
+    $a = [System.Reflection.Assembly]::ReflectionOnlyLoadFrom($_.FullName)
+    [PSCustomObject]@{
+        Name    = $a.GetName().Name
+        Version = $a.GetName().Version
+        Config  = ($a.GetCustomAttributesData() |
+                   Where-Object { $_.AttributeType.Name -eq <span class="st">'AssemblyConfigurationAttribute'</span> }
+                  ).ConstructorArguments.Value
+        File    = $_.FullName
+    }
+} | Format-Table -AutoSize</pre>
+    </div>
+
+    <div class="box box-note">
+      <p>
+        <code class="inline">ReflectionOnlyLoadFrom</code> は .NET Framework 用です（Windows PowerShell 5.1 で動作）。
+        .NET Core / PowerShell 7 では <code class="inline">System.Reflection.Metadata</code> か、
+        <code class="inline">ilspycmd</code>・ILSpy などのツールを使います。
+      </p>
+    </div>
+
+    <h3>8.3 事故パターン2: <code class="inline">#if</code>で公開APIの形が変わる</h3>
+    <div class="box box-danger">
+      <p>
+        <strong>これが最も危険です。</strong>
+        publicメンバーの有無やシグネチャを <code class="inline">#if</code> で変えると、
+        「ビルド構成によってDLLの契約そのものが変わる」ことになります。
+        参照側は<strong>コンパイル時に見えたシグネチャ</strong>で呼び出しコードを生成するため、
+        実行時に別構成のDLLが置かれると
+        <code class="inline">MissingMethodException</code> や <code class="inline">TypeLoadException</code> で落ちます。
+        コンパイルは通り、テストも通り、本番だけで落ちます。
+      </p>
+    </div>
+
+    <div class="compare">
+      <div class="bad-box">
+        <div class="code" style="margin-top:0">
+          <div class="cap">publicの契約が構成で変わる</div>
+<pre><span class="kw">public class</span> Engine
+{
+    <span class="kw">public void</span> Run() { }
+
+<span class="pp">#if</span> DEBUG
+    <span class="cm">// Debug版DLLにしか存在しない public メソッド</span>
+    <span class="kw">public void</span> DumpState() { }
+<span class="pp">#endif</span>
+
+<span class="pp">#if</span> DEBUG
+    <span class="cm">// 引数の数まで変わる最悪パターン</span>
+    <span class="kw">public void</span> Start(<span class="kw">int</span> id, <span class="kw">bool</span> verbose) { }
+<span class="pp">#else</span>
+    <span class="kw">public void</span> Start(<span class="kw">int</span> id) { }
+<span class="pp">#endif</span>
+}</pre>
+        </div>
+      </div>
+      <div class="good-box">
+        <div class="code" style="margin-top:0">
+          <div class="cap">契約は固定。中身だけ変える</div>
+<pre><span class="kw">public class</span> Engine
+{
+    <span class="kw">public void</span> Run() { }
+
+    <span class="cm">// シグネチャは常に存在する</span>
+    <span class="kw">public void</span> DumpState()
+    {
+<span class="pp">#if</span> DEBUG
+        WriteInternalState();
+<span class="pp">#endif</span>
+        <span class="cm">// Release では何もしない</span>
+    }
+
+    <span class="cm">// 引数は常に同じ。挙動を実行時に切り替える</span>
+    <span class="kw">public void</span> Start(<span class="kw">int</span> id, <span class="kw">bool</span> verbose = <span class="kw">false</span>) { }
+}</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="box box-good">
+      <p>
+        <strong>ルール:</strong> <code class="inline">#if</code> は<strong>メソッドの内側</strong>だけで使う。
+        <code class="inline">public</code> なメンバーの宣言そのものを囲まない。<br>
+        どうしてもデバッグ専用のAPIが要る場合は、<strong>別アセンブリ（例: <code class="inline">MyLib.Diagnostics.dll</code>）に切り出し、
+        本番には配置しない</strong>。そちらのほうが安全で意図も明確です。
+      </p>
+    </div>
+
+    <div class="box box-warn">
+      <p>
+        シリアライズ対象のクラスで <code class="inline">#if</code> によりフィールドを増減させるのも同種の事故です。
+        バイナリシリアライズやフィールド順に依存する相互運用（P/Invokeの構造体レイアウトなど）では、
+        <strong>構成が違うだけでデータが壊れます</strong>。
+      </p>
+    </div>
+
+    <h3>8.4 マルチターゲットとNuGetのフォルダ構造</h3>
+    <p>
+      <code class="inline">#if NETFRAMEWORK</code> / <code class="inline">#if NET8_0_OR_GREATER</code> によるマルチターゲットは、
+      最終的にNuGetパッケージ内の <code class="inline">lib/&lt;TFM&gt;/</code> フォルダに落ちます。
+      <strong>同名のDLLがTFMの数だけ存在し、中身が全部違います。</strong>
+    </p>
+
+    <div class="code">
+      <div class="cap">NuGetパッケージの中身（同名DLLが複数ある）</div>
+<pre>MyCompany.Core.2.1.0.nupkg
+├─ lib/
+│   ├─ net48/
+│   │    └─ MyCompany.Core.dll     ← NETFRAMEWORK 版（中身が違う）
+│   ├─ netstandard2.0/
+│   │    └─ MyCompany.Core.dll     ← NETSTANDARD 版（中身が違う）
+│   └─ net8.0/
+│        └─ MyCompany.Core.dll     ← NET8_0 版（中身が違う）
+└─ MyCompany.Core.nuspec
+
+<span class="cm"># 復元時に、参照側のTFMに合う1つだけが選ばれて出力フォルダにコピーされる。</span></pre>
+    </div>
+
+    <div class="box box-danger">
+      <p>
+        <strong>手コピー配布の危険:</strong>
+        ビルド出力の <code class="inline">bin\Release\net48\MyCompany.Core.dll</code> を
+        「同じ名前だから」と .NET 8 アプリのフォルダに手動で置くと、TFM選択の仕組みが働きません。
+        運が良ければ <code class="inline">BadImageFormatException</code> や <code class="inline">TypeLoadException</code> で即死しますが、
+        運が悪いと<strong>一部のAPIだけ挙動が違う</strong>状態で動いてしまいます。
+        配布は必ずNuGetパッケージか、ビルド成果物一式（発行フォルダ）単位で行ってください。
+      </p>
+    </div>
+
+    <h3>8.5 ビルド警告 MSB3277 / MSB3243 を無視しない</h3>
+    <p>
+      「同名アセンブリの異なるバージョンが競合しています」という警告は、
+      第9章で扱う多重ロード問題の<strong>ビルド時点での予告</strong>です。実務では最重要の警告の1つです。
+    </p>
+    <div class="code">
+      <div class="cap">見逃してはいけない警告</div>
+<pre>warning MSB3277: Found conflicts between different versions of
+"Newtonsoft.Json" that could not be resolved.
+
+warning MSB3243: No way to resolve conflict between
+"MyCompany.Core, Version=2.1.0.0" and "MyCompany.Core, Version=2.0.0.0".</pre>
+    </div>
+    <div class="box box-good">
+      <p>
+        対策は、①依存バージョンを一本化する（<code class="inline">Directory.Packages.props</code> による中央管理）、
+        ②.NET Frameworkなら <code class="inline">&lt;AutoGenerateBindingRedirects&gt;true&lt;/AutoGenerateBindingRedirects&gt;</code> を有効にして
+        バインディングリダイレクトを生成する、の2つです。
+        「動いているから」と放置すると、第9章の症状に発展します。
+      </p>
+    </div>
+
+    <h3>8.6 「同名・同バージョン・中身違い」を作らない仕組み</h3>
+    <div class="card">
+      <h4>① Build once, deploy many</h4>
+      <p>検証環境と本番環境で<strong>ビルドし直さない</strong>。CIで1回だけビルドした成果物を、そのまま全環境へ配る。
+         再ビルドする運用は「同名同バージョン別バイナリ」を量産します。</p>
+
+      <h4>② 決定的ビルド（Deterministic Build）</h4>
+      <p>SDK形式では既定で <code class="inline">Deterministic=true</code>。
+         CIでは <code class="inline">&lt;ContinuousIntegrationBuild&gt;true&lt;/ContinuousIntegrationBuild&gt;</code> も設定します。
+         入力が同じなら出力バイト列も同じになるため、<strong>ハッシュ比較でバイナリの同一性を検証できる</strong>ようになります。</p>
+
+      <h4>③ バージョンにビルド情報を埋める</h4>
+      <div class="code" style="margin-bottom:0">
+        <div class="cap">csproj — コミットハッシュを情報バージョンに刻む</div>
+<pre><span class="at">&lt;PropertyGroup&gt;</span>
+  <span class="at">&lt;Version&gt;</span>2.1.0<span class="at">&lt;/Version&gt;</span>
+  <span class="at">&lt;Deterministic&gt;</span>true<span class="at">&lt;/Deterministic&gt;</span>
+  <span class="at">&lt;ContinuousIntegrationBuild</span> Condition=<span class="st">"'$(CI)' == 'true'"</span><span class="at">&gt;</span>true<span class="at">&lt;/ContinuousIntegrationBuild&gt;</span>
+  <span class="at">&lt;SourceRevisionId&gt;</span>$(GIT_COMMIT)<span class="at">&lt;/SourceRevisionId&gt;</span>
+  <span class="cm">&lt;!-- → InformationalVersion が "2.1.0+9f60915" のようになる --&gt;</span>
+<span class="at">&lt;/PropertyGroup&gt;</span></pre>
+      </div>
+
+      <h4>④ デバッグシンボル（PDB）の扱い</h4>
+      <p>Release配布でもPDBは有用です。<code class="inline">&lt;DebugType&gt;portable&lt;/DebugType&gt;</code>（既定）でPDBを別ファイルとして生成し、
+         シンボルサーバやSourceLinkで管理します。<code class="inline">embedded</code> にすればDLLに埋め込めます（サイズ増）。
+         <strong>PDBの有無はコード生成に影響しません</strong> —「PDBを配ったからDebugビルド」ではありません。</p>
+    </div>
+
+    <!-- ============ 9 ============ -->
+    <h2 id="s9">9. 同名DLLが複数メモリ展開されるとどうなるか</h2>
+
+    <div class="box box-key">
+      <p>
+        .NETの型のアイデンティティは<strong>「アセンブリのアイデンティティ」だけでなく「どのロードコンテキストに載ったか」も含みます</strong>。
+        同じ <code class="inline">MyLib.dll v1.0.0</code> が2つのコンテキストに載ると、
+        中の <code class="inline">MyLib.Engine</code> は<strong>2つの別々の型</strong>になります。
+        <code class="inline">static</code> フィールドも2組に分裂します。
+      </p>
+    </div>
+
+    <h3>9.1 前提: ロードコンテキストという概念</h3>
+
+    <h4><span class="badge b-fw">.NET Framework</span> AppDomainと3つのバインディングコンテキスト</h4>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>コンテキスト</th><th>入る方法</th><th>同名・同バージョンの扱い</th><th>依存の解決</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>Load（既定）</strong></td>
+            <td><code class="inline">Assembly.Load(name)</code>、通常の参照解決</td>
+            <td>1つに集約される（GAC → AppBase → PrivateBinPath の順に探索）</td>
+            <td>自動</td>
+          </tr>
+          <tr>
+            <td><strong>LoadFrom</strong></td>
+            <td><code class="inline">Assembly.LoadFrom(path)</code></td>
+            <td>同じアイデンティティがLoadコンテキストに既にあれば<strong>そちらが返る</strong>（指定パスは無視される）</td>
+            <td>同じディレクトリから自動解決</td>
+          </tr>
+          <tr>
+            <td><strong>どのコンテキストでもない</strong></td>
+            <td><code class="inline">Assembly.LoadFile(path)</code>、<code class="inline">Assembly.Load(byte[])</code></td>
+            <td><strong>パスごとに別インスタンスが作られる</strong>。同名同バージョンでも重複ロードされる</td>
+            <td>自動解決されない（<code class="inline">AssemblyResolve</code> の実装が必要）</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4><span class="badge b-core">.NET 5以降</span> AssemblyLoadContext（ALC）</h4>
+    <p>
+      .NET Core系では追加のAppDomainを作れません。代わりに <code class="inline">AssemblyLoadContext</code> が分離の単位になります。
+    </p>
+    <ul>
+      <li><strong>Default ALC</strong>: <code class="inline">deps.json</code> と実行ディレクトリから解決。
+          <strong>同じ単純名のアセンブリは1つしか載りません。</strong>
+          2つ目を要求すると、既に読み込み済みのものが返ります。
+          バージョンが違う場合は<strong>上位バージョンへ自動ロールフォワード</strong>します（FrameworkのようなbindingRedirect設定は不要）。</li>
+      <li><strong>独自ALC</strong>: <code class="inline">new MyPluginContext(...)</code> を作れば、
+          <strong>同名・同バージョンのアセンブリを意図的に複数ロードできます</strong>。プラグイン分離の標準手法です。</li>
+      <li><strong>Collectible ALC</strong>: <code class="inline">isCollectible: true</code> で作ると <code class="inline">Unload()</code> できます。
+          ただし、そのALCの型・インスタンスへの参照が1つでも残っていると解放されません。</li>
+      <li><code class="inline">Assembly.LoadFile(path)</code> は .NET Core系では<strong>呼ぶたびに新しい無名ALCを作ります</strong>。
+          ループで呼ぶと重複ロードが積み上がります。</li>
+    </ul>
+
+    <h3>9.2 何が起きるか</h3>
+
+    <div class="diagram">
+      <p class="proc-title">1つのプロセス（同名DLLが2つ載っている状態）</p>
+      <div class="ctx-row">
+        <div class="ctx">
+          <p class="ctx-name">Default ALC ／ Load コンテキスト</p>
+          <div class="asm">
+            <b>MyLib.dll</b>
+            Version = 1.0.0.0
+            <span class="path">C:\app\bin\MyLib.dll</span>
+            <span class="tag">Releaseビルド</span>
+          </div>
+        </div>
+        <div class="ctx">
+          <p class="ctx-name">PluginContext ／ LoadFile</p>
+          <div class="asm">
+            <b>MyLib.dll</b>
+            Version = 1.0.0.0
+            <span class="path">C:\app\plugins\x\MyLib.dll</span>
+            <span class="tag">Debugビルド</span>
+          </div>
+        </div>
+      </div>
+      <p class="arrow-note">
+        アセンブリ名もバージョンも同一。しかしCLRにとっては別アセンブリ・別型。
+      </p>
+    </div>
+
+    <h4>症状1: 同名の型なのにキャストできない</h4>
+    <div class="code">
+      <div class="cap">典型的な例外メッセージ（.NET Framework）</div>
+<pre>System.InvalidCastException:
+  [A]MyLib.Engine を [B]MyLib.Engine にキャストできません。
+  型 A は 'MyLib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null' から
+    コンテキスト 'LoadNeither'（場所 'C:\app\plugins\x\MyLib.dll'）に読み込まれています。
+  型 B は 'MyLib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null' から
+    コンテキスト 'Default'（場所 'C:\app\bin\MyLib.dll'）に読み込まれています。</pre>
+    </div>
+    <p>
+      「型Aを型Aにキャストできない」という一見矛盾したメッセージが、多重ロードの決定的な証拠です。
+      同様に <code class="inline">is</code> / <code class="inline">as</code> が失敗し、
+      <code class="inline">typeof(Engine) == instance.GetType()</code> が <code class="inline">false</code> になります。
+    </p>
+
+    <h4>症状2: staticが分裂する</h4>
+    <p>
+      <code class="inline">static</code> フィールドはアセンブリのロード単位ごとに独立して確保されます。
+      シングルトン、キャッシュ、カウンタ、イベントの購読リスト、<code class="inline">lock</code> 用オブジェクトが<strong>すべて2組になります</strong>。
+    </p>
+    <div class="code">
+      <div class="cap">静かに壊れるパターン</div>
+<pre><span class="kw">public static class</span> ConnectionPool
+{
+    <span class="kw">private static readonly object</span> Gate = <span class="kw">new</span>();
+    <span class="kw">private static</span> Connection? _shared;
+
+    <span class="kw">public static</span> Connection Get()
+    {
+        <span class="kw">lock</span> (Gate)                    <span class="cm">// ← 2つのALCで Gate は別オブジェクト。排他が成立しない</span>
+        {
+            <span class="kw">return</span> _shared ??= Connect(); <span class="cm">// ← 「単一の」接続が2本張られる</span>
+        }
+    }
+}</pre>
+    </div>
+    <div class="box box-danger">
+      <p>
+        この症状は<strong>例外にならない</strong>のが厄介です。
+        接続が2本になる、キャッシュが効かない、初期化が2回走る、イベントが片方にしか届かない、
+        設定変更が反映されない —— 症状が「なんとなくおかしい」の形で現れ、原因究明が長引きます。
+      </p>
+    </div>
+
+    <h4>症状3: 条件付きコンパイルとの合わせ技（本題）</h4>
+    <div class="box box-danger">
+      <p>
+        2つの <code class="inline">MyLib.dll v1.0.0</code> が、片方は <code class="inline">DEBUG</code> 定義あり、
+        片方はなしでビルドされていたとします。<br>
+        <strong>アセンブリ名もバージョンも同じなので、ログにも例外メッセージにも差が出ません。</strong>
+        検証コードが走ったり走らなかったり、ログが出たり出なかったり、
+        <code class="inline">Limits.MaxRetryCount</code> が 3 だったり 100 だったりします。
+        「どちらのDLLがその処理を実行したか」を、<strong>ファイルパスとMVIDを出力するまで誰も特定できません。</strong>
+      </p>
+    </div>
+
+    <h4>症状4: メモリと初期化コストの二重化</h4>
+    <ul>
+      <li>ILとメタデータがロードコンテキストごとにマップされ、<strong>JITコードも別々に生成</strong>されます。</li>
+      <li>型初期化子（<code class="inline">static</code> コンストラクター）が2回実行されます。
+          ここでファイル・ポート・COM登録・ハードウェアなど<strong>プロセス外の資源</strong>を掴んでいると、衝突します。</li>
+      <li>Collectible ALCでない限り、プロセス終了までアンロードされません。</li>
+    </ul>
+
+    <h4>症状5: ネイティブDLLは別のルールで動く</h4>
+    <p>
+      <code class="inline">DllImport</code> で呼ぶネイティブDLLは、OSの <code class="inline">LoadLibrary</code> で読み込まれ、
+      <strong>プロセス単位・モジュールパス単位</strong>で管理されます。
+      マネージド側が2つのALCに分かれていても、同じパスのネイティブDLLなら<strong>1つのモジュールを共有</strong>します。
+      つまり<strong>ネイティブ側のグローバル状態は共有され、マネージド側の状態は分裂する</strong>という、
+      最も混乱しやすい組み合わせが発生します。
+      逆に、プラグインごとに別パスの同名ネイティブDLLを置くと、ネイティブ側も2重ロードされます。
+    </p>
+
+    <h3>9.3 どういうときに起きるか</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>状況</th><th>起きる理由</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>プラグイン／アドイン型アプリ（Office VSTO、AutoCAD、Revit、Visual Studio拡張など）</td>
+            <td>ホストが複数のアドインを1プロセスに読み込み、各アドインが自分のフォルダの共通ライブラリを <code class="inline">LoadFrom</code> / <code class="inline">LoadFile</code> する</td>
+          </tr>
+          <tr>
+            <td>自作プラグインローダー</td>
+            <td>フォルダを走査して <code class="inline">Assembly.LoadFile</code> をループで呼ぶ実装</td>
+          </tr>
+          <tr>
+            <td><span class="badge b-fw">.NET FW</span> GACとbinの二重配置</td>
+            <td>強い名前のアセンブリはGACが優先される。binに新しいDLLを置いても反映されない</td>
+          </tr>
+          <tr>
+            <td>IISの複数アプリケーション／ShadowCopy</td>
+            <td>アプリケーションプールの構成や一時フォルダのコピーが絡む</td>
+          </tr>
+          <tr>
+            <td>ILMerge / ILRepack で埋め込んだライブラリ</td>
+            <td>埋め込み版と、外部に置かれた同名DLLが共存する</td>
+          </tr>
+          <tr>
+            <td>テストランナー</td>
+            <td>複数のテストアセンブリがそれぞれ別フォルダから依存を読み込む</td>
+          </tr>
+          <tr>
+            <td>手動での部分的なDLL差し替え</td>
+            <td>「このDLLだけ新しくすればいい」と1ファイルだけ上書きし、依存関係の整合が崩れる</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>9.4 プラグイン方式で「意図的に」分離する正しいやり方</h3>
+    <p>
+      多重ロードは事故とは限りません。プラグインごとに依存バージョンを分けたい場合は、
+      <strong>意図的にALCで分離するのが正解</strong>です。ただし1点だけ守るべき鉄則があります。
+    </p>
+
+    <div class="box box-good">
+      <p>
+        <strong>鉄則: ホストとプラグインが受け渡しする「契約アセンブリ（インターフェース定義）」だけは、
+        必ずホスト側のALCから1つだけ読み込ませる。</strong><br>
+        契約までプラグイン側でロードすると、<code class="inline">IPlugin</code> が2つの別型になり、
+        キャストできずにプラグインが1つも動きません。
+      </p>
+    </div>
+
+    <div class="code">
+      <div class="cap">.NET 5以降 — プラグイン用ALCの定石</div>
+<pre><span class="kw">using</span> System.Reflection;
+<span class="kw">using</span> System.Runtime.Loader;
+
+<span class="kw">internal sealed class</span> PluginLoadContext : AssemblyLoadContext
+{
+    <span class="kw">private readonly</span> AssemblyDependencyResolver _resolver;
+
+    <span class="kw">public</span> PluginLoadContext(<span class="kw">string</span> pluginPath)
+        : <span class="kw">base</span>(name: Path.GetFileNameWithoutExtension(pluginPath), isCollectible: <span class="kw">true</span>)
+    {
+        <span class="cm">// プラグインの .deps.json を読んで依存を解決する</span>
+        _resolver = <span class="kw">new</span> AssemblyDependencyResolver(pluginPath);
+    }
+
+    <span class="kw">protected override</span> Assembly? Load(AssemblyName name)
+    {
+        <span class="cm">// ★重要★ 契約アセンブリは自分でロードせず、null を返して</span>
+        <span class="cm">//         Default ALC（ホスト側）に解決させる</span>
+        <span class="kw">if</span> (name.Name == <span class="st">"MyApp.PluginContracts"</span>)
+            <span class="kw">return null</span>;
+
+        <span class="kw">var</span> path = _resolver.ResolveAssemblyToPath(name);
+        <span class="kw">return</span> path <span class="kw">is null</span> ? <span class="kw">null</span> : LoadFromAssemblyPath(path);
+    }
+}</pre>
+    </div>
+
+    <div class="code">
+      <div class="cap">プラグイン側csproj — 契約DLLを出力にコピーさせない</div>
+<pre><span class="at">&lt;ItemGroup&gt;</span>
+  <span class="cm">&lt;!-- コンパイルには使うが、実行時のDLLはコピーしない --&gt;</span>
+  <span class="at">&lt;ProjectReference</span> Include=<span class="st">"..\MyApp.PluginContracts\MyApp.PluginContracts.csproj"</span><span class="at">&gt;</span>
+    <span class="at">&lt;Private&gt;</span>false<span class="at">&lt;/Private&gt;</span>
+    <span class="at">&lt;ExcludeAssets&gt;</span>runtime<span class="at">&lt;/ExcludeAssets&gt;</span>
+  <span class="at">&lt;/ProjectReference&gt;</span>
+<span class="at">&lt;/ItemGroup&gt;</span></pre>
+    </div>
+
+    <div class="box box-warn">
+      <p>
+        契約アセンブリは<strong>できるだけ小さく、変更しない</strong>設計にします。
+        インターフェースとDTOだけを置き、実装や便利メソッドを混ぜないこと。
+        契約が頻繁に変わると、ホストとプラグインのバージョンずれが直ちに型不一致として現れます。
+      </p>
+    </div>
+
+    <div class="box box-note">
+      <p>
+        <span class="badge b-fw">.NET Framework</span> 同等のことをする場合は、
+        <code class="inline">AppDomain</code> による分離（<code class="inline">MarshalByRefObject</code> 越しのリモーティング）か、
+        <code class="inline">LoadFrom</code> ＋ <code class="inline">AppDomain.AssemblyResolve</code> ハンドラで
+        契約アセンブリをホスト側のものに強制する方法を取ります。
+        AppDomain分離は堅牢ですが、境界をまたぐ呼び出しがシリアライズを伴い、実装コストが高くなります。
+      </p>
+    </div>
+
+    <!-- ============ 10 ============ -->
+    <h2 id="s10">10. 診断とトラブルシュート</h2>
+
+    <h3>10.1 まず入れておくべき自己診断コード</h3>
+    <p>
+      多重ロードは「起きてから調べる」と非常に手間がかかります。
+      起動時に一度だけ重複を検出してログに出す仕組みを入れておくと、調査時間が桁で変わります。
+    </p>
+
+    <div class="code">
+      <div class="cap">C# — 同名アセンブリの重複ロードを検出する</div>
+<pre><span class="kw">using</span> System;
+<span class="kw">using</span> System.Linq;
+<span class="kw">using</span> System.Reflection;
+<span class="kw">using</span> System.Runtime.Loader;   <span class="cm">// .NET Core / .NET 5+ のみ</span>
+
+<span class="kw">public static class</span> AssemblyDiagnostics
+{
+    <span class="kw">public static void</span> ReportDuplicates(Action&lt;<span class="kw">string</span>&gt; log)
+    {
+        <span class="kw">var</span> groups = AppDomain.CurrentDomain.GetAssemblies()
+            .Where(a =&gt; !a.IsDynamic)
+            .GroupBy(a =&gt; a.GetName().Name, StringComparer.OrdinalIgnoreCase)
+            .Where(g =&gt; g.Count() &gt; 1);
+
+        <span class="kw">foreach</span> (<span class="kw">var</span> g <span class="kw">in</span> groups)
+        {
+            log(<span class="st">$"[重複ロード] {g.Key} が {g.Count()} 個ロードされています"</span>);
+
+            <span class="kw">foreach</span> (<span class="kw">var</span> asm <span class="kw">in</span> g)
+            {
+                <span class="kw">var</span> config = asm.GetCustomAttribute&lt;AssemblyConfigurationAttribute&gt;()?.Configuration ?? <span class="st">"?"</span>;
+<span class="pp">#if</span> NET
+                <span class="kw">var</span> ctx = AssemblyLoadContext.GetLoadContext(asm)?.Name ?? <span class="st">"(既定)"</span>;
+<span class="pp">#else</span>
+                <span class="kw">var</span> ctx = <span class="st">"(.NET Framework)"</span>;
+<span class="pp">#endif</span>
+                log(<span class="st">$"  Version={asm.GetName().Version} 構成={config} ALC={ctx}"</span>);
+                log(<span class="st">$"  MVID   ={asm.ManifestModule.ModuleVersionId}"</span>);
+                log(<span class="st">$"  場所   ={(string.IsNullOrEmpty(asm.Location) ? "(メモリ内)" : asm.Location)}"</span>);
+            }
+        }
+    }
+}</pre>
+    </div>
+
+    <div class="box box-note">
+      <p>
+        <strong>MVID（Module Version ID）</strong>はビルドごとに決まるGUIDです。
+        決定的ビルドなら「入力が同じなら同じMVID」になるため、
+        <strong>同名・同バージョンのDLLが本当に同じバイナリかどうかをMVIDで判定できます</strong>。
+        「同名同バージョンだけどMVIDが違う」＝ビルドが別、という決定的な証拠になります。
+      </p>
+    </div>
+
+    <div class="code">
+      <div class="cap">C# — ロード時にログを取る（原因のロード箇所を特定する）</div>
+<pre><span class="cm">// アプリのできるだけ早い段階で登録する</span>
+AppDomain.CurrentDomain.AssemblyLoad += (_, e) =&gt;
+{
+    <span class="kw">var</span> name = e.LoadedAssembly.GetName();
+    Console.WriteLine(<span class="st">$"[LOAD] {name.Name} {name.Version} &lt;- {e.LoadedAssembly.Location}"</span>);
+    <span class="cm">// 誰が読み込ませたかを追うにはスタックトレースも有効</span>
+    Console.WriteLine(Environment.StackTrace);
+};
+
+<span class="cm">// 解決に失敗したときのフック（.NET Framework で特に有用）</span>
+AppDomain.CurrentDomain.AssemblyResolve += (_, e) =&gt;
+{
+    Console.WriteLine(<span class="st">$"[RESOLVE FAILED] {e.Name} (要求元: {e.RequestingAssembly?.FullName})"</span>);
+    <span class="kw">return null</span>;
+};</pre>
+    </div>
+
+    <h3>10.2 ツールによる調査</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>目的</th><th>環境</th><th>手段</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>バインディング（解決）の全記録</td>
+            <td><span class="badge b-fw">.NET FW</span></td>
+            <td>Fusion Log Viewer（<code class="inline">fuslogvw.exe</code>）。レジストリ <code class="inline">HKLM\SOFTWARE\Microsoft\Fusion</code> の <code class="inline">EnableLog</code> を 1 にして記録し、<strong>調査後は必ず 0 に戻す</strong>（ログが際限なく溜まるため）</td>
+          </tr>
+          <tr>
+            <td>アセンブリロードのトレース</td>
+            <td><span class="badge b-core">.NET 5+</span></td>
+            <td><code class="inline">dotnet-trace collect --providers Microsoft-Windows-DotNETRuntime:0x8:4 -- MyApp.exe</code>（Loaderキーワード）</td>
+          </tr>
+          <tr>
+            <td>ダンプからロード済みアセンブリを列挙</td>
+            <td><span class="badge b-both">両方</span></td>
+            <td><code class="inline">dotnet-dump collect</code> → <code class="inline">dotnet-dump analyze</code> で <code class="inline">clrmodules</code> / SOSの <code class="inline">!dumpdomain</code></td>
+          </tr>
+          <tr>
+            <td>プロセスが掴んでいるDLLファイルの一覧</td>
+            <td><span class="badge b-both">両方</span></td>
+            <td>Process Explorer（下ペインをDLLビューに切替）、<code class="inline">Get-Process ... | Select -Expand Modules</code></td>
+          </tr>
+          <tr>
+            <td>DLLの中身（ILと条件付きコンパイル結果）を確認</td>
+            <td><span class="badge b-both">両方</span></td>
+            <td>ILSpy / <code class="inline">ilspycmd</code> / dnSpyEx。<code class="inline">#if</code> で消えたコードが本当に無いかを目視できる</td>
+          </tr>
+          <tr>
+            <td>依存の重複・競合を事前に洗う</td>
+            <td><span class="badge b-core">.NET 5+</span></td>
+            <td><code class="inline">dotnet list package --include-transitive</code>、ビルドログのMSB3277警告</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>10.3 症状から原因を引く表</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>症状</th><th>疑うべき原因</th><th>最初にやること</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code class="inline">InvalidCastException</code>: 同名の型にキャストできない</td>
+            <td>同名アセンブリの多重ロード（9章）</td>
+            <td>例外メッセージ内の2つの「場所」を比較する</td>
+          </tr>
+          <tr>
+            <td><code class="inline">MissingMethodException</code> / <code class="inline">TypeLoadException</code></td>
+            <td>参照時と実行時でDLLの公開APIが違う（8.3節）／バージョン不一致</td>
+            <td>実行時にロードされたDLLの <code class="inline">Location</code> とバージョンを出力</td>
+          </tr>
+          <tr>
+            <td>DLLを差し替えたのに挙動が変わらない</td>
+            <td><span class="badge b-fw">.NET FW</span> GACが優先されている／別フォルダのDLLが読まれている</td>
+            <td><code class="inline">Assembly.Location</code> を出力。<code class="inline">gacutil /l MyLib</code> を確認</td>
+          </tr>
+          <tr>
+            <td>シングルトンが2つできる、ロックが効かない</td>
+            <td>多重ロードによる <code class="inline">static</code> の分裂（9.2節）</td>
+            <td>10.1節の重複検出コードを実行</td>
+          </tr>
+          <tr>
+            <td><code class="inline">#if</code> の中のコードが動かない</td>
+            <td>シンボル未定義（<code class="inline">#if RELEASE</code> の罠、<code class="inline">$(DefineConstants)</code> の上書き）</td>
+            <td><code class="inline">dotnet build -v:n</code> でcscに渡された <code class="inline">/define:</code> を確認</td>
+          </tr>
+          <tr>
+            <td><code class="inline">Debug.WriteLine</code> が出ない</td>
+            <td>呼び出し側が <code class="inline">DEBUG</code> なしでビルドされている（4章）</td>
+            <td>ライブラリ側ではなく<strong>呼び出し側</strong>の構成を確認</td>
+          </tr>
+          <tr>
+            <td>本番だけ極端に遅い</td>
+            <td>Debugビルドの混入（8.2節）</td>
+            <td><code class="inline">AssemblyConfiguration</code> を全DLLについて出力</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="code">
+      <div class="cap">実際に渡されたシンボルを確認する</div>
+<pre>dotnet build -v:normal | Select-String <span class="st">"/define:"</span>
+
+<span class="cm"># 例: /define:TRACE;NET;NET8_0;NET8_0_OR_GREATER;NETCOREAPP;...;PRODUCTION</span>
+<span class="cm"># DEBUG や独自シンボルが期待どおり入っているかをここで確定させる。</span></pre>
+    </div>
+
+    <!-- ============ 11 ============ -->
+    <h2 id="s11">11. 実務チェックリスト</h2>
+
+    <div class="card">
+      <h4>コードを書くとき</h4>
+      <ul class="check">
+        <li><code class="inline">#if</code> は本当に必要か。実行時の設定・DI・<code class="inline">OperatingSystem.IsXxx()</code> で代替できないか検討した</li>
+        <li><code class="inline">#if RELEASE</code> と書いていない（<code class="inline">RELEASE</code> は定義されない。<code class="inline">#if !DEBUG</code> が正しい）</li>
+        <li><code class="inline">#if</code> ブロックは短く、メソッドの内側に閉じている</li>
+        <li><code class="inline">public</code> なメンバーの宣言そのものを <code class="inline">#if</code> で囲んでいない</li>
+        <li>シリアライズ対象・相互運用構造体のフィールドを <code class="inline">#if</code> で増減させていない</li>
+        <li><code class="inline">[Conditional]</code> を付けたメソッドの引数に副作用を書いていない</li>
+        <li>想定外のシンボル組み合わせを <code class="inline">#error</code> で塞いだ</li>
+        <li>差分が10行を超えるなら、ファイル分割＋<code class="inline">partial</code> を検討した</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h4>ビルド設定</h4>
+      <ul class="check">
+        <li><code class="inline">&lt;DefineConstants&gt;</code> に <code class="inline">$(DefineConstants);</code> を付けて追記形式にした</li>
+        <li>CIで<strong>全構成・全ターゲットフレームワーク</strong>をビルドしている（無効ブロックの腐敗検出）</li>
+        <li>MSB3277 / MSB3243（アセンブリ競合）警告が出ていない、または解消済み</li>
+        <li><span class="badge b-fw">.NET FW</span> <code class="inline">AutoGenerateBindingRedirects</code> を有効にした</li>
+        <li><code class="inline">Deterministic</code> が有効（既定）で、CIでは <code class="inline">ContinuousIntegrationBuild</code> も設定した</li>
+        <li><code class="inline">InformationalVersion</code> にコミットハッシュ等の追跡情報を入れた</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h4>配布・デプロイ</h4>
+      <ul class="check">
+        <li>環境ごとに再ビルドせず、CIの成果物を全環境へ配っている（Build once, deploy many）</li>
+        <li>Releaseビルドであることを、配置後に <code class="inline">AssemblyConfiguration</code> で確認できる</li>
+        <li>DLLを1ファイルだけ手で差し替える運用になっていない（発行フォルダ単位／NuGet単位で配る）</li>
+        <li>マルチターゲットのDLLを、TFMを無視して手コピーしていない</li>
+        <li><span class="badge b-fw">.NET FW</span> GACに古いバージョンが残っていないか確認した</li>
+        <li>デバッグ専用APIは別アセンブリに切り出し、本番に配置していない</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h4>多重ロード対策</h4>
+      <ul class="check">
+        <li>起動時に同名アセンブリの重複を検出してログに出す仕組みを入れた（10.1節）</li>
+        <li>ログにアセンブリの <code class="inline">Location</code> と MVID と構成を出している</li>
+        <li>プラグイン方式の場合、契約アセンブリをホストALCに一本化している</li>
+        <li>プラグイン側csprojで契約DLLを <code class="inline">&lt;Private&gt;false&lt;/Private&gt;</code> にしてコピー除外した</li>
+        <li><code class="inline">Assembly.LoadFile</code> をループで呼ぶ実装になっていない</li>
+        <li>ネイティブDLLのグローバル状態が、プラグイン間で共有されても問題ないことを確認した</li>
+      </ul>
+    </div>
+
+    <!-- ============ 12 ============ -->
+    <h2 id="s12">12. 用語集</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>用語</th><th>意味</th></tr></thead>
+        <tbody>
+          <tr><td>条件付きコンパイルシンボル</td><td><code class="inline">#if</code> の条件に使う名前。真偽値としてのみ扱われ、値は持てない</td></tr>
+          <tr><td>DefineConstants</td><td>MSBuildのプロパティ。プロジェクト全体に効くシンボルを <code class="inline">;</code> 区切りで指定する</td></tr>
+          <tr><td>TFM（Target Framework Moniker）</td><td><code class="inline">net48</code>、<code class="inline">net8.0</code>、<code class="inline">netstandard2.0</code> のような対象フレームワークの識別子</td></tr>
+          <tr><td>IL（中間言語）</td><td>C#コンパイラが出力する中間形式。DLLの中身はこれ。<code class="inline">#if</code> で捨てられたコードはここに存在しない</td></tr>
+          <tr><td>アセンブリのアイデンティティ</td><td>単純名＋バージョン＋カルチャ＋公開キートークン。ビルド構成は含まれない</td></tr>
+          <tr><td>MVID</td><td>Module Version ID。ビルドごとに決まるGUID。同名同バージョンのバイナリ差を見分けられる</td></tr>
+          <tr><td>AppDomain</td><td><span class="badge b-fw">.NET FW</span> プロセス内の分離単位。.NET Core系では追加作成できない</td></tr>
+          <tr><td>AssemblyLoadContext（ALC）</td><td><span class="badge b-core">.NET Core+</span> アセンブリのロード単位。同名DLLを意図的に分離ロードできる</td></tr>
+          <tr><td>Loadコンテキスト／LoadFromコンテキスト</td><td><span class="badge b-fw">.NET FW</span> バインディングの3系統。<code class="inline">LoadFile</code> はどれにも属さず重複ロードを生む</td></tr>
+          <tr><td>GAC</td><td><span class="badge b-fw">.NET FW</span> グローバルアセンブリキャッシュ。強い名前のDLLの共有置き場。binより優先される</td></tr>
+          <tr><td>バインディングリダイレクト</td><td><span class="badge b-fw">.NET FW</span> 参照バージョンを別バージョンへ読み替える設定。.NET Core系では自動ロールフォワードが代替</td></tr>
+          <tr><td>決定的ビルド</td><td>同じ入力から常に同じバイナリを出力するビルド。ハッシュ比較で同一性を検証できる</td></tr>
+          <tr><td>PDB</td><td>デバッグシンボルファイル。行番号と変数名の対応表。あってもコード生成には影響しない</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="s-end" style="background:none;border-left-color:#8b93a4">おわりに — 3つの原則</h2>
+    <div class="box box-key" style="--c-accent:#5b3fa8">
+      <ol style="margin:0;padding-left:var(--sp-6)">
+        <li><strong>切り替えは、できるだけ実行時に寄せる。</strong>
+            同じバイナリを全環境に配れる状態は、それ自体が最大の事故防止策です。</li>
+        <li><strong><code class="inline">#if</code> を使うなら、メソッドの内側に、短く、1箇所に。</strong>
+            公開APIの形だけは絶対に変えない。</li>
+        <li><strong>ログにアセンブリのパス・バージョン・構成・MVIDを出す。</strong>
+            多重ロードは「起きてから調べる」と最も高くつく問題です。出力しておけば10分で終わります。</li>
+      </ol>
+    </div>
+
+  </main>
+</div>
+
+<a href="#top" class="to-top" aria-label="ページ先頭へ戻る" title="ページ先頭へ戻る">
+  <span class="caret" aria-hidden="true">▲</span>TOP
+</a>
+
+<script>
+  // ===== 目次のアクティブ表示 =====
+  (function () {
+    const links = Array.from(document.querySelectorAll('aside.sidebar nav a[href^="#"]'));
+    if (links.length === 0) return;
+
+    const linkMap = new Map();
+    const sections = [];
+    links.forEach(a => {
+      const id = a.getAttribute('href').slice(1);
+      const el = document.getElementById(id);
+      if (el) { linkMap.set(id, a); sections.push(el); }
+    });
+
+    const setActive = id => {
+      links.forEach(a => a.classList.remove('active'));
+      const link = linkMap.get(id);
+      if (link) link.classList.add('active');
+    };
+
+    const observer = new IntersectionObserver(entries => {
+      const visible = entries.filter(e => e.isIntersecting);
+      if (visible.length === 0) return;
+      visible.sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+      setActive(visible[0].target.id);
+    }, { rootMargin: '-15% 0px -70% 0px', threshold: 0 });
+
+    sections.forEach(s => observer.observe(s));
+  })();
+
+  // ===== トップへ戻るボタンの表示制御 =====
+  (function () {
+    const btn = document.querySelector('.to-top');
+    if (!btn) return;
+    const update = () => btn.classList.toggle('show', window.scrollY > 300);
+    window.addEventListener('scroll', update, { passive: true });
+    update();
+  })();
+</script>
+</body>
+</html>

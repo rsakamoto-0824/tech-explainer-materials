@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>技術報告パワーポイント資料のアンチパターン集</title>
+<style>
+  /* =========================================
+     Design Tokens — Blue Theme
+     ========================================= */
+  :root {
+    --fs-xs:   12px;
+    --fs-sm:   14px;
+    --fs-base: 16px;
+    --fs-md:   18px;
+    --fs-lg:   22px;
+    --fs-xl:   30px;
+    --fs-2xl:  38px;
+
+    --sp-1: 4px;
+    --sp-2: 8px;
+    --sp-3: 12px;
+    --sp-4: 16px;
+    --sp-6: 24px;
+    --sp-8: 32px;
+    --sp-12: 48px;
+    --sp-16: 64px;
+
+    --r-sm: 6px;
+    --r-md: 10px;
+    --r-lg: 14px;
+
+    /* Blue palette */
+    --c-bg:          #eff4fb;
+    --c-card:        #ffffff;
+    --c-text:        #0f1b2d;
+    --c-muted:       #4b5b73;
+    --c-border:      #cfdcee;
+    --c-accent:      #1d4ed8;
+    --c-accent-dark: #1e3a8a;
+    --c-accent-soft: #e5edfb;
+    --c-accent-mid:  #3b82f6;
+
+    --c-bad:         #b42318;
+    --c-bad-soft:    #fdecea;
+    --c-good:        #1e6f3c;
+    --c-good-soft:   #e6f5ec;
+    --c-warn:        #8a5a00;
+    --c-warn-soft:   #fff5d6;
+
+    --c-sidebar-bg:    #0b2545;
+    --c-sidebar-bg-2:  #13315c;
+    --c-sidebar-text:  #c6d4ec;
+    --c-sidebar-muted: #7e93b6;
+    --c-sidebar-hover: #1f4a8a;
+    --c-sidebar-on:    #ffffff;
+
+    --sidebar-w: 280px;
+
+    --shadow-sm: 0 1px 2px rgba(11,37,69,0.06);
+    --shadow-md: 0 4px 16px rgba(11,37,69,0.10);
+    --shadow-lg: 0 8px 24px rgba(11,37,69,0.18);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: "Hiragino Sans", "Yu Gothic", "Meiryo", system-ui, -apple-system, sans-serif;
+    font-size: var(--fs-base);
+    line-height: 1.8;
+    color: var(--c-text);
+    background: var(--c-bg);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  :focus-visible {
+    outline: 3px solid #ffb300;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* =========================================
+     Layout
+     ========================================= */
+  .layout {
+    display: grid;
+    grid-template-columns: var(--sidebar-w) 1fr;
+    min-height: 100vh;
+  }
+
+  /* =========================================
+     Sidebar (TOC on the left)
+     ========================================= */
+  aside.sidebar {
+    background: linear-gradient(180deg, var(--c-sidebar-bg) 0%, var(--c-sidebar-bg-2) 100%);
+    color: var(--c-sidebar-text);
+    padding: var(--sp-8) var(--sp-4);
+    position: sticky;
+    top: 0;
+    align-self: start;
+    height: 100vh;
+    overflow-y: auto;
+    border-right: 1px solid #0a1e3a;
+  }
+  .sidebar-title {
+    font-size: var(--fs-md);
+    color: var(--c-sidebar-on);
+    margin: 0 0 var(--sp-2);
+    padding: 0 var(--sp-2);
+    line-height: 1.4;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+  .sidebar-subtitle {
+    font-size: var(--fs-xs);
+    color: var(--c-sidebar-muted);
+    margin: 0 0 var(--sp-6);
+    padding: 0 var(--sp-2);
+    letter-spacing: 0.08em;
+  }
+  .sidebar h2 {
+    font-size: var(--fs-xs);
+    letter-spacing: 0.14em;
+    color: var(--c-sidebar-muted);
+    margin: var(--sp-6) 0 var(--sp-3);
+    text-transform: uppercase;
+    background: none;
+    border: none;
+    padding: 0 var(--sp-2);
+    font-weight: 700;
+  }
+  .sidebar ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    counter-reset: toc;
+  }
+  .sidebar li {
+    counter-increment: toc;
+    margin: 0;
+  }
+  .sidebar a {
+    display: block;
+    color: var(--c-sidebar-text);
+    text-decoration: none;
+    padding: var(--sp-2) var(--sp-3) var(--sp-2) var(--sp-8);
+    font-size: var(--fs-sm);
+    border-radius: var(--r-sm);
+    position: relative;
+    line-height: 1.4;
+    transition: background .15s, color .15s, border-left-color .15s;
+    border-left: 3px solid transparent;
+    margin-left: -3px;
+  }
+  .sidebar a::before {
+    content: counter(toc, decimal-leading-zero);
+    position: absolute;
+    left: var(--sp-3);
+    top: var(--sp-2);
+    color: var(--c-sidebar-muted);
+    font-size: 11px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  .sidebar a:hover {
+    background: var(--c-sidebar-hover);
+    color: var(--c-sidebar-on);
+  }
+  .sidebar a:hover::before {
+    color: #c6d4ec;
+  }
+  .sidebar a.active {
+    background: var(--c-sidebar-hover);
+    color: var(--c-sidebar-on);
+    border-left-color: var(--c-accent-mid);
+  }
+
+  /* =========================================
+     Main
+     ========================================= */
+  main.content {
+    padding: var(--sp-12) var(--sp-12);
+    max-width: 980px;
+  }
+
+  header.page-header {
+    margin-bottom: var(--sp-12);
+    padding-bottom: var(--sp-6);
+    border-bottom: 2px solid var(--c-accent);
+  }
+  header.page-header .eyebrow {
+    font-size: var(--fs-xs);
+    letter-spacing: 0.16em;
+    color: var(--c-accent);
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: var(--sp-2);
+  }
+  header.page-header h1 {
+    font-size: var(--fs-2xl);
+    margin: 0 0 var(--sp-3);
+    line-height: 1.3;
+    color: var(--c-accent-dark);
+    letter-spacing: 0.01em;
+  }
+  header.page-header p.lead {
+    margin: 0;
+    color: var(--c-muted);
+    font-size: var(--fs-md);
+    line-height: 1.7;
+  }
+
+  section.chapter {
+    margin: 0 0 var(--sp-12);
+    scroll-margin-top: var(--sp-6);
+  }
+  section.chapter h2 {
+    font-size: var(--fs-xl);
+    margin: 0 0 var(--sp-6);
+    padding: var(--sp-3) 0 var(--sp-3) var(--sp-4);
+    border-left: 6px solid var(--c-accent);
+    color: var(--c-accent-dark);
+    background: linear-gradient(90deg, var(--c-accent-soft) 0%, transparent 70%);
+    border-radius: 0 var(--r-sm) var(--r-sm) 0;
+    line-height: 1.4;
+  }
+  section.chapter > p.intro {
+    color: var(--c-muted);
+    margin: 0 0 var(--sp-6);
+  }
+
+  /* Anti-pattern cards */
+  .ap {
+    background: var(--c-card);
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-md);
+    padding: var(--sp-6);
+    margin: 0 0 var(--sp-6);
+    box-shadow: var(--shadow-sm);
+  }
+  .ap h3 {
+    font-size: var(--fs-lg);
+    margin: 0 0 var(--sp-4);
+    color: var(--c-accent-dark);
+    line-height: 1.4;
+    display: flex;
+    align-items: baseline;
+    gap: var(--sp-3);
+  }
+  .ap h3 .num {
+    display: inline-block;
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    color: var(--c-accent);
+    background: var(--c-accent-soft);
+    padding: 2px 8px;
+    border-radius: var(--r-sm);
+    letter-spacing: 0.06em;
+    flex-shrink: 0;
+  }
+
+  .ap .label {
+    display: inline-block;
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.04em;
+    margin-bottom: var(--sp-2);
+  }
+  .label-bad  { color: var(--c-bad);  background: var(--c-bad-soft); }
+  .label-good { color: var(--c-good); background: var(--c-good-soft); }
+
+  .ap .block {
+    margin: var(--sp-4) 0 0;
+    padding: var(--sp-4);
+    border-radius: var(--r-sm);
+    border: 1px solid transparent;
+  }
+  .block-bad {
+    background: var(--c-bad-soft);
+    border-color: #f3cdc7;
+  }
+  .block-good {
+    background: var(--c-good-soft);
+    border-color: #c2e3cd;
+  }
+  .block h4 {
+    margin: 0 0 var(--sp-2);
+    font-size: var(--fs-sm);
+    color: var(--c-text);
+    letter-spacing: 0.02em;
+  }
+  .block ul, .block ol {
+    margin: 0;
+    padding-left: 1.4em;
+  }
+  .block li + li {
+    margin-top: var(--sp-1);
+  }
+
+  .why {
+    margin: var(--sp-4) 0 0;
+    padding: var(--sp-3) var(--sp-4);
+    background: var(--c-accent-soft);
+    border-left: 4px solid var(--c-accent);
+    border-radius: var(--r-sm);
+    font-size: var(--fs-sm);
+    color: var(--c-accent-dark);
+  }
+  .why strong { color: var(--c-accent-dark); }
+
+  /* Checklist with checkboxes */
+  .check-group {
+    background: var(--c-card);
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-md);
+    padding: var(--sp-6);
+    margin: 0 0 var(--sp-6);
+    box-shadow: var(--shadow-sm);
+  }
+  .check-group h3 {
+    font-size: var(--fs-md);
+    margin: 0 0 var(--sp-4);
+    color: var(--c-accent-dark);
+    padding-bottom: var(--sp-2);
+    border-bottom: 1px solid var(--c-border);
+  }
+  .check-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .check-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--sp-3);
+    padding: var(--sp-2) 0;
+    border-bottom: 1px dashed var(--c-border);
+  }
+  .check-list li:last-child { border-bottom: none; }
+  .check-list input[type="checkbox"] {
+    margin-top: 6px;
+    width: 18px;
+    height: 18px;
+    accent-color: var(--c-accent);
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+  .check-list label {
+    cursor: pointer;
+    line-height: 1.6;
+    flex: 1;
+  }
+  .check-list input:checked + label {
+    color: var(--c-muted);
+    text-decoration: line-through;
+  }
+
+  /* Back to top (home) button */
+  .back-to-top {
+    position: fixed;
+    right: var(--sp-6);
+    bottom: var(--sp-6);
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--c-accent);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    box-shadow: var(--shadow-lg);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .25s, visibility .25s, transform .15s, background .15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    font-size: 22px;
+    font-weight: 700;
+  }
+  .back-to-top.visible {
+    opacity: 1;
+    visibility: visible;
+  }
+  .back-to-top:hover {
+    background: var(--c-accent-dark);
+    transform: translateY(-2px);
+  }
+  .back-to-top:active {
+    transform: translateY(0);
+  }
+
+  /* Summary table */
+  .summary-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: var(--sp-4) 0 0;
+    font-size: var(--fs-sm);
+    background: var(--c-card);
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-md);
+    overflow: hidden;
+  }
+  .summary-table th,
+  .summary-table td {
+    text-align: left;
+    padding: var(--sp-3) var(--sp-4);
+    border-bottom: 1px solid var(--c-border);
+    vertical-align: top;
+  }
+  .summary-table th {
+    background: var(--c-accent-soft);
+    color: var(--c-accent-dark);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+  .summary-table tr:last-child td { border-bottom: none; }
+  .summary-table td:first-child {
+    font-weight: 700;
+    color: var(--c-accent-dark);
+    white-space: nowrap;
+  }
+
+  footer.page-footer {
+    margin-top: var(--sp-16);
+    padding-top: var(--sp-6);
+    border-top: 1px solid var(--c-border);
+    color: var(--c-muted);
+    font-size: var(--fs-sm);
+  }
+
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    aside.sidebar { position: static; height: auto; }
+    main.content { padding: var(--sp-8) var(--sp-6); }
+    header.page-header h1 { font-size: var(--fs-xl); }
+    .back-to-top { right: var(--sp-4); bottom: var(--sp-4); width: 46px; height: 46px; }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <aside class="sidebar" aria-label="目次">
+    <div class="sidebar-title">技術報告PPT<br>アンチパターン集</div>
+    <div class="sidebar-subtitle">TECHNICAL REPORT · DESIGN GUIDE</div>
+
+    <h2>目次</h2>
+    <nav>
+      <ol>
+        <li><a href="#ch01">情報量の過多</a></li>
+        <li><a href="#ch02">フォントと文字サイズ</a></li>
+        <li><a href="#ch03">配色とコントラスト</a></li>
+        <li><a href="#ch04">レイアウトと余白</a></li>
+        <li><a href="#ch05">図表とイメージ</a></li>
+        <li><a href="#ch06">グラフとデータ表現</a></li>
+        <li><a href="#ch07">数式・記号・単位</a></li>
+        <li><a href="#ch08">タイトルと見出し</a></li>
+        <li><a href="#ch09">ストーリー構成</a></li>
+        <li><a href="#ch10">アニメーションと装飾</a></li>
+        <li><a href="#ch11">引用と出典</a></li>
+        <li><a href="#ch12">結論とまとめ</a></li>
+        <li><a href="#ch13">チェックリスト</a></li>
+      </ol>
+    </nav>
+  </aside>
+
+  <main class="content">
+
+    <header class="page-header">
+      <div class="eyebrow">Anti-Patterns Catalog</div>
+      <h1>技術報告パワーポイント資料の<br>アンチパターン集</h1>
+      <p class="lead">
+        技術報告会・社内発表・学会発表で「伝わらない」スライドを生む典型パターンと、その改善策をまとめたガイドです。
+        各項目は「悪い例 → 良い例 → なぜそうするか」の順で整理しています。
+      </p>
+    </header>
+
+    <!-- ========== 1 ========== -->
+    <section class="chapter" id="ch01">
+      <h2>1. 情報量の過多</h2>
+      <p class="intro">1枚のスライドに詰め込みすぎる、聴衆が読みきれない状態を作るパターンです。</p>
+
+      <div class="ap">
+        <h3><span class="num">AP-1.1</span>1スライドに伝えたいことが3つ以上ある</h3>
+        <div class="block block-bad">
+          <h4><span class="label label-bad">悪い例</span></h4>
+          <ul>
+            <li>「背景」「課題」「手法」「結果」「考察」が1枚に詰まっている</li>
+            <li>箇条書きが10項目以上ある</li>
+            <li>文字を読まないとスライドの主張が分からない</li>
+          </ul>
+        </div>
+        <div class="block block-good">
+          <h4><span class="label label-good">良い例</span></h4>
+          <ul>
+            <li>1スライド = 1メッセージ(One Slide, One Message)を徹底する</li>
+            <li>箇条書きは多くても5項目までに絞る</li>
+            <li>スライドタイトルだけ読めば論旨が追える</li>
+          </ul>
+        </div>
+        <p class="why"><strong>なぜ：</strong>人間が短時間で処理できる情報量には限界があり、口頭説明とスライドの両方を同時に追わせると理解が止まる。</p>
+      </div>
+
+      <div class="ap">
+        <h3><span class="num">AP-1.2</span>文章をそのまま貼り付けている</h3>
+        <div class="block block-bad">
+          <h4><span class="label label-bad">悪い例</span></h4>
+          <ul>
+            <li>報告書やメールの文章をコピペした長文がスライドを占有</li>
+            <li>句読点付きの完成された段落が複数並ぶ</li>
+            <li>発表者が読み上げる時間、聴衆が文字を読んでいる</li>
+          </ul>
+        </div>
+        <div class="block block-good">
+          <h4><span class="label label-good">良い例</span></h4>
+          <ul>
+            <li>キーワードと短文(20字以内)に分解する</li>
+            <li>文章で伝えたい内容は配布資料や Appendix に回す</li>
+            <li>スライドは「視覚的サマリ」と割り切る</li>
+          </ul>
+        </div>
+        <p class="why"><strong>なぜ：</strong>スライドは「読む資料」ではなく「見る資料」。長文は配布資料の役割で、発表中は集中を奪うノイズになる。</p>
+      </div>
+    </section>
+
+    <!-- ========== 2 ========== -->
+    <section class="chapter" id="ch02">
+      <h2>2. フォントと文字サイズ</h2>
+      <p class="intro">「会場の後ろからでは読めない」最大の原因になる項目です。</p>
+
+      <div class="ap">
+        <h3><span class="num">AP-2.1</span>本文が18pt未満</h3>
+        <div class="block block-bad">
+          <h4><span class="label label-bad">悪い例</span></h4>
+          <ul>
+            <li>本文10〜12ptで「情報を多く載せたい」を優先</li>
+            <li>注釈が6〜8ptで実質読めない</li>
+            <li>会議室後方の聴衆が前傾姿勢になる</li>
+          </ul>
+        </div>
+        <div class="block block-good">
+          <h4><span class="label label-good">良い例</span></h4>
+          <ul>
+            <li>本文は最低 <strong>18pt</strong>、推奨 <strong>20〜24pt</strong></li>
+            <li>タイトルは <strong>28〜36pt</strong></li>
+            <li>注釈でも <strong>14pt</strong> を下限にする</li>
+          </ul>
+        </div>
+        <p class="why"><strong>なぜ：</strong>プロジェクター投影では PC 画面より見かけが小さくなる。サイズ不足の文字は「載せていない」のと同じ。</p>
+      </div>
+
+      <div class="ap">
+        <h3><span class="num">AP-2.2</span>フォントが混在している</h3>
+        <div class="block block-bad">
+          <h4><span class="label label-bad">悪い例</span></h4>
+          <ul>
+            <li>明朝・ゴシック・MSゴシック・メイリオが混ざる</li>
+            <li>本文と図中文字でフォントが違う</li>
+            <li>欧文に和文フォントが当たって不格好</li>
+          </ul>
+        </div>
+        <div class="block block-good">
+          <h4><span class="label label-good">良い例</span></h4>
+          <ul>
+            <li>和文は「メイリオ」または「游ゴシック」に統一</li>
+            <li>欧文は「Segoe UI」「Arial」など対応フォントを指定</li>
+            <li>スライドマスターで一括設定して事故を防ぐ</li>
+          </ul>
+        </div>
+        <p class="why"><strong>なぜ：</strong>フォントの揺れは「資料に手間がかかっていない」という無意識のシグナルになり、内容の説得力まで損なう。</p>
+      </div>
+    </section>
+
+    <!-- ========== 3 ========== -->
+    <section class="chapter" id="ch03">
+      <h2>3. 配色とコントラスト</h2>
+      <p class="intro">投影環境では PC 画面と見え方が大きく変わります。色の使い方は読みやすさに直結します。</p>
+
+      <div class="ap">
+        <h3><span class="num">AP-3.1</span>色を5色以上使う</h3>
+        <div class="block block-bad">
+          <h4><span class="label label-bad">悪い例</span></h4>
+          <ul>
+            <li>強調したい箇所すべてに違う色を当てる</li>
+            <li>赤・青・緑・橙・紫が1枚に同時登場</li>
+            <li>どこが本当に重要なのか分からない</li>
+          </ul>
+        </div>
+        <div class="block block-good">
+          <h4><span class="label label-good">良い例</span></h4>
+          <ul>
+            <li>基本色は3色まで(主色・補助色・強調色)</li>
+            <li>強調色は1スライドに1〜2箇所だけ使う</li>
+            <li>テーマカラーをスライドマスターで固定する</li>
+          </ul>
+        </div>
+        <p class="why"><strong>なぜ：</strong>「全部が強調」は「何も強調されていない」と同じ。色は希少資源として扱う。</p>
+      </div>
+
+      <div class="ap">
+        <h3><span class="num">AP-3.2</span>背景と文字のコントラストが不足</h3>
+        <div class="block block-bad">
+          <h4><span class="label label-bad">悪い例</span></h4>
+          <ul>
+            <li>薄いグレー背景に薄いグレー文字</li>
+            <li>青背景に黒文字、赤背景に緑文字</li>
+            <li>写真背景の上に白文字を直置きして埋没</li>
+          </ul>
+        </div>
+        <div class="block block-good">
+          <h4><span class="label label-good">良い例</span></h4>
+          <ul>
+            <li>白背景+濃紺文字、紺背景+白文字を基本に</li>
+            <li>WCAG 基準で <strong>4.5:1 以上</strong>のコントラスト比を確保</li>
+            <li>写真背景には半透明オーバーレイを敷く</li>
+          </ul>
+        </div>
+        <p class="why"><strong>なぜ：</strong>プロジェクターは外光や色温度で見え方が変わる。手元で OK でも会場で読めないケースが多い。</p>
+      </div>
+
+      <div class="ap">
+        <h3><span class="num">AP-3.3</span>赤緑だけで状態を区別する</h3>
+        <div class="block block-bad">
+          <h4><span class="label label-bad">悪い例</span></h4>
+          <ul>
+            <li>OK=緑、NG=赤 のみで判別させる</li>
+            <li>色弱の聴衆には差が見えない</li>
+          </ul>
+        </div>
+        <div class="block block-good">
+          <h4><span class="label label-good">良い例</span></h4>
+          <ul>
+            <li>色 + 記号(◯/×) + テキストラベルを併用</li>
+            <li>カラーユニバーサルデザイン対応色(青/橙)を選ぶ</li>
+          </ul>
+        </div>
+        <p class="why"><strong>なぜ：</strong>男性の約5%は色弱を持つ。技術報告は意思決定資料なので、誰一人として情報を取り逃さない設計が必要。</p>
+      </div>
+    </section>
+
+    <!-- ========== 4 ========== -->
+    <section class="chapter" id="ch04">
+      <h2>4. レイアウトと余白</h2>
+      <p class="intro">「窮屈なスライド」は内容より先に読み手を疲れさせます。</p>
+
+      <div class="ap">
+        <h3><span class="num">AP-4.1</span>端まで要素を詰める</h3>
+        <div class="block block-bad">
+          <h4><span class="label label-bad">悪い例</span></h4>
+          <ul>
+            <li>左端から右端まで図やテキストを敷き詰める</li>
+            <li>余白=もったいない、と考えてしまう</li>
+          </ul>
+        </div>
+        <div class="block block-good">
+          <h4><span class="label label-good">良い例</span></h4>
+          <ul>
+            <li>外周には最低 <strong>5%</strong> 程度の余白を取る</li>
+            <li>要素同士のグルーピングが分かる間隔をとる</li>
+          </ul>
+        </div>
+        <p class="why"><strong>なぜ：</strong>余白は「情報の境界」を伝える役割を持つ。情報そのものと同じくらい重要なデザイン要素。</p>
+      </div>
+
+      <div class="ap">
+        <h3><span class="num">AP-4.2</span>整列が崩れている</h3>
+        <div class="block block-bad">
+          <h4><span class="label label-bad">悪い例</span></h4>
+          <ul>
+            <li>テキストボックスの左端が数ピクセルずつズレている</li>
+            <li>ボックスサイズがバラバラで揃って見えない</li>
+          </ul>
+        </div>
+        <div class="block block-good">
+          <h4><span class="label label-good">良い例</span></h4>
+          <ul>
+            <li>ガイド線・スマートガイドを使って左揃え/中央揃えを徹底</li>
+            <li>同じ役割の要素はサイズも統一する</li>
+          </ul>
+        </div>
+        <p class="why"><strong>なぜ：</strong>整列の乱れは無意識のストレスを生み、内容への信頼を下げる。技術報告では特に「正確さ」の印象に直結する。</p>
+      </div>
+    </section>
+
+    <!-- ========== 5 ========== -->
+    <section class="chapter" id="ch05">
+      <h2>5. 図表とイメージ</h2>
+      <p class="intro">技術報告では図表が主役。図解の品質がそのまま伝達速度に直結します。</p>
+
+      <div class="ap">
+        <h3><span class="num">AP-5.1</span>スクリーンショットを拡大して荒い</h3>
+        <div class="block block-bad">
+          <h4><span class="label label-bad">悪い例</span></h4>
+          <ul>
+            <li>Excel 表をスクショして引き伸ばす</li>
+            <li>UI 画像がボケて文字が判読不能</li>
+          </ul>
+        </div>
+        <div class="block block-good">
+          <h4><span class="label label-good">良い例</span></h4>
+          <ul>
+            <li>表は PowerPoint 内で作り直す(再描画される)</li>
+            <li>UI は必要部分のみトリミングして拡大せず使う</li>
+            <li>SVG など解像度に依存しない素材を選ぶ</li>
+          </ul>
+        </div>
+        <p class="why"><strong>なぜ：</strong>ぼやけた画像は内容を曖昧にし、報告の根拠そのものを疑わせる。</p>
+      </div>
+
+      <div class="ap">
+        <h3><span class="num">AP-5.2</span>「ご覧の通り」で済ます</h3>
+        <div class="block block-bad">
+          <h4><span class="label label-bad">悪い例</span></h4>
+          <ul>
+            <li>巨大な表を貼って「詳細は資料を参照」と言って次へ</li>
+            <li>図のどこを見るべきか示さない</li>
+          </ul>
+        </div>
+        <div class="block block-good">
+          <h4><span class="label label-good">良い例</span></h4>
+          <ul>
+            <li>注目箇所を四角や矢印で明示する</li>
+            <li>強調以外の部分はグレーアウトする</li>
+            <li>図の下に「ここから読み取れること」を1行で書く</li>
+          </ul>
+        </div>
+        <p class="why"><strong>なぜ：</strong>聴衆は資料を初見で見るため、発表者が「読み方」をガイドしない限り誤読される。</p>
+      </div>
+    </section>
+
+    <!-- ========== 6 ========== -->
+    <section class="chapter" id="ch06">
+      <h2>6. グラフとデータ表現</h2>
+      <p class="intro">数値を扱う技術報告では、グラフが事実認識を左右します。</p>
+
+      <div class="ap">
+        <h3><span class="num">AP-6.1</span>3D グラフを使う</h3>
+        <div class="block block-bad">
+          <h4><span class="label label-bad">悪い例</span></h4>
+          <ul>
+            <li>3D 円グラフで割合が歪んで見える</li>
+            <li>3D 棒グラフで奥行きにより値が読みにくい</li>
+          </ul>
+        </div>
+        <div class="block block-good">
+          <h4><span class="label label-good">良い例</span></h4>
+          <ul>
+            <li>2D の棒グラフ、折れ線グラフを基本にする</li>
+            <li>割合は円グラフより横並びの棒グラフが正確</li>
+          </ul>
+        </div>
+        <p class="why"><strong>なぜ：</strong>3D 効果は遠近で面積が変わり、数値の正しい比較を妨げる。技術報告に装飾は不要。</p>
+      </div>
+
+      <div class="ap">
+        <h3><span class="num">AP-6.2</span>軸の起点を 0 にしない</h3>
+        <div class="block block-bad">
+          <h4><span class="label label-bad">悪い例</span></h4>
+          <ul>
+            <li>差を強調するため Y 軸を 95〜100 にして印象操作</li>
+            <li>軸ラベルを省略して差が大きく見える</li>
+          </ul>
+        </div>
+        <div class="block block-good">
+          <h4><span class="label label-good">良い例</span></h4>
+          <ul>
+            <li>棒グラフは原則 0 から始める</li>
+            <li>軸を切り詰める場合は破断記号を入れて明示する</li>
+            <li>絶対値が重要なら数値ラベルも併記する</li>
+          </ul>
+        </div>
+        <p class="why"><strong>なぜ：</strong>誤解を生むグラフは「結果の改ざん」と同等に扱われる。意図的でなくても信頼を失う。</p>
+      </div>
+
+      <div class="ap">
+        <h3><span class="num">AP-6.3</span>凡例が遠い・順序が無関係</h3>
+        <div class="block block-bad">
+          <h4><span class="label label-bad">悪い例</span></h4>
+          <ul>
+            <li>折れ線とは別の場所に凡例ボックスが置かれる</li>
+            <li>凡例の順序がグラフ上の系列順と一致しない</li>
+          </ul>
+        </div>
+        <div class="block block-good">
+          <h4><span class="label label-good">良い例</span></h4>
+          <ul>
+            <li>系列名を線・棒の末尾に直接ラベル付け</li>
+            <li>凡例を残す場合は系列の並びと一致させる</li>
+          </ul>
+        </div>
+        <p class="why"><strong>なぜ：</strong>視線移動が増えるほど読解スピードが落ちる。情報は「物理的に近く」配置するのが原則。</p>
+      </div>
+    </section>
+
+    <!-- ========== 7 ========== -->
+    <section class="chapter" id="ch07">
+      <h2>7. 数式・記号・単位</h2>
+      <p class="intro">技術報告ならではの落とし穴。理系の信頼性は単位と表記でできています。</p>
+
+      <div class="ap">
+        <h3><span class="num">AP-7.1</span>単位がない</h3>
+        <div class="block block-bad">
+          <h4><span class="label label-bad">悪い例</span></h4>
+          <ul>
+            <li>「処理時間: 12」「温度: 200」など単位が抜けている</li>
+            <li>グラフ軸に単位が書いていない</li>
+          </ul>
+        </div>
+        <div class="block block-good">
+          <h4><span class="label label-good">良い例</span></h4>
+          <ul>
+            <li>数値の隣に必ず単位を書く(ms, kPa, ℃ など)</li>
+            <li>軸ラベルは「項目 [単位]」の形式で統一</li>
+          </ul>
+        </div>
+        <p class="why"><strong>なぜ：</strong>単位を省くと別物の比較になり、結論が変わる。理系資料の最重要マナー。</p>
+      </div>
+
+      <div class="ap">
+        <h3><span class="num">AP-7.2</span>数式を画像で貼る</h3>
+        <div class="block block-bad">
+          <h4><span class="label label-bad">悪い例</span></h4>
+          <ul>
+            <li>ピンぼけ画像で数式が読めない</li>
+            <li>後から添字を直せず、結局作り直し</li>
+          </ul>
+        </div>
+        <div class="block block-good">
+          <h4><span class="label label-good">良い例</span></h4>
+          <ul>
+            <li>PowerPoint の数式ツール、または LaTeX 連携を使う</li>
+            <li>変数の意味は数式の下に短く書き添える</li>
+          </ul>
+        </div>
+        <p class="why"><strong>なぜ：</strong>数式は技術報告の根拠そのもの。可読性と修正性の両方が要る。</p>
+      </div>
+    </section>
+
+    <!-- ========== 8 ========== -->
+    <section class="chapter" id="ch08">
+      <h2>8. タイトルと見出し</h2>
+      <p class="intro">スライドタイトルは「読み手への要約サービス」です。</p>
+
+      <div class="ap">
+        <h3><span class="num">AP-8.1</span>タイトルがトピック名のみ</h3>
+        <div class="block block-bad">
+          <h4><span class="label label-bad">悪い例</span></h4>
+          <ul>
+            <li>「実験結果」「考察」「課題」など名詞だけ</li>
+            <li>タイトルを見ても何が言いたいか分からない</li>
+          </ul>
+        </div>
+        <div class="block block-good">
+          <h4><span class="label label-good">良い例</span></h4>
+          <ul>
+            <li>「条件A では従来比 30% 高速化を確認」</li>
+            <li>結論または主張を1文で書く(メッセージタイトル)</li>
+          </ul>
+        </div>
+        <p class="why"><strong>なぜ：</strong>タイトルだけ拾い読みしても話の筋が追えるようにすれば、聴衆の認知負荷が劇的に下がる。</p>
+      </div>
+    </section>
+
+    <!-- ========== 9 ========== -->
+    <section class="chapter" id="ch09">
+      <h2>9. ストーリー構成</h2>
+      <p class="intro">話の流れが弱いと、スライドが整っていても伝わりません。</p>
+
+      <div class="ap">
+        <h3><span class="num">AP-9.1</span>背景説明が長すぎる</h3>
+        <div class="block block-bad">
+          <h4><span class="label label-bad">悪い例</span></h4>
+          <ul>
+            <li>背景・歴史・先行研究で全体の半分を消費</li>
+            <li>本題に入る前に時間切れ</li>
+          </ul>
+        </div>
+        <div class="block block-good">
+          <h4><span class="label label-good">良い例</span></h4>
+          <ul>
+            <li>背景は「課題」を導く最小限に絞る</li>
+            <li>聴衆が既に知っている知識は飛ばす</li>
+            <li>原則として全体の <strong>20%</strong> 以内</li>
+          </ul>
+        </div>
+        <p class="why"><strong>なぜ：</strong>聴衆の関心は「で、何が分かったの?」に向かっている。前段が長いと結論への期待値が下がる。</p>
+      </div>
+
+      <div class="ap">
+        <h3><span class="num">AP-9.2</span>結論が最後にしか出てこない</h3>
+        <div class="block block-bad">
+          <h4><span class="label label-bad">悪い例</span></h4>
+          <ul>
+            <li>「結論はこのあと述べます」を多用</li>
+            <li>聴衆が話の現在地を見失う</li>
+          </ul>
+        </div>
+        <div class="block block-good">
+          <h4><span class="label label-good">良い例</span></h4>
+          <ul>
+            <li>冒頭にエグゼクティブサマリ(結論先出し)を入れる</li>
+            <li>各章の冒頭にも小結論を置く</li>
+          </ul>
+        </div>
+        <p class="why"><strong>なぜ：</strong>技術報告の聴衆(管理職・顧客)は時間が限られている。結論先出しは敬意の表明でもある。</p>
+      </div>
+    </section>
+
+    <!-- ========== 10 ========== -->
+    <section class="chapter" id="ch10">
+      <h2>10. アニメーションと装飾</h2>
+      <p class="intro">「使えるから使う」は失敗のもとです。</p>
+
+      <div class="ap">
+        <h3><span class="num">AP-10.1</span>派手なアニメーションを多用</h3>
+        <div class="block block-bad">
+          <h4><span class="label label-bad">悪い例</span></h4>
+          <ul>
+            <li>フェード・回転・バウンドが全要素に付く</li>
+            <li>クリックの度に違う動きが出る</li>
+          </ul>
+        </div>
+        <div class="block block-good">
+          <h4><span class="label label-good">良い例</span></h4>
+          <ul>
+            <li>アニメーションは「順を追って見せたい時」のみ</li>
+            <li>効果は「フェード」または「アピール」に統一</li>
+          </ul>
+        </div>
+        <p class="why"><strong>なぜ：</strong>派手な動きは集中を奪い、内容より動きが記憶に残る。技術報告では原則「静」が良い。</p>
+      </div>
+
+      <div class="ap">
+        <h3><span class="num">AP-10.2</span>装飾アイコンやイラストの過剰使用</h3>
+        <div class="block block-bad">
+          <h4><span class="label label-bad">悪い例</span></h4>
+          <ul>
+            <li>すべての見出しに無関係なフリー素材アイコン</li>
+            <li>テイストの違うイラストが混在</li>
+          </ul>
+        </div>
+        <div class="block block-good">
+          <h4><span class="label label-good">良い例</span></h4>
+          <ul>
+            <li>意味を持つアイコンだけを残す(ピクトグラム的に)</li>
+            <li>同じスタイルのアイコンセットで統一</li>
+          </ul>
+        </div>
+        <p class="why"><strong>なぜ：</strong>装飾は「内容が薄い」シグナルにもなり得る。技術内容で勝負する場では引き算が効く。</p>
+      </div>
+    </section>
+
+    <!-- ========== 11 ========== -->
+    <section class="chapter" id="ch11">
+      <h2>11. 引用と出典</h2>
+      <p class="intro">外部の図やデータを使う時の作法です。</p>
+
+      <div class="ap">
+        <h3><span class="num">AP-11.1</span>出典が無い・あいまい</h3>
+        <div class="block block-bad">
+          <h4><span class="label label-bad">悪い例</span></h4>
+          <ul>
+            <li>「ネットより」「某社資料より」とだけ書く</li>
+            <li>引用元が不明で再確認ができない</li>
+          </ul>
+        </div>
+        <div class="block block-good">
+          <h4><span class="label label-good">良い例</span></h4>
+          <ul>
+            <li>「著者名(年). タイトル. 出版元.」の形式で明記</li>
+            <li>Web は URL + 取得日を併記する</li>
+            <li>図表ごとにスライド右下に小さく出典を載せる</li>
+          </ul>
+        </div>
+        <p class="why"><strong>なぜ：</strong>技術報告で出典不明は致命的。報告全体の信頼度を下げ、コンプライアンス上の問題にもなる。</p>
+      </div>
+    </section>
+
+    <!-- ========== 12 ========== -->
+    <section class="chapter" id="ch12">
+      <h2>12. 結論とまとめ</h2>
+      <p class="intro">最後のスライドは「次の意思決定」へのバトンです。</p>
+
+      <div class="ap">
+        <h3><span class="num">AP-12.1</span>「ご清聴ありがとうございました」だけ</h3>
+        <div class="block block-bad">
+          <h4><span class="label label-bad">悪い例</span></h4>
+          <ul>
+            <li>最終スライドが感謝の言葉のみ</li>
+            <li>質疑応答の間、何も情報が映っていない</li>
+          </ul>
+        </div>
+        <div class="block block-good">
+          <h4><span class="label label-good">良い例</span></h4>
+          <ul>
+            <li>最終スライドに「結論3点」を残す</li>
+            <li>質疑中もそのスライドを表示しておく</li>
+          </ul>
+        </div>
+        <p class="why"><strong>なぜ：</strong>議論はそのスライドを起点に進む。最後の画面が「結論」かどうかで会議の質が変わる。</p>
+      </div>
+
+      <div class="ap">
+        <h3><span class="num">AP-12.2</span>Next Action が書かれていない</h3>
+        <div class="block block-bad">
+          <h4><span class="label label-bad">悪い例</span></h4>
+          <ul>
+            <li>結論だけで「次にどうするか」が無い</li>
+            <li>聴衆が判断を求めているのに、判断材料が揃わない</li>
+          </ul>
+        </div>
+        <div class="block block-good">
+          <h4><span class="label label-good">良い例</span></h4>
+          <ul>
+            <li>「誰が」「いつまでに」「何をする」を1枚に</li>
+            <li>意思決定が必要な項目には ⭕ で印を付ける</li>
+          </ul>
+        </div>
+        <p class="why"><strong>なぜ：</strong>技術報告のゴールは「聴衆が次の行動を取れる」こと。結論で終わると会議が宙に浮く。</p>
+      </div>
+    </section>
+
+    <!-- ========== 13 ========== -->
+    <section class="chapter" id="ch13">
+      <h2>13. 発表前チェックリスト</h2>
+      <p class="intro">資料が完成したら、投影前に必ず以下を確認しましょう。チェック状態は自動保存され、ページを再度開いても保持されます。</p>
+
+      <div class="check-group">
+        <h3>情報量</h3>
+        <ul class="check-list">
+          <li><input type="checkbox" id="ppt-1-1"><label for="ppt-1-1">1スライド = 1メッセージになっている</label></li>
+          <li><input type="checkbox" id="ppt-1-2"><label for="ppt-1-2">箇条書きは5項目以内に絞られている</label></li>
+          <li><input type="checkbox" id="ppt-1-3"><label for="ppt-1-3">長文の貼り付けがなく、キーワード中心になっている</label></li>
+        </ul>
+      </div>
+
+      <div class="check-group">
+        <h3>フォントと文字</h3>
+        <ul class="check-list">
+          <li><input type="checkbox" id="ppt-2-1"><label for="ppt-2-1">本文が 18pt 以上(推奨 20〜24pt)</label></li>
+          <li><input type="checkbox" id="ppt-2-2"><label for="ppt-2-2">注釈でも 14pt 以上</label></li>
+          <li><input type="checkbox" id="ppt-2-3"><label for="ppt-2-3">和文フォントが統一されている(メイリオ/游ゴシック等)</label></li>
+          <li><input type="checkbox" id="ppt-2-4"><label for="ppt-2-4">欧文用フォントが指定されている</label></li>
+        </ul>
+      </div>
+
+      <div class="check-group">
+        <h3>配色とコントラスト</h3>
+        <ul class="check-list">
+          <li><input type="checkbox" id="ppt-3-1"><label for="ppt-3-1">基本色は3色以内に絞られている</label></li>
+          <li><input type="checkbox" id="ppt-3-2"><label for="ppt-3-2">強調色は1スライドに1〜2箇所のみ</label></li>
+          <li><input type="checkbox" id="ppt-3-3"><label for="ppt-3-3">背景と文字のコントラスト比 4.5:1 以上</label></li>
+          <li><input type="checkbox" id="ppt-3-4"><label for="ppt-3-4">赤緑だけで状態を区別していない(記号やラベル併用)</label></li>
+        </ul>
+      </div>
+
+      <div class="check-group">
+        <h3>レイアウトと余白</h3>
+        <ul class="check-list">
+          <li><input type="checkbox" id="ppt-4-1"><label for="ppt-4-1">外周に5%以上の余白がある</label></li>
+          <li><input type="checkbox" id="ppt-4-2"><label for="ppt-4-2">要素の左揃え・中央揃えが徹底されている</label></li>
+          <li><input type="checkbox" id="ppt-4-3"><label for="ppt-4-3">同じ役割の要素はサイズが揃っている</label></li>
+        </ul>
+      </div>
+
+      <div class="check-group">
+        <h3>図表とイメージ</h3>
+        <ul class="check-list">
+          <li><input type="checkbox" id="ppt-5-1"><label for="ppt-5-1">スクリーンショットがぼやけていない</label></li>
+          <li><input type="checkbox" id="ppt-5-2"><label for="ppt-5-2">表は PowerPoint で再描画している(画像貼り付けでない)</label></li>
+          <li><input type="checkbox" id="ppt-5-3"><label for="ppt-5-3">図の注目箇所が枠・矢印で明示されている</label></li>
+          <li><input type="checkbox" id="ppt-5-4"><label for="ppt-5-4">図の下に「ここから何が読み取れるか」が1行ある</label></li>
+        </ul>
+      </div>
+
+      <div class="check-group">
+        <h3>グラフとデータ表現</h3>
+        <ul class="check-list">
+          <li><input type="checkbox" id="ppt-6-1"><label for="ppt-6-1">2D グラフを使っている(3D を避けている)</label></li>
+          <li><input type="checkbox" id="ppt-6-2"><label for="ppt-6-2">棒グラフの Y 軸は 0 から始まる</label></li>
+          <li><input type="checkbox" id="ppt-6-3"><label for="ppt-6-3">軸を切る場合は破断記号で明示</label></li>
+          <li><input type="checkbox" id="ppt-6-4"><label for="ppt-6-4">系列名は直接ラベルで示されている</label></li>
+        </ul>
+      </div>
+
+      <div class="check-group">
+        <h3>数式・記号・単位</h3>
+        <ul class="check-list">
+          <li><input type="checkbox" id="ppt-7-1"><label for="ppt-7-1">すべての数値に単位が付いている</label></li>
+          <li><input type="checkbox" id="ppt-7-2"><label for="ppt-7-2">グラフ軸が「項目 [単位]」形式で統一されている</label></li>
+          <li><input type="checkbox" id="ppt-7-3"><label for="ppt-7-3">数式は編集可能な形式で挿入されている(画像でない)</label></li>
+        </ul>
+      </div>
+
+      <div class="check-group">
+        <h3>タイトルと見出し</h3>
+        <ul class="check-list">
+          <li><input type="checkbox" id="ppt-8-1"><label for="ppt-8-1">タイトルが「結果」「考察」などの名詞だけになっていない</label></li>
+          <li><input type="checkbox" id="ppt-8-2"><label for="ppt-8-2">タイトルだけ読んでも論旨が追える</label></li>
+        </ul>
+      </div>
+
+      <div class="check-group">
+        <h3>ストーリー構成</h3>
+        <ul class="check-list">
+          <li><input type="checkbox" id="ppt-9-1"><label for="ppt-9-1">背景説明が全体の20%以内に収まっている</label></li>
+          <li><input type="checkbox" id="ppt-9-2"><label for="ppt-9-2">冒頭にエグゼクティブサマリ(結論先出し)がある</label></li>
+          <li><input type="checkbox" id="ppt-9-3"><label for="ppt-9-3">各章の冒頭に小結論が置かれている</label></li>
+        </ul>
+      </div>
+
+      <div class="check-group">
+        <h3>アニメーションと装飾</h3>
+        <ul class="check-list">
+          <li><input type="checkbox" id="ppt-10-1"><label for="ppt-10-1">アニメーションは順序提示が必要な箇所のみ</label></li>
+          <li><input type="checkbox" id="ppt-10-2"><label for="ppt-10-2">アニメ効果が統一されている(フェード等)</label></li>
+          <li><input type="checkbox" id="ppt-10-3"><label for="ppt-10-3">無関係な装飾アイコン・イラストを削っている</label></li>
+        </ul>
+      </div>
+
+      <div class="check-group">
+        <h3>引用と出典</h3>
+        <ul class="check-list">
+          <li><input type="checkbox" id="ppt-11-1"><label for="ppt-11-1">外部の図表すべてに出典が記載されている</label></li>
+          <li><input type="checkbox" id="ppt-11-2"><label for="ppt-11-2">Web 引用には URL と取得日が併記されている</label></li>
+        </ul>
+      </div>
+
+      <div class="check-group">
+        <h3>結論とまとめ</h3>
+        <ul class="check-list">
+          <li><input type="checkbox" id="ppt-12-1"><label for="ppt-12-1">最終スライドが「ご清聴ありがとう」だけになっていない</label></li>
+          <li><input type="checkbox" id="ppt-12-2"><label for="ppt-12-2">最終スライドに結論3点が残されている</label></li>
+          <li><input type="checkbox" id="ppt-12-3"><label for="ppt-12-3">Next Action(誰が・いつ・何を)が示されている</label></li>
+        </ul>
+      </div>
+
+      <div class="check-group">
+        <h3>投影前確認</h3>
+        <ul class="check-list">
+          <li><input type="checkbox" id="ppt-13-1"><label for="ppt-13-1">会場の後方からでも文字が読める</label></li>
+          <li><input type="checkbox" id="ppt-13-2"><label for="ppt-13-2">プロジェクター環境で色味が崩れない</label></li>
+          <li><input type="checkbox" id="ppt-13-3"><label for="ppt-13-3">配布資料版(Appendix付き)も用意した</label></li>
+        </ul>
+      </div>
+    </section>
+
+    <footer class="page-footer">
+      <p>本ガイドは技術報告会・社内発表向けの実務メモです。発表の目的(意思決定/情報共有/教育)に応じて調整してください。</p>
+    </footer>
+
+  </main>
+</div>
+
+<button class="back-to-top" id="backToTop" aria-label="ページ先頭(ホーム)に戻る" title="ページ先頭に戻る">
+  <span aria-hidden="true">↑</span>
+</button>
+
+<script>
+  // Highlight the current section in the sidebar TOC as the user scrolls.
+  const links = document.querySelectorAll('.sidebar a[href^="#"]');
+  const sections = Array.from(links).map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  const linkBySection = new Map();
+  links.forEach((a, i) => linkBySection.set(sections[i], a));
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const link = linkBySection.get(entry.target);
+      if (!link) return;
+      if (entry.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-40% 0px -55% 0px', threshold: 0 });
+
+  sections.forEach(s => observer.observe(s));
+
+  // Back-to-top (home) button: show after scrolling, scroll to top on click.
+  const backToTop = document.getElementById('backToTop');
+  const SCROLL_THRESHOLD_PX = 300;
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > SCROLL_THRESHOLD_PX) {
+      backToTop.classList.add('visible');
+    } else {
+      backToTop.classList.remove('visible');
+    }
+  });
+  backToTop.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // Persist checkbox state to localStorage so progress survives page reload.
+  const STORAGE_KEY = 'ppt-checklist-state-v1';
+  const checkboxes = document.querySelectorAll('.check-list input[type="checkbox"]');
+  const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+  checkboxes.forEach(cb => {
+    if (saved[cb.id]) cb.checked = true;
+    cb.addEventListener('change', () => {
+      const state = {};
+      checkboxes.forEach(c => { if (c.checked) state[c.id] = true; });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    });
+  });
+</script>
+
+</body>
+</html>

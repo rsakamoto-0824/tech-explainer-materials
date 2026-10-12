@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Power BI 無償版と有償版でできること比較レポート</title>
+<style>
+  /* ===== 配色・サイズの定数（CSS変数） ===== */
+  :root {
+    --color-bg: #f2f5f3;
+    --color-surface: #ffffff;
+    --color-sidebar-bg: #143528;        /* ダークグリーン：本レポートの基調 */
+    --color-sidebar-text: #bfd3c9;
+    --color-sidebar-hover: #1e4636;
+    --color-sidebar-active: #34c98e;
+    --color-text: #1e2b25;
+    --color-text-sub: #58685f;
+    --color-accent: #1fa971;            /* グリーン＝無償版 */
+    --color-accent-deep: #147a51;
+    --color-paid: #d98a1f;              /* アンバー＝有償版 */
+    --color-paid-deep: #a86710;
+    --color-blue: #2b6cb0;
+    --color-border: #dde5e0;
+    --color-code-bg: #eef2ef;
+    --color-note-bg: #e7f6ef;
+    --color-note-border: #1fa971;
+    --color-tip-bg: #fdf4e3;
+    --color-tip-border: #d98a1f;
+    --color-warn-bg: #fdecea;
+    --color-warn-border: #d9534f;
+
+    --sidebar-width-px: 300px;
+    --content-max-width-px: 900px;
+    --radius-px: 10px;
+    --font-base: 16px;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo", system-ui, sans-serif;
+    font-size: var(--font-base);
+    line-height: 1.85;
+    color: var(--color-text);
+    background: var(--color-bg);
+  }
+
+  /* ===== 左サイドバー（目次） ===== */
+  .sidebar {
+    position: fixed; top: 0; left: 0;
+    width: var(--sidebar-width-px); height: 100vh; overflow-y: auto;
+    background: var(--color-sidebar-bg); color: var(--color-sidebar-text);
+    padding: 24px 16px 40px;
+  }
+  .sidebar-brand {
+    display: flex; align-items: center; gap: 10px;
+    padding: 0 8px 16px; border-bottom: 1px solid #285a45; margin-bottom: 14px;
+  }
+  .sidebar-brand .logo {
+    width: 34px; height: 34px;
+    background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-paid) 100%);
+    color: #fff; font-weight: 800; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0;
+  }
+  .sidebar-brand .title { font-size: 13.5px; font-weight: 700; color: #fff; line-height: 1.4; }
+  .toc-label { font-size: 11px; letter-spacing: 0.12em; color: #7d968a; padding: 10px 10px 4px; }
+  .sidebar nav a {
+    display: block; color: var(--color-sidebar-text); text-decoration: none;
+    padding: 7px 12px; border-radius: 6px; font-size: 13.5px;
+    border-left: 3px solid transparent; transition: background .15s, color .15s;
+  }
+  .sidebar nav a:hover { background: var(--color-sidebar-hover); color: #fff; }
+  .sidebar nav a.active {
+    background: var(--color-sidebar-hover); color: #fff;
+    border-left-color: var(--color-sidebar-active); font-weight: 700;
+  }
+  .sidebar nav a .num { display: inline-block; width: 24px; color: var(--color-sidebar-active); font-weight: 700; }
+
+  /* ===== 本文 ===== */
+  .main { margin-left: var(--sidebar-width-px); padding: 48px 40px 120px; }
+  .content { max-width: var(--content-max-width-px); margin: 0 auto; }
+
+  header.report-header {
+    background: linear-gradient(135deg, #143528 0%, #1e5a40 100%);
+    color: #fff; border-radius: var(--radius-px); padding: 40px 36px; margin-bottom: 36px;
+  }
+  header.report-header .eyebrow { color: #6fe0b2; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; margin: 0 0 12px; }
+  header.report-header h1 { font-size: 26px; line-height: 1.5; margin: 0 0 16px; }
+  header.report-header p { color: #cfe0d7; font-size: 15px; margin: 0; }
+  .meta-row { display: flex; flex-wrap: wrap; gap: 10px 18px; margin-top: 22px; font-size: 13px; color: #9fb8ab; }
+  .meta-row span { display: inline-flex; align-items: center; gap: 6px; }
+
+  section {
+    background: var(--color-surface); border: 1px solid var(--color-border);
+    border-radius: var(--radius-px); padding: 28px 32px 32px; margin-bottom: 26px; scroll-margin-top: 20px;
+  }
+  section > h2 {
+    font-size: 21.5px; margin: 0 0 6px; padding-bottom: 14px;
+    border-bottom: 3px solid var(--color-accent);
+    display: flex; align-items: baseline; gap: 12px;
+  }
+  section.paid-sec > h2 { border-bottom-color: var(--color-paid); }
+  section > h2 .chapter-no { color: var(--color-accent-deep); font-size: 15px; font-weight: 800; }
+  section.paid-sec > h2 .chapter-no { color: var(--color-paid-deep); }
+  .lead { color: var(--color-text-sub); font-size: 14.5px; margin: 14px 0 20px; }
+  h3 { font-size: 17px; margin: 26px 0 10px; padding-left: 12px; border-left: 5px solid var(--color-blue); }
+  h4 { font-size: 15px; margin: 18px 0 8px; }
+  p { margin: 10px 0; }
+  ul, ol { margin: 10px 0; padding-left: 24px; }
+  li { margin: 6px 0; }
+  strong { color: #10201a; }
+  code {
+    background: var(--color-code-bg); padding: 2px 6px; border-radius: 4px;
+    font-family: "SFMono-Regular", Consolas, "Courier New", monospace; font-size: 13.5px; color: #147a51;
+  }
+
+  /* ライセンスバッジ */
+  .lic {
+    display: inline-block; font-size: 11px; font-weight: 700;
+    padding: 1px 9px; border-radius: 999px; margin-left: 6px; vertical-align: 2px; white-space: nowrap;
+  }
+  .lic.free { background: #e7f6ef; color: var(--color-accent-deep); border: 1px solid var(--color-accent); }
+  .lic.paid { background: #fdf4e3; color: var(--color-paid-deep); border: 1px solid var(--color-paid); }
+
+  /* 注記ボックス */
+  .box { border-radius: 8px; padding: 14px 18px; margin: 16px 0; font-size: 14px; }
+  .box p { margin: 4px 0; }
+  .box .box-title { font-weight: 700; display: block; margin-bottom: 4px; }
+  .box.note { background: var(--color-note-bg); border-left: 5px solid var(--color-note-border); }
+  .box.tip  { background: var(--color-tip-bg);  border-left: 5px solid var(--color-tip-border); }
+  .box.warn { background: var(--color-warn-bg); border-left: 5px solid var(--color-warn-border); }
+
+  /* テーブル */
+  .table-wrap { overflow-x: auto; margin: 16px 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+  th, td { border: 1px solid var(--color-border); padding: 9px 12px; text-align: left; vertical-align: top; }
+  th { background: #1e4636; color: #fff; font-weight: 600; }
+  tbody tr:nth-child(even) { background: #f9fbfa; }
+  td.ok { color: var(--color-accent-deep); font-weight: 700; text-align: center; }
+  td.ng { color: #c0392b; font-weight: 700; text-align: center; }
+  td.tri { color: var(--color-paid-deep); font-weight: 700; text-align: center; }
+
+  /* プランカード */
+  .plan-cards { display: flex; flex-wrap: wrap; gap: 12px; margin: 18px 0; }
+  .plan-card {
+    flex: 1 1 200px; border: 1px solid var(--color-border); border-top: 5px solid var(--color-accent);
+    border-radius: 10px; padding: 16px 18px; background: #fbfdfc;
+  }
+  .plan-card.paid { border-top-color: var(--color-paid); }
+  .plan-card h4 { margin: 0 0 2px; font-size: 15.5px; }
+  .plan-card .price { font-size: 20px; font-weight: 800; color: var(--color-accent-deep); margin: 4px 0; }
+  .plan-card.paid .price { color: var(--color-paid-deep); }
+  .plan-card .price small { font-size: 12px; font-weight: 600; color: var(--color-text-sub); }
+  .plan-card p { font-size: 13px; color: var(--color-text-sub); margin: 6px 0 0; }
+
+  /* チェックリスト */
+  .checklist { list-style: none; padding-left: 0; }
+  .checklist li { padding-left: 30px; position: relative; }
+  .checklist li::before { content: "✓"; position: absolute; left: 0; top: 0; color: var(--color-accent); font-weight: 800; }
+
+  /* 出典カード */
+  .doc-card {
+    display: block; border: 1px solid var(--color-border); border-left: 5px solid var(--color-blue);
+    border-radius: 8px; padding: 13px 18px; margin: 10px 0;
+    text-decoration: none; color: inherit; transition: box-shadow .15s, transform .1s;
+  }
+  .doc-card:hover { box-shadow: 0 3px 12px rgba(0,0,0,.08); transform: translateY(-1px); }
+  .doc-card .dtitle { font-weight: 700; color: var(--color-blue); font-size: 14.5px; }
+  .doc-card .dmeta { font-size: 12.5px; color: var(--color-text-sub); margin-top: 3px; }
+
+  /* トップへ戻る */
+  #back-to-top {
+    position: fixed; right: 28px; bottom: 28px; width: 52px; height: 52px;
+    border-radius: 50%; background: var(--color-accent); color: #fff; border: none;
+    font-size: 22px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 14px rgba(0,0,0,.25);
+    opacity: 0; visibility: hidden; transition: opacity .25s, visibility .25s, transform .15s; z-index: 200;
+  }
+  #back-to-top.show { opacity: 1; visibility: visible; }
+  #back-to-top:hover { transform: translateY(-3px); }
+  #back-to-top span { display: block; line-height: 1; }
+  #back-to-top small { font-size: 9px; font-weight: 700; }
+
+  footer.report-footer {
+    max-width: var(--content-max-width-px); margin: 40px auto 0; color: var(--color-text-sub);
+    font-size: 13px; text-align: center; padding-top: 20px; border-top: 1px solid var(--color-border);
+  }
+
+  /* モバイル用 */
+  .menu-toggle {
+    display: none; position: fixed; top: 14px; left: 14px; z-index: 210;
+    background: var(--color-sidebar-bg); color: #fff; border: none; border-radius: 8px;
+    padding: 10px 13px; font-size: 18px; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,.2);
+  }
+  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 190; }
+
+  @media (max-width: 900px) {
+    .menu-toggle { display: block; }
+    .sidebar { transform: translateX(-100%); transition: transform .25s ease; z-index: 200; width: 280px; }
+    .sidebar.open { transform: translateX(0); }
+    .overlay.show { display: block; }
+    .main { margin-left: 0; padding: 64px 18px 110px; }
+    header.report-header { padding: 28px 22px; }
+    header.report-header h1 { font-size: 20px; }
+    section { padding: 22px 18px 24px; }
+    #back-to-top { right: 16px; bottom: 16px; width: 48px; height: 48px; }
+  }
+</style>
+</head>
+<body>
+
+<button class="menu-toggle" id="menuToggle" aria-label="目次を開く">☰</button>
+<div class="overlay" id="overlay"></div>
+
+<!-- ===== 左サイドバー（目次） ===== -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <div class="logo">¥/0</div>
+    <div class="title">Power BI<br>無償版 vs 有償版レポート</div>
+  </div>
+  <div class="toc-label">目次 / CONTENTS</div>
+  <nav id="toc">
+    <a href="#summary"><span class="num">0</span>3行でわかる結論</a>
+    <a href="#lineup"><span class="num">1</span>ライセンスの全体像</a>
+    <a href="#free-can"><span class="num">2</span>無償版でできること</a>
+    <a href="#free-cannot"><span class="num">3</span>無償版でできないこと</a>
+    <a href="#pro"><span class="num">4</span>Pro でできること</a>
+    <a href="#ppu"><span class="num">5</span>PPU でできること</a>
+    <a href="#capacity"><span class="num">6</span>Fabric容量（F SKU）</a>
+    <a href="#compare"><span class="num">7</span>機能比較 早見表</a>
+    <a href="#choose"><span class="num">8</span>選び方フローと費用感</a>
+    <a href="#rules"><span class="num">9</span>社内利用時の注意</a>
+    <a href="#faq"><span class="num">10</span>よくある質問</a>
+    <a href="#sources"><span class="num">11</span>出典</a>
+  </nav>
+</aside>
+
+<!-- ===== 本文 ===== -->
+<div class="main">
+<div class="content">
+
+  <header class="report-header">
+    <p class="eyebrow">POWER BI LICENSING REPORT</p>
+    <h1>Power BI 無償版と有償版<br>できること・できないこと 比較レポート</h1>
+    <p>「無料でどこまでできるのか」「いつから有償ライセンスが必要になるのか」を、Microsoft公式ドキュメントと最新の料金情報（2026年時点）に基づいて整理したレポートです。</p>
+    <div class="meta-row">
+      <span>📅 作成日：2026年7月8日</span>
+      <span>📚 根拠：Microsoft Learn・公式価格ページ</span>
+      <span>⚠️ 価格・仕様は変更されるため導入前に公式で要確認</span>
+    </div>
+  </header>
+
+  <!-- 0. 結論 -->
+  <section id="summary">
+    <h2><span class="chapter-no">0</span>3行でわかる結論</h2>
+    <ol style="font-size: 15.5px; font-weight: 600;">
+      <li><strong>「作る」だけなら完全無料。</strong>Power BI Desktopは全機能無料で、ダッシュボード作成・DAX・Denebまですべて使える</li>
+      <li><strong>「人と共有する」瞬間から有償。</strong>他の人にレポートを配る・共同編集するにはPro（$14/人/月）以上が必要</li>
+      <li><strong>「大人数に見せる」なら容量課金。</strong>閲覧者が数百人規模ならFabric容量（F64以上）で、閲覧者は無料ライセンスのままでよくなる</li>
+    </ol>
+    <div class="box note">
+      <span class="box-title">📌 覚え方</span>
+      <p>境界線は機能の高度さではなく<strong>「共有」</strong>です。1人で完結する限り無料、他人が関わった瞬間に有償——これがPower BIライセンスの基本原理です。</p>
+    </div>
+  </section>
+
+  <!-- 1. 全体像 -->
+  <section id="lineup">
+    <h2><span class="chapter-no">1</span>ライセンスの全体像</h2>
+    <p class="lead">登場人物は5つ。まず名前と役割を押さえましょう。価格は2026年時点の米国ドル公式価格です（2025年4月改定後）。</p>
+
+    <div class="plan-cards">
+      <div class="plan-card">
+        <h4>Power BI Desktop</h4>
+        <div class="price">無料</div>
+        <p>Windowsアプリ。レポート作成の道具。全機能使える</p>
+      </div>
+      <div class="plan-card">
+        <h4>Fabric（無料）ライセンス</h4>
+        <div class="price">無料</div>
+        <p>Web版（Power BIサービス）に入るための個人ライセンス。自分専用の利用に限定</p>
+      </div>
+      <div class="plan-card paid">
+        <h4>Power BI Pro</h4>
+        <div class="price">$14 <small>/人/月</small></div>
+        <p>共有・共同作業の標準ライセンス。ビジネス利用の基本</p>
+      </div>
+      <div class="plan-card paid">
+        <h4>Premium Per User（PPU）</h4>
+        <div class="price">$24 <small>/人/月</small></div>
+        <p>Pro＋Premium機能（大容量モデル・高頻度更新など）を1人単位で</p>
+      </div>
+      <div class="plan-card paid">
+        <h4>Fabric容量（F SKU）</h4>
+        <div class="price">F2: 約$262〜 <small>/月</small></div>
+        <p>組織単位の容量課金。F64（約$5,250/月）以上で無料ユーザーも閲覧可能に</p>
+      </div>
+    </div>
+
+    <div class="box tip">
+      <span class="box-title">💡 旧「Premium 容量（P SKU）」は終息方向</span>
+      <p>以前あった組織向けの「Power BI Premium（P1〜P5）」は、<strong>Microsoft Fabric容量（F SKU）への移行</strong>が案内されています。これから検討する場合はF SKUだけ考えれば十分です。</p>
+    </div>
+
+    <div class="box warn">
+      <span class="box-title">⚠ サインアップには会社・学校のアカウントが必要</span>
+      <p>Web版（Power BIサービス）は無料でも、<strong>個人のGmail等ではサインアップできず、組織のメールアドレス（Microsoft 365アカウント等）が必要</strong>です。Desktopはアカウントなしでも利用できます。</p>
+    </div>
+  </section>
+
+  <!-- 2. 無償版でできること -->
+  <section id="free-can">
+    <h2><span class="chapter-no">2</span>無償版でできること <span class="lic free">無料</span></h2>
+    <p class="lead">「無料＝機能制限版」ではありません。作る作業に関しては有償版とほぼ同じことができます。</p>
+
+    <h3>① Power BI Desktop：作成機能はフルスペック</h3>
+    <ul>
+      <li><strong>データ取得</strong>：Excel・CSV・各種データベース・Webなど、有償版と同じコネクタが使える</li>
+      <li><strong>Power Queryでの整形</strong>：クリーニング・結合・変換すべて可能</li>
+      <li><strong>データモデリング</strong>：スタースキーマ・リレーション・日付テーブル、制限なし</li>
+      <li><strong>DAX</strong>：メジャー・計算列・タイムインテリジェンス、すべて無料</li>
+      <li><strong>ビジュアル作成</strong>：標準ビジュアル全種類＋カスタムビジュアル（<strong>Denebも無料</strong>）＋テーマJSON</li>
+      <li><strong>保存</strong>：<code>.pbix</code> / PBIP形式（Git管理用）どちらも可 → <strong>当社のGitソース管理ルールは無料の範囲で実践できる</strong></li>
+    </ul>
+
+    <h3>② Fabric（無料）ライセンス：自分専用ならWeb版も使える</h3>
+    <ul>
+      <li>Power BIサービス（Web）にサインインできる</li>
+      <li><strong>マイワークスペース</strong>に自分のレポートを発行し、ブラウザで閲覧できる</li>
+      <li>Web上でのレポート作成・編集（自分用）</li>
+      <li>データの自動更新設定（回数制限あり）</li>
+    </ul>
+
+    <h3>③ 「見る側」としての無料利用（重要）</h3>
+    <p>組織が<strong>Fabric容量 F64以上</strong>（または旧Premium容量）を持っている場合、そこに置かれたレポートは<strong>無料ライセンスのユーザーでも閲覧できます</strong>。「作る人は有償、見るだけの大勢は無料」という構成が可能です。</p>
+
+    <h3>④ 無料でここまでできる、の実例</h3>
+    <ul class="checklist">
+      <li>学習・練習・スキル習得（本シリーズのレポート1〜4の内容はすべて無料で実践可能）</li>
+      <li>自分専用の分析ダッシュボード運用</li>
+      <li>開発・検証（本番共有前のプロトタイプ作成）</li>
+      <li>pbixファイルを渡して相手のDesktopで開いてもらう共有もどき（※非推奨だが技術的には可能）</li>
+    </ul>
+
+    <div class="box tip">
+      <span class="box-title">💡 60日間の無料試用もある</span>
+      <p>Fabric試用版（60日）を開始すると、<strong>PPU相当の機能</strong>を試せます。有償化の判断前に実際の共有機能を検証できます。</p>
+    </div>
+  </section>
+
+  <!-- 3. 無償版でできないこと -->
+  <section id="free-cannot">
+    <h2><span class="chapter-no">3</span>無償版でできないこと <span class="lic free">無料の限界</span></h2>
+    <p class="lead">Microsoft公式の表現では「共有または共同作業機能を使用できない」。具体的には以下です。</p>
+
+    <ul>
+      <li>❌ <strong>レポートを他のユーザーと共有する</strong>（リンク共有・アクセス許可付与）</li>
+      <li>❌ <strong>マイワークスペース以外のワークスペースへ発行する</strong>（チームのワークスペースに置けない）</li>
+      <li>❌ <strong>他の人のワークスペースやアプリのコンテンツを見る</strong>（※F64以上の容量にある場合を除く）</li>
+      <li>❌ <strong>共同編集・コメントでのコラボレーション</strong></li>
+      <li>❌ <strong>ダッシュボードやレポートのサブスクライブ</strong>（定期メール配信）</li>
+      <li>❌ アプリとしてのパッケージ配布</li>
+    </ul>
+
+    <div class="box warn">
+      <span class="box-title">⚠ ありがちな誤解：「無料ユーザー同士なら共有できる」→ できません</span>
+      <p>無料ユーザーが作ったレポートは、<strong>本人しか見られません</strong>。また、Proユーザーが共有をかけても、<strong>受け取る側も</strong>Pro（またはF64以上の容量）が必要です。「作る人だけ課金すればよい」わけではない点が、最も誤解されやすいポイントです。</p>
+    </div>
+  </section>
+
+  <!-- 4. Pro -->
+  <section id="pro" class="paid-sec">
+    <h2><span class="chapter-no">4</span>Power BI Pro でできること <span class="lic paid">$14/人/月</span></h2>
+    <p class="lead">ビジネス利用の標準ライセンス。無料版に「共有・共同作業」が加わります。</p>
+
+    <ul>
+      <li>✅ <strong>チームのワークスペースへの発行</strong>と共同編集</li>
+      <li>✅ <strong>他のProユーザーとの共有</strong>（レポート・ダッシュボード・アプリ配布）</li>
+      <li>✅ サブスクライブ（定期メール配信）・アラート</li>
+      <li>✅ Microsoft 365（Teams・SharePoint）への埋め込み共有</li>
+    </ul>
+
+    <h3>Proの主な上限値</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>項目</th><th>Pro の上限</th></tr></thead>
+        <tbody>
+          <tr><td>データモデルの最大サイズ</td><td><strong>1 GB</strong>／モデル</td></tr>
+          <tr><td>データ自動更新</td><td><strong>8回／日</strong></td></tr>
+          <tr><td>ストレージ</td><td>10 GB／ユーザー</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="box note">
+      <span class="box-title">📌 Microsoft 365 E5 には Pro が含まれる</span>
+      <p>会社がMicrosoft 365 E5を契約している場合、<strong>Power BI Proライセンスが最初から含まれています</strong>。追加購入の前に、既存の契約を管理者に確認しましょう。</p>
+    </div>
+  </section>
+
+  <!-- 5. PPU -->
+  <section id="ppu" class="paid-sec">
+    <h2><span class="chapter-no">5</span>Premium Per User（PPU）でできること <span class="lic paid">$24/人/月</span></h2>
+    <p class="lead">Proの全機能＋Premium級の機能を「1人単位」で使えるライセンス。データが大きい・更新が頻繁なチーム向けです。</p>
+
+    <h3>Proに追加される主な機能</h3>
+    <ul>
+      <li>✅ <strong>大容量データモデル：最大100 GB</strong>（Proの100倍）</li>
+      <li>✅ <strong>自動更新：最大48回／日</strong>（Proの6倍）</li>
+      <li>✅ ページ分割レポート（帳票形式の印刷向けレポート）</li>
+      <li>✅ デプロイパイプライン（開発→テスト→本番の段階リリース）</li>
+      <li>✅ XMLAエンドポイント読み書き（外部ツールでのモデル管理）</li>
+      <li>✅ AI機能の強化・データフローの高度な機能</li>
+    </ul>
+
+    <div class="box warn">
+      <span class="box-title">⚠ PPUの落とし穴：共有相手にもPPUが必要</span>
+      <p>PPUワークスペースのコンテンツを見られるのは、<strong>PPUライセンスを持つ人だけ</strong>です（Proの人も見られません）。「一部の人だけPPU」にすると共有が分断されるため、<strong>チーム単位で揃える</strong>のが原則です。</p>
+    </div>
+  </section>
+
+  <!-- 6. Fabric容量 -->
+  <section id="capacity" class="paid-sec">
+    <h2><span class="chapter-no">6</span>Fabric容量（F SKU）でできること <span class="lic paid">組織単位</span></h2>
+    <p class="lead">人数課金ではなく「計算能力」を組織で購入する方式。閲覧者が多い場合の切り札です。</p>
+
+    <h3>仕組みと効果</h3>
+    <ul>
+      <li>F2・F4・F8…F64…と容量サイズが上がる（例：F2 約$262/月、F64 約$5,250/月）</li>
+      <li><strong>F64以上</strong>の容量に置いたレポートは、<strong>無料ライセンスのユーザーでも閲覧できる</strong>（Viewerロール付与が条件）</li>
+      <li>作成・発行する人には引き続きPro以上が必要（容量は「見る側」を無料化する仕組み）</li>
+      <li>F64以上でCopilot（AIアシスタント）も利用可能に</li>
+      <li>予約（1年リザーブ）で従量比 約40%割引</li>
+    </ul>
+
+    <h3>損益分岐の目安</h3>
+    <p>F64（約$5,250/月）÷ PPU（$24/人/月）≒ <strong>約220人</strong>。閲覧者が200人を超えるあたりから、全員にライセンスを配るよりF64の方が安くなる計算です。逆に言えば、<strong>数十人規模ならPro/PPUの人数課金で十分</strong>です。</p>
+  </section>
+
+  <!-- 7. 比較表 -->
+  <section id="compare">
+    <h2><span class="chapter-no">7</span>機能比較 早見表</h2>
+    <p class="lead">✅＝可能 ／ ❌＝不可 ／ ⚠＝条件付き</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>できること</th><th>無料</th><th>Pro</th><th>PPU</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Desktopでのレポート作成（DAX・Deneb含む）</td><td class="ok">✅</td><td class="ok">✅</td><td class="ok">✅</td></tr>
+          <tr><td>PBIP形式でのGitソース管理</td><td class="ok">✅</td><td class="ok">✅</td><td class="ok">✅</td></tr>
+          <tr><td>Web版へのサインイン・マイワークスペース利用</td><td class="ok">✅</td><td class="ok">✅</td><td class="ok">✅</td></tr>
+          <tr><td>F64以上の容量にあるレポートの閲覧</td><td class="ok">✅</td><td class="ok">✅</td><td class="ok">✅</td></tr>
+          <tr><td>チームのワークスペースへの発行</td><td class="ng">❌</td><td class="ok">✅</td><td class="ok">✅</td></tr>
+          <tr><td>他ユーザーへの共有・アプリ配布</td><td class="ng">❌</td><td class="ok">✅</td><td class="tri">⚠ PPU同士</td></tr>
+          <tr><td>サブスクライブ（定期メール配信）</td><td class="ng">❌</td><td class="ok">✅</td><td class="ok">✅</td></tr>
+          <tr><td>データモデル上限</td><td class="tri">1GB</td><td class="tri">1GB</td><td class="ok">100GB</td></tr>
+          <tr><td>自動更新回数／日</td><td class="tri">8回</td><td class="tri">8回</td><td class="ok">48回</td></tr>
+          <tr><td>ページ分割レポート・デプロイパイプライン</td><td class="ng">❌</td><td class="ng">❌</td><td class="ok">✅</td></tr>
+          <tr><td>XMLAエンドポイント読み書き</td><td class="ng">❌</td><td class="ng">❌</td><td class="ok">✅</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size: 13px; color: var(--color-text-sub);">※ Fabric容量（F SKU）を組み合わせると、上記に加えて「無料ユーザーへの配布（F64以上）」「容量側の上限値適用」が加わります。</p>
+  </section>
+
+  <!-- 8. 選び方 -->
+  <section id="choose">
+    <h2><span class="chapter-no">8</span>選び方フローと費用感</h2>
+    <p class="lead">利用シーン別に、最小コストの構成を整理します。</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>シーン</th><th>推奨構成</th><th>月額の目安（税抜・USD）</th></tr></thead>
+        <tbody>
+          <tr><td>1人で学習・自分用分析</td><td><strong>無料</strong>（Desktop＋無料ライセンス）</td><td>$0</td></tr>
+          <tr><td>数人のチームで共有</td><td>全員 <strong>Pro</strong></td><td>$14 × 人数（5人なら$70）</td></tr>
+          <tr><td>大きいデータ・頻繁な更新・帳票が必要</td><td>チーム全員 <strong>PPU</strong></td><td>$24 × 人数</td></tr>
+          <tr><td>作る人は少数、見る人が数百人</td><td>作成者にPro＋<strong>F64容量</strong></td><td>約$5,250＋$14×作成者数</td></tr>
+          <tr><td>小さく容量機能を試したい</td><td>F2〜F8＋Pro</td><td>$262〜＋$14×人数（※F64未満は閲覧者にもPro必要）</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>判断フロー</h3>
+    <ol>
+      <li><strong>共有するか？</strong> しない → 無料で完結</li>
+      <li><strong>共有相手は何人か？</strong> 〜200人程度 → Pro/PPUの人数課金</li>
+      <li><strong>モデル1GB超・更新8回/日超・帳票が必要か？</strong> Yes → PPU</li>
+      <li><strong>閲覧者が200人超 or Copilotが必要か？</strong> Yes → F64以上を検討</li>
+    </ol>
+
+    <div class="box tip">
+      <span class="box-title">💡 円建て価格について</span>
+      <p>本レポートは米ドルの公式定価で記載しています。<strong>円建て価格は為替や契約形態（年払い・CSP経由等）で変わる</strong>ため、導入時は<a href="https://www.microsoft.com/ja-jp/power-platform/products/power-bi/pricing" target="_blank" rel="noopener">Microsoft公式の価格ページ</a>と販売代理店の見積りで確認してください。</p>
+    </div>
+  </section>
+
+  <!-- 9. 社内ルール -->
+  <section id="rules">
+    <h2><span class="chapter-no">9</span>社内利用時の注意（当社ルールとの関係）</h2>
+    <p class="lead">当社のPower BI開発ルールと照らした実務上の注意点です。</p>
+    <ul>
+      <li><strong>開発は無料で進められる</strong>：PBIP形式・TMDL・Deneb・テーマJSONなど、当社ルールのソース管理はすべてDesktop（無料）で実践可能</li>
+      <li><strong>「共有」フェーズに入る前にライセンス確認</strong>：チーム公開が決まった時点で、既存のMicrosoft 365契約にProが含まれるか管理者に確認する（E5なら追加費用なし）</li>
+      <li><strong>RLS（行レベルセキュリティ）は共有時の話</strong>：無料の個人利用では実質不要。共有開始と同時に要否を検討（当社ルールどおり）</li>
+      <li><strong>「Webに公開（publish to web）」は使わない</strong>：URLを知っていれば<strong>世界中の誰でも閲覧できる</strong>機能。社内データでの使用は情報漏洩に直結するため、当社セキュリティルール上は禁止相当。共有はライセンスに基づく方法で行う</li>
+      <li><strong>ライセンス購入の判断は自己判断しない</strong>：容量（F SKU）の契約は金額が大きいため、エンジニア・管理者への相談ルートに乗せる</li>
+    </ul>
+  </section>
+
+  <!-- 10. FAQ -->
+  <section id="faq">
+    <h2><span class="chapter-no">10</span>よくある質問</h2>
+
+    <h4>Q1. 無料版のDesktopには機能制限がある？</h4>
+    <p>A. <strong>作成機能に関しては制限はほぼありません</strong>。有償ライセンスは「サービス上での共有・容量」に対する課金であり、Desktopの作成体験は同じです。</p>
+
+    <h4>Q2. pbixファイルをメールで送れば無料で共有できるのでは？</h4>
+    <p>A. 技術的には可能ですが、受け取る側もDesktopが必要で、<strong>データが丸ごとファイルに入って出回る</strong>ため、セキュリティ・バージョン管理の面で推奨されません。業務の共有はライセンスに基づく方法を使いましょう。</p>
+
+    <h4>Q3. 作る人だけProを買えば、見る人は無料でいい？</h4>
+    <p>A. <strong>いいえ（原則）</strong>。見る側にもProが必要です。例外は「F64以上のFabric容量にレポートを置いた場合」で、このときだけ閲覧者は無料ライセンスで済みます。</p>
+
+    <h4>Q4. ProとPPUが混在したらどうなる？</h4>
+    <p>A. PPUワークスペースはPPU保有者しか見られないため、混在すると共有が分断されます。<strong>ワークスペース単位でライセンス種類を揃える</strong>のが実務の定石です。</p>
+
+    <h4>Q5. 無料試用はある？</h4>
+    <p>A. あります。<strong>Fabric試用版（60日・PPU相当）</strong>で共有機能や容量機能を検証してから購入判断ができます。</p>
+  </section>
+
+  <!-- 11. 出典 -->
+  <section id="sources">
+    <h2><span class="chapter-no">11</span>出典</h2>
+    <p class="lead">本レポートは以下の公式ドキュメント・解説記事に基づいています。</p>
+
+    <a class="doc-card" href="https://learn.microsoft.com/ja-jp/power-bi/fundamentals/service-features-license-type" target="_blank" rel="noopener">
+      <div class="dtitle">Power BI サービスのライセンスの種類別機能（Microsoft Learn）</div>
+      <div class="dmeta">無料・Pro・PPU・容量ライセンスの公式定義と機能差（一次情報）</div>
+    </a>
+    <a class="doc-card" href="https://www.microsoft.com/ja-jp/power-platform/products/power-bi/pricing" target="_blank" rel="noopener">
+      <div class="dtitle">Power BI の価格（Microsoft公式）</div>
+      <div class="dmeta">最新の価格・プラン比較（円建て価格もこちらで確認）</div>
+    </a>
+    <a class="doc-card" href="https://sranalytics.io/blog/power-bi-licenses/" target="_blank" rel="noopener">
+      <div class="dtitle">Power BI Licenses: Pro vs PPU vs Fabric Capacity [2026 Guide]</div>
+      <div class="dmeta">2026年時点の料金（Pro $14／PPU $24／F SKU）とF64閲覧条件の整理</div>
+    </a>
+    <a class="doc-card" href="https://www.epcgroup.net/power-bi-premium-vs-premium-per-user" target="_blank" rel="noopener">
+      <div class="dtitle">Power BI Premium F64 vs PPU 2026（EPC Group）</div>
+      <div class="dmeta">F64とPPUの損益分岐（約220人）の試算</div>
+    </a>
+    <a class="doc-card" href="https://jpbap-sqlbi.github.io/blog/powerbi/pbi_license/" target="_blank" rel="noopener">
+      <div class="dtitle">Power BI ライセンスの違い（Japan CSS Support Power BI Blog）</div>
+      <div class="dmeta">日本マイクロソフトサポートチームによるライセンス解説</div>
+    </a>
+
+    <div class="box note">
+      <span class="box-title">📌 ご注意</span>
+      <p>価格・機能・上限値は変更されることがあります（直近では2025年4月に価格改定あり）。<strong>導入・契約の前には必ずMicrosoft公式の最新情報を確認</strong>してください。本レポートは2026年7月8日時点の調査に基づきます。</p>
+    </div>
+  </section>
+
+  <footer class="report-footer">
+    Power BI 無償版と有償版 できること・できないこと 比較レポート ／ 2026年7月8日作成
+  </footer>
+
+</div>
+</div>
+
+<button id="back-to-top" aria-label="トップへ戻る" title="トップへ戻る">
+  <span>▲</span><small>TOP</small>
+</button>
+
+<script>
+  // ===== 定数 =====
+  const SCROLL_SHOW_THRESHOLD_PX = 300; // この高さを超えたら「トップへ戻る」を表示
+
+  const backToTop = document.getElementById('back-to-top');
+  const tocLinks = document.querySelectorAll('#toc a');
+  const sections = document.querySelectorAll('section[id]');
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('overlay');
+  const menuToggle = document.getElementById('menuToggle');
+
+  window.addEventListener('scroll', function () {
+    if (window.scrollY > SCROLL_SHOW_THRESHOLD_PX) {
+      backToTop.classList.add('show');
+    } else {
+      backToTop.classList.remove('show');
+    }
+    highlightActiveSection();
+  });
+
+  backToTop.addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  function highlightActiveSection() {
+    let currentId = '';
+    sections.forEach(function (sec) {
+      const top = sec.getBoundingClientRect().top;
+      if (top <= 120) currentId = sec.id;
+    });
+    tocLinks.forEach(function (link) {
+      link.classList.toggle('active', link.getAttribute('href') === '#' + currentId);
+    });
+  }
+
+  function openMenu() { sidebar.classList.add('open'); overlay.classList.add('show'); }
+  function closeMenu() { sidebar.classList.remove('open'); overlay.classList.remove('show'); }
+  menuToggle.addEventListener('click', openMenu);
+  overlay.addEventListener('click', closeMenu);
+  tocLinks.forEach(function (link) { link.addEventListener('click', closeMenu); });
+
+  highlightActiveSection();
+</script>
+
+</body>
+</html>

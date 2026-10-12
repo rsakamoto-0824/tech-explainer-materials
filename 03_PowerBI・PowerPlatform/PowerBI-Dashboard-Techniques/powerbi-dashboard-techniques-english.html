@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>英語解説動画で学ぶ Power BI ダッシュボード作成技術｜リサーチレポート</title>
+<style>
+  /* ===== 配色・サイズの定数（CSS変数） ===== */
+  :root {
+    --color-bg: #eef2f5;
+    --color-surface: #ffffff;
+    --color-sidebar-bg: #0f2c3f;     /* 英語版は濃いティール系で和文版と区別 */
+    --color-sidebar-text: #bcd0db;
+    --color-sidebar-hover: #1a3e54;
+    --color-sidebar-active: #16c0a8;
+    --color-text: #1c2a33;
+    --color-text-sub: #56656f;
+    --color-accent: #16c0a8;         /* ティール */
+    --color-accent-deep: #0e8c7a;
+    --color-blue: #2b6cb0;
+    --color-border: #dde4e9;
+    --color-code-bg: #eef1f4;
+    --color-note-bg: #e6f7f4;
+    --color-note-border: #16c0a8;
+    --color-tip-bg: #e8f3ec;
+    --color-tip-border: #3a9d5d;
+    --color-warn-bg: #fdecea;
+    --color-warn-border: #d9534f;
+    --color-channel-bg: #fff6e9;
+    --color-channel-border: #e8962f;
+
+    --sidebar-width-px: 300px;
+    --content-max-width-px: 880px;
+    --radius-px: 10px;
+    --font-base: 16px;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo", system-ui, sans-serif;
+    font-size: var(--font-base);
+    line-height: 1.85;
+    color: var(--color-text);
+    background: var(--color-bg);
+  }
+
+  /* ===== 左サイドバー（目次） ===== */
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    width: var(--sidebar-width-px);
+    height: 100vh;
+    overflow-y: auto;
+    background: var(--color-sidebar-bg);
+    color: var(--color-sidebar-text);
+    padding: 24px 16px 40px;
+  }
+  .sidebar-brand {
+    display: flex; align-items: center; gap: 10px;
+    padding: 0 8px 16px;
+    border-bottom: 1px solid #234a61;
+    margin-bottom: 14px;
+  }
+  .sidebar-brand .logo {
+    width: 34px; height: 34px;
+    background: var(--color-accent);
+    color: #0f2c3f;
+    font-weight: 800;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0;
+  }
+  .sidebar-brand .title { font-size: 14px; font-weight: 700; color: #fff; line-height: 1.4; }
+  .toc-label { font-size: 11px; letter-spacing: 0.12em; color: #7e93a0; padding: 8px 10px 4px; }
+  .sidebar nav a {
+    display: block; color: var(--color-sidebar-text); text-decoration: none;
+    padding: 8px 12px; border-radius: 6px; font-size: 14px;
+    border-left: 3px solid transparent; transition: background .15s, color .15s;
+  }
+  .sidebar nav a:hover { background: var(--color-sidebar-hover); color: #fff; }
+  .sidebar nav a.active {
+    background: var(--color-sidebar-hover); color: #fff;
+    border-left-color: var(--color-sidebar-active); font-weight: 700;
+  }
+  .sidebar nav a .num { display: inline-block; width: 22px; color: var(--color-accent); font-weight: 700; }
+
+  /* ===== 本文 ===== */
+  .main { margin-left: var(--sidebar-width-px); padding: 48px 40px 120px; }
+  .content { max-width: var(--content-max-width-px); margin: 0 auto; }
+
+  header.report-header {
+    background: linear-gradient(135deg, #0f2c3f 0%, #1a3e54 100%);
+    color: #fff; border-radius: var(--radius-px);
+    padding: 40px 36px; margin-bottom: 36px;
+  }
+  header.report-header .eyebrow { color: var(--color-accent); font-size: 13px; font-weight: 700; letter-spacing: 0.08em; margin: 0 0 12px; }
+  header.report-header h1 { font-size: 26px; line-height: 1.5; margin: 0 0 16px; }
+  header.report-header p { color: #c8d6de; font-size: 15px; margin: 0; }
+  .meta-row { display: flex; flex-wrap: wrap; gap: 10px 18px; margin-top: 22px; font-size: 13px; color: #9fb1bb; }
+  .meta-row span { display: inline-flex; align-items: center; gap: 6px; }
+
+  section {
+    background: var(--color-surface); border: 1px solid var(--color-border);
+    border-radius: var(--radius-px); padding: 28px 32px 32px;
+    margin-bottom: 26px; scroll-margin-top: 20px;
+  }
+  section > h2 {
+    font-size: 22px; margin: 0 0 6px; padding-bottom: 14px;
+    border-bottom: 3px solid var(--color-accent);
+    display: flex; align-items: baseline; gap: 12px;
+  }
+  section > h2 .chapter-no { color: var(--color-accent-deep); font-size: 15px; font-weight: 800; }
+  .lead { color: var(--color-text-sub); font-size: 14.5px; margin: 14px 0 20px; }
+  h3 { font-size: 17px; margin: 26px 0 10px; padding-left: 12px; border-left: 5px solid var(--color-blue); }
+  h4 { font-size: 15px; margin: 18px 0 8px; }
+  p { margin: 10px 0; }
+  ul, ol { margin: 10px 0; padding-left: 24px; }
+  li { margin: 6px 0; }
+  strong { color: #11161d; }
+  .en { color: var(--color-text-sub); font-size: 0.92em; }
+
+  /* コード */
+  code {
+    background: var(--color-code-bg); padding: 2px 6px; border-radius: 4px;
+    font-family: "SFMono-Regular", Consolas, "Courier New", monospace;
+    font-size: 13.5px; color: #0e7c6e;
+  }
+  pre {
+    background: #14222b; color: #e6e9ee; padding: 16px 18px;
+    border-radius: 8px; overflow-x: auto; font-size: 13.5px; line-height: 1.6; margin: 14px 0;
+  }
+  pre code { background: none; color: inherit; padding: 0; }
+  pre .cm { color: #8fa3b8; }
+  pre .fn { color: #16c0a8; }
+  pre .st { color: #9ecbff; }
+  pre .kw { color: #ff9e64; }
+
+  /* 注記ボックス */
+  .box { border-radius: 8px; padding: 14px 18px; margin: 16px 0; font-size: 14px; }
+  .box p { margin: 4px 0; }
+  .box .box-title { font-weight: 700; display: block; margin-bottom: 4px; }
+  .box.note { background: var(--color-note-bg); border-left: 5px solid var(--color-note-border); }
+  .box.tip  { background: var(--color-tip-bg);  border-left: 5px solid var(--color-tip-border); }
+  .box.warn { background: var(--color-warn-bg); border-left: 5px solid var(--color-warn-border); }
+
+  /* チャンネル別ボックス */
+  .channel-quote {
+    background: var(--color-channel-bg); border-left: 5px solid var(--color-channel-border);
+    border-radius: 8px; padding: 12px 16px; margin: 14px 0; font-size: 13.5px;
+  }
+  .channel-quote .who { font-weight: 700; color: #b8730f; }
+
+  /* テーブル */
+  .table-wrap { overflow-x: auto; margin: 16px 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; }
+  th, td { border: 1px solid var(--color-border); padding: 9px 12px; text-align: left; vertical-align: top; }
+  th { background: #1a3e54; color: #fff; font-weight: 600; }
+  tbody tr:nth-child(even) { background: #fafbfc; }
+  td code { white-space: nowrap; }
+
+  /* チャンネルカード */
+  .channel-card {
+    border: 1px solid var(--color-border); border-radius: 8px;
+    padding: 14px 18px; margin: 12px 0; background: #fbfdfd;
+  }
+  .channel-card h4 { margin: 0 0 4px; font-size: 15.5px; }
+  .channel-card h4 a { color: var(--color-blue); text-decoration: none; }
+  .channel-card h4 a:hover { text-decoration: underline; }
+  .channel-card .tag {
+    display: inline-block; font-size: 11px; font-weight: 700;
+    background: var(--color-accent); color: #0f2c3f; padding: 1px 9px;
+    border-radius: 999px; margin-left: 6px; vertical-align: 2px;
+  }
+  .channel-card p { margin: 4px 0 0; font-size: 13.5px; color: var(--color-text-sub); }
+
+  /* チェックリスト */
+  .checklist { list-style: none; padding-left: 0; }
+  .checklist li { padding-left: 30px; position: relative; }
+  .checklist li::before { content: "✓"; position: absolute; left: 0; top: 0; color: var(--color-tip-border); font-weight: 800; }
+
+  /* 動画カード */
+  .video-card {
+    display: block; border: 1px solid var(--color-border); border-left: 5px solid #d9534f;
+    border-radius: 8px; padding: 14px 18px; margin: 12px 0;
+    text-decoration: none; color: inherit; transition: box-shadow .15s, transform .1s;
+  }
+  .video-card:hover { box-shadow: 0 3px 12px rgba(0,0,0,.08); transform: translateY(-1px); }
+  .video-card .vtitle { font-weight: 700; color: var(--color-blue); font-size: 15px; }
+  .video-card .vmeta { font-size: 12.5px; color: var(--color-text-sub); margin-top: 4px; }
+  .badge {
+    display: inline-block; font-size: 11px; font-weight: 700;
+    background: #d9534f; color: #fff; padding: 1px 8px; border-radius: 999px;
+    margin-right: 6px; vertical-align: 1px;
+  }
+
+  /* トップへ戻る */
+  #back-to-top {
+    position: fixed; right: 28px; bottom: 28px; width: 52px; height: 52px;
+    border-radius: 50%; background: var(--color-accent); color: #0f2c3f;
+    border: none; font-size: 22px; font-weight: 800; cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0,0,0,.25);
+    opacity: 0; visibility: hidden; transition: opacity .25s, visibility .25s, transform .15s; z-index: 200;
+  }
+  #back-to-top.show { opacity: 1; visibility: visible; }
+  #back-to-top:hover { transform: translateY(-3px); }
+  #back-to-top span { display: block; line-height: 1; }
+  #back-to-top small { font-size: 9px; font-weight: 700; }
+
+  footer.report-footer {
+    max-width: var(--content-max-width-px); margin: 40px auto 0;
+    color: var(--color-text-sub); font-size: 13px; text-align: center;
+    padding-top: 20px; border-top: 1px solid var(--color-border);
+  }
+
+  /* モバイル用 */
+  .menu-toggle {
+    display: none; position: fixed; top: 14px; left: 14px; z-index: 210;
+    background: var(--color-sidebar-bg); color: #fff; border: none;
+    border-radius: 8px; padding: 10px 13px; font-size: 18px; cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,.2);
+  }
+  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 190; }
+
+  @media (max-width: 900px) {
+    .menu-toggle { display: block; }
+    .sidebar { transform: translateX(-100%); transition: transform .25s ease; z-index: 200; width: 280px; }
+    .sidebar.open { transform: translateX(0); }
+    .overlay.show { display: block; }
+    .main { margin-left: 0; padding: 64px 18px 110px; }
+    header.report-header { padding: 28px 22px; }
+    header.report-header h1 { font-size: 20px; }
+    section { padding: 22px 18px 24px; }
+    #back-to-top { right: 16px; bottom: 16px; width: 48px; height: 48px; }
+  }
+</style>
+</head>
+<body>
+
+<button class="menu-toggle" id="menuToggle" aria-label="目次を開く">☰</button>
+<div class="overlay" id="overlay"></div>
+
+<!-- ===== 左サイドバー（目次） ===== -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <div class="logo">EN</div>
+    <div class="title">英語動画で学ぶ<br>Power BI ダッシュボード技術</div>
+  </div>
+  <div class="toc-label">目次 / CONTENTS</div>
+  <nav id="toc">
+    <a href="#intro"><span class="num">0</span>はじめに・調査方法</a>
+    <a href="#channels"><span class="num">1</span>主要英語チャンネル早見表</a>
+    <a href="#plan"><span class="num">2</span>設計の起点：3〜5の問い</a>
+    <a href="#model"><span class="num">3</span>データモデル & カレンダー</a>
+    <a href="#dax"><span class="num">4</span>DAXの実践テクニック</a>
+    <a href="#design"><span class="num">5</span>レポートデザイン（神は細部）</a>
+    <a href="#interactive"><span class="num">6</span>インタラクティブ機能</a>
+    <a href="#performance"><span class="num">7</span>パフォーマンス最適化</a>
+    <a href="#governance"><span class="num">8</span>ガバナンス & モバイル</a>
+    <a href="#glossary"><span class="num">9</span>英語用語ミニ辞典</a>
+    <a href="#checklist"><span class="num">10</span>チェックリスト</a>
+    <a href="#sources"><span class="num">11</span>参照した動画・資料</a>
+  </nav>
+</aside>
+
+<!-- ===== 本文 ===== -->
+<div class="main">
+<div class="content">
+
+  <header class="report-header">
+    <p class="eyebrow">ENGLISH YOUTUBE RESEARCH REPORT</p>
+    <h1>英語解説動画で学ぶ<br>Power BI ダッシュボード作成技術</h1>
+    <p>Guy in a Cube・SQLBI・Curbal・How to Power BI など、英語圏の人気Power BI解説チャンネルが発信する技術を調査し、日本語でまとめたレポートです。和文版レポートと対になる「英語コミュニティ視点」の一冊として、専門用語は<span class="en">English</span>を併記しています。</p>
+    <div class="meta-row">
+      <span>📅 作成日：2026年6月24日</span>
+      <span>🌐 ソース：英語YouTube動画・公式Docs</span>
+      <span>🎯 対象：和文版を読んだ次のステップに</span>
+    </div>
+  </header>
+
+  <!-- 0. はじめに -->
+  <section id="intro">
+    <h2><span class="chapter-no">0</span>はじめに・調査方法</h2>
+    <p class="lead">本レポートは「英語の解説動画では何が語られているか」に絞って調査・要約したものです。</p>
+
+    <h3>このレポートの位置づけ</h3>
+    <p>先に作成した日本語動画版レポートと<strong>テーマは同じ（Power BIダッシュボード作成）</strong>ですが、ソースを<strong>英語圏のYouTubeチャンネルと英語の公式ドキュメント</strong>に限定しています。英語コミュニティが特に重視する論点（グリッド整列、<span class="en">SWITCH</span>による動的切替、行レベルセキュリティ、ツールチップページ等）に踏み込んでいるのが特徴です。</p>
+
+    <h3>調査方法</h3>
+    <p>「英語圏で評価の高いPower BIチャンネルはどこか」をまず特定し、各チャンネルが扱う代表的トピック（デザイン、DAX、ドリルスルー等）を、英語の解説記事・<span class="en">Microsoft Learn</span>と突き合わせて抽出しました。動画ページ本体は字幕の自動取得ができないため、<strong>チャンネル／動画のテーマを特定 → 内容を英語の解説資料で裏取り</strong>という方法を採っています。</p>
+
+    <div class="box note">
+      <span class="box-title">📌 専門用語は原語のまま覚えるのがおすすめ</span>
+      <p>Power BIの機能名・関数名は英語UIでもそのまま使われます。本レポートでは <code>measure</code>（メジャー）、<code>drill through</code>（ドリルスルー）のように<strong>英語と日本語を併記</strong>しているので、英語動画を直接見るときの予習にも使えます。</p>
+    </div>
+  </section>
+
+  <!-- 1. チャンネル早見表 -->
+  <section id="channels">
+    <h2><span class="chapter-no">1</span>主要な英語チャンネル早見表</h2>
+    <p class="lead">「誰が・何を教えているか」を知ると、学びたいテーマに最短でたどり着けます。英語圏で繰り返し名前が挙がる定番チャンネルです。</p>
+
+    <div class="channel-card">
+      <h4><a href="https://www.youtube.com/guyinacube" target="_blank" rel="noopener">Guy in a Cube</a><span class="tag">総合・実務</span></h4>
+      <p>初心者から上級者まで。Microsoftの分析スタック全般を、楽しく分かりやすく解説する定番中の定番。レポートデザインや新機能の解説に強い（"5 Tips for AWESOME Report Design" など）。</p>
+    </div>
+    <div class="channel-card">
+      <h4><a href="https://www.youtube.com/@SQLBI" target="_blank" rel="noopener">SQLBI（Marco Russo / Alberto Ferrari）</a><span class="tag">DAX・最適化</span></h4>
+      <p>DAXとデータモデル、パフォーマンス最適化の「聖地」。複雑な計算やTabularモデル、チューニングを深掘りしたい人向け。Microsoft公式もデザインのベストプラクティス動画として紹介。</p>
+    </div>
+    <div class="channel-card">
+      <h4><a href="https://www.youtube.com/@CurbalEN" target="_blank" rel="noopener">Curbal（Ruth Pozuelo Martinez）</a><span class="tag">DAX入門〜応用</span></h4>
+      <p>DAXを基礎から応用まで体系的に学べる専用プレイリストが充実。短く実用的な解説が多い。</p>
+    </div>
+    <div class="channel-card">
+      <h4><a href="https://www.youtube.com/@HowtoPowerBI" target="_blank" rel="noopener">How to Power BI</a><span class="tag">デザイン・レイアウト</span></h4>
+      <p>ビジュアルデザイン、レイアウトのベストプラクティス、データストーリーテリングに強い。</p>
+    </div>
+    <div class="channel-card">
+      <h4><a href="https://www.youtube.com/@PragmaticWorks" target="_blank" rel="noopener">Pragmatic Works</a><span class="tag">機能解説</span></h4>
+      <p>ドリルダウン／ドリルスルーなど、機能ごとの "Must Know" 解説が分かりやすい。</p>
+    </div>
+    <div class="channel-card">
+      <h4><a href="https://www.youtube.com/@LeilaGharani" target="_blank" rel="noopener">Leila Gharani</a><span class="tag">初心者・Excel連携</span></h4>
+      <p>ExcelユーザーがPower BIに入る導線が丁寧。初学者の最初の一歩におすすめ。</p>
+    </div>
+    <div class="channel-card">
+      <h4><a href="https://www.youtube.com/@EnterpriseDNA" target="_blank" rel="noopener">Enterprise DNA</a><span class="tag">DAX・分析シナリオ</span></h4>
+      <p>実務シナリオに沿ったDAX活用、分析手法のプレイリストが豊富。</p>
+    </div>
+  </section>
+
+  <!-- 2. 設計の起点 -->
+  <section id="plan">
+    <h2><span class="chapter-no">2</span>設計の起点：「3〜5の問い」を書き出す</h2>
+    <p class="lead">英語動画・記事が口を揃えるのが「作り始める前に目的を言語化せよ」という点です。</p>
+
+    <h3>最初に "key questions" を決める</h3>
+    <p>優れたダッシュボードには明確なゴールがあります。英語の解説では<strong>「答えるべき3〜5個の重要な問い（key questions）を先に書き出す」</strong>ことが繰り返し推奨されます。この問いが、必要なデータの選択とデザインの判断基準になります。</p>
+
+    <div class="channel-quote">
+      <span class="who">英語コミュニティの定番アドバイス：</span>「Write down the 3–5 key questions you need to answer.（答えるべき3〜5個の問いを書き出す）」 — その答えが、使うデータとデザインの選択を導く。
+    </div>
+
+    <h3>閲覧者のタイプで設計を変える</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>ダッシュボード種別</th><th>閲覧者</th><th>設計の方針</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Executive（経営層向け）</strong></td><td>意思決定者</td><td>1ページに<strong>KPIを3〜5個</strong>、タイルは<strong>5〜8個</strong>に厳選</td></tr>
+          <tr><td><strong>Operational（現場向け）</strong></td><td>オペレーション担当</td><td>ドリルスルー／フィルターで詳細を掘れる設計</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="box tip">
+      <span class="box-title">💡 1ページ＝1つの問い</span>
+      <p>"Each report page should address one central question."＝<strong>1ページで1つの中心的な問いに答える</strong>。これは見やすさだけでなく、表示速度（パフォーマンス）の面でも有利です。</p>
+    </div>
+  </section>
+
+  <!-- 3. データモデル -->
+  <section id="model">
+    <h2><span class="chapter-no">3</span>データモデル & カレンダーディメンション</h2>
+    <p class="lead">英語動画では「ダッシュボードの信頼性は土台のモデルで決まる」という前提が徹底されています。</p>
+
+    <h3>セマンティックモデル（semantic model）を堅牢に</h3>
+    <ul>
+      <li>"Your final dashboard is only as reliable as the data it's built on."＝<strong>ダッシュボードの信頼性は元データの品質まで</strong>。取り込み時の余分な列・命名のゆれ・型違いを直す</li>
+      <li><strong>スタースキーマ（star schema）</strong>を基本に、ファクトとディメンションを明確に分離</li>
+      <li><strong>明示的なメジャー（explicit measures）</strong>で計算を定義し、再利用可能・テスト可能にする</li>
+    </ul>
+
+    <h3>カレンダーディメンションは「すべての中核」</h3>
+    <p>英語のDAX解説で最も強調されるのが日付テーブルです。<strong>"A good calendar dimension is the core element of every Power BI data model."</strong>（良いカレンダーディメンションはあらゆるモデルの中核）。生（なま）の日付列を使うのではなく、年・四半期・月・曜日などの属性を持つカレンダー表を作ります。</p>
+
+    <pre><code><span class="cm">// CALENDARAUTO で日付範囲を自動生成し、属性列を追加</span>
+Calendar =
+<span class="fn">ADDCOLUMNS</span>(
+    <span class="fn">CALENDARAUTO</span>(),
+    <span class="st">"Year"</span>,    <span class="fn">FORMAT</span>([Date], <span class="st">"yyyy"</span>),
+    <span class="st">"Month"</span>,   <span class="fn">FORMAT</span>([Date], <span class="st">"MMM"</span>),
+    <span class="st">"Quarter"</span>, <span class="st">"Q"</span> & <span class="fn">QUARTER</span>([Date])
+)</code></pre>
+    <p>作成後、このカレンダー表をファクトテーブルの日付列と関連付ければ、次章の時間インテリジェンス関数が正しく動きます。</p>
+  </section>
+
+  <!-- 4. DAX -->
+  <section id="dax">
+    <h2><span class="chapter-no">4</span>DAXの実践テクニック（英語動画の定番5パターン）</h2>
+    <p class="lead">Zebra BIやSQLBIなどが繰り返し紹介する、ダッシュボードを一段引き上げるDAXパターンです。</p>
+
+    <h3>① メジャーを使う（インライン式を避ける）</h3>
+    <p>"Move complex DAX from visual-level expressions into named measures."＝<strong>複雑な計算はビジュアル内ではなく、名前付きメジャーに切り出す</strong>。名前付きメジャーは<strong>再利用可能・テスト可能・高速</strong>です。これは英語圏で最も繰り返される鉄則。</p>
+
+    <h3>② 変数（VAR / RETURN）で読みやすく</h3>
+    <p>英語動画では <code>VAR</code> と <code>RETURN</code> を使って計算を段階分けする書き方が定番です。可読性が上がり、同じ計算の重複も防げます。</p>
+    <pre><code>Revenue Growth % =
+<span class="kw">VAR</span> CurrentRevenue = [Revenue AC]
+<span class="kw">VAR</span> PriorRevenue   = [Revenue PY]
+<span class="kw">RETURN</span>
+    <span class="fn">DIVIDE</span>(CurrentRevenue - PriorRevenue, PriorRevenue)</code></pre>
+
+    <h3>③ 前年比は DATEADD が最も汎用的</h3>
+    <p>"DATEADD is the most versatile and safest to work with."＝時間シフトには <code>DATEADD</code> が最も柔軟で安全、と紹介されます。</p>
+    <pre><code><span class="cm">// 前年同期の売上</span>
+Revenue PY =
+<span class="fn">CALCULATE</span>( [Revenue AC], <span class="fn">DATEADD</span>(<span class="st">'Calendar'[Date]</span>, -1, <span class="kw">YEAR</span>) )</code></pre>
+
+    <h3>④ CALCULATE + FILTER でシナリオ別メジャー</h3>
+    <p>実績（Actual）と計画（Plan）を分けるなど、条件付きの「どれだけ？」に答えるメジャーを作ります。</p>
+    <pre><code>Revenue Actual =
+<span class="fn">CALCULATE</span>( <span class="fn">SUM</span>(<span class="st">Sales[Amount]</span>),
+    <span class="fn">FILTER</span>(<span class="st">Sales</span>, <span class="st">Sales[Scenario]</span> = <span class="st">"Actual"</span>) )</code></pre>
+
+    <h3>⑤ SWITCH で「動的切替」（英語動画の人気テク）</h3>
+    <p>切断テーブル（disconnected table）＋ <code>SWITCH</code> で、<strong>同じ指標を月次／年初来（YTD）で切り替える</strong>、あるいは<strong>売上／コスト／粗利をボタン1つで切り替える</strong>仕組みを、メジャーを増やさず実現します。</p>
+    <pre><code>Selected KPI =
+<span class="fn">SWITCH</span>( <span class="fn">SELECTEDVALUE</span>(<span class="st">KpiSelector[Id]</span>),
+    1, [Revenue],
+    2, [Cost],
+    3, [Gross Profit]
+)</code></pre>
+
+    <div class="box tip">
+      <span class="box-title">💡 1つの式に意味を詰め込みすぎない</span>
+      <p>"Break complex calculations into intermediate measures."＝<strong>複雑な計算は中間メジャーに分割</strong>。<code>[Revenue]</code>→<code>[Revenue PY]</code>→<code>[Growth %]</code>のように積み上げると保守性が上がります。</p>
+    </div>
+  </section>
+
+  <!-- 5. デザイン -->
+  <section id="design">
+    <h2><span class="chapter-no">5</span>レポートデザイン ― 神は細部に宿る</h2>
+    <p class="lead">Guy in a Cubeなどが「report design」で語るのは、整列・グリッド・余白といった“細部の作り込み”です。</p>
+
+    <h3>① 12カラムグリッドで整列させる</h3>
+    <p>"Use a 12-column grid layout for all reports."＝<strong>全レポートを12カラムのグリッドで設計</strong>。これでPC・Web両方で視覚要素がきれいに揃います。Power BI Desktopの機能で実装できます。</p>
+    <ul>
+      <li><strong>Align / Distribute</strong>（整列・等間隔配置）：複数ビジュアルを選び、Format リボンから上下左右の整列・均等配置</li>
+      <li><strong>Gridlines & Snap to grid</strong>（グリッド線・グリッドに合わせる）：View メニューからオンにし、ピクセル単位のズレを防ぐ</li>
+    </ul>
+
+    <div class="channel-quote">
+      <span class="who">Guy in a Cube 系の定番Tip：</span>整列していないだけでレポートは“素人っぽく”見える。Align・Distribute・Snap to grid を使い、ビジュアルの端をきっちり揃えるだけで完成度が一気に上がる。
+    </div>
+
+    <h3>② JSONテーマファイルでブランド統一</h3>
+    <p>"Implement JSON theme files to enforce consistent colors, fonts, and visual defaults."＝<strong>JSONのテーマファイルで色・フォント・既定値を全社で統一</strong>。手作業で色を指定するのではなく、テーマで一元管理するのが英語圏の標準的アプローチです。</p>
+
+    <h3>③ タイル数・数値の見せ方を絞る</h3>
+    <ul>
+      <li>経営層向けは<strong>タイル5〜8個</strong>に厳選（情報の入れすぎを防ぐ）</li>
+      <li>1ページ＝1つの中心的な問いに答える</li>
+      <li>大きな数値は丸めて表示（"$3.4M" のように単位付きで）</li>
+    </ul>
+
+    <h3>④ アクセシビリティ（accessibility）も意識</h3>
+    <p>色だけに頼らない（色覚に配慮）、十分なコントラスト、ビジュアルの代替テキスト（alt text）など、英語圏では<strong>アクセシビリティ</strong>が品質基準として語られます。</p>
+  </section>
+
+  <!-- 6. インタラクティブ -->
+  <section id="interactive">
+    <h2><span class="chapter-no">6</span>インタラクティブ機能（drill / bookmark / tooltip）</h2>
+    <p class="lead">Pragmatic Worksなどが "Must Know / Game Changer" として紹介する操作機能群です。</p>
+
+    <h3>Drill Down と Drill Through の違い</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th></th><th>Drill Down（ドリルダウン）</th><th>Drill Through（ドリルスルー）</th></tr></thead>
+        <tbody>
+          <tr><td>動き</td><td>同じビジュアル内で階層を展開（年→四半期→月）</td><td>選んだ値の<strong>フィルター文脈を保ったまま別ページへ</strong>移動</td></tr>
+          <tr><td>用途</td><td>1つのグラフで粗→細</td><td>特定の顧客・部門・地域の明細を表示</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Drill Through の設定手順（英語チュートリアル準拠）</h3>
+    <ol>
+      <li><strong>Source ページ</strong>（概要）と <strong>Target ページ</strong>（詳細）の2枚を用意する</li>
+      <li>Target ページのビジュアル化ペインで、フィルター列（例 <code>ManagerName</code>）を<strong>Drill through</strong>欄にドラッグ</li>
+      <li>"Keep all filters" をオンにすると、地域やカテゴリなど元ページのフィルターも引き継がれる</li>
+      <li>Source ページでデータ点を右クリック／ホバー → ドリルスルーで Target へ移動</li>
+    </ol>
+
+    <div class="box note">
+      <span class="box-title">📌 戻るボタンは自動で付く</span>
+      <p>Drill Through を設定すると、Target ページに<strong>「戻る（Back）」矢印ボタンが自動生成</strong>されます。手動で付ける場合は Insert &gt; Buttons &gt; Back から追加し、Action を Back に設定します。</p>
+    </div>
+
+    <h3>Bookmarks（状態のスナップショット）</h3>
+    <p>"A bookmark captures the current state of a report page."＝<strong>ページの現在の状態（選択・フィルター・ドリルスルー状態）を丸ごと保存</strong>。ボタンに割り当てれば、ページを増やさずに“多ページアプリ”のような切替を作れます。</p>
+
+    <h3>Report Page Tooltips（ツールチップページ）</h3>
+    <p>英語動画で人気の上級テク。通常のツールチップ（hoverで小さな情報表示）に加え、<strong>専用ページをまるごとツールチップにする</strong>ことで、ホバー時にミニグラフ付きの濃い情報を見せられます。</p>
+    <ul>
+      <li><code>File &gt; Options &gt; Preview features</code> で <strong>Modern visual tooltips</strong> を有効化（再起動）</li>
+      <li>ツールチップ用ページを作り、ページサイズを Tooltip に設定して専用ビジュアルを配置</li>
+    </ul>
+  </section>
+
+  <!-- 7. パフォーマンス -->
+  <section id="performance">
+    <h2><span class="chapter-no">7</span>パフォーマンス最適化</h2>
+    <p class="lead">英語圏では「遅いレポートは使われない」と数値目標で語られます。</p>
+    <ul>
+      <li><strong>3秒以内のロードを目指す</strong>："Optimize for sub-three-second load times." 5秒を超えると企業ユーザーは離脱する、とされる</li>
+      <li><strong>1ページのビジュアルは8個以下</strong>に：描画クエリが増えるほど遅くなる</li>
+      <li><strong>集計（aggregations）</strong>を使って大規模データの応答を速くする</li>
+      <li><strong>計算はモデル側のメジャーで事前計算</strong>（pre-calculate）し、ビジュアル内インライン式を避ける</li>
+      <li><strong>更新は業務時間外に</strong>："Schedule refresh during off-peak hours."（深夜〜早朝）でクエリ競合を避ける</li>
+      <li>不要な列・テーブルは取り込まない（データ量削減が最大の高速化）</li>
+    </ul>
+  </section>
+
+  <!-- 8. ガバナンス -->
+  <section id="governance">
+    <h2><span class="chapter-no">8</span>ガバナンス & モバイル対応</h2>
+    <p class="lead">「作る」だけでなく「安全に配る・どの端末でも見せる」までが英語動画の守備範囲です。</p>
+
+    <h3>行レベルセキュリティ（Row-Level Security / RLS）</h3>
+    <p>"Apply row-level security to every production dashboard."＝<strong>本番ダッシュボードには必ずRLSを適用</strong>。役割（role）ごとの静的フィルター、または <code>USERPRINCIPALNAME()</code> を使った動的フィルターで、<strong>ユーザーごとに見えるデータを制御</strong>します。</p>
+    <pre><code><span class="cm">// 動的RLSの例：ログインユーザーの担当地域だけ表示</span>
+[Region Manager] = <span class="fn">USERPRINCIPALNAME</span>()</code></pre>
+
+    <h3>モバイルレイアウト（mobile layout）</h3>
+    <p>"Design mobile layouts separately using Power BI Desktop's mobile layout editor."＝<strong>スマホ用は専用のモバイルレイアウトエディタで別途設計</strong>し、ビジュアルを縦に積む。PC用をそのまま縮小するのではなく、端末に合わせて作り分けます。</p>
+
+    <h3>運用の自動化</h3>
+    <ul>
+      <li><strong>自動ページ更新（automatic page refresh）</strong>：サポートキュー・IoT・受注などの準リアルタイム表示に</li>
+      <li>テーマファイル・命名規則・バージョン管理でチーム運用を標準化</li>
+    </ul>
+
+    <div class="box warn">
+      <span class="box-title">⚠ 機密データ・社外共有は要相談</span>
+      <p>個人情報や会員情報など、漏れると致命的なデータを扱う場合や社外公開の判断が必要な場合は、自己判断せず社内のエンジニア／管理者に相談してください。RLSと共有範囲は公開前に必ず確認しましょう。</p>
+    </div>
+  </section>
+
+  <!-- 9. 用語辞典 -->
+  <section id="glossary">
+    <h2><span class="chapter-no">9</span>英語用語ミニ辞典</h2>
+    <p class="lead">英語動画を直接見るときに役立つ、頻出用語の対訳です。</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>英語</th><th>日本語</th><th>ひとことメモ</th></tr></thead>
+        <tbody>
+          <tr><td>Semantic model / Dataset</td><td>セマンティックモデル／データセット</td><td>レポートの土台になるデータの集合体</td></tr>
+          <tr><td>Measure</td><td>メジャー</td><td>表示時に集計する計算式</td></tr>
+          <tr><td>Calculated column</td><td>計算列</td><td>行ごとに計算して保存する列（多用注意）</td></tr>
+          <tr><td>Star schema</td><td>スタースキーマ</td><td>ファクト＋ディメンションの星型設計</td></tr>
+          <tr><td>Fact / Dimension table</td><td>ファクト／ディメンションテーブル</td><td>数値の表／切り口の表</td></tr>
+          <tr><td>Time intelligence</td><td>時間インテリジェンス</td><td>前年比・累計などの日付計算</td></tr>
+          <tr><td>Drill down / Drill through</td><td>ドリルダウン／ドリルスルー</td><td>階層展開／別ページへ移動</td></tr>
+          <tr><td>Bookmark</td><td>ブックマーク</td><td>ページ状態の保存・再現</td></tr>
+          <tr><td>Tooltip</td><td>ツールチップ</td><td>ホバー時の補足情報</td></tr>
+          <tr><td>Slicer</td><td>スライサー</td><td>画面上のフィルター部品</td></tr>
+          <tr><td>Row-Level Security (RLS)</td><td>行レベルセキュリティ</td><td>ユーザー別に見える行を制御</td></tr>
+          <tr><td>Theme (JSON)</td><td>テーマ（JSON）</td><td>色・フォントの一括定義ファイル</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 10. チェックリスト -->
+  <section id="checklist">
+    <h2><span class="chapter-no">10</span>英語ベストプラクティス チェックリスト</h2>
+    <p class="lead">英語動画・記事で語られた要点を、公開前の点検リストにまとめました。</p>
+
+    <h4>設計・モデル</h4>
+    <ul class="checklist">
+      <li>答えるべき「3〜5の問い」を書き出したか</li>
+      <li>スタースキーマ＋カレンダーディメンションを用意したか</li>
+      <li>計算はインライン式でなく名前付きメジャーにしたか</li>
+    </ul>
+    <h4>デザイン</h4>
+    <ul class="checklist">
+      <li>12カラムグリッド＋Align/Distribute/Snapで整列したか</li>
+      <li>JSONテーマで色・フォントを統一したか</li>
+      <li>経営層向けはタイル5〜8個に絞ったか</li>
+      <li>色だけに頼らずアクセシビリティに配慮したか</li>
+    </ul>
+    <h4>操作性</h4>
+    <ul class="checklist">
+      <li>Drill through の Source/Target と戻るボタンを設定したか</li>
+      <li>Bookmark／Tooltipページで体験を高めたか</li>
+    </ul>
+    <h4>パフォーマンス・運用</h4>
+    <ul class="checklist">
+      <li>3秒以内のロード／1ページ8ビジュアル以下を満たすか</li>
+      <li>RLSを適用し、見えるデータを制御したか</li>
+      <li>モバイルレイアウトを別途作成したか</li>
+      <li>更新を業務時間外にスケジュールしたか</li>
+    </ul>
+  </section>
+
+  <!-- 11. ソース -->
+  <section id="sources">
+    <h2><span class="chapter-no">11</span>参照した動画・チャンネル・資料</h2>
+    <p class="lead">本レポートは以下の英語チャンネル・動画と、英語の解説記事・公式ドキュメントをもとに作成しました。</p>
+
+    <h3>英語 YouTube チャンネル / 動画</h3>
+    <a class="video-card" href="https://www.youtube.com/guyinacube" target="_blank" rel="noopener">
+      <div class="vtitle"><span class="badge">CH</span>Guy in a Cube</div>
+      <div class="vmeta">レポートデザイン・新機能・実務Tips（"5 Tips for AWESOME Report Design" など）</div>
+    </a>
+    <a class="video-card" href="https://www.youtube.com/@SQLBI" target="_blank" rel="noopener">
+      <div class="vtitle"><span class="badge">CH</span>SQLBI（Marco Russo / Alberto Ferrari）</div>
+      <div class="vmeta">DAX・データモデル・パフォーマンス最適化。Microsoft公式がデザイン解説動画として紹介</div>
+    </a>
+    <a class="video-card" href="https://www.youtube.com/@CurbalEN" target="_blank" rel="noopener">
+      <div class="vtitle"><span class="badge">CH</span>Curbal（Ruth Pozuelo Martinez）</div>
+      <div class="vmeta">DAX入門〜応用の体系的プレイリスト</div>
+    </a>
+    <a class="video-card" href="https://www.youtube.com/@PragmaticWorks" target="_blank" rel="noopener">
+      <div class="vtitle"><span class="badge">CH</span>Pragmatic Works</div>
+      <div class="vmeta">Drill Down / Drill Through "Must Know GAME CHANGER" など機能解説</div>
+    </a>
+    <a class="video-card" href="https://www.youtube.com/watch?v=k9LGRfREuIk" target="_blank" rel="noopener">
+      <div class="vtitle"><span class="badge">動画</span>5 IDEAS to take Power BI reports to the NEXT LEVEL</div>
+      <div class="vmeta">レポートを次のレベルへ引き上げるデザインアイデア</div>
+    </a>
+    <a class="video-card" href="https://www.youtube.com/watch?v=TpgRSMMDsf4" target="_blank" rel="noopener">
+      <div class="vtitle"><span class="badge">動画</span>Power BI Drill Through Hack 💡 Instantly Make Reports Interactive!</div>
+      <div class="vmeta">ドリルスルーでレポートを即インタラクティブにするテク</div>
+    </a>
+    <a class="video-card" href="https://www.youtube.com/watch?v=JMd1dVDrrTI" target="_blank" rel="noopener">
+      <div class="vtitle"><span class="badge">動画</span>Design Engaging Power BI Report Page Tooltips Effortlessly</div>
+      <div class="vmeta">レポートページ・ツールチップの作り方</div>
+    </a>
+
+    <h3>補足した英語の解説記事・公式ドキュメント</h3>
+    <ul>
+      <li><a href="https://zebrabi.com/power-bi-dax/" target="_blank" rel="noopener">Power BI DAX Tutorial: 5 Tricks for Top Power BI Dashboards（Zebra BI）</a></li>
+      <li><a href="https://www.epcgroup.net/power-bi-dashboard-design-best-practices" target="_blank" rel="noopener">Power BI Dashboard Design Best Practices: The Enterprise Guide for 2026（EPC Group）</a></li>
+      <li><a href="https://www.datacamp.com/tutorial/power-bi-drill-through" target="_blank" rel="noopener">Power BI Drill Through: A Full Tutorial（DataCamp）</a></li>
+      <li><a href="https://learn.microsoft.com/en-us/power-bi/transform-model/desktop-quickstart-learn-dax-basics" target="_blank" rel="noopener">Learn DAX basics in Power BI Desktop（Microsoft Learn）</a></li>
+      <li><a href="https://learn.microsoft.com/en-us/power-bi/create-reports/desktop-gridlines-snap-to-grid" target="_blank" rel="noopener">Use Gridlines and Snap-to-Grid in Power BI Reports（Microsoft Learn）</a></li>
+      <li><a href="https://learn.microsoft.com/en-us/power-bi/create-reports/desktop-visual-tooltips" target="_blank" rel="noopener">Create Visual Tooltips in Power BI（Microsoft Learn）</a></li>
+      <li><a href="https://www.fugo.ai/blog/best-power-bi-youtube-channels-learn-sql-fast/" target="_blank" rel="noopener">Best Power BI YouTube Channels（Fugo.ai）</a></li>
+    </ul>
+
+    <div class="box note">
+      <span class="box-title">📌 ご注意</span>
+      <p>本レポートは公開情報の調査に基づくまとめです。各チャンネル・動画の最新内容や、Power BIのバージョンによっては操作画面・名称が変わる場合があります。英語の引用は要点を示すためのもので、重要な実装前には公式ドキュメントもあわせてご確認ください。</p>
+    </div>
+  </section>
+
+  <footer class="report-footer">
+    英語解説動画で学ぶ Power BI ダッシュボード作成技術 ／ English YouTube Research Report ／ 2026年6月24日作成
+  </footer>
+
+</div>
+</div>
+
+<button id="back-to-top" aria-label="トップへ戻る" title="トップへ戻る">
+  <span>▲</span><small>TOP</small>
+</button>
+
+<script>
+  // ===== 定数 =====
+  const SCROLL_SHOW_THRESHOLD_PX = 300; // この高さを超えたら「トップへ戻る」を表示
+
+  const backToTop = document.getElementById('back-to-top');
+  const tocLinks = document.querySelectorAll('#toc a');
+  const sections = document.querySelectorAll('section[id]');
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('overlay');
+  const menuToggle = document.getElementById('menuToggle');
+
+  window.addEventListener('scroll', function () {
+    if (window.scrollY > SCROLL_SHOW_THRESHOLD_PX) {
+      backToTop.classList.add('show');
+    } else {
+      backToTop.classList.remove('show');
+    }
+    highlightActiveSection();
+  });
+
+  backToTop.addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  function highlightActiveSection() {
+    let currentId = '';
+    sections.forEach(function (sec) {
+      const top = sec.getBoundingClientRect().top;
+      if (top <= 120) currentId = sec.id;
+    });
+    tocLinks.forEach(function (link) {
+      link.classList.toggle('active', link.getAttribute('href') === '#' + currentId);
+    });
+  }
+
+  function openMenu() { sidebar.classList.add('open'); overlay.classList.add('show'); }
+  function closeMenu() { sidebar.classList.remove('open'); overlay.classList.remove('show'); }
+  menuToggle.addEventListener('click', openMenu);
+  overlay.addEventListener('click', closeMenu);
+  tocLinks.forEach(function (link) { link.addEventListener('click', closeMenu); });
+
+  highlightActiveSection();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,153 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "開発フロー — ブランチからマージまで",
+    "quality_profile": "showcase"
+  },
+  "lanes": [
+    {
+      "id": "dev",
+      "label": "実装（自分 + AIエージェント）"
+    },
+    {
+      "id": "review",
+      "label": "確認・承認・マージ"
+    },
+    {
+      "id": "rework",
+      "label": "差し戻し",
+      "variant": "exception"
+    }
+  ],
+  "mainPath": [
+    "branch",
+    "implement",
+    "selfcheck",
+    "pr",
+    "approval",
+    "merge"
+  ],
+  "nodes": [
+    {
+      "id": "branch",
+      "lane": "dev",
+      "col": 0,
+      "type": "frontend",
+      "label": "ブランチ作成",
+      "sublabel": "main から分岐"
+    },
+    {
+      "id": "implement",
+      "lane": "dev",
+      "col": 1,
+      "type": "backend",
+      "label": "実装",
+      "sublabel": "Claude Code / Codex"
+    },
+    {
+      "id": "selfcheck",
+      "lane": "dev",
+      "col": 2,
+      "type": "backend",
+      "label": "動作確認",
+      "sublabel": "テスト・表示を検証",
+      "width": 116
+    },
+    {
+      "id": "pr",
+      "lane": "review",
+      "col": 3,
+      "type": "frontend",
+      "label": "PR 作成",
+      "sublabel": "レポートを添えて提出",
+      "width": 128
+    },
+    {
+      "id": "approval",
+      "lane": "review",
+      "col": 4,
+      "type": "security",
+      "label": "ユーザー確認",
+      "sublabel": "承認ゲート"
+    },
+    {
+      "id": "merge",
+      "lane": "review",
+      "col": 5,
+      "type": "cloud",
+      "label": "マージ",
+      "sublabel": "main へ反映"
+    },
+    {
+      "id": "fix",
+      "lane": "rework",
+      "col": 4,
+      "type": "backend",
+      "label": "指摘対応",
+      "sublabel": "同じブランチで修正"
+    }
+  ],
+  "edges": [
+    {
+      "from": "branch",
+      "to": "implement",
+      "role": "main"
+    },
+    {
+      "from": "implement",
+      "to": "selfcheck",
+      "role": "main"
+    },
+    {
+      "from": "selfcheck",
+      "to": "pr",
+      "role": "main",
+      "label": "動作を確認してから"
+    },
+    {
+      "from": "pr",
+      "to": "approval",
+      "role": "main"
+    },
+    {
+      "from": "approval",
+      "to": "merge",
+      "role": "main",
+      "label": "承認"
+    },
+    {
+      "from": "approval",
+      "to": "fix",
+      "role": "error",
+      "label": "差し戻し"
+    },
+    {
+      "from": "fix",
+      "to": "implement",
+      "role": "return",
+      "label": "再実装"
+    }
+  ],
+  "phases": [
+    {
+      "id": "build",
+      "label": "実装",
+      "fromCol": 0,
+      "toCol": 2
+    },
+    {
+      "id": "check",
+      "label": "レビュー",
+      "fromCol": 3,
+      "toCol": 4,
+      "variant": "emphasis"
+    },
+    {
+      "id": "land",
+      "label": "反映",
+      "fromCol": 5,
+      "toCol": 5
+    }
+  ]
+}

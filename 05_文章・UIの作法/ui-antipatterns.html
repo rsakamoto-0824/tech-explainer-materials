@@ -1,0 +1,1895 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>アプリ開発のUIアンチパターンまとめ</title>
+<style>
+  /* =========================================
+     Design Tokens
+     ========================================= */
+  :root {
+    /* Type scale (6 sizes only) */
+    --fs-xs:   12px;
+    --fs-sm:   14px;
+    --fs-base: 16px;
+    --fs-md:   18px;
+    --fs-lg:   22px;
+    --fs-xl:   30px;
+
+    /* Spacing scale (4の倍数) */
+    --sp-1: 4px;
+    --sp-2: 8px;
+    --sp-3: 12px;
+    --sp-4: 16px;
+    --sp-6: 24px;
+    --sp-8: 32px;
+    --sp-12: 48px;
+    --sp-16: 64px;
+
+    /* Radius */
+    --r-sm: 6px;
+    --r-md: 10px;
+    --r-lg: 14px;
+
+    /* Colors — semantic only */
+    --c-bg:       #f6f7f9;
+    --c-card:     #ffffff;
+    --c-text:     #14181f;
+    --c-muted:    #5a6472;
+    --c-border:   #dfe3e8;
+    --c-accent:   #2f6feb;
+    --c-accent-soft: #eef3fc;
+    --c-bad:      #c62828;
+    --c-bad-soft: #fff1ee;
+    --c-good:     #2e7d32;
+    --c-good-soft:#eef7ee;
+    --c-warn:     #8a5a00;
+    --c-warn-soft:#fff5d6;
+
+    --sidebar-w: 260px;
+
+    --shadow-sm: 0 1px 2px rgba(16,24,40,0.04);
+    --shadow-md: 0 4px 16px rgba(16,24,40,0.08);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: "Hiragino Sans", "Yu Gothic", "Meiryo", system-ui, -apple-system, sans-serif;
+    font-size: var(--fs-base);
+    line-height: 1.75;
+    color: var(--c-text);
+    background: var(--c-bg);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Focus ring — visible (we don't kill outlines) */
+  :focus-visible {
+    outline: 3px solid #ffb300;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* =========================================
+     Layout
+     ========================================= */
+  .layout {
+    display: grid;
+    grid-template-columns: var(--sidebar-w) 1fr;
+    min-height: 100vh;
+  }
+
+  /* =========================================
+     Sidebar
+     ========================================= */
+  aside.sidebar {
+    background: #1c2230;
+    color: #cdd3dc;
+    padding: var(--sp-6) var(--sp-4);
+    position: sticky;
+    top: 0;
+    align-self: start;
+    height: 100vh;
+    overflow-y: auto;
+    border-right: 1px solid #2a3142;
+  }
+  .sidebar-title {
+    font-size: var(--fs-md);
+    color: #fff;
+    margin: 0 0 var(--sp-6);
+    padding: 0 var(--sp-1);
+    line-height: 1.4;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+  .sidebar h2 {
+    font-size: var(--fs-xs);
+    letter-spacing: 0.14em;
+    color: #8b95a7;
+    margin: 0 0 var(--sp-3);
+    text-transform: uppercase;
+    background: none;
+    border: none;
+    padding: 0;
+  }
+  .sidebar ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    counter-reset: toc;
+  }
+  .sidebar li {
+    counter-increment: toc;
+    margin: 0;
+  }
+  .sidebar a {
+    display: block;
+    color: #cdd3dc;
+    text-decoration: none;
+    padding: var(--sp-2) var(--sp-3) var(--sp-2) var(--sp-8);
+    font-size: var(--fs-sm);
+    border-radius: var(--r-sm);
+    position: relative;
+    line-height: 1.4;
+    transition: background .15s, color .15s;
+    border-left: 3px solid transparent;
+    margin-left: -3px;
+  }
+  .sidebar a::before {
+    content: counter(toc, decimal-leading-zero);
+    position: absolute;
+    left: var(--sp-3);
+    top: var(--sp-2);
+    color: #6b7689;
+    font-size: 11px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  .sidebar a:hover {
+    background: #262d3d;
+    color: #fff;
+  }
+  .sidebar a.active {
+    background: #262d3d;
+    color: #fff;
+    border-left-color: var(--c-accent);
+  }
+  .sidebar a.active::before { color: #fff; }
+
+  /* =========================================
+     Main
+     ========================================= */
+  main {
+    padding: var(--sp-8) var(--sp-12) var(--sp-16);
+    max-width: 1020px;
+  }
+  header.top {
+    border-bottom: 1px solid var(--c-border);
+    padding-bottom: var(--sp-4);
+    margin-bottom: var(--sp-8);
+  }
+  header.top h1 {
+    font-size: var(--fs-xl);
+    margin: 0 0 var(--sp-2);
+    letter-spacing: 0.01em;
+    line-height: 1.3;
+  }
+  header.top p.lead {
+    margin: 0;
+    color: var(--c-muted);
+    font-size: var(--fs-sm);
+  }
+
+  h2 {
+    font-size: var(--fs-lg);
+    margin: var(--sp-12) 0 var(--sp-4);
+    padding: var(--sp-3) var(--sp-4);
+    background: linear-gradient(90deg, var(--c-accent-soft) 0%, transparent 90%);
+    border-left: 4px solid var(--c-accent);
+    border-radius: var(--r-sm);
+    line-height: 1.3;
+  }
+  h3 {
+    font-size: var(--fs-md);
+    margin: var(--sp-4) 0 var(--sp-2);
+    line-height: 1.4;
+  }
+  p { margin: var(--sp-2) 0 var(--sp-3); }
+  ul { padding-left: var(--sp-6); }
+  li { margin-bottom: var(--sp-1); }
+
+  /* Note box — improved contrast */
+  .note {
+    background: var(--c-warn-soft);
+    border: 1px solid #ead7a3;
+    border-left: 4px solid #c19400;
+    padding: var(--sp-3) var(--sp-4);
+    border-radius: var(--r-sm);
+    margin: var(--sp-4) 0 var(--sp-8);
+    font-size: var(--fs-sm);
+    color: #4d3a00;
+  }
+  .note strong { color: #2e2200; }
+
+  /* =========================================
+     Pattern card
+     ========================================= */
+  .card {
+    background: var(--c-card);
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-md);
+    padding: var(--sp-4) var(--sp-6);
+    margin-bottom: var(--sp-4);
+    box-shadow: var(--shadow-sm);
+  }
+  /* Heading uses dark text + small icon-led badge, NOT red text */
+  .card h3 {
+    color: var(--c-text);
+    margin: 0 0 var(--sp-2);
+    font-size: var(--fs-md);
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+  }
+  .card h3::before {
+    content: "アンチパターン";
+    background: var(--c-bad);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px var(--sp-2);
+    border-radius: var(--r-sm);
+    letter-spacing: 0.04em;
+    line-height: 1.5;
+    flex-shrink: 0;
+  }
+  .card .why,
+  .card .fix {
+    margin: var(--sp-2) 0 0;
+    font-size: var(--fs-sm);
+    color: var(--c-text);
+  }
+  .card .why::before {
+    content: "なぜ問題か　";
+    font-weight: 700;
+    color: var(--c-muted);
+  }
+  .card .fix {
+    background: var(--c-good-soft);
+    padding: var(--sp-2) var(--sp-3);
+    border-radius: var(--r-sm);
+    border-left: 3px solid var(--c-good);
+  }
+  .card .fix::before {
+    content: "改善の方向　";
+    font-weight: 700;
+    color: var(--c-good);
+  }
+
+  /* =========================================
+     Compare (Bad vs Good)
+     ========================================= */
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sp-3);
+    margin: var(--sp-4) 0 var(--sp-2);
+  }
+  .compare > div {
+    border-radius: var(--r-md);
+    padding: var(--sp-4);
+    font-size: var(--fs-sm);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    /* Equal heights so eye doesn't jump */
+  }
+  .bad-box {
+    background: var(--c-bad-soft);
+    border: 1px solid #f3c8c1;
+  }
+  .good-box {
+    background: var(--c-good-soft);
+    border: 1px solid #c4dec6;
+  }
+  /* Labels: bold pill, not subtle text */
+  .compare > div::before {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-1);
+    font-weight: 700;
+    font-size: var(--fs-xs);
+    letter-spacing: 0.08em;
+    margin-bottom: var(--sp-3);
+    padding: 3px var(--sp-2);
+    border-radius: 999px;
+    align-self: flex-start;
+  }
+  .bad-box::before {
+    content: "✗  BEFORE";
+    background: var(--c-bad);
+    color: #fff;
+  }
+  .good-box::before {
+    content: "✓  AFTER";
+    background: var(--c-good);
+    color: #fff;
+  }
+  @media (max-width: 760px) {
+    .compare { grid-template-columns: 1fr; }
+  }
+
+  /* =========================================
+     Device mockups
+     ========================================= */
+  .mock-phone {
+    background: #fff;
+    border-radius: var(--r-lg);
+    border: 2px solid #c4c9d2;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    margin: var(--sp-1) auto;
+    max-width: 250px;
+    font-size: var(--fs-xs);
+    width: 100%;
+  }
+  .mock-phone .statusbar {
+    background: #f0f2f5;
+    padding: var(--sp-1) var(--sp-3);
+    font-size: 10px;
+    color: var(--c-muted);
+    display: flex;
+    justify-content: space-between;
+    font-variant-numeric: tabular-nums;
+  }
+  /* Clean status bar indicators (no emoji) */
+  .signal {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+  }
+  .signal::before {
+    content: "•••••";
+    letter-spacing: -1px;
+    color: #14181f;
+    font-size: 11px;
+  }
+  .mock-screen {
+    padding: var(--sp-3);
+    min-height: 64px;
+    background: #fff;
+  }
+  .mock-browser {
+    border-radius: var(--r-sm);
+    border: 1px solid #c4c9d2;
+    background: #fff;
+    overflow: hidden;
+    margin: var(--sp-1) 0;
+    font-size: var(--fs-xs);
+  }
+  .mock-browser .urlbar {
+    background: #f0f2f5;
+    padding: var(--sp-1) var(--sp-3);
+    font-size: 10px;
+    color: var(--c-muted);
+    border-bottom: 1px solid var(--c-border);
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+  }
+  .mock-browser .urlbar::before {
+    content: "";
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #d8554c;
+    box-shadow: 10px 0 0 #e6a13a, 20px 0 0 #4cc06c;
+    margin-right: 18px;
+  }
+  .mock-page { padding: var(--sp-3); }
+
+  /* Mockup primitives */
+  .icon-row { display: flex; justify-content: space-around; align-items: center; padding: var(--sp-2) var(--sp-1); border-top: 1px solid #eee; background: #fafbfc; }
+  .icon-only { font-size: 16px; color: var(--c-muted); }
+  .tabbar { display: flex; justify-content: space-around; padding: var(--sp-1) 0 6px; background: #fafbfc; border-top: 1px solid #eee; font-size: 9px; color: var(--c-muted); text-align: center; }
+  .tabbar div { padding: 2px 0; flex: 1; }
+  .tabbar div .ic { font-size: 14px; display: block; margin-bottom: 2px; }
+  .tabbar div.active { color: var(--c-accent); font-weight: 700; }
+
+  .ham-btn { float: right; font-size: 16px; color: var(--c-muted); }
+  .menu-list { list-style: none; padding: 0; margin: var(--sp-2) 0 0; font-size: var(--fs-xs); }
+  .menu-list li { padding: var(--sp-1) var(--sp-2); border-bottom: 1px dashed #eee; }
+
+  /* Forms */
+  .form-row { margin-bottom: var(--sp-3); font-size: var(--fs-xs); }
+  .form-row label { display: block; margin-bottom: var(--sp-1); color: var(--c-text); font-weight: 700; font-size: var(--fs-xs); }
+  .form-row .req { color: var(--c-bad); font-size: 11px; margin-left: 4px; }
+  .form-row .opt { color: var(--c-muted); font-weight: 400; font-size: 11px; margin-left: 4px; }
+  .form-row .field {
+    width: 100%;
+    padding: 6px var(--sp-2);
+    border: 1px solid #c4c9d2;
+    border-radius: 4px;
+    background: #fff;
+    font-size: var(--fs-xs);
+    color: var(--c-text);
+    min-height: 28px;
+  }
+  .form-row .placeholder { color: #9aa3b0; }
+  .form-row .err {
+    color: var(--c-bad);
+    font-size: 11px;
+    margin-top: var(--sp-1);
+  }
+  .form-row .ok {
+    color: var(--c-good);
+    font-size: 11px;
+    margin-top: var(--sp-1);
+  }
+  .form-help { font-size: 11px; color: var(--c-muted); margin-top: var(--sp-1); }
+
+  /* Buttons */
+  .btn {
+    display: inline-block;
+    padding: 7px 14px;
+    border-radius: var(--r-sm);
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    border: 1px solid transparent;
+    cursor: default;
+    line-height: 1.4;
+  }
+  .btn-primary { background: var(--c-accent); color: #fff; }
+  .btn-secondary { background: #fff; color: var(--c-accent); border-color: var(--c-accent); }
+  .btn-danger { background: var(--c-bad); color: #fff; }
+  .btn-ghost { background: transparent; color: var(--c-muted); }
+  .btn-link { background: none; color: var(--c-accent); padding: 4px 6px; text-decoration: underline; }
+  .btn-row { display: flex; gap: var(--sp-2); margin-top: var(--sp-2); align-items: center; flex-wrap: wrap; }
+
+  .tap-bad {
+    display: inline-block; padding: 2px 6px;
+    background: var(--c-accent); color: #fff;
+    border-radius: 3px; font-size: 9px;
+  }
+  .tap-good {
+    display: inline-block; padding: 12px 22px;
+    background: var(--c-accent); color: #fff;
+    border-radius: var(--r-sm); font-size: 13px;
+    font-weight: 600;
+  }
+
+  /* Feedback */
+  .toast {
+    background: var(--c-good); color: #fff;
+    padding: var(--sp-2) var(--sp-3);
+    border-radius: var(--r-sm);
+    font-size: var(--fs-xs);
+    display: inline-block;
+    margin-top: var(--sp-1);
+  }
+  .toast.err { background: var(--c-bad); }
+  .spinner {
+    display: inline-block; width: 11px; height: 11px;
+    border: 2px solid #fff; border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    vertical-align: middle; margin-right: 6px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Text examples */
+  .text-tiny { font-size: 10px; line-height: 1.35; color: var(--c-text); }
+  .text-tiny-low { font-size: 10px; color: #c4c9d2; line-height: 1.35; }
+  .text-ok { font-size: 14px; line-height: 1.7; color: var(--c-text); }
+  .text-center-bad { text-align: center; font-size: var(--fs-xs); line-height: 1.6; }
+  .text-left-good { text-align: left; font-size: var(--fs-xs); line-height: 1.7; }
+
+  /* Modal mockup */
+  .modal-bg {
+    position: relative;
+    background: #e5e8ed;
+    border-radius: var(--r-sm);
+    padding: var(--sp-6) var(--sp-3) var(--sp-3);
+    margin-top: var(--sp-1);
+  }
+  .modal-window {
+    background: #fff;
+    border-radius: var(--r-sm);
+    padding: var(--sp-3);
+    box-shadow: var(--shadow-md);
+    font-size: var(--fs-xs);
+    position: relative;
+  }
+  .modal-close-hidden {
+    position: absolute;
+    top: 4px; right: 4px;
+    color: #e1e4e8;
+    font-size: 10px;
+  }
+  .modal-close-good {
+    position: absolute;
+    top: 6px; right: 6px;
+    width: 24px; height: 24px;
+    background: #f0f2f5;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 24px;
+    color: var(--c-text);
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  /* Check rows */
+  .check-row { display: flex; align-items: center; gap: var(--sp-2); font-size: var(--fs-xs); margin: var(--sp-1) 0; }
+  .check-box { width: 13px; height: 13px; border: 1.5px solid var(--c-muted); border-radius: 3px; display: inline-block; flex-shrink: 0; background: #fff; position: relative; }
+  .check-box.checked { background: var(--c-accent); border-color: var(--c-accent); }
+  .check-box.checked::after { content: "✓"; color: #fff; font-size: 10px; position: absolute; top: -3px; left: 1px; font-weight: 700; }
+
+  /* Cart */
+  .cart-line { display: flex; justify-content: space-between; font-size: var(--fs-xs); padding: 3px 0; border-bottom: 1px dashed #eee; }
+  .cart-total { font-weight: 700; font-size: var(--fs-sm); padding-top: var(--sp-1); border-top: 2px solid var(--c-text); margin-top: var(--sp-1); }
+
+  /* Accessibility example */
+  .a11y-row { display: flex; gap: var(--sp-2); align-items: center; font-size: var(--fs-xs); padding: 3px 0; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+  .dot.red { background: var(--c-bad); }
+  .dot.green { background: var(--c-good); }
+  .badge {
+    display: inline-flex; align-items: center; gap: var(--sp-1);
+    padding: 2px var(--sp-2);
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .badge.err { background: var(--c-bad-soft); color: var(--c-bad); }
+  .badge.ok { background: var(--c-good-soft); color: var(--c-good); }
+
+  /* Mini cramped PC frame */
+  .pc-frame {
+    width: 100%; max-width: 220px; height: 130px;
+    border: 1.5px solid var(--c-muted); border-radius: var(--r-sm);
+    background: #fff; padding: var(--sp-2);
+    overflow: hidden; font-size: 8px;
+    transform-origin: top left;
+  }
+  .pc-frame .grid { display: grid; grid-template-columns: 40px 1fr 50px; gap: 4px; height: 100%; }
+  .pc-frame .grid > div { background: #f0f2f5; border-radius: 3px; padding: 3px; }
+
+  /* =========================================
+     Books — neutralized (no rainbow)
+     ========================================= */
+  .book-section {
+    border-radius: var(--r-md);
+    padding: var(--sp-2) var(--sp-6) var(--sp-4);
+    margin: var(--sp-4) 0;
+    background: var(--c-card);
+    border: 1px solid var(--c-border);
+    border-left: 4px solid var(--c-accent);
+  }
+  .book-section h3 {
+    display: flex; align-items: center; gap: var(--sp-2);
+    margin: var(--sp-4) 0 var(--sp-2);
+  }
+  .book-num {
+    display: inline-flex;
+    align-items: center; justify-content: center;
+    width: 26px; height: 26px;
+    background: var(--c-accent);
+    color: #fff;
+    border-radius: 50%;
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: var(--sp-3) 0;
+    font-size: var(--fs-sm);
+    background: var(--c-card);
+    border-radius: var(--r-sm);
+    overflow: hidden;
+  }
+  th, td {
+    padding: var(--sp-2) var(--sp-3);
+    border-bottom: 1px solid var(--c-border);
+    text-align: left;
+    vertical-align: top;
+  }
+  th { background: #f0f2f5; font-weight: 700; font-size: var(--fs-xs); letter-spacing: 0.04em; }
+  tbody tr:last-child td { border-bottom: none; }
+
+  footer {
+    margin-top: var(--sp-12);
+    padding-top: var(--sp-4);
+    border-top: 1px solid var(--c-border);
+    color: var(--c-muted);
+    font-size: var(--fs-sm);
+  }
+  code {
+    background: #f0f2f5;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 90%;
+  }
+
+  /* =========================================
+     Home button (floating)
+     ========================================= */
+  .home-btn {
+    position: fixed;
+    bottom: var(--sp-6);
+    right: var(--sp-6);
+    background: var(--c-accent);
+    color: #fff;
+    border: none;
+    padding: 12px 18px 12px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: var(--fs-sm);
+    font-weight: 700;
+    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-2);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s, transform .2s;
+    box-shadow: var(--shadow-md);
+    z-index: 10;
+  }
+  .home-btn.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .home-btn:hover { transform: translateY(-2px); background: #1f5fd9; }
+  .home-btn .home-icon {
+    font-size: var(--fs-md);
+    line-height: 1;
+  }
+
+  /* Sidebar title as home link */
+  a.sidebar-title {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+    text-decoration: none;
+    color: #fff;
+    padding: var(--sp-2);
+    margin: 0 0 var(--sp-4);
+    border-radius: var(--r-sm);
+    transition: background .15s;
+  }
+  a.sidebar-title:hover {
+    background: #262d3d;
+  }
+  a.sidebar-title .home-ic {
+    width: 32px; height: 32px;
+    background: var(--c-accent);
+    border-radius: var(--r-sm);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--fs-md);
+    flex-shrink: 0;
+  }
+  a.sidebar-title .home-lbl {
+    font-size: var(--fs-sm);
+    font-weight: 700;
+    line-height: 1.3;
+  }
+  a.sidebar-title .home-lbl small {
+    display: block;
+    font-size: 11px;
+    color: #8b95a7;
+    font-weight: 400;
+    margin-top: 2px;
+  }
+
+  /* =========================================
+     Progress bar (sidebar)
+     ========================================= */
+  .progress-box {
+    background: #262d3d;
+    border-radius: var(--r-sm);
+    padding: var(--sp-3);
+    margin-bottom: var(--sp-4);
+    font-size: var(--fs-xs);
+    color: #cdd3dc;
+  }
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  .progress-label .num { color: #fff; font-variant-numeric: tabular-nums; }
+  .progress-bar {
+    background: #14181f;
+    height: 6px;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .progress-bar > div {
+    background: var(--c-good);
+    height: 100%;
+    width: 0%;
+    transition: width .25s ease;
+    border-radius: 999px;
+  }
+  .progress-reset {
+    background: none;
+    border: 1px solid #3a4357;
+    color: #8b95a7;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    cursor: pointer;
+    margin-top: var(--sp-2);
+    font-family: inherit;
+  }
+  .progress-reset:hover { color: #fff; border-color: #5a6577; }
+
+  /* =========================================
+     Card checkbox
+     ========================================= */
+  .card { position: relative; padding-right: 56px; transition: opacity .2s, background .2s; }
+  .card-check-wrap {
+    position: absolute;
+    top: var(--sp-4);
+    right: var(--sp-4);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+  .card-check {
+    width: 28px;
+    height: 28px;
+    border: 2px solid var(--c-border);
+    border-radius: var(--r-sm);
+    background: #fff;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    display: grid;
+    place-items: center;
+    transition: all .15s;
+    margin: 0;
+  }
+  .card-check:hover { border-color: var(--c-good); background: var(--c-good-soft); }
+  .card-check:checked {
+    background: var(--c-good);
+    border-color: var(--c-good);
+  }
+  .card-check:checked::before {
+    content: "✓";
+    color: #fff;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 1;
+  }
+  .card-check-label {
+    font-size: 10px;
+    color: var(--c-muted);
+    user-select: none;
+  }
+  .card.checked {
+    opacity: 0.55;
+    background: #f6faf6;
+  }
+  .card.checked h3::after {
+    content: "確認済み";
+    display: inline-block;
+    background: var(--c-good);
+    color: #fff;
+    font-size: 11px;
+    padding: 2px var(--sp-2);
+    border-radius: 999px;
+    margin-left: var(--sp-2);
+    font-weight: 600;
+  }
+
+  /* =========================================
+     Checklist table with checkboxes
+     ========================================= */
+  table.checklist-table tr.checked {
+    background: #f6faf6;
+    color: var(--c-muted);
+  }
+  table.checklist-table tr.checked td:not(:first-child) {
+    text-decoration: line-through;
+    text-decoration-color: var(--c-good);
+  }
+  .list-check {
+    width: 22px;
+    height: 22px;
+    border: 2px solid var(--c-border);
+    border-radius: 4px;
+    background: #fff;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    display: grid;
+    place-items: center;
+    transition: all .15s;
+    margin: 0;
+  }
+  .list-check:hover { border-color: var(--c-good); }
+  .list-check:checked {
+    background: var(--c-good);
+    border-color: var(--c-good);
+  }
+  .list-check:checked::before {
+    content: "✓";
+    color: #fff;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 1;
+  }
+
+  /* =========================================
+     Responsive
+     ========================================= */
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    aside.sidebar {
+      position: relative;
+      height: auto;
+      width: 100%;
+      padding: var(--sp-4);
+    }
+    .sidebar ol {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--sp-1);
+    }
+    main { padding: var(--sp-6) var(--sp-4) var(--sp-12); }
+  }
+
+  /* =========================================
+     Print
+     ========================================= */
+  @media print {
+    aside.sidebar, .home-btn { display: none; }
+    .layout { grid-template-columns: 1fr; }
+    main { padding: 0; max-width: 100%; }
+    .card { break-inside: avoid; }
+    .compare { break-inside: avoid; }
+    .card-check-wrap { display: none; }
+    .card { padding-right: var(--sp-6); }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+  <!-- ===== Sidebar TOC ===== -->
+  <aside class="sidebar" aria-label="目次">
+    <a href="#top" class="sidebar-title" title="ページ先頭へ戻る">
+      <span class="home-ic">🏠</span>
+      <span class="home-lbl">
+        UIアンチパターン
+        <small>クリックでホームへ</small>
+      </span>
+    </a>
+
+    <div class="progress-box" id="progress-box">
+      <div class="progress-label">
+        <span>確認済み</span>
+        <span class="num"><span id="progress-num">0</span> / <span id="progress-total">0</span></span>
+      </div>
+      <div class="progress-bar"><div id="progress-fill"></div></div>
+      <button class="progress-reset" id="progress-reset" type="button">チェックをすべて解除</button>
+    </div>
+
+    <h2>目次</h2>
+    <ol id="toc">
+      <li><a href="#ch1">ナビゲーション</a></li>
+      <li><a href="#ch2">入力フォーム</a></li>
+      <li><a href="#ch3">ボタン・操作要素</a></li>
+      <li><a href="#ch4">フィードバック</a></li>
+      <li><a href="#ch5">文字・コントラスト</a></li>
+      <li><a href="#ch6">モーダル・ポップアップ</a></li>
+      <li><a href="#ch7">ダークパターン</a></li>
+      <li><a href="#ch8">マルチデバイス対応</a></li>
+      <li><a href="#ch9">アクセシビリティ</a></li>
+      <li><a href="#ch10">一貫性・命名</a></li>
+      <li><a href="#books">参考書籍3冊の補足</a></li>
+      <li><a href="#checklist">レビュー用チェックリスト</a></li>
+    </ol>
+  </aside>
+
+  <!-- ===== Main content ===== -->
+  <main>
+    <header class="top" id="top">
+      <h1>アプリ開発のUIアンチパターンまとめ</h1>
+      <p class="lead">「やってはいけないUI」を、悪い例（BEFORE）と改善例（AFTER）のビジュアル比較で確認できる資料です。</p>
+    </header>
+
+    <div class="note">
+      <strong>注記：</strong>
+      Nielsen Norman Group・Material Design・Apple HIG など一般的なUI/UXガイドラインと、
+      端末のKindle書籍3冊（<em>『UIデザイン41の法則』『UIデザインのアイデア帳』『UIデザインの教科書』</em>）が一般に扱うテーマを参考にまとめました。
+      KindleはDRMで保護されているため本文の直接引用は行っていません。
+    </div>
+
+    <!-- ============ Chapter 1 ============ -->
+    <h2 id="ch1">1. ナビゲーション</h2>
+
+    <div class="card">
+      <h3>1-1. アイコンだけで意味を示す（ミステリーミート）</h3>
+      <p>アイコンしか並んでおらず、押すまで何が起きるか分からない。</p>
+      <div class="compare">
+        <div class="bad-box">
+          <div class="mock-phone">
+            <div class="statusbar"><span>9:41</span><span class="signal"></span></div>
+            <div class="mock-screen" style="color:#9aa3b0; font-size:11px;">どこに何があるか分からない…</div>
+            <div class="icon-row">
+              <span class="icon-only">⌂</span>
+              <span class="icon-only">◎</span>
+              <span class="icon-only">＋</span>
+              <span class="icon-only">♡</span>
+              <span class="icon-only">☰</span>
+            </div>
+          </div>
+        </div>
+        <div class="good-box">
+          <div class="mock-phone">
+            <div class="statusbar"><span>9:41</span><span class="signal"></span></div>
+            <div class="mock-screen" style="font-size:11px;">機能が一目で分かる。</div>
+            <div class="tabbar">
+              <div class="active"><span class="ic">⌂</span>ホーム</div>
+              <div><span class="ic">◎</span>探す</div>
+              <div><span class="ic">＋</span>追加</div>
+              <div><span class="ic">♡</span>保存</div>
+              <div><span class="ic">☰</span>メニュー</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="why">人はラベルなしアイコンを正しく解釈できない。学習コストが上がり離脱する。</p>
+      <p class="fix">アイコン＋短いテキストを併記。最低でもツールチップを用意する。</p>
+    </div>
+
+    <div class="card">
+      <h3>1-2. ハンバーガーメニューに主要機能まで詰め込む</h3>
+      <p>「☰」の中にすべて隠してしまうと、利用率が大きく落ちる。</p>
+      <div class="compare">
+        <div class="bad-box">
+          <div class="mock-phone">
+            <div class="statusbar"><span>サービス名</span><span>☰</span></div>
+            <div class="mock-screen" style="min-height:120px;">
+              <div style="font-size:10px;color:#9aa3b0;">主要機能は「☰」をタップしないと見えない</div>
+              <ul class="menu-list" style="margin-top:6px;">
+                <li>ホーム</li>
+                <li>商品を探す</li>
+                <li>カート</li>
+                <li>マイページ</li>
+                <li>お気に入り</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="good-box">
+          <div class="mock-phone">
+            <div class="statusbar"><span>サービス名</span><span>☰</span></div>
+            <div class="mock-screen" style="min-height:120px; font-size:10px; color:#9aa3b0;">よく使う機能は常に見える</div>
+            <div class="tabbar">
+              <div class="active"><span class="ic">⌂</span>ホーム</div>
+              <div><span class="ic">◎</span>探す</div>
+              <div><span class="ic">🛒</span>カート</div>
+              <div><span class="ic">👤</span>マイ</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="why">「見えない機能」は使われない。1タップ追加で利用率が半減することもある。</p>
+      <p class="fix">よく使う2〜5機能はタブバーやヘッダーに露出。それ以外をメニューに格納する。</p>
+    </div>
+
+    <div class="card">
+      <h3>1-3. 階層が深すぎる／現在地が分からない</h3>
+      <div class="compare">
+        <div class="bad-box">
+          <div class="mock-browser">
+            <div class="urlbar">app.example.com</div>
+            <div class="mock-page">
+              <div style="color:#9aa3b0; font-size:11px;">パンくずなし。今どこ？</div>
+              <div style="margin-top:8px; padding:6px; background:#f0f2f5; border-radius:4px; font-size:11px;">＞ 詳細</div>
+              <div style="margin-top:4px;font-size:11px;color:var(--c-bad);">タップ回数: 6回目</div>
+            </div>
+          </div>
+        </div>
+        <div class="good-box">
+          <div class="mock-browser">
+            <div class="urlbar">app.example.com</div>
+            <div class="mock-page">
+              <div style="color:var(--c-muted); font-size:11px;">ホーム ＞ 商品一覧 ＞ 詳細</div>
+              <div style="margin-top:8px; padding:6px; background:#dcefdd; border-radius:4px; font-weight:700; font-size:11px;">商品詳細ページ</div>
+              <div style="margin-top:4px;font-size:11px;color:var(--c-good);">タップ回数: 2回目</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="fix">原則3階層以内。パンくずや見出しで現在地を常に表示する。</p>
+    </div>
+
+    <!-- ============ Chapter 2 ============ -->
+    <h2 id="ch2">2. 入力フォーム</h2>
+
+    <div class="card">
+      <h3>2-1. 必須／任意が分からない</h3>
+      <div class="compare">
+        <div class="bad-box">
+          <div class="mock-browser"><div class="mock-page">
+            <div class="form-row"><label>お名前</label><div class="field placeholder">　</div></div>
+            <div class="form-row"><label>メール</label><div class="field placeholder">　</div></div>
+            <div class="form-row"><label>電話番号</label><div class="field placeholder">　</div></div>
+            <div style="font-size:11px;color:var(--c-bad);">送信後に「必須未入力」と怒られる…</div>
+          </div></div>
+        </div>
+        <div class="good-box">
+          <div class="mock-browser"><div class="mock-page">
+            <div class="form-row"><label>お名前 <span class="req">*必須</span></label><div class="field placeholder">　</div></div>
+            <div class="form-row"><label>メール <span class="req">*必須</span></label><div class="field placeholder">　</div></div>
+            <div class="form-row"><label>電話番号 <span class="opt">（任意）</span></label><div class="field placeholder">　</div></div>
+          </div></div>
+        </div>
+      </div>
+      <p class="fix">必須／任意のうち <strong>少ない方</strong>にラベルを付ける。</p>
+    </div>
+
+    <div class="card">
+      <h3>2-2. プレースホルダーをラベル代わりに使う</h3>
+      <div class="compare">
+        <div class="bad-box">
+          <div class="mock-browser"><div class="mock-page">
+            <div class="form-row"><div class="field placeholder">お名前を入力</div></div>
+            <div class="form-row"><div class="field">山田 太郎</div><div class="form-help" style="color:var(--c-bad);">↑何の項目だっけ？</div></div>
+            <div class="form-row"><div class="field placeholder">メールアドレス</div></div>
+          </div></div>
+        </div>
+        <div class="good-box">
+          <div class="mock-browser"><div class="mock-page">
+            <div class="form-row"><label>お名前</label><div class="field placeholder">例: 山田 太郎</div></div>
+            <div class="form-row"><label>お名前</label><div class="field">山田 太郎</div></div>
+            <div class="form-row"><label>メール</label><div class="field placeholder">例: name@example.com</div></div>
+          </div></div>
+        </div>
+      </div>
+      <p class="fix">ラベルは常に上に表示。プレースホルダーは「例示」専用に。</p>
+    </div>
+
+    <div class="card">
+      <h3>2-3. 入力フォーマットを利用者に強制する</h3>
+      <div class="compare">
+        <div class="bad-box">
+          <div class="mock-browser"><div class="mock-page">
+            <div class="form-row">
+              <label>電話番号</label>
+              <div class="field">09012345678</div>
+              <div class="err">⚠ 「090-1234-5678」の形式で入力してください</div>
+            </div>
+            <div class="form-row">
+              <label>カナ</label>
+              <div class="field">やまだ</div>
+              <div class="err">⚠ 全角カタカナで入力してください</div>
+            </div>
+          </div></div>
+        </div>
+        <div class="good-box">
+          <div class="mock-browser"><div class="mock-page">
+            <div class="form-row">
+              <label>電話番号</label>
+              <div class="field">09012345678</div>
+              <div class="ok">✓ 受け付けました</div>
+              <div class="form-help">ハイフンあり／なし、どちらでもOK</div>
+            </div>
+            <div class="form-row">
+              <label>カナ</label>
+              <div class="field">やまだ</div>
+              <div class="ok">✓ 自動でカタカナに変換します</div>
+            </div>
+          </div></div>
+        </div>
+      </div>
+      <p class="fix">システム都合の整形はバックエンドで行う。ユーザーに押し付けない。</p>
+    </div>
+
+    <div class="card">
+      <h3>2-4. エラーは送信後にまとめて赤字で出す</h3>
+      <div class="compare">
+        <div class="bad-box">
+          <div class="mock-browser"><div class="mock-page">
+            <div style="background:var(--c-bad-soft); border:1px solid #f3c8c1; padding:6px; border-radius:4px; font-size:11px; color:var(--c-bad); margin-bottom:8px;">
+              入力に5件のエラーがあります。修正して再送信してください。
+            </div>
+            <div class="form-row"><label>名前</label><div class="field" style="border-color:var(--c-bad);">　</div></div>
+            <div class="form-row"><label>メール</label><div class="field" style="border-color:var(--c-bad);">abc@</div></div>
+          </div></div>
+        </div>
+        <div class="good-box">
+          <div class="mock-browser"><div class="mock-page">
+            <div class="form-row"><label>名前</label><div class="field">山田 太郎</div><div class="ok">✓ OK</div></div>
+            <div class="form-row"><label>メール</label><div class="field" style="border-color:var(--c-bad);">abc@</div><div class="err">⚠ メールの形式が正しくありません</div></div>
+            <div class="form-help">入力中にその場で1項目ずつ検証</div>
+          </div></div>
+        </div>
+      </div>
+      <p class="fix">入力中・フォーカスアウト時にその場で1項目ずつ検証する。</p>
+    </div>
+
+    <div class="card">
+      <h3>2-5. 送信ボタンの隣に「リセット」</h3>
+      <div class="compare">
+        <div class="bad-box">
+          <div class="mock-browser"><div class="mock-page">
+            <div style="font-size:11px;color:var(--c-muted);">…長いフォームを書き終えた…</div>
+            <div class="btn-row">
+              <span class="btn btn-primary">送信</span>
+              <span class="btn btn-danger">リセット</span>
+            </div>
+            <div style="font-size:11px; color:var(--c-bad); margin-top:6px;">⚠ 押し間違えで全消去事故</div>
+          </div></div>
+        </div>
+        <div class="good-box">
+          <div class="mock-browser"><div class="mock-page">
+            <div style="font-size:11px;color:var(--c-muted);">…長いフォームを書き終えた…</div>
+            <div class="btn-row">
+              <span class="btn btn-primary">送信</span>
+              <span class="btn btn-link">下書き保存</span>
+            </div>
+            <div style="font-size:11px; color:var(--c-good); margin-top:6px;">破壊操作は置かない／必要なら確認＋Undo</div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ Chapter 3 ============ -->
+    <h2 id="ch3">3. ボタン・操作要素</h2>
+
+    <div class="card">
+      <h3>3-1. リンクとボタンの見た目が同じ</h3>
+      <div class="compare">
+        <div class="bad-box">
+          <div class="mock-browser"><div class="mock-page">
+            <div style="font-size:11px;">注文内容を確認のうえ、進んでください。</div>
+            <div class="btn-row">
+              <span class="btn btn-primary">利用規約を見る</span>
+              <span class="btn btn-primary">注文確定</span>
+              <span class="btn btn-primary">キャンセル</span>
+            </div>
+            <div style="font-size:11px; color:var(--c-bad); margin-top:6px;">⚠ どれが「実行」「移動」か分からない</div>
+          </div></div>
+        </div>
+        <div class="good-box">
+          <div class="mock-browser"><div class="mock-page">
+            <div style="font-size:11px;">注文内容を確認のうえ、進んでください。</div>
+            <div class="btn-row">
+              <span class="btn btn-link">利用規約を見る</span>
+              <span class="btn btn-primary">注文確定</span>
+              <span class="btn btn-ghost">キャンセル</span>
+            </div>
+            <div style="font-size:11px; color:var(--c-good); margin-top:6px;">主要動作だけが目立つ</div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>3-2. プライマリボタンが1画面に複数</h3>
+      <div class="compare">
+        <div class="bad-box">
+          <div class="mock-browser"><div class="mock-page">
+            <div class="btn-row">
+              <span class="btn btn-primary">保存</span>
+              <span class="btn btn-primary">共有</span>
+              <span class="btn btn-primary">削除</span>
+              <span class="btn btn-primary">エクスポート</span>
+            </div>
+            <div style="font-size:11px; color:var(--c-bad); margin-top:6px;">⚠ 何を一番してほしいか不明</div>
+          </div></div>
+        </div>
+        <div class="good-box">
+          <div class="mock-browser"><div class="mock-page">
+            <div class="btn-row">
+              <span class="btn btn-primary">保存</span>
+              <span class="btn btn-secondary">共有</span>
+              <span class="btn btn-link">エクスポート</span>
+              <span class="btn btn-ghost" style="color:var(--c-bad);">削除</span>
+            </div>
+            <div style="font-size:11px; color:var(--c-good); margin-top:6px;">主要1つ。残りは重要度に応じて格下げ</div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>3-3. 否定ボタンで罪悪感を煽る（コンファームシェイミング）</h3>
+      <div class="compare">
+        <div class="bad-box">
+          <div class="mock-browser"><div class="mock-page" style="text-align:center; padding:16px;">
+            <div style="font-size:13px;font-weight:700;">🎁 今だけ20%OFFクーポン</div>
+            <div style="font-size:11px;margin:6px 0;">登録すると毎日お得な情報が届きます</div>
+            <div class="btn-row" style="justify-content:center;">
+              <span class="btn btn-primary">クーポンを受け取る</span>
+            </div>
+            <div style="font-size:11px;text-decoration:underline;color:#9aa3b0;margin-top:6px;">いいえ、損をしたいです</div>
+          </div></div>
+        </div>
+        <div class="good-box">
+          <div class="mock-browser"><div class="mock-page" style="text-align:center; padding:16px;">
+            <div style="font-size:13px;font-weight:700;">クーポン配布のお知らせ</div>
+            <div style="font-size:11px;margin:6px 0;">メール登録で20%OFFクーポンを受け取れます</div>
+            <div class="btn-row" style="justify-content:center;">
+              <span class="btn btn-primary">登録する</span>
+              <span class="btn btn-ghost">あとで</span>
+            </div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>3-4. タップ領域が小さすぎる</h3>
+      <div class="compare">
+        <div class="bad-box" style="align-items:center; justify-content:center; min-height:120px;">
+          <div style="text-align:center;">
+            <div style="font-size:11px;color:var(--c-muted);margin-bottom:10px;">何度もタップミス</div>
+            <span class="tap-bad">購入</span>
+          </div>
+        </div>
+        <div class="good-box" style="align-items:center; justify-content:center; min-height:120px;">
+          <div style="text-align:center;">
+            <div style="font-size:11px;color:var(--c-muted);margin-bottom:10px;">指の腹で確実に押せる</div>
+            <span class="tap-good">購入する</span>
+          </div>
+        </div>
+      </div>
+      <p class="fix">タップ領域は最低 44×44px（HIG／Material 推奨）。</p>
+    </div>
+
+    <!-- ============ Chapter 4 ============ -->
+    <h2 id="ch4">4. フィードバック</h2>
+
+    <div class="card">
+      <h3>4-1. ローディング表示なし／二重送信</h3>
+      <div class="compare">
+        <div class="bad-box">
+          <div class="mock-browser"><div class="mock-page" style="text-align:center;">
+            <span class="btn btn-primary">送信</span>
+            <div style="font-size:11px; color:var(--c-bad); margin-top:10px;">何も起きない…もう一度押そう…<br>（二重送信発生）</div>
+          </div></div>
+        </div>
+        <div class="good-box">
+          <div class="mock-browser"><div class="mock-page" style="text-align:center;">
+            <span class="btn btn-primary" style="opacity:0.85;"><span class="spinner"></span>送信中…</span>
+            <div style="font-size:11px; color:var(--c-good); margin-top:10px;">ボタン無効化＋スピナー</div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>4-2. 成功／失敗のフィードバックがない</h3>
+      <div class="compare">
+        <div class="bad-box">
+          <div class="mock-browser"><div class="mock-page" style="text-align:center;">
+            <span class="btn btn-primary">保存</span>
+            <div style="font-size:11px; color:var(--c-bad); margin-top:10px;">…画面に変化なし。本当に保存された？</div>
+          </div></div>
+        </div>
+        <div class="good-box">
+          <div class="mock-browser"><div class="mock-page" style="text-align:center;">
+            <span class="btn btn-primary">保存</span>
+            <div class="toast">✓ 保存しました</div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>4-3. エラーメッセージが「エラーが発生しました」だけ</h3>
+      <div class="compare">
+        <div class="bad-box">
+          <div class="mock-browser"><div class="mock-page">
+            <div class="toast err">⚠ エラーが発生しました</div>
+            <div style="font-size:11px; color:var(--c-bad); margin-top:8px;">何が起きた？どうすればいい？</div>
+          </div></div>
+        </div>
+        <div class="good-box">
+          <div class="mock-browser"><div class="mock-page">
+            <div class="toast err" style="text-align:left;">
+              <strong>⚠ メール送信に失敗しました</strong><br>
+              <span style="font-size:11px;">通信が不安定なようです。</span><br>
+              <span style="font-size:11px;">少し時間をおいて再送信してください。</span>
+            </div>
+            <div class="btn-row" style="margin-top:6px;">
+              <span class="btn btn-secondary">再送信する</span>
+            </div>
+          </div></div>
+        </div>
+      </div>
+      <p class="fix">「何が起きたか／なぜか／次にどうすればよいか」を3点書く。</p>
+    </div>
+
+    <!-- ============ Chapter 5 ============ -->
+    <h2 id="ch5">5. 文字・コントラスト</h2>
+
+    <div class="card">
+      <h3>5-1. 文字が小さく、行間が詰まりすぎ</h3>
+      <div class="compare">
+        <div class="bad-box">
+          <div class="mock-browser"><div class="mock-page text-tiny">
+            本サービスのご利用にあたっては利用規約をよくお読みください。本サービスは18歳以上のお客様を対象としています。お問い合わせは平日10時から17時まで受け付けております。
+          </div></div>
+        </div>
+        <div class="good-box">
+          <div class="mock-browser"><div class="mock-page text-ok">
+            本サービスのご利用にあたっては利用規約をよくお読みください。
+            18歳以上のお客様を対象としています。
+          </div></div>
+        </div>
+      </div>
+      <p class="fix">本文は16px以上、行間1.5〜1.7倍を基本に。</p>
+    </div>
+
+    <div class="card">
+      <h3>5-2. グレー文字でコントラスト不足</h3>
+      <div class="compare">
+        <div class="bad-box">
+          <div class="mock-browser"><div class="mock-page">
+            <div class="text-tiny-low">パスワードは8文字以上、英数字記号を含めてください。</div>
+            <div class="text-tiny-low" style="margin-top:4px;">登録するとメルマガが届きます。</div>
+          </div></div>
+        </div>
+        <div class="good-box">
+          <div class="mock-browser"><div class="mock-page">
+            <div style="font-size:12px; color:var(--c-text);">パスワードは8文字以上、英数字記号を含めてください。</div>
+            <div style="font-size:11px; color:var(--c-muted); margin-top:4px;">登録するとメルマガが届きます。</div>
+          </div></div>
+        </div>
+      </div>
+      <p class="fix">本文は WCAG コントラスト比 4.5:1 以上。大文字でも 3:1 以上。</p>
+    </div>
+
+    <div class="card">
+      <h3>5-3. 本文を全部「中央揃え」にする</h3>
+      <div class="compare">
+        <div class="bad-box">
+          <div class="mock-browser"><div class="mock-page text-center-bad">
+            本サービスは、お客様の業務効率化を<br>
+            目的としたクラウドサービスです。<br>
+            国内外の多くの企業様にご利用いただいて<br>
+            おります。詳しくはお問い合わせください。
+          </div></div>
+        </div>
+        <div class="good-box">
+          <div class="mock-browser"><div class="mock-page text-left-good">
+            本サービスは、お客様の業務効率化を目的としたクラウドサービスです。
+            国内外の多くの企業様にご利用いただいております。
+          </div></div>
+        </div>
+      </div>
+      <p class="fix">中央揃えは見出し・1〜2行の短文のみ。本文は左揃え。</p>
+    </div>
+
+    <!-- ============ Chapter 6 ============ -->
+    <h2 id="ch6">6. モーダル・ポップアップ</h2>
+
+    <div class="card">
+      <h3>6-1. 初訪問の直後に大型ポップアップ</h3>
+      <div class="compare">
+        <div class="bad-box">
+          <div class="modal-bg">
+            <div class="modal-window" style="text-align:center;">
+              <div class="modal-close-hidden">×</div>
+              <div style="font-weight:700;">🎉 メルマガ登録で500円OFF</div>
+              <div class="form-row" style="margin-top:8px;"><div class="field placeholder">メールアドレス</div></div>
+              <span class="btn btn-primary">登録</span>
+            </div>
+            <div style="font-size:11px;color:var(--c-bad);margin-top:6px;text-align:center;">サービスを見る前から押し付け</div>
+          </div>
+        </div>
+        <div class="good-box">
+          <div class="modal-bg">
+            <div class="modal-window">
+              <div class="modal-close-good">×</div>
+              <div style="font-size:11px;">記事をお気に召しましたか？</div>
+              <div style="font-size:11px;margin-top:4px;">メルマガで続報をお届けします。</div>
+              <div class="btn-row"><span class="btn btn-primary">登録</span><span class="btn btn-ghost">あとで</span></div>
+            </div>
+            <div style="font-size:11px;color:var(--c-good);margin-top:6px;text-align:center;">1コンテンツ閲覧後・離脱動作時に提示</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>6-2. 閉じるボタンが小さすぎる／見えない</h3>
+      <div class="compare">
+        <div class="bad-box">
+          <div class="modal-bg">
+            <div class="modal-window">
+              <div class="modal-close-hidden">×</div>
+              <div style="font-size:11px;">アンケートにご協力ください</div>
+              <div class="btn-row"><span class="btn btn-primary">回答する</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="good-box">
+          <div class="modal-bg">
+            <div class="modal-window">
+              <div class="modal-close-good">×</div>
+              <div style="font-size:11px;">アンケートにご協力ください</div>
+              <div class="btn-row"><span class="btn btn-primary">回答する</span><span class="btn btn-ghost">閉じる</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="fix">「×」は十分な視認性とタップ領域。Escキー・背景タップでも閉じられるように。</p>
+    </div>
+
+    <!-- ============ Chapter 7 ============ -->
+    <h2 id="ch7">7. ダークパターン</h2>
+
+    <div class="card">
+      <h3>7-1. Roach Motel（登録は簡単、退会は困難）</h3>
+      <div class="compare">
+        <div class="bad-box">
+          <div class="mock-browser"><div class="mock-page">
+            <div style="font-size:11px;">退会をご希望のお客様は…</div>
+            <ul style="font-size:11px; padding-left:16px;">
+              <li>平日10〜17時に電話受付のみ</li>
+              <li>本人確認書類をFAX送付</li>
+              <li>本社窓口に来訪</li>
+            </ul>
+          </div></div>
+        </div>
+        <div class="good-box">
+          <div class="mock-browser"><div class="mock-page">
+            <div style="font-size:11px;">退会手続き</div>
+            <div class="form-row" style="margin-top:8px;"><div class="field">パスワードを入力</div></div>
+            <div class="btn-row"><span class="btn btn-danger">退会する</span></div>
+            <div style="font-size:11px; color:var(--c-good); margin-top:4px;">登録と同じ手数で完了</div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>7-2. デフォルトでオン（オプトアウト型同意）</h3>
+      <div class="compare">
+        <div class="bad-box">
+          <div class="mock-browser"><div class="mock-page">
+            <div class="check-row"><span class="check-box checked"></span>メルマガを受信する</div>
+            <div class="check-row"><span class="check-box checked"></span>広告ID共有に同意する</div>
+            <div class="check-row"><span class="check-box checked"></span>提携企業からの案内に同意</div>
+            <div style="font-size:11px;color:var(--c-bad);margin-top:4px;">気づかず全部オンになっている</div>
+          </div></div>
+        </div>
+        <div class="good-box">
+          <div class="mock-browser"><div class="mock-page">
+            <div class="check-row"><span class="check-box"></span>メルマガを受信する</div>
+            <div class="check-row"><span class="check-box"></span>広告ID共有に同意する</div>
+            <div class="check-row"><span class="check-box"></span>提携企業からの案内に同意</div>
+            <div style="font-size:11px;color:var(--c-good);margin-top:4px;">ユーザーが明示的に選ぶ（オプトイン）</div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>7-3. 隠れたコスト（最終画面で送料・手数料が現れる）</h3>
+      <div class="compare">
+        <div class="bad-box">
+          <div class="mock-browser"><div class="mock-page">
+            <div class="cart-line"><span>商品代金</span><span>3,000円</span></div>
+            <div class="cart-line"><span>送料</span><span>800円</span></div>
+            <div class="cart-line"><span>手数料</span><span>500円</span></div>
+            <div class="cart-line"><span>包装料</span><span>300円</span></div>
+            <div class="cart-total"><span>合計</span><span>4,600円</span></div>
+            <div style="font-size:11px;color:var(--c-bad);margin-top:4px;">最終画面で500円→4,600円に</div>
+          </div></div>
+        </div>
+        <div class="good-box">
+          <div class="mock-browser"><div class="mock-page">
+            <div style="font-size:13px; padding-bottom:6px;">
+              <strong>3,000円</strong>
+              <span style="font-size:11px;color:var(--c-muted);">（送料・手数料込：約4,600円）</span>
+            </div>
+            <div style="font-size:11px;color:var(--c-good);">商品一覧の段階で総額目安を提示</div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ Chapter 8 ============ -->
+    <h2 id="ch8">8. マルチデバイス対応</h2>
+
+    <div class="card">
+      <h3>8-1. PCレイアウトをスマホに縮小しただけ</h3>
+      <div class="compare">
+        <div class="bad-box">
+          <div class="mock-phone">
+            <div class="statusbar"><span>9:41</span><span class="signal"></span></div>
+            <div class="mock-screen">
+              <div class="pc-frame">
+                <div class="grid">
+                  <div>メ<br>ニ<br>ュ<br>ー</div>
+                  <div>本文がとても小さい</div>
+                  <div>サ<br>イ<br>ド</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="good-box">
+          <div class="mock-phone">
+            <div class="statusbar"><span>9:41</span><span class="signal"></span></div>
+            <div class="mock-screen">
+              <div style="font-size:12px;font-weight:700;">タイトル</div>
+              <div style="font-size:11px;margin-top:4px;">本文が読みやすいサイズで、上から順に並ぶ。</div>
+              <div style="font-size:11px;margin-top:4px;color:var(--c-muted);">サイドの情報は下に。</div>
+            </div>
+            <div class="tabbar">
+              <div class="active"><span class="ic">⌂</span>ホーム</div>
+              <div><span class="ic">◎</span>探す</div>
+              <div><span class="ic">👤</span>マイ</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="fix">モバイルファースト：構造から見直す。表はカード型へ。</p>
+    </div>
+
+    <div class="card">
+      <h3>8-2. ホバー前提の機能（タッチで到達できない）</h3>
+      <div class="compare">
+        <div class="bad-box">
+          <div class="mock-phone">
+            <div class="mock-screen">
+              <div style="font-size:11px;">商品名 <span style="color:#9aa3b0;">ⓘ</span></div>
+              <div style="font-size:11px; color:var(--c-bad); margin-top:4px;">ⓘにマウスを乗せると説明が出る…<br>スマホでは表示不可</div>
+            </div>
+          </div>
+        </div>
+        <div class="good-box">
+          <div class="mock-phone">
+            <div class="mock-screen">
+              <div style="font-size:11px;">商品名 <span class="badge" style="background:var(--c-accent-soft);color:var(--c-accent);">ⓘ 詳細</span></div>
+              <div style="font-size:11px; color:var(--c-good); margin-top:4px;">タップで説明モーダルが開く</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ Chapter 9 ============ -->
+    <h2 id="ch9">9. アクセシビリティ</h2>
+
+    <div class="card">
+      <h3>9-1. 色だけで意味を伝える</h3>
+      <div class="compare">
+        <div class="bad-box">
+          <div class="mock-browser"><div class="mock-page">
+            <div class="a11y-row"><span class="dot red"></span>　サーバーA</div>
+            <div class="a11y-row"><span class="dot green"></span>　サーバーB</div>
+            <div class="a11y-row"><span class="dot red"></span>　サーバーC</div>
+            <div style="font-size:11px;color:var(--c-bad);margin-top:4px;">色覚特性のある人・印刷時は判別不能</div>
+          </div></div>
+        </div>
+        <div class="good-box">
+          <div class="mock-browser"><div class="mock-page">
+            <div class="a11y-row"><span class="badge err">⚠ 異常</span>　サーバーA</div>
+            <div class="a11y-row"><span class="badge ok">✓ 正常</span>　サーバーB</div>
+            <div class="a11y-row"><span class="badge err">⚠ 異常</span>　サーバーC</div>
+            <div style="font-size:11px;color:var(--c-good);margin-top:4px;">色＋アイコン＋テキストで重複表現</div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>9-2. キーボードでフォーカスリングを消す</h3>
+      <div class="compare">
+        <div class="bad-box">
+          <div class="mock-browser"><div class="mock-page" style="text-align:center;">
+            <span class="btn btn-primary">送信</span>
+            <div style="font-size:11px; color:var(--c-bad); margin-top:8px;">Tabキーで選んでも「どこにいるか」見えない</div>
+            <div style="font-size:11px; color:var(--c-muted);"><code>outline: none;</code></div>
+          </div></div>
+        </div>
+        <div class="good-box">
+          <div class="mock-browser"><div class="mock-page" style="text-align:center;">
+            <span class="btn btn-primary" style="outline:3px solid #ffb300; outline-offset:2px;">送信</span>
+            <div style="font-size:11px; color:var(--c-good); margin-top:8px;">フォーカスが明確に見える</div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ Chapter 10 ============ -->
+    <h2 id="ch10">10. 一貫性・命名</h2>
+
+    <div class="card">
+      <h3>10-1. 同じ機能なのにラベルがバラバラ</h3>
+      <div class="compare">
+        <div class="bad-box">
+          <div class="mock-browser"><div class="mock-page">
+            <div style="font-size:11px;">画面A: <span class="btn btn-primary">保存</span></div>
+            <div style="font-size:11px;margin-top:6px;">画面B: <span class="btn btn-primary">登録</span></div>
+            <div style="font-size:11px;margin-top:6px;">画面C: <span class="btn btn-primary">確定</span></div>
+            <div style="font-size:11px;margin-top:6px;">画面D: <span class="btn btn-primary">OK</span></div>
+          </div></div>
+        </div>
+        <div class="good-box">
+          <div class="mock-browser"><div class="mock-page">
+            <div style="font-size:11px;">画面A: <span class="btn btn-primary">保存</span></div>
+            <div style="font-size:11px;margin-top:6px;">画面B: <span class="btn btn-primary">保存</span></div>
+            <div style="font-size:11px;margin-top:6px;">画面C: <span class="btn btn-primary">保存</span></div>
+            <div style="font-size:11px;margin-top:6px;">画面D: <span class="btn btn-primary">保存</span></div>
+            <div style="font-size:11px;color:var(--c-good);margin-top:4px;">UIライティングガイドで1機能=1ラベル</div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>10-2. OS慣習を破る（iOSなのに右下に戻る等）</h3>
+      <div class="compare">
+        <div class="bad-box">
+          <div class="mock-phone">
+            <div class="statusbar"><span>9:41</span><span class="signal"></span></div>
+            <div class="mock-screen" style="position:relative;min-height:90px;">
+              <div style="font-size:11px;color:#9aa3b0;">画面内容</div>
+              <div style="position:absolute; bottom:6px; right:6px; background:var(--c-accent-soft); color:var(--c-accent); padding:4px 10px; border-radius:14px; font-size:10px;">← 戻る</div>
+              <div style="font-size:11px;color:var(--c-bad);margin-top:30px;">iOSなのに「戻る」が右下</div>
+            </div>
+          </div>
+        </div>
+        <div class="good-box">
+          <div class="mock-phone">
+            <div class="statusbar"><span>9:41</span><span class="signal"></span></div>
+            <div style="display:flex;align-items:center;padding:6px 10px;border-bottom:1px solid #eee;font-size:12px;">
+              <span style="color:var(--c-accent);">‹ 戻る</span>
+              <span style="margin:0 auto;font-weight:600;">タイトル</span>
+            </div>
+            <div class="mock-screen" style="font-size:11px;color:var(--c-muted);">画面内容</div>
+          </div>
+        </div>
+      </div>
+      <p class="fix">OS標準パターン（HIG／Material）に沿う。独自性は中身で出す。</p>
+    </div>
+
+    <!-- ============ Books ============ -->
+    <h2 id="books">11. 参考書籍3冊の補足</h2>
+    <p>各書籍が一般に扱うテーマと、本資料のアンチパターンとの対応関係を整理しました。書籍本文の直接引用は含みません。</p>
+
+    <section class="book-section">
+      <h3><span class="book-num">1</span>『UIデザイン41の法則』</h3>
+      <p><strong>位置づけ：</strong>UI/UX設計に関わる「人間の認知特性に基づく法則」のカタログ。</p>
+      <p><strong>本資料との関係：</strong>各アンチパターンが「なぜ問題か」を、心理学・認知科学の法則で裏付ける役目。</p>
+      <table>
+        <thead><tr><th>代表的な法則</th><th>意味</th><th>本資料の関連項目</th></tr></thead>
+        <tbody>
+          <tr><td>Fittsの法則</td><td>対象が大きく近いほど素早く押せる</td><td>3-4 タップ領域 / 6-2 閉じるボタン</td></tr>
+          <tr><td>Hickの法則</td><td>選択肢が多いほど判断時間が増える</td><td>1-2 ハンバーガー詰め / 3-2 主要ボタン乱立</td></tr>
+          <tr><td>Millerの法則</td><td>短期記憶は7±2程度</td><td>1-3 深い階層 / 2-4 まとめてエラー</td></tr>
+          <tr><td>Teslerの法則</td><td>複雑さは消えず誰かが引き受ける</td><td>2-3 フォーマット強制</td></tr>
+          <tr><td>Jakobの法則</td><td>ユーザーは他サイトの慣れに沿う</td><td>10-2 OS慣習</td></tr>
+          <tr><td>Dohertyの閾値</td><td>応答400ms以内で生産性向上</td><td>4-1 ローディング表示</td></tr>
+          <tr><td>美的ユーザビリティ効果</td><td>美しいUIは使いやすく感じる</td><td>5章全般</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="book-section">
+      <h3><span class="book-num">2</span>『UIデザインのアイデア帳』</h3>
+      <p><strong>位置づけ：</strong>「悪い例 → 改善例」をビジュアルに比較する実務向けパターン集。本資料の章構成と最も相性がよい一冊。</p>
+      <ul>
+        <li>フォーム改善のビフォーアフター　→　2章全般</li>
+        <li>ボタンの主従と配置　→　3-1、3-2</li>
+        <li>リスト／カードの情報密度　→　5-2、10章</li>
+        <li>空状態（エンプティステート）の見せ方　→　4-2、4-3</li>
+        <li>余白とグルーピング　→　5章全般</li>
+        <li>モーダル・ポップアップの出すタイミング　→　6章全般</li>
+      </ul>
+    </section>
+
+    <section class="book-section">
+      <h3><span class="book-num">3</span>『UIデザインの教科書』</h3>
+      <p><strong>位置づけ：</strong>マルチデバイス時代のUI設計を体系的にまとめた教科書。</p>
+      <ul>
+        <li>情報アーキテクチャ（IA）／階層設計　→　1-3、10章</li>
+        <li>マルチデバイス（PC／スマホ／タブレット）　→　8章全般</li>
+        <li>ナビゲーションの種類と使い分け　→　1章全般</li>
+        <li>視線誘導とグリッド・余白　→　5章、10章</li>
+        <li>インタラクション（遷移・アニメーション）　→　4章、6章</li>
+        <li>OS／プラットフォーム慣習との整合　→　10-2</li>
+      </ul>
+    </section>
+
+    <!-- ============ Checklist ============ -->
+    <h2 id="checklist">12. レビュー用チェックリスト</h2>
+    <p style="font-size:var(--fs-sm); color:var(--c-muted);">確認できた項目にチェックを入れてください。状態はブラウザに保存されます。</p>
+    <table class="checklist-table">
+      <thead><tr><th style="width:48px;">✓</th><th style="width:25%;">観点</th><th>確認内容</th></tr></thead>
+      <tbody>
+        <tr><td><input type="checkbox" class="list-check" data-key="cl-nav"></td><td>ナビゲーション</td><td>主要機能が3タップ以内で到達できるか／現在地が分かるか</td></tr>
+        <tr><td><input type="checkbox" class="list-check" data-key="cl-form"></td><td>入力フォーム</td><td>必須・任意が明示／プレースホルダーがラベル代わりでない／フォーマット強制なし</td></tr>
+        <tr><td><input type="checkbox" class="list-check" data-key="cl-btn"></td><td>ボタン</td><td>主要アクションは1画面1つ／タップ領域44px以上／煽る文言なし</td></tr>
+        <tr><td><input type="checkbox" class="list-check" data-key="cl-fb"></td><td>フィードバック</td><td>処理中／成功／失敗を明示／エラーは「原因＋次の行動」</td></tr>
+        <tr><td><input type="checkbox" class="list-check" data-key="cl-text"></td><td>文字</td><td>本文16px以上／コントラスト4.5:1以上／本文は左揃え</td></tr>
+        <tr><td><input type="checkbox" class="list-check" data-key="cl-modal"></td><td>モーダル</td><td>初訪問即ポップアップなし／閉じる手段が3種類（×・Esc・背景タップ）</td></tr>
+        <tr><td><input type="checkbox" class="list-check" data-key="cl-dark"></td><td>ダークパターン</td><td>退会導線が登録と同じ手数／同意はオプトイン／総額は早期表示</td></tr>
+        <tr><td><input type="checkbox" class="list-check" data-key="cl-multi"></td><td>マルチデバイス</td><td>モバイル幅で破綻しない／ホバー前提なし／文字サイズ拡大に追随</td></tr>
+        <tr><td><input type="checkbox" class="list-check" data-key="cl-a11y"></td><td>アクセシビリティ</td><td>色のみで意味を伝えない／alt属性／キーボード操作可能／フォーカスリング表示</td></tr>
+        <tr><td><input type="checkbox" class="list-check" data-key="cl-cons"></td><td>一貫性</td><td>同じ機能のラベル統一／アイコン1意味1対応／OS慣習に沿う</td></tr>
+      </tbody>
+    </table>
+
+    <footer>
+      <p>本資料は、Nielsen Norman Group、Material Design、Apple HIG などで広く議論されているUIアンチパターンと、
+      『UIデザイン41の法則』『UIデザインのアイデア帳』『UIデザインの教科書』が一般に扱うテーマを参考に構成したまとめです。</p>
+    </footer>
+  </main>
+</div>
+
+<!-- Home button (floating) -->
+<button class="home-btn" type="button" aria-label="ホームへ戻る"
+        onclick="window.scrollTo({top:0,behavior:'smooth'})">
+  <span class="home-icon">🏠</span><span>ホーム</span>
+</button>
+
+<script>
+  // ===== localStorage keys =====
+  const STORAGE_KEY = 'ui-antipattern-checks-v1';
+
+  function loadChecks() {
+    try {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    } catch (e) { return {}; }
+  }
+  function saveChecks(state) {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+    catch (e) { /* ignore quota errors */ }
+  }
+
+  // ===== Setup card checkboxes =====
+  (function setupCardChecks() {
+    const state = loadChecks();
+    const cards = document.querySelectorAll('.card');
+
+    cards.forEach((card, i) => {
+      const h3 = card.querySelector('h3');
+      if (!h3) return;
+      // Derive stable key from heading text (e.g. "1-1" → "ap-1-1")
+      const match = h3.textContent.match(/^(\d+-\d+)\./);
+      const key = match ? `ap-${match[1]}` : `ap-i${i}`;
+      card.dataset.checkKey = key;
+
+      // Create checkbox UI
+      const wrap = document.createElement('div');
+      wrap.className = 'card-check-wrap';
+      const cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.className = 'card-check';
+      cb.setAttribute('aria-label', '確認済みとしてマーク');
+      cb.title = '確認済みにする';
+      const lbl = document.createElement('span');
+      lbl.className = 'card-check-label';
+      lbl.textContent = '確認';
+      wrap.appendChild(cb);
+      wrap.appendChild(lbl);
+      card.appendChild(wrap);
+
+      // Restore state
+      if (state[key]) {
+        cb.checked = true;
+        card.classList.add('checked');
+      }
+
+      cb.addEventListener('change', () => {
+        const s = loadChecks();
+        if (cb.checked) {
+          s[key] = true;
+          card.classList.add('checked');
+        } else {
+          delete s[key];
+          card.classList.remove('checked');
+        }
+        saveChecks(s);
+        updateProgress();
+      });
+    });
+  })();
+
+  // ===== Setup checklist table =====
+  (function setupListChecks() {
+    const state = loadChecks();
+    document.querySelectorAll('.list-check').forEach(cb => {
+      const key = cb.dataset.key;
+      const row = cb.closest('tr');
+      if (state[key]) {
+        cb.checked = true;
+        row.classList.add('checked');
+      }
+      cb.addEventListener('change', () => {
+        const s = loadChecks();
+        if (cb.checked) {
+          s[key] = true;
+          row.classList.add('checked');
+        } else {
+          delete s[key];
+          row.classList.remove('checked');
+        }
+        saveChecks(s);
+        updateProgress();
+      });
+    });
+  })();
+
+  // ===== Progress counter =====
+  function updateProgress() {
+    const allChecks = document.querySelectorAll('.card-check, .list-check');
+    const total = allChecks.length;
+    const done = Array.from(allChecks).filter(c => c.checked).length;
+    document.getElementById('progress-num').textContent = done;
+    document.getElementById('progress-total').textContent = total;
+    const pct = total === 0 ? 0 : (done / total) * 100;
+    document.getElementById('progress-fill').style.width = pct + '%';
+  }
+  updateProgress();
+
+  // ===== Reset button =====
+  document.getElementById('progress-reset').addEventListener('click', () => {
+    if (!confirm('チェックをすべて解除してよろしいですか？')) return;
+    localStorage.removeItem(STORAGE_KEY);
+    document.querySelectorAll('.card-check, .list-check').forEach(c => {
+      c.checked = false;
+    });
+    document.querySelectorAll('.card.checked').forEach(c => c.classList.remove('checked'));
+    document.querySelectorAll('tr.checked').forEach(r => r.classList.remove('checked'));
+    updateProgress();
+  });
+
+  // ===== Scroll spy =====
+  (function() {
+    const links = document.querySelectorAll('aside.sidebar a[href^="#"]:not(.sidebar-title)');
+    const sections = Array.from(links)
+      .map(a => document.getElementById(a.getAttribute('href').slice(1)))
+      .filter(Boolean);
+    const linkMap = new Map();
+    links.forEach(a => linkMap.set(a.getAttribute('href').slice(1), a));
+
+    const setActive = (id) => {
+      links.forEach(a => a.classList.remove('active'));
+      const link = linkMap.get(id);
+      if (link) link.classList.add('active');
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      const visible = entries.filter(e => e.isIntersecting);
+      if (visible.length > 0) {
+        visible.sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+        setActive(visible[0].target.id);
+      }
+    }, { rootMargin: '-20% 0px -70% 0px', threshold: 0 });
+
+    sections.forEach(s => observer.observe(s));
+  })();
+
+  // ===== Home button visibility =====
+  (function() {
+    const btn = document.querySelector('.home-btn');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 300) btn.classList.add('show');
+      else btn.classList.remove('show');
+    });
+  })();
+</script>
+</body>
+</html>

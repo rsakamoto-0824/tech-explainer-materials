@@ -1,0 +1,17 @@
+ASML Investor Relations - Quarterly results
+URL: https://investor.asml.com/quarterly-results
+閲覧日: 2026-10-10
+取得方法: スクリプト（urllib）からは接続がタイムアウトしたため、アプリ内のブラウザで閲覧し、本文（main要素）をそのまま写した。
+
+---
+Investors
+Quarterly results
+ASML Holding NV will announce its Q3 2026 financial results on Wednesday, October 14, 2026.
+
+The press release will be distributed via GlobeNewswire at 07:00 CET.
+
+The press release, a video, consolidated financial statements and presentation of the latest quarterly financial figures will be posted on our website on October 14 shortly after 07:00 CET.
+
+Investor call at 15:00 CET
+
+At 15:00 CET, ASML senior management will host a 60-minute investor call. Investors, analysts and journalists can listen to the live webcast using the video player on this page.

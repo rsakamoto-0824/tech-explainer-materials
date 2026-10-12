@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>論文執筆のアンチパターンとチェックリスト</title>
+<style>
+  /* =========================================
+     Design Tokens — Academic Blue
+     ========================================= */
+  :root {
+    --fs-xs:   12px;
+    --fs-sm:   14px;
+    --fs-base: 16px;
+    --fs-md:   18px;
+    --fs-lg:   22px;
+    --fs-xl:   30px;
+    --fs-2xl:  38px;
+
+    --sp-1: 4px;
+    --sp-2: 8px;
+    --sp-3: 12px;
+    --sp-4: 16px;
+    --sp-6: 24px;
+    --sp-8: 32px;
+    --sp-12: 48px;
+    --sp-16: 64px;
+
+    --r-sm: 6px;
+    --r-md: 10px;
+    --r-lg: 14px;
+
+    --c-bg:          #eff4fb;
+    --c-card:        #ffffff;
+    --c-text:        #0f1b2d;
+    --c-muted:       #4b5b73;
+    --c-border:      #cfdcee;
+    --c-accent:      #1d4ed8;
+    --c-accent-dark: #1e3a8a;
+    --c-accent-soft: #e5edfb;
+    --c-accent-mid:  #3b82f6;
+
+    --c-bad:         #b42318;
+    --c-bad-soft:    #fdecea;
+    --c-good:        #1e6f3c;
+    --c-good-soft:   #e6f5ec;
+    --c-warn:        #8a5a00;
+    --c-warn-soft:   #fff5d6;
+
+    --c-sidebar-bg:    #0b2545;
+    --c-sidebar-bg-2:  #13315c;
+    --c-sidebar-text:  #c6d4ec;
+    --c-sidebar-muted: #7e93b6;
+    --c-sidebar-hover: #1f4a8a;
+    --c-sidebar-on:    #ffffff;
+
+    --sidebar-w: 280px;
+
+    --shadow-sm: 0 1px 2px rgba(11,37,69,0.06);
+    --shadow-md: 0 4px 16px rgba(11,37,69,0.10);
+    --shadow-lg: 0 8px 24px rgba(11,37,69,0.18);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: "Hiragino Sans", "Yu Gothic", "Meiryo", system-ui, -apple-system, sans-serif;
+    font-size: var(--fs-base);
+    line-height: 1.8;
+    color: var(--c-text);
+    background: var(--c-bg);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  :focus-visible {
+    outline: 3px solid #ffb300;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* =========================================
+     Layout
+     ========================================= */
+  .layout {
+    display: grid;
+    grid-template-columns: var(--sidebar-w) 1fr;
+    min-height: 100vh;
+  }
+
+  /* =========================================
+     Sidebar (TOC on the left)
+     ========================================= */
+  aside.sidebar {
+    background: linear-gradient(180deg, var(--c-sidebar-bg) 0%, var(--c-sidebar-bg-2) 100%);
+    color: var(--c-sidebar-text);
+    padding: var(--sp-8) var(--sp-4);
+    position: sticky;
+    top: 0;
+    align-self: start;
+    height: 100vh;
+    overflow-y: auto;
+    border-right: 1px solid #0a1e3a;
+  }
+  .sidebar-title {
+    font-size: var(--fs-md);
+    color: var(--c-sidebar-on);
+    margin: 0 0 var(--sp-2);
+    padding: 0 var(--sp-2);
+    line-height: 1.4;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+  .sidebar-subtitle {
+    font-size: var(--fs-xs);
+    color: var(--c-sidebar-muted);
+    margin: 0 0 var(--sp-6);
+    padding: 0 var(--sp-2);
+    letter-spacing: 0.08em;
+  }
+  .sidebar h2 {
+    font-size: var(--fs-xs);
+    letter-spacing: 0.14em;
+    color: var(--c-sidebar-muted);
+    margin: var(--sp-6) 0 var(--sp-3);
+    text-transform: uppercase;
+    background: none;
+    border: none;
+    padding: 0 var(--sp-2);
+    font-weight: 700;
+  }
+  .sidebar ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    counter-reset: toc;
+  }
+  .sidebar li {
+    counter-increment: toc;
+    margin: 0;
+  }
+  .sidebar a {
+    display: block;
+    color: var(--c-sidebar-text);
+    text-decoration: none;
+    padding: var(--sp-2) var(--sp-3) var(--sp-2) var(--sp-8);
+    font-size: var(--fs-sm);
+    border-radius: var(--r-sm);
+    position: relative;
+    line-height: 1.4;
+    transition: background .15s, color .15s, border-left-color .15s;
+    border-left: 3px solid transparent;
+    margin-left: -3px;
+  }
+  .sidebar a::before {
+    content: counter(toc, decimal-leading-zero);
+    position: absolute;
+    left: var(--sp-3);
+    top: var(--sp-2);
+    color: var(--c-sidebar-muted);
+    font-size: 11px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  .sidebar a:hover {
+    background: var(--c-sidebar-hover);
+    color: var(--c-sidebar-on);
+  }
+  .sidebar a:hover::before {
+    color: #c6d4ec;
+  }
+  .sidebar a.active {
+    background: var(--c-sidebar-hover);
+    color: var(--c-sidebar-on);
+    border-left-color: var(--c-accent-mid);
+  }
+
+  /* =========================================
+     Main
+     ========================================= */
+  main.content {
+    padding: var(--sp-12) var(--sp-12);
+    max-width: 980px;
+  }
+
+  header.page-header {
+    margin-bottom: var(--sp-12);
+    padding-bottom: var(--sp-6);
+    border-bottom: 2px solid var(--c-accent);
+  }
+  header.page-header .eyebrow {
+    font-size: var(--fs-xs);
+    letter-spacing: 0.16em;
+    color: var(--c-accent);
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: var(--sp-2);
+  }
+  header.page-header h1 {
+    font-size: var(--fs-2xl);
+    margin: 0 0 var(--sp-3);
+    line-height: 1.3;
+    color: var(--c-accent-dark);
+    letter-spacing: 0.01em;
+  }
+  header.page-header p.lead {
+    margin: 0;
+    color: var(--c-muted);
+    font-size: var(--fs-md);
+    line-height: 1.7;
+  }
+
+  section.chapter {
+    margin: 0 0 var(--sp-12);
+    scroll-margin-top: var(--sp-6);
+  }
+  section.chapter h2 {
+    font-size: var(--fs-xl);
+    margin: 0 0 var(--sp-6);
+    padding: var(--sp-3) 0 var(--sp-3) var(--sp-4);
+    border-left: 6px solid var(--c-accent);
+    color: var(--c-accent-dark);
+    background: linear-gradient(90deg, var(--c-accent-soft) 0%, transparent 70%);
+    border-radius: 0 var(--r-sm) var(--r-sm) 0;
+    line-height: 1.4;
+  }
+  section.chapter > p.intro {
+    color: var(--c-muted);
+    margin: 0 0 var(--sp-6);
+  }
+
+  .ap {
+    background: var(--c-card);
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-md);
+    padding: var(--sp-6);
+    margin: 0 0 var(--sp-6);
+    box-shadow: var(--shadow-sm);
+  }
+  .ap h3 {
+    font-size: var(--fs-lg);
+    margin: 0 0 var(--sp-4);
+    color: var(--c-accent-dark);
+    line-height: 1.4;
+    display: flex;
+    align-items: baseline;
+    gap: var(--sp-3);
+  }
+  .ap h3 .num {
+    display: inline-block;
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    color: var(--c-accent);
+    background: var(--c-accent-soft);
+    padding: 2px 8px;
+    border-radius: var(--r-sm);
+    letter-spacing: 0.06em;
+    flex-shrink: 0;
+  }
+
+  .ap .label {
+    display: inline-block;
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.04em;
+    margin-bottom: var(--sp-2);
+  }
+  .label-bad  { color: var(--c-bad);  background: var(--c-bad-soft); }
+  .label-good { color: var(--c-good); background: var(--c-good-soft); }
+
+  .ap .block {
+    margin: var(--sp-4) 0 0;
+    padding: var(--sp-4);
+    border-radius: var(--r-sm);
+    border: 1px solid transparent;
+  }
+  .block-bad {
+    background: var(--c-bad-soft);
+    border-color: #f3cdc7;
+  }
+  .block-good {
+    background: var(--c-good-soft);
+    border-color: #c2e3cd;
+  }
+  .block h4 {
+    margin: 0 0 var(--sp-2);
+    font-size: var(--fs-sm);
+    color: var(--c-text);
+    letter-spacing: 0.02em;
+  }
+  .block ul, .block ol {
+    margin: 0;
+    padding-left: 1.4em;
+  }
+  .block li + li {
+    margin-top: var(--sp-1);
+  }
+
+  .why {
+    margin: var(--sp-4) 0 0;
+    padding: var(--sp-3) var(--sp-4);
+    background: var(--c-accent-soft);
+    border-left: 4px solid var(--c-accent);
+    border-radius: var(--r-sm);
+    font-size: var(--fs-sm);
+    color: var(--c-accent-dark);
+  }
+  .why strong { color: var(--c-accent-dark); }
+
+  /* Checklist section */
+  .check-group {
+    background: var(--c-card);
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-md);
+    padding: var(--sp-6);
+    margin: 0 0 var(--sp-6);
+    box-shadow: var(--shadow-sm);
+  }
+  .check-group h3 {
+    font-size: var(--fs-md);
+    margin: 0 0 var(--sp-4);
+    color: var(--c-accent-dark);
+    padding-bottom: var(--sp-2);
+    border-bottom: 1px solid var(--c-border);
+  }
+  .check-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .check-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--sp-3);
+    padding: var(--sp-2) 0;
+    border-bottom: 1px dashed var(--c-border);
+  }
+  .check-list li:last-child { border-bottom: none; }
+  .check-list input[type="checkbox"] {
+    margin-top: 6px;
+    width: 18px;
+    height: 18px;
+    accent-color: var(--c-accent);
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+  .check-list label {
+    cursor: pointer;
+    line-height: 1.6;
+    flex: 1;
+  }
+  .check-list input:checked + label {
+    color: var(--c-muted);
+    text-decoration: line-through;
+  }
+
+  /* Back to top button */
+  .back-to-top {
+    position: fixed;
+    right: var(--sp-6);
+    bottom: var(--sp-6);
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--c-accent);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    box-shadow: var(--shadow-lg);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .25s, visibility .25s, transform .15s, background .15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    font-size: 22px;
+    font-weight: 700;
+  }
+  .back-to-top.visible {
+    opacity: 1;
+    visibility: visible;
+  }
+  .back-to-top:hover {
+    background: var(--c-accent-dark);
+    transform: translateY(-2px);
+  }
+  .back-to-top:active {
+    transform: translateY(0);
+  }
+  .back-to-top span.label {
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    margin-top: -2px;
+  }
+
+  footer.page-footer {
+    margin-top: var(--sp-16);
+    padding-top: var(--sp-6);
+    border-top: 1px solid var(--c-border);
+    color: var(--c-muted);
+    font-size: var(--fs-sm);
+  }
+
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    aside.sidebar { position: static; height: auto; }
+    main.content { padding: var(--sp-8) var(--sp-6); }
+    header.page-header h1 { font-size: var(--fs-xl); }
+    .back-to-top { right: var(--sp-4); bottom: var(--sp-4); width: 46px; height: 46px; }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <aside class="sidebar" aria-label="目次">
+    <div class="sidebar-title">論文執筆<br>アンチパターン集</div>
+    <div class="sidebar-subtitle">ACADEMIC WRITING · ANTI-PATTERNS</div>
+
+    <h2>目次</h2>
+    <nav>
+      <ol>
+        <li><a href="#ch01">テーマと問題設定</a></li>
+        <li><a href="#ch02">先行研究レビュー</a></li>
+        <li><a href="#ch03">構成と論理展開</a></li>
+        <li><a href="#ch04">文章表現</a></li>
+        <li><a href="#ch05">図表の使い方</a></li>
+        <li><a href="#ch06">引用と参考文献</a></li>
+        <li><a href="#ch07">データと統計</a></li>
+        <li><a href="#ch08">結論と考察</a></li>
+        <li><a href="#ch09">アブストラクト</a></li>
+        <li><a href="#ch10">タイトルとキーワード</a></li>
+        <li><a href="#ch11">査読対応</a></li>
+        <li><a href="#ch12">研究倫理</a></li>
+        <li><a href="#ch13">投稿前チェックリスト</a></li>
+      </ol>
+    </nav>
+  </aside>
+
+  <main class="content">
+
+    <header class="page-header">
+      <div class="eyebrow">Anti-Patterns &amp; Checklist</div>
+      <h1>論文執筆の<br>アンチパターンとチェックリスト</h1>
+      <p class="lead">
+        学術論文（ジャーナル投稿、学位論文、紀要論文など）で「掲載されない」「査読が通らない」典型パターンと、その改善策をまとめたガイドです。
+        最後に投稿前チェックリストを用意しています。
+      </p>
+    </header>
+
+    <!-- ========== 1 ========== -->
+    <section class="chapter" id="ch01">
+      <h2>1. テーマと問題設定</h2>
+      <p class="intro">論文の運命は問題設定の段階でほぼ決まります。</p>
+
+      <div class="ap">
+        <h3><span class="num">AP-1.1</span>研究目的が広すぎる</h3>
+        <div class="block block-bad">
+          <h4><span class="label label-bad">悪い例</span></h4>
+          <ul>
+            <li>「AI を活用した教育改善について研究する」</li>
+            <li>「環境問題に貢献する」など、対象も方法も曖昧</li>
+            <li>1本の論文で扱える範囲を大幅に超えている</li>
+          </ul>
+        </div>
+        <div class="block block-good">
+          <h4><span class="label label-good">良い例</span></h4>
+          <ul>
+            <li>「高校1年生の英文法学習における生成AIフィードバックの学習効果を、3か月の介入実験で検証する」</li>
+            <li>対象・手法・期間・指標を限定する</li>
+            <li>1本のRQ(Research Question)に絞る</li>
+          </ul>
+        </div>
+        <p class="why"><strong>なぜ：</strong>査読者は「何を主張する論文か」を最初の1段落で判断する。広い目的は深掘りができず、結局なにも示せない論文になりやすい。</p>
+      </div>
+
+      <div class="ap">
+        <h3><span class="num">AP-1.2</span>「やってみた」止まりで貢献が無い</h3>
+        <div class="block block-bad">
+          <h4><span class="label label-bad">悪い例</span></h4>
+          <ul>
+            <li>「○○を試してみた、結果はこうなった」だけ</li>
+            <li>新規性・有用性・学術的位置づけが書かれていない</li>
+          </ul>
+        </div>
+        <div class="block block-good">
+          <h4><span class="label label-good">良い例</span></h4>
+          <ul>
+            <li>「先行研究では未検証だった○○の条件下で検証し、既存手法より△△% 改善することを示した」</li>
+            <li>Contribution(貢献)を箇条書きで明示する</li>
+          </ul>
+        </div>
+        <p class="why"><strong>なぜ：</strong>論文は「人類の知見を1ミリ進める」ことが価値。実装記録や試行記録は技術報告であって論文ではない。</p>
+      </div>
+    </section>
+
+    <!-- ========== 2 ========== -->
+    <section class="chapter" id="ch02">
+      <h2>2. 先行研究レビュー</h2>
+      <p class="intro">「Related Work」は単なる文献リストではなく、自分の位置を示す座標系です。</p>
+
+      <div class="ap">
+        <h3><span class="num">AP-2.1</span>先行研究を羅列するだけ</h3>
+        <div class="block block-bad">
+          <h4><span class="label label-bad">悪い例</span></h4>
+          <ul>
+            <li>「Aは○○を提案した。Bは△△を提案した。Cは□□を…」と並べるだけ</li>
+            <li>本研究との関係が書かれていない</li>
+          </ul>
+        </div>
+        <div class="block block-good">
+          <h4><span class="label label-good">良い例</span></h4>
+          <ul>
+            <li>研究を観点ごとにグルーピングする(例: 手法系/応用系)</li>
+            <li>各グループの「限界」と「本研究がどう乗り越えるか」を明示</li>
+          </ul>
+        </div>
+        <p class="why"><strong>なぜ：</strong>先行研究レビューの目的は「ギャップを示す」こと。羅列はそれ自体に価値がなく、自分の論文の必要性が説明できない。</p>
+      </div>
+
+      <div class="ap">
+        <h3><span class="num">AP-2.2</span>古い文献ばかり、または1〜2本だけ</h3>
+        <div class="block block-bad">
+          <h4><span class="label label-bad">悪い例</span></h4>
+          <ul>
+            <li>引用が10年以上前の文献ばかり</li>
+            <li>同一著者の文献が大半を占める</li>
+            <li>査読者の論文が引かれていない</li>
+          </ul>
+        </div>
+        <div class="block block-good">
+          <h4><span class="label label-good">良い例</span></h4>
+          <ul>
+            <li>近5年の代表的な文献を必ず含める</li>
+            <li>分野の主要グループの研究をバランス良く引く</li>
+            <li>関連サーベイ論文に当たって網羅性を確認</li>
+          </ul>
+        </div>
+        <p class="why"><strong>なぜ：</strong>「最新動向を把握していない」と判断された時点で査読者の信頼が下がる。引用は研究分野への敬意でもある。</p>
+      </div>
+    </section>
+
+    <!-- ========== 3 ========== -->
+    <section class="chapter" id="ch03">
+      <h2>3. 構成と論理展開</h2>
+      <p class="intro">論文は「IMRaD」を骨格に、各セクションが役割を全うすることが求められます。</p>
+
+      <div class="ap">
+        <h3><span class="num">AP-3.1</span>章の役割が混在している</h3>
+        <div class="block block-bad">
+          <h4><span class="label label-bad">悪い例</span></h4>
+          <ul>
+            <li>「結果」の章に考察が混じる</li>
+            <li>「方法」の章に結果や図が出てくる</li>
+            <li>「はじめに」に結論が書かれていない</li>
+          </ul>
+        </div>
+        <div class="block block-good">
+          <h4><span class="label label-good">良い例</span></h4>
+          <ul>
+            <li>Introduction → Methods → Results → Discussion の役割分担を厳守</li>
+            <li>各章の冒頭で「ここで何を述べるか」を1文で予告</li>
+          </ul>
+        </div>
+        <p class="why"><strong>なぜ：</strong>IMRaDは読み手の認知コストを下げるための業界共通フォーマット。崩すと「論文を読み慣れていない」と判断される。</p>
+      </div>
+
+      <div class="ap">
+        <h3><span class="num">AP-3.2</span>主張の根拠が示されない</h3>
+        <div class="block block-bad">
+          <h4><span class="label label-bad">悪い例</span></h4>
+          <ul>
+            <li>「○○は重要である」と書くが、出典も根拠もない</li>
+            <li>「一般的に△△と言われている」と曖昧表現</li>
+          </ul>
+        </div>
+        <div class="block block-good">
+          <h4><span class="label label-good">良い例</span></h4>
+          <ul>
+            <li>主張の直後に[文献番号]で根拠を示す</li>
+            <li>データに基づく場合は数値と出典を併記</li>
+          </ul>
+        </div>
+        <p class="why"><strong>なぜ：</strong>論文は「個人の意見」を述べる場ではない。根拠のない主張は査読で必ず指摘される。</p>
+      </div>
+    </section>
+
+    <!-- ========== 4 ========== -->
+    <section class="chapter" id="ch04">
+      <h2>4. 文章表現</h2>
+      <p class="intro">論文の文章には独特の作法があります。エッセイや報告書とは別物です。</p>
+
+      <div class="ap">
+        <h3><span class="num">AP-4.1</span>一文が長すぎる</h3>
+        <div class="block block-bad">
+          <h4><span class="label label-bad">悪い例</span></h4>
+          <ul>
+            <li>1文が3行以上にわたる</li>
+            <li>「〜し、〜であり、〜のため、〜であるが、〜となる。」と接続が続く</li>
+          </ul>
+        </div>
+        <div class="block block-good">
+          <h4><span class="label label-good">良い例</span></h4>
+          <ul>
+            <li>1文 = 1主張。原則 <strong>60字以内</strong>を目安に</li>
+            <li>長い文は接続詞で区切って2〜3文に分割</li>
+          </ul>
+        </div>
+        <p class="why"><strong>なぜ：</strong>長文は主語と述語の対応が崩れやすく、論理関係が見えにくい。査読者は短い時間で大量に読むため、読みやすさは加点になる。</p>
+      </div>
+
+      <div class="ap">
+        <h3><span class="num">AP-4.2</span>曖昧な指示語と主観表現</h3>
+        <div class="block block-bad">
+          <h4><span class="label label-bad">悪い例</span></h4>
+          <ul>
+            <li>「これ」「それ」が何を指すか不明</li>
+            <li>「非常に」「かなり」「およそ」など主観・概数の連発</li>
+            <li>「〜と思われる」「〜だろう」を結論で使う</li>
+          </ul>
+        </div>
+        <div class="block block-good">
+          <h4><span class="label label-good">良い例</span></h4>
+          <ul>
+            <li>指示語は名詞で言い換える(例: 「これ」→「この手法」)</li>
+            <li>定量的に書く(「約30%向上」「p &lt; 0.01」など)</li>
+            <li>結論では断定形を使う(根拠が伴う範囲で)</li>
+          </ul>
+        </div>
+        <p class="why"><strong>なぜ：</strong>論文の価値は再現性。曖昧表現は他者が再現も検証もできない。</p>
+      </div>
+
+      <div class="ap">
+        <h3><span class="num">AP-4.3</span>口語表現や和製英語</h3>
+        <div class="block block-bad">
+          <h4><span class="label label-bad">悪い例</span></h4>
+          <ul>
+            <li>「だいたい」「やっぱり」「いろんな」</li>
+            <li>「コミット」「フィードバック」を文脈無視で多用</li>
+          </ul>
+        </div>
+        <div class="block block-good">
+          <h4><span class="label label-good">良い例</span></h4>
+          <ul>
+            <li>「概ね」「やはり」「様々な」など書き言葉に置換</li>
+            <li>カタカナ語は初出時に和訳や定義を併記</li>
+          </ul>
+        </div>
+        <p class="why"><strong>なぜ：</strong>口語は読み手によって解釈幅が大きく、定義の精密さを要する学術コミュニケーションに合わない。</p>
+      </div>
+    </section>
+
+    <!-- ========== 5 ========== -->
+    <section class="chapter" id="ch05">
+      <h2>5. 図表の使い方</h2>
+      <p class="intro">「図表だけ見れば論文が分かる」のが理想形です。</p>
+
+      <div class="ap">
+        <h3><span class="num">AP-5.1</span>キャプションが説明不足</h3>
+        <div class="block block-bad">
+          <h4><span class="label label-bad">悪い例</span></h4>
+          <ul>
+            <li>「図1. 結果」とだけ書く</li>
+            <li>軸ラベル・単位がない</li>
+          </ul>
+        </div>
+        <div class="block block-good">
+          <h4><span class="label label-good">良い例</span></h4>
+          <ul>
+            <li>「図1. 条件A〜Cにおける反応時間(ms)の平均値とSD(N=30)」のように要素を網羅</li>
+            <li>図単体で文脈が分かるレベルまで書く</li>
+          </ul>
+        </div>
+        <p class="why"><strong>なぜ：</strong>査読者・読者の多くは図表から先に読む。本文を読まなくても内容が伝わる図表は、引用される確率が上がる。</p>
+      </div>
+
+      <div class="ap">
+        <h3><span class="num">AP-5.2</span>本文と図表の役割が重複</h3>
+        <div class="block block-bad">
+          <h4><span class="label label-bad">悪い例</span></h4>
+          <ul>
+            <li>図に書かれていることを本文でそのまま反復</li>
+            <li>表とグラフが同じデータを別表現で並ぶ</li>
+          </ul>
+        </div>
+        <div class="block block-good">
+          <h4><span class="label label-good">良い例</span></h4>
+          <ul>
+            <li>本文では図のうち「読み取るべきポイント」だけを述べる</li>
+            <li>同じデータは「表 or グラフ」のいずれか一方</li>
+          </ul>
+        </div>
+        <p class="why"><strong>なぜ：</strong>反復は紙面の無駄であり、読み手にも「重要な点が分からない」というストレスを与える。</p>
+      </div>
+    </section>
+
+    <!-- ========== 6 ========== -->
+    <section class="chapter" id="ch06">
+      <h2>6. 引用と参考文献</h2>
+      <p class="intro">引用の作法が崩れると、研究倫理の疑義を招きます。</p>
+
+      <div class="ap">
+        <h3><span class="num">AP-6.1</span>引用形式が統一されていない</h3>
+        <div class="block block-bad">
+          <h4><span class="label label-bad">悪い例</span></h4>
+          <ul>
+            <li>APA・IEEE・ハーバード形式が混在</li>
+            <li>著者名・年・ページ番号の欠落</li>
+          </ul>
+        </div>
+        <div class="block block-good">
+          <h4><span class="label label-good">良い例</span></h4>
+          <ul>
+            <li>投稿先の指定スタイルを最初に確認し統一</li>
+            <li>BibTeX や Zotero などの参考文献管理ツールを使う</li>
+          </ul>
+        </div>
+        <p class="why"><strong>なぜ：</strong>参考文献の形式は投稿規程の遵守そのもの。デスクリジェクトの一番多い理由がここ。</p>
+      </div>
+
+      <div class="ap">
+        <h3><span class="num">AP-6.2</span>二次引用・孫引き</h3>
+        <div class="block block-bad">
+          <h4><span class="label label-bad">悪い例</span></h4>
+          <ul>
+            <li>原典を読まず、別の論文に引用された内容を引く</li>
+            <li>引用元の解釈ミスをそのまま再引用</li>
+          </ul>
+        </div>
+        <div class="block block-good">
+          <h4><span class="label label-good">良い例</span></h4>
+          <ul>
+            <li>必ず原典に当たる</li>
+            <li>原典が入手不能な場合は「○○(原典) [△△(2024)に引用]」と明示</li>
+          </ul>
+        </div>
+        <p class="why"><strong>なぜ：</strong>二次引用は誤りの再生産源になる。論文の信頼性は引用の正確さに支えられる。</p>
+      </div>
+    </section>
+
+    <!-- ========== 7 ========== -->
+    <section class="chapter" id="ch07">
+      <h2>7. データと統計</h2>
+      <p class="intro">数値表現は論文の根幹。雑な扱いは即リジェクト対象です。</p>
+
+      <div class="ap">
+        <h3><span class="num">AP-7.1</span>有意差だけを報告</h3>
+        <div class="block block-bad">
+          <h4><span class="label label-bad">悪い例</span></h4>
+          <ul>
+            <li>「有意差あり(p &lt; 0.05)」とだけ書く</li>
+            <li>効果量や信頼区間が無い</li>
+          </ul>
+        </div>
+        <div class="block block-good">
+          <h4><span class="label label-good">良い例</span></h4>
+          <ul>
+            <li>p値 + 効果量(Cohen's d など) + 95% 信頼区間 を併記</li>
+            <li>サンプルサイズと検定の前提条件を明記</li>
+          </ul>
+        </div>
+        <p class="why"><strong>なぜ：</strong>p値だけでは「実用的に意味のある差か」が判断できない。近年は効果量の併記が国際標準。</p>
+      </div>
+
+      <div class="ap">
+        <h3><span class="num">AP-7.2</span>有意になるまで検定を繰り返す(p-hacking)</h3>
+        <div class="block block-bad">
+          <h4><span class="label label-bad">悪い例</span></h4>
+          <ul>
+            <li>外れ値を恣意的に除外して有意差を作る</li>
+            <li>サブグループ解析を後付けで増やす</li>
+          </ul>
+        </div>
+        <div class="block block-good">
+          <h4><span class="label label-good">良い例</span></h4>
+          <ul>
+            <li>解析計画を事前登録(プレレジ)する</li>
+            <li>外れ値除外の基準を事前に決め、論文に明記</li>
+          </ul>
+        </div>
+        <p class="why"><strong>なぜ：</strong>p-hackingは「再現性の危機」の主因。発覚すれば撤回処分も。データ整形は研究倫理の問題。</p>
+      </div>
+    </section>
+
+    <!-- ========== 8 ========== -->
+    <section class="chapter" id="ch08">
+      <h2>8. 結論と考察</h2>
+      <p class="intro">「結果」「考察」「結論」は別物です。</p>
+
+      <div class="ap">
+        <h3><span class="num">AP-8.1</span>結果を超えた一般化</h3>
+        <div class="block block-bad">
+          <h4><span class="label label-bad">悪い例</span></h4>
+          <ul>
+            <li>50人の大学生のデータから「日本人全体に当てはまる」と結論</li>
+            <li>1条件の実験から「あらゆる場面で有効」と主張</li>
+          </ul>
+        </div>
+        <div class="block block-good">
+          <h4><span class="label label-good">良い例</span></h4>
+          <ul>
+            <li>結論は「実験条件の範囲内」に限定して述べる</li>
+            <li>限界(Limitations)セクションで適用範囲を明示</li>
+          </ul>
+        </div>
+        <p class="why"><strong>なぜ：</strong>過剰一般化は科学的厳密性の欠如と判断される。査読で最も指摘されるポイントの1つ。</p>
+      </div>
+
+      <div class="ap">
+        <h3><span class="num">AP-8.2</span>限界(Limitations)が書かれていない</h3>
+        <div class="block block-bad">
+          <h4><span class="label label-bad">悪い例</span></h4>
+          <ul>
+            <li>研究の限界に一切触れない</li>
+            <li>限界を書くと評価が下がると誤解</li>
+          </ul>
+        </div>
+        <div class="block block-good">
+          <h4><span class="label label-good">良い例</span></h4>
+          <ul>
+            <li>サンプル・期間・手法の限界を3〜5項目挙げる</li>
+            <li>「今後の課題」として発展可能性も示す</li>
+          </ul>
+        </div>
+        <p class="why"><strong>なぜ：</strong>限界の明示は「研究を客観視できている」シグナル。むしろ評価が上がる。先に書かないと査読者が指摘してしまう。</p>
+      </div>
+    </section>
+
+    <!-- ========== 9 ========== -->
+    <section class="chapter" id="ch09">
+      <h2>9. アブストラクト</h2>
+      <p class="intro">論文の中で最も読まれる部分が、最も雑になりがちです。</p>
+
+      <div class="ap">
+        <h3><span class="num">AP-9.1</span>結論が書かれていないアブスト</h3>
+        <div class="block block-bad">
+          <h4><span class="label label-bad">悪い例</span></h4>
+          <ul>
+            <li>「○○について検討した」で終わる</li>
+            <li>結果の数値や方向性が無い</li>
+          </ul>
+        </div>
+        <div class="block block-good">
+          <h4><span class="label label-good">良い例</span></h4>
+          <ul>
+            <li>「背景・目的・方法・結果・結論」を1段落で必ず網羅</li>
+            <li>最重要数値(改善率、p値など)を1つは入れる</li>
+          </ul>
+        </div>
+        <p class="why"><strong>なぜ：</strong>検索エンジン経由で読者が最初に見るのはアブスト。ここで「読む価値あり」と判断されなければ本文は読まれない。</p>
+      </div>
+    </section>
+
+    <!-- ========== 10 ========== -->
+    <section class="chapter" id="ch10">
+      <h2>10. タイトルとキーワード</h2>
+      <p class="intro">検索性は被引用数に直結します。</p>
+
+      <div class="ap">
+        <h3><span class="num">AP-10.1</span>抽象的なタイトル</h3>
+        <div class="block block-bad">
+          <h4><span class="label label-bad">悪い例</span></h4>
+          <ul>
+            <li>「新しい手法の提案」「効果的な学習法について」</li>
+            <li>何を扱った論文か検索結果から判別不可</li>
+          </ul>
+        </div>
+        <div class="block block-good">
+          <h4><span class="label label-good">良い例</span></h4>
+          <ul>
+            <li>対象 + 手法 + 主要結果を含める</li>
+            <li>「生成AIフィードバックが高校生の英文法学習に与える効果: ランダム化比較試験」</li>
+          </ul>
+        </div>
+        <p class="why"><strong>なぜ：</strong>タイトルとキーワードは検索エンジン経由の流入を決める。読まれなければ引用もされない。</p>
+      </div>
+    </section>
+
+    <!-- ========== 11 ========== -->
+    <section class="chapter" id="ch11">
+      <h2>11. 査読対応</h2>
+      <p class="intro">査読は「敵」ではなく「最強の共著者」です。</p>
+
+      <div class="ap">
+        <h3><span class="num">AP-11.1</span>査読コメントへの反論ばかり</h3>
+        <div class="block block-bad">
+          <h4><span class="label label-bad">悪い例</span></h4>
+          <ul>
+            <li>「ご指摘は当たらない」「すでに本文に記載済み」を多用</li>
+            <li>感情的な反論を返す</li>
+          </ul>
+        </div>
+        <div class="block block-good">
+          <h4><span class="label label-good">良い例</span></h4>
+          <ul>
+            <li>「ご指摘ありがとうございます」から始める</li>
+            <li>査読コメント → 対応方針 → 修正箇所(p.○ L.△) の形式で1件ずつ返す</li>
+            <li>反論する場合も根拠と文献で示す</li>
+          </ul>
+        </div>
+        <p class="why"><strong>なぜ：</strong>査読者は分野の専門家。指摘には大抵理由がある。建設的に対応すれば論文の質が上がる。</p>
+      </div>
+
+      <div class="ap">
+        <h3><span class="num">AP-11.2</span>修正箇所が分かりにくい</h3>
+        <div class="block block-bad">
+          <h4><span class="label label-bad">悪い例</span></h4>
+          <ul>
+            <li>「修正しました」とだけ書く</li>
+            <li>修正前後の対比が無い</li>
+          </ul>
+        </div>
+        <div class="block block-good">
+          <h4><span class="label label-good">良い例</span></h4>
+          <ul>
+            <li>修正後の文章を引用する(変更箇所を太字や色で強調)</li>
+            <li>該当ページ・行番号を明記</li>
+            <li>レスポンスレターを別ファイルで丁寧に作成</li>
+          </ul>
+        </div>
+        <p class="why"><strong>なぜ：</strong>査読者は限られた時間で再査読する。修正箇所を探す手間を取らせない配慮が評価につながる。</p>
+      </div>
+    </section>
+
+    <!-- ========== 12 ========== -->
+    <section class="chapter" id="ch12">
+      <h2>12. 研究倫理</h2>
+      <p class="intro">違反は論文の撤回と研究者キャリアの終わりに直結します。</p>
+
+      <div class="ap">
+        <h3><span class="num">AP-12.1</span>無自覚な剽窃(プラギアリズム)</h3>
+        <div class="block block-bad">
+          <h4><span class="label label-bad">悪い例</span></h4>
+          <ul>
+            <li>他者の文章をコピー&amp;ペーストして表現だけ少し変える</li>
+            <li>自分の過去論文を再利用しても引用しない(自己剽窃)</li>
+          </ul>
+        </div>
+        <div class="block block-good">
+          <h4><span class="label label-good">良い例</span></h4>
+          <ul>
+            <li>必ず引用と出典明記</li>
+            <li>iThenticate などの剽窃検出ツールで投稿前チェック</li>
+            <li>自分の過去論文も「[著者(2023)]を参照」と明示</li>
+          </ul>
+        </div>
+        <p class="why"><strong>なぜ：</strong>剽窃は研究不正の最も多い類型。検出された時点で論文は撤回・所属機関に通知される。</p>
+      </div>
+
+      <div class="ap">
+        <h3><span class="num">AP-12.2</span>利益相反・倫理審査の未記載</h3>
+        <div class="block block-bad">
+          <h4><span class="label label-bad">悪い例</span></h4>
+          <ul>
+            <li>企業との資金提供関係を記載しない</li>
+            <li>人を対象とする研究で倫理審査の記載が無い</li>
+          </ul>
+        </div>
+        <div class="block block-good">
+          <h4><span class="label label-good">良い例</span></h4>
+          <ul>
+            <li>Conflict of Interest セクションを必ず設ける</li>
+            <li>「○○大学倫理委員会の承認(承認番号△△)を得た」と明記</li>
+            <li>インフォームドコンセントの取得方法も記述</li>
+          </ul>
+        </div>
+        <p class="why"><strong>なぜ：</strong>近年は学術誌の必須要件。記載なしでデスクリジェクトになるケースが急増している。</p>
+      </div>
+    </section>
+
+    <!-- ========== 13 ========== -->
+    <section class="chapter" id="ch13">
+      <h2>13. 投稿前チェックリスト</h2>
+      <p class="intro">投稿ボタンを押す前に、以下の項目をひとつずつ確認しましょう。チェックボックスはクリックで状態を保存できます。</p>
+
+      <div class="check-group">
+        <h3>研究設計</h3>
+        <ul class="check-list">
+          <li><input type="checkbox" id="c-1-1"><label for="c-1-1">RQ(Research Question)が1〜2個に絞られている</label></li>
+          <li><input type="checkbox" id="c-1-2"><label for="c-1-2">新規性・貢献を箇条書きで明示している</label></li>
+          <li><input type="checkbox" id="c-1-3"><label for="c-1-3">先行研究のギャップを明示している</label></li>
+          <li><input type="checkbox" id="c-1-4"><label for="c-1-4">直近5年の代表的文献を引用している</label></li>
+        </ul>
+      </div>
+
+      <div class="check-group">
+        <h3>構成・論理</h3>
+        <ul class="check-list">
+          <li><input type="checkbox" id="c-2-1"><label for="c-2-1">IMRaD構造を守っている</label></li>
+          <li><input type="checkbox" id="c-2-2"><label for="c-2-2">各章の冒頭で「何を述べるか」を予告している</label></li>
+          <li><input type="checkbox" id="c-2-3"><label for="c-2-3">すべての主張に根拠(出典・データ)がある</label></li>
+          <li><input type="checkbox" id="c-2-4"><label for="c-2-4">結果と考察が混在していない</label></li>
+        </ul>
+      </div>
+
+      <div class="check-group">
+        <h3>文章表現</h3>
+        <ul class="check-list">
+          <li><input type="checkbox" id="c-3-1"><label for="c-3-1">1文 60字以内を目安に短く書けている</label></li>
+          <li><input type="checkbox" id="c-3-2"><label for="c-3-2">指示語(これ・それ)を名詞に置き換えた</label></li>
+          <li><input type="checkbox" id="c-3-3"><label for="c-3-3">主観表現(非常に・かなり)を定量表現に直した</label></li>
+          <li><input type="checkbox" id="c-3-4"><label for="c-3-4">口語・和製英語を排除した</label></li>
+          <li><input type="checkbox" id="c-3-5"><label for="c-3-5">誤字・脱字を音読チェックした</label></li>
+        </ul>
+      </div>
+
+      <div class="check-group">
+        <h3>図表</h3>
+        <ul class="check-list">
+          <li><input type="checkbox" id="c-4-1"><label for="c-4-1">すべての図表にキャプション・単位・N数がある</label></li>
+          <li><input type="checkbox" id="c-4-2"><label for="c-4-2">同じデータを表とグラフで二重掲載していない</label></li>
+          <li><input type="checkbox" id="c-4-3"><label for="c-4-3">図表だけで主旨が伝わるレベルになっている</label></li>
+          <li><input type="checkbox" id="c-4-4"><label for="c-4-4">本文中に図表番号への参照(図1参照など)がある</label></li>
+        </ul>
+      </div>
+
+      <div class="check-group">
+        <h3>データ・統計</h3>
+        <ul class="check-list">
+          <li><input type="checkbox" id="c-5-1"><label for="c-5-1">p値だけでなく効果量・信頼区間を併記</label></li>
+          <li><input type="checkbox" id="c-5-2"><label for="c-5-2">サンプルサイズと検定の前提を明記</label></li>
+          <li><input type="checkbox" id="c-5-3"><label for="c-5-3">外れ値の処理基準を事前に決め記載</label></li>
+          <li><input type="checkbox" id="c-5-4"><label for="c-5-4">データ・解析コードの公開可能性を検討</label></li>
+        </ul>
+      </div>
+
+      <div class="check-group">
+        <h3>引用・参考文献</h3>
+        <ul class="check-list">
+          <li><input type="checkbox" id="c-6-1"><label for="c-6-1">投稿先指定の引用スタイルに統一</label></li>
+          <li><input type="checkbox" id="c-6-2"><label for="c-6-2">本文の引用と参考文献リストが一致</label></li>
+          <li><input type="checkbox" id="c-6-3"><label for="c-6-3">原典に当たって二次引用を避けた</label></li>
+          <li><input type="checkbox" id="c-6-4"><label for="c-6-4">DOI・URLが正しくリンクする</label></li>
+        </ul>
+      </div>
+
+      <div class="check-group">
+        <h3>結論・限界</h3>
+        <ul class="check-list">
+          <li><input type="checkbox" id="c-7-1"><label for="c-7-1">結論が実験条件の範囲内に留まっている</label></li>
+          <li><input type="checkbox" id="c-7-2"><label for="c-7-2">Limitationsセクションに3項目以上の限界を明記</label></li>
+          <li><input type="checkbox" id="c-7-3"><label for="c-7-3">今後の課題が示されている</label></li>
+        </ul>
+      </div>
+
+      <div class="check-group">
+        <h3>アブスト・タイトル</h3>
+        <ul class="check-list">
+          <li><input type="checkbox" id="c-8-1"><label for="c-8-1">アブストに「背景→目的→方法→結果→結論」が揃う</label></li>
+          <li><input type="checkbox" id="c-8-2"><label for="c-8-2">アブストに主要な数値が1つは入っている</label></li>
+          <li><input type="checkbox" id="c-8-3"><label for="c-8-3">タイトルに対象+手法+主要結果が含まれる</label></li>
+          <li><input type="checkbox" id="c-8-4"><label for="c-8-4">キーワードが検索を意識して選定されている</label></li>
+        </ul>
+      </div>
+
+      <div class="check-group">
+        <h3>研究倫理・投稿規定</h3>
+        <ul class="check-list">
+          <li><input type="checkbox" id="c-9-1"><label for="c-9-1">剽窃検出ツール(iThenticate等)を通した</label></li>
+          <li><input type="checkbox" id="c-9-2"><label for="c-9-2">倫理審査の承認番号を記載</label></li>
+          <li><input type="checkbox" id="c-9-3"><label for="c-9-3">利益相反(COI)を開示</label></li>
+          <li><input type="checkbox" id="c-9-4"><label for="c-9-4">著者貢献(CRediT)を明記</label></li>
+          <li><input type="checkbox" id="c-9-5"><label for="c-9-5">投稿先の投稿規程(字数・形式)を満たす</label></li>
+          <li><input type="checkbox" id="c-9-6"><label for="c-9-6">共著者全員の最終承認を得た</label></li>
+        </ul>
+      </div>
+    </section>
+
+    <footer class="page-footer">
+      <p>本ガイドは学術論文(国内誌・国際誌)向けの実務メモです。投稿先の分野・規程に応じて適宜調整してください。</p>
+    </footer>
+
+  </main>
+</div>
+
+<button class="back-to-top" id="backToTop" aria-label="ページ先頭に戻る" title="ページ先頭に戻る">
+  <span aria-hidden="true">↑</span>
+</button>
+
+<script>
+  // Highlight the current section in the sidebar TOC as the user scrolls.
+  const links = document.querySelectorAll('.sidebar a[href^="#"]');
+  const sections = Array.from(links).map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  const linkBySection = new Map();
+  links.forEach((a, i) => linkBySection.set(sections[i], a));
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const link = linkBySection.get(entry.target);
+      if (!link) return;
+      if (entry.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-40% 0px -55% 0px', threshold: 0 });
+
+  sections.forEach(s => observer.observe(s));
+
+  // Back-to-top button: show after scrolling 300px, scroll to top on click.
+  const backToTop = document.getElementById('backToTop');
+  const SCROLL_THRESHOLD_PX = 300;
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > SCROLL_THRESHOLD_PX) {
+      backToTop.classList.add('visible');
+    } else {
+      backToTop.classList.remove('visible');
+    }
+  });
+  backToTop.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // Persist checkbox state to localStorage so progress survives page reload.
+  const STORAGE_KEY = 'paper-checklist-state-v1';
+  const checkboxes = document.querySelectorAll('.check-list input[type="checkbox"]');
+  const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+  checkboxes.forEach(cb => {
+    if (saved[cb.id]) cb.checked = true;
+    cb.addEventListener('change', () => {
+      const state = {};
+      checkboxes.forEach(c => { if (c.checked) state[c.id] = true; });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    });
+  });
+</script>
+
+</body>
+</html>

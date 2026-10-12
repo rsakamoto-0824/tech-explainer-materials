@@ -1,0 +1,408 @@
+{
+  "checked_on": "2026-09-27",
+  "sec_reason": "米SECのEDGARは、スクリプトからの取得に連絡先メールアドレス入りのUser-Agentを求めるため、ファイルの保存を見送った。本文はアプリ内ブラウザで閲覧し、数値を確認した",
+  "sony_ir_reason": "sony.com がスクリプトからのアクセスを拒否し（Access Denied）、アプリ内ブラウザでも安全上の制限で開けなかった",
+  "references": [
+    {
+      "key": "sony_fy2025_presentation", "inDeck": true, "itemType": "report", "affiliation": "ソニー",
+      "publisher": "ソニーグループ", "title": "FY2025 Consolidated Financial Results（決算説明資料）", "dateLabel": "2026-05-08", "date": "2026-05-08",
+      "zoteroTitle": "FY2025 Consolidated Financial Results (earnings presentation, Form 6-K)",
+      "url": "https://www.sec.gov/Archives/edgar/data/313838/000110465926057456/tm2613222d2_6k.htm",
+      "files": [], "status": "not_saved", "reasonKey": "sec_reason",
+      "note": "2025年度のI&SS分野の売上高2兆1,515億円・営業利益3,573億円と要因、一時費用（イスラエル子会社の持分売却損199億円・減損165億円）、2026年度見通し"
+    },
+    {
+      "key": "sony_fy2025_summary", "inDeck": true, "itemType": "report", "affiliation": "ソニー",
+      "publisher": "ソニーグループ", "title": "Consolidated Financial Summary for the Fiscal Year Ended March 31, 2026", "dateLabel": "2026-05-08", "date": "2026-05-08",
+      "url": "https://www.sec.gov/Archives/edgar/data/313838/000110465926057451/tm2613222d1_6k.htm",
+      "files": [], "status": "not_saved", "reasonKey": "sec_reason",
+      "note": "セグメント別の売上高（セグメント間取引を含む）と営業利益の確定値（2024・2025年度）"
+    },
+    {
+      "key": "sony_q1fy2026_presentation", "inDeck": true, "itemType": "report", "affiliation": "ソニー",
+      "publisher": "ソニーグループ", "title": "Q1 FY2026 Consolidated Financial Results（決算説明資料）", "dateLabel": "2026-07-31", "date": "2026-07-31",
+      "zoteroTitle": "Q1 FY2026 Consolidated Financial Results (earnings presentation, Form 6-K)",
+      "url": "https://www.sec.gov/Archives/edgar/data/313838/000110465926088922/tm2621477d2_6k.htm",
+      "files": [], "status": "not_saved", "reasonKey": "sec_reason",
+      "note": "2026年4〜6月の実績（売上高5,127億円・営業利益1,222億円、為替影響）、通期見通しの修正（2兆1,100億円・4,200億円）、為替の前提（約153円）、熊本地震の記述"
+    },
+    {
+      "key": "sony_fy2024_summary", "inDeck": true, "itemType": "report", "affiliation": "ソニー",
+      "publisher": "ソニーグループ", "title": "Consolidated Financial Summary for the Fiscal Year Ended March 31, 2025", "dateLabel": "2025-05-14", "date": "2025-05-14",
+      "url": "https://www.sec.gov/Archives/edgar/data/313838/000110465925048017/tm2514462d2_6k.htm",
+      "files": [], "status": "not_saved", "reasonKey": "sec_reason",
+      "note": "2023・2024年度のI&SS分野の売上高・営業利益（1兆6,027億円・1,935億円、1兆7,990億円・2,611億円）"
+    },
+    {
+      "key": "sony_fy2022_results", "inDeck": true, "itemType": "report", "affiliation": "ソニー",
+      "publisher": "ソニーグループ", "title": "2022年度 決算短信（英文、SEC提出版）", "dateLabel": "2023-04-28", "date": "2023-04-28",
+      "zoteroTitle": "Consolidated Financial Results for the Fiscal Year Ended March 31, 2023 (Form 6-K)",
+      "url": "https://www.sec.gov/Archives/edgar/data/313838/000115752323000641/a53388224.htm",
+      "files": [], "status": "not_saved", "reasonKey": "sec_reason",
+      "note": "2021・2022年度のI&SS分野の売上高・営業利益（1兆764億円・1,556億円、1兆4,022億円・2,122億円）"
+    },
+    {
+      "key": "sss_2layer_2021", "inDeck": true, "itemType": "webpage", "affiliation": "ソニー",
+      "publisher": "SSS", "title": "世界初 2層トランジスタ画素積層型CMOSイメージセンサー技術を開発", "dateLabel": "2021-12-16", "date": "2021-12-16",
+      "url": "https://www.sony-semicon.com/ja/news/2021/2021121601.html",
+      "files": ["sources/web/2021_ソニーセミコンダクタソリューションズ_2層トランジスタ画素積層型CMOSイメージセンサー技術を開発.html"], "status": "saved",
+      "note": "2層トランジスタ画素（飽和信号量 約2倍）の発表"
+    },
+    {
+      "key": "sss_history", "inDeck": true, "itemType": "webpage", "affiliation": "ソニー",
+      "publisher": "SSS", "title": "ソニーの半導体の歴史/沿革", "dateLabel": "2026-09閲覧", "date": null,
+      "url": "https://www.sony-semicon.com/ja/company/history/index.html",
+      "files": ["sources/web/2026_ソニーセミコンダクタソリューションズ_ソニーの半導体の歴史・沿革.html"], "status": "saved",
+      "note": "2004年のCMOSへの集中、2009年の裏面照射型、2012年の積層型、2015年のCu-Cu接続、2016年のSSS発足、九州・東北の拠点の沿革"
+    },
+    {
+      "key": "sss_bases", "inDeck": true, "itemType": "webpage", "affiliation": "ソニー",
+      "publisher": "SSS", "title": "拠点一覧（日本）", "dateLabel": "2026-09閲覧", "date": null,
+      "url": "https://www.sony-semicon.com/ja/company/base/index.html",
+      "files": ["sources/web/2026_ソニーセミコンダクタソリューションズ_拠点一覧（日本）.html"], "status": "saved",
+      "note": "熊本・長崎・大分・鹿児島・山形・宮城などの生産拠点"
+    },
+    {
+      "key": "sss_ivs", "inDeck": true, "itemType": "webpage", "affiliation": "ソニー",
+      "publisher": "SSS", "title": "インテリジェントビジョンセンサー（AIセンサー）", "dateLabel": "2026-09閲覧", "date": null,
+      "url": "https://www.sony-semicon.com/ja/technology/ivs/index.html",
+      "files": ["sources/web/2026_ソニーセミコンダクタソリューションズ_インテリジェントビジョンセンサー（AIセンサー）.html"], "status": "saved",
+      "note": "IMX500（2020年）、画像を出力せずメタデータを出すことでプライバシーに配慮。車載LiDAR用SPAD ToF など製品群の一覧"
+    },
+    {
+      "key": "sss_bsm2025_notice", "inDeck": true, "itemType": "webpage", "affiliation": "ソニー",
+      "publisher": "SSS", "title": "I&SS分野 事業プレゼンテーション 動画公開のお知らせ", "dateLabel": "2025-06-13", "date": "2025-06-13",
+      "url": "https://www.sony-semicon.com/ja/info/2025/2025061301.html",
+      "files": ["sources/web/2025_ソニーセミコンダクタソリューションズ_I&SS分野 事業説明資料の公開.html"], "status": "saved",
+      "note": "2025年の事業説明会（指田社長）の公開案内。資料PDF本体は sony.com にあり、取得できなかった"
+    },
+    {
+      "key": "sss_tsmc_mou", "inDeck": true, "itemType": "webpage", "affiliation": "ソニー",
+      "publisher": "SSS", "title": "TSMCと次世代イメージセンサーに関する戦略的提携に向けた基本合意書を締結", "dateLabel": "2026-05-08", "date": "2026-05-08",
+      "url": "https://www.sony-semicon.com/ja/news/2026/2026050801.html",
+      "files": ["sources/web/2026_ソニーセミコンダクタソリューションズ_TSMCとの戦略的提携に向けた基本合意.html"], "status": "saved",
+      "note": "合志市の新工場での合弁の検討、フィジカルAI・車載・ロボット向け、長崎工場への投資"
+    },
+    {
+      "key": "sss_lytia_l910", "inDeck": true, "itemType": "webpage", "affiliation": "ソニー",
+      "publisher": "SSS", "title": "LOFIC搭載のモバイル用CMOSイメージセンサーを商品化", "dateLabel": "2026-06-17", "date": "2026-06-17",
+      "url": "https://www.sony-semicon.com/ja/info/2026/2026061701.html",
+      "files": ["sources/web/2026_ソニーセミコンダクタソリューションズ_LOFIC搭載モバイル用センサー LYTIA L910.html"], "status": "saved",
+      "note": "LYTIA L910：単一露光で100dB、約5,000万画素、2026年夏に量産出荷"
+    },
+    {
+      "key": "sss_mitsubishi_jv", "inDeck": true, "itemType": "webpage", "affiliation": "ソニー",
+      "publisher": "SSS", "title": "三菱電機とAIビジョンセンサーソリューションの合弁会社設立に合意", "dateLabel": "2026-07-22", "date": "2026-07-22",
+      "url": "https://www.sony-semicon.com/ja/news/2026/2026072201.html",
+      "files": ["sources/web/2026_ソニーセミコンダクタソリューションズ_三菱電機とのAIビジョンセンサー合弁会社設立に合意.html"], "status": "saved",
+      "note": "Advanced Vision Solutions（三菱電機60%・SSS 40%、2026年10月開始予定）"
+    },
+    {
+      "key": "sss_quake_1", "inDeck": true, "itemType": "webpage", "affiliation": "ソニー",
+      "publisher": "SSS", "title": "2026年7月28日発生の熊本地方を震源とした地震の影響について（第1報）", "dateLabel": "2026-07-29", "date": "2026-07-29",
+      "url": "https://www.sony-semicon.com/ja/info/2026/2026072901.html",
+      "files": ["sources/web/2026_ソニーセミコンダクタソリューションズ_熊本地震の影響について（第1報）.html"], "status": "saved",
+      "note": "熊本テクノロジーセンターが地震直後から生産を停止。長崎・大分・鹿児島は大きな被害なし"
+    },
+    {
+      "key": "sss_quake_2", "inDeck": true, "itemType": "webpage", "affiliation": "ソニー",
+      "publisher": "SSS", "title": "令和8年熊本地震の影響について（第2報）", "dateLabel": "2026-07-31", "date": "2026-07-31",
+      "url": "https://www.sony-semicon.com/ja/info/2026/2026073101.html",
+      "files": ["sources/web/2026_ソニーセミコンダクタソリューションズ_熊本地震の影響について（第2報）.html"], "status": "saved",
+      "note": "8月4日から段階的に操業再開、8月中旬に地震前の稼働水準へ復旧する見込み"
+    },
+    {
+      "key": "sss_tsmc_jv", "inDeck": true, "itemType": "webpage", "affiliation": "ソニー",
+      "publisher": "SSS", "title": "TSMCと次世代イメージセンサーにおける合弁会社の設立に関する確定契約を締結", "dateLabel": "2026-08-11", "date": "2026-08-11",
+      "url": "https://www.sony-semicon.com/ja/news/2026/2026081101.html",
+      "files": ["sources/web/2026_ソニーセミコンダクタソリューションズ_TSMCとの合弁会社設立の確定契約.html"], "status": "saved",
+      "note": "Advanced Vision Semiconductor Manufacturing（合志市）。SSS約4,650億円・TSMC約2,820億円、2029年量産予定、SSSが単独の支配株主"
+    },
+    {
+      "key": "meti_plan28", "inDeck": true, "itemType": "report", "affiliation": "経済産業省",
+      "publisher": "経済産業省", "title": "供給確保計画の概要（ソニーセミコンダクタマニュファクチャリング）", "dateLabel": "2026-04-17", "date": "2026-04-17",
+      "url": "https://www.meti.go.jp/policy/economy/economic_security/semicon/nintei_anpohandoutai_keikaku_28.pdf",
+      "files": ["sources/2026_経済産業省_供給確保計画の概要（ソニーセミコンダクタマニュファクチャリング）.pdf"], "status": "saved",
+      "note": "合志市の新工場：月1万枚（300mm換算）、2029年5月供給開始、必要資金約1,800億円・最大助成額約600億円"
+    },
+    {
+      "key": "yole_2026", "inDeck": true, "itemType": "webpage", "affiliation": "Yole Group",
+      "publisher": "Yole Group", "title": "CIS industry: Sony extends its lead as China overtakes South Korea", "dateLabel": "2026-08-03", "date": "2026-08-03",
+      "url": "https://www.yolegroup.com/press-release/cis-industry-sony-extends-its-lead-as-china-overtakes-south-korea/",
+      "files": ["sources/web/2026_Yole Group_CIS industry Sony extends its lead as China overtakes South Korea.html"], "status": "saved",
+      "note": "2025年のソニーのシェア約50%、モバイル向け57%、中国勢が韓国を抜き2位、車載はOmniVisionが首位、AI向けメモリ逼迫が2026年以降のリスク"
+    },
+    {
+      "key": "dclife_map2027", "inDeck": true, "itemType": "webpage", "affiliation": "",
+      "publisher": "デジカメライフ", "title": "CMOSセンサー世界シェア2025（日経業界地図2027年版の紹介）", "dateLabel": "2026-08-21", "date": "2026-08-21",
+      "url": "https://dclife.jp/archives/18627",
+      "files": ["sources/web/2026_デジカメライフ_日経業界地図 CMOSイメージセンサー出荷額ベース世界シェア2025.html"], "status": "saved",
+      "note": "2025年の出荷額ベースのシェア：ソニー53.6%、オムニビジョン13.4%、サムスン13.2%、スマートセンス5.6%、ギャラクシーコア3.9%"
+    },
+    {
+      "key": "ithome_2026", "inDeck": true, "itemType": "webpage", "affiliation": "",
+      "publisher": "IT之家", "title": "报告称国产 CMOS 厂商豪威 2025 年全球份额首超三星", "dateLabel": "2026-09-07", "date": "2026-09-07",
+      "url": "https://www.ithome.com/0/999/120.htm",
+      "files": ["sources/web/2026_IT之家_豪威2025年全球份额首超三星.html"], "status": "saved",
+      "note": "TSR・日経業界地図のデータを引用し、オムニビジョンが2025年にサムスンを抜いて2位と報道"
+    },
+    {
+      "key": "techinsights_q2_2025", "inDeck": true, "itemType": "webpage", "affiliation": "TechInsights",
+      "publisher": "TechInsights", "title": "Smartphone Image Sensor Market Share Q2 2025", "dateLabel": "2025-09-05", "date": "2025-09-05",
+      "url": "https://www.techinsights.com/blog/narrative-smartphone-image-sensor-market-share-q2-2025",
+      "files": ["sources/web/2025_TechInsights_Smartphone image sensor market share Q2 2025.html"], "status": "saved",
+      "note": "2025年4〜6月のスマホ用センサーでソニーのシェア51%。米国関税への備えで顧客の在庫積み増し"
+    },
+    {
+      "key": "idc_2026_05", "inDeck": true, "itemType": "webpage", "affiliation": "IDC",
+      "publisher": "IDC", "title": "Worldwide Smartphone Market to Decline 13.9% in 2026 as Memory Crisis and US-Iran War Constrain Growth", "dateLabel": "2026-05-26", "date": "2026-05-26",
+      "url": "https://www.idc.com/resource-center/blog/worldwide-smartphone-market-to-decline-13-9-in-2026-as-memory-crisis-and-us-iran-war-constrain-growth/",
+      "files": ["sources/web/2026_IDC_Worldwide smartphone market to decline 13.9% in 2026.html"], "status": "saved",
+      "note": "2026年のスマホ出荷−13.9%の予測（5月時点）。米国とイランの衝突で原油・輸送費が上昇"
+    },
+    {
+      "key": "idc_2026_08", "inDeck": true, "itemType": "webpage", "affiliation": "IDC",
+      "publisher": "IDC", "title": "Smartphone Shipments Set for Record 16.7% Drop in 2026, as the Memory Crisis Hits Full Force", "dateLabel": "2026-08-26", "date": "2026-08-26",
+      "url": "https://www.idc.com/resource-center/blog/smartphone-shipments-set-for-record-16-7-drop-in-2026-as-the-memory-crisis-hits-full-force/",
+      "files": ["sources/web/2026_IDC_Smartphone shipments set for record 16.7% drop in 2026.html"], "status": "saved",
+      "note": "2026年のスマホ出荷−16.7%（約10億台強）、メモリ価格は前年比300%超上昇、Android −24.3%・iOS −1.3%"
+    },
+    {
+      "key": "apple_2025_08", "inDeck": true, "itemType": "webpage", "affiliation": "Apple",
+      "publisher": "Apple", "title": "Apple increases U.S. commitment to $600 billion, announces ambitious program", "dateLabel": "2025-08-06", "date": "2025-08-06",
+      "url": "https://www.apple.com/newsroom/2025/08/apple-increases-us-commitment-to-600-billion-usd-announces-ambitious-program/",
+      "files": ["sources/web/2025_Apple_Apple increases US commitment to 600 billion USD.html"], "status": "saved",
+      "note": "米国投資を6,000億ドルに拡大。Samsungのオースティン工場で「世界で初めて使う新技術」によるチップ製造"
+    },
+    {
+      "key": "trendforce_2025_08", "inDeck": true, "itemType": "webpage", "affiliation": "Samsung",
+      "publisher": "TrendForce", "title": "Samsung Tapped to Produce Apple’s New Chips at Austin Fab, Likely iPhone Image Sensors", "dateLabel": "2025-08-07", "date": "2025-08-07",
+      "url": "https://www.trendforce.com/news/2025/08/07/news-samsung-tapped-to-produce-apples-new-chips-at-austin-fab-likely-for-iphone-image-sensors/",
+      "files": ["sources/web/2025_TrendForce_Samsung tapped to produce Apple new chips at Austin fab.html"], "status": "saved",
+      "note": "Appleの新チップはiPhone用イメージセンサーとの見方（報道）"
+    },
+    {
+      "key": "macrumors_2025_12", "inDeck": true, "itemType": "webpage", "affiliation": "Apple",
+      "publisher": "MacRumors", "title": "Advanced iPhone 18 Camera Sensor to Be Made in Texas", "dateLabel": "2025-12-24", "date": "2025-12-24",
+      "url": "https://www.macrumors.com/2025/12/24/iphone-18-camera-sensor-to-be-made-in-texas/",
+      "files": ["sources/web/2025_MacRumors_iPhone 18 camera sensor to be made in Texas.html"], "status": "saved",
+      "note": "iPhone 18向けの3層積層センサーをSamsungがオースティンで製造するとの報道（The Elecの報道を紹介）"
+    },
+    {
+      "key": "sammyfans_2026_01", "inDeck": true, "itemType": "webpage", "affiliation": "Samsung",
+      "publisher": "Sammy Fans", "title": "Apple could pay Samsung $1.5 billion a year for iPhone camera（SemiAnalysisの推計を紹介）", "dateLabel": "2026-01-11", "date": "2026-01-11",
+      "zoteroTitle": "Apple could pay Samsung $1.5 billion a year for iPhone camera",
+      "url": "https://www.sammyfans.com/2026/01/11/apple-could-pay-samsung-1-5-billion-a-year-for-iphone-camera/",
+      "files": ["sources/web/2026_Sammy Fans_Apple could pay Samsung 1.5 billion a year for iPhone camera.html"], "status": "saved",
+      "note": "SemiAnalysisの推計：2027年までにiPhone向けCIS数量の20〜30%をSamsungが獲得する可能性"
+    },
+    {
+      "key": "trendforce_2025_03", "inDeck": true, "itemType": "webpage", "affiliation": "SK hynix",
+      "publisher": "TrendForce", "title": "SK hynix Reportedly Exits CIS to Focus on AI amid Weak Demand and Fierce China Competition", "dateLabel": "2025-03-06", "date": "2025-03-06",
+      "url": "https://www.trendforce.com/news/2025/03/06/news-sk-hynix-reportedly-exits-cis-to-focus-on-ai-memory-amid-weak-demand-and-fierce-china-competition/",
+      "files": ["sources/web/2025_TrendForce_SK hynix reportedly exits CIS to focus on AI memory.html"], "status": "saved",
+      "note": "SK hynixがイメージセンサー事業から撤退し、AI向けメモリへ集中"
+    },
+    {
+      "key": "crs_in12608", "inDeck": true, "itemType": "report", "affiliation": "",
+      "publisher": "米議会調査局", "title": "U.S. Tariffs and the 2025 U.S.-Japan Framework Agreement（IN12608）", "dateLabel": "2026-01-30", "date": "2026-01-30",
+      "zoteroTitle": "U.S. Tariffs and the 2025 U.S.-Japan Framework Agreement",
+      "url": "https://www.congress.gov/crs_external_products/IN/PDF/IN12608/IN12608.3.pdf",
+      "files": ["sources/2026_Congressional Research Service_US tariffs and the 2025 US-Japan framework agreement.pdf"], "status": "saved",
+      "note": "日米合意：関税の上限15%、半導体でも他国より不利に扱わない"
+    },
+    {
+      "key": "skadden_2026_02", "inDeck": true, "itemType": "webpage", "affiliation": "",
+      "publisher": "Skadden", "title": "The Supreme Court Ends IEEPA Tariffs, Bringing Fresh Uncertainty for Companies", "dateLabel": "2026-02-24", "date": "2026-02-24",
+      "url": "https://www.skadden.com/insights/publications/2026/02/the-supreme-court-ends-ieepa-tariffs",
+      "files": ["sources/web/2026_Skadden_The Supreme Court ends IEEPA tariffs.html"], "status": "saved",
+      "note": "2026年2月20日、連邦最高裁がIEEPAに基づく関税を違法と判断。232条・301条などは残る"
+    },
+    {
+      "key": "strtrade_232", "inDeck": true, "itemType": "webpage", "affiliation": "",
+      "publisher": "Sandler, Travis & Rosenberg", "title": "Section 232 Tariffs on Semiconductors", "dateLabel": "2026-09閲覧", "date": null,
+      "url": "https://www.strtrade.com/trade-news-resources/tariff-actions-resources/section-232-investigation-semiconductors",
+      "files": ["sources/web/2026_Sandler Travis & Rosenberg_Section 232 tariffs on semiconductors.html"], "status": "saved",
+      "note": "半導体への232条関税（25%）が2026年1月15日に発効"
+    },
+    {
+      "key": "tmi_2026", "inDeck": true, "itemType": "webpage", "affiliation": "",
+      "publisher": "TMI総合法律事務所", "title": "中国による日本企業の輸出管理規制リストへの追加と実務対応", "dateLabel": "2026", "date": "2026",
+      "url": "https://www.tmi.gr.jp/eyes/blog/2026/18033.html",
+      "files": ["sources/web/2026_TMI総合法律事務所_中国による日本企業の輸出管理規制リストへの追加と実務対応.html"], "status": "saved",
+      "note": "中国が2026年2月24日に日本企業40社を輸出管理リスト・注視リストに追加"
+    },
+    {
+      "key": "reri_2025", "inDeck": true, "itemType": "webpage", "affiliation": "",
+      "publisher": "地方経済総合研究所", "title": "熊本の水資源と半導体産業", "dateLabel": "2025-11-05", "date": "2025-11-05",
+      "url": "https://www.reri.or.jp/report-and-news/ckm-semiconductor-water/",
+      "files": ["sources/web/2025_地方経済総合研究所_熊本の水資源と半導体産業.html"], "status": "saved",
+      "note": "熊本都市圏は水道水のほぼ全量が地下水。菊陽町の工業用水は2023年444万トン→2027年1,244万トンの見込み"
+    },
+    {
+      "key": "eetj_2024_06_03", "inDeck": true, "itemType": "webpage", "affiliation": "ソニー",
+      "publisher": "EE Times Japan", "title": "イメージセンサーの成長を今後けん引するのは？ ソニーが見る半導体市場と成長戦略", "dateLabel": "2024-06-03", "date": "2024-06-03",
+      "url": "https://eetimes.itmedia.co.jp/ee/articles/2406/03/news056.html",
+      "files": [
+        "sources/web/2024_EE Times Japan_イメージセンサーの成長を今後けん引するのは（事業説明会）_p1.html",
+        "sources/web/2024_EE Times Japan_イメージセンサーの成長を今後けん引するのは（事業説明会）_p2.html",
+        "sources/web/2024_EE Times Japan_イメージセンサーの成長を今後けん引するのは（事業説明会）_p3.html",
+        "sources/web/2024_EE Times Japan_イメージセンサーの成長を今後けん引するのは（事業説明会）_p4.html"
+      ], "status": "saved",
+      "note": "2024年の事業説明会：第5次中計、設備投資は前中計の約7割、3つの事業領域、動画需要（年約24%増）、車載カメラ8→12個、車載シェア目標43%"
+    },
+    {
+      "key": "eetj_2025_06_13", "inDeck": true, "itemType": "webpage", "affiliation": "ソニー",
+      "publisher": "EE Times Japan", "title": "イメージセンサー金額シェア60％目標「数年遅れる」、ソニー半導体", "dateLabel": "2025-06-13", "date": "2025-06-13",
+      "url": "https://eetimes.itmedia.co.jp/ee/articles/2506/13/news108.html",
+      "files": ["sources/web/2025_EE Times Japan_イメージセンサー金額シェア60％目標「数年遅れる」.html"], "status": "saved",
+      "note": "ソニー調べのシェアは2024年53%（横ばい）、2025年56%見込み。60%目標は数年遅れ"
+    },
+    {
+      "key": "eetj_2025_06_19", "inDeck": true, "itemType": "webpage", "affiliation": "ソニー",
+      "publisher": "EE Times Japan", "title": "センサーで微細プロセス、ロジックも12nm導入へ ソニーのイメージセンサー戦略", "dateLabel": "2025-06-19", "date": "2025-06-19",
+      "url": "https://eetimes.itmedia.co.jp/ee/articles/2506/19/news091.html",
+      "files": ["sources/web/2025_EE Times Japan_センサーで微細プロセス、ロジックも12nm導入へ.html"], "status": "saved",
+      "note": "画素側は28〜22nmをカバーする装置群、ロジックは12nmを導入予定（時期は非公表）"
+    },
+    {
+      "key": "eetj_2025_07_07", "inDeck": true, "itemType": "webpage", "affiliation": "ソニー",
+      "publisher": "EE Times Japan", "title": "26年度には世界大手の9割が採用、黒字化も 本格化するソニーの車載イメージセンサー", "dateLabel": "2025-07-07", "date": "2025-07-07",
+      "url": "https://eetimes.itmedia.co.jp/ee/articles/2507/07/news061.html",
+      "files": ["sources/web/2025_EE Times Japan_26年度には世界大手の9割が採用、黒字化も（車載）.html"], "status": "saved",
+      "note": "2026年度に主要自動車メーカー20社の9割が採用する見通し、2026年度の黒字化計画"
+    },
+    {
+      "key": "eetj_2025_10_02", "inDeck": true, "itemType": "webpage", "affiliation": "ソニー",
+      "publisher": "EE Times Japan", "title": "ソニーが初の車室内用イメージセンサー投入、法規制で急成長の市場狙う", "dateLabel": "2025-10-02", "date": "2025-10-02",
+      "url": "https://eetimes.itmedia.co.jp/ee/articles/2510/02/news038.html",
+      "files": ["sources/web/2025_EE Times Japan_ソニーが初の車室内用イメージセンサー投入.html"], "status": "saved",
+      "note": "車載シェア9%（2021年度）→37%（2024年度）、EUのDMS義務化、車室内カメラは年15%以上の成長、車載の商品化発表は2014年"
+    },
+    {
+      "key": "eetj_2025_11_11", "inDeck": true, "itemType": "webpage", "affiliation": "ソニー",
+      "publisher": "EE Times Japan", "title": "ソニー半導体、過去最高更新で見通しを上方修正 スマホ向け好調", "dateLabel": "2025-11-11", "date": "2025-11-11",
+      "url": "https://eetimes.itmedia.co.jp/ee/articles/2511/11/news110.html",
+      "files": [
+        "sources/web/2025_EE Times Japan_ソニー半導体、過去最高更新で見通しを上方修正_p1.html",
+        "sources/web/2025_EE Times Japan_ソニー半導体、過去最高更新で見通しを上方修正_p2.html"
+      ], "status": "saved",
+      "note": "ハンドヘルドなど新しい動画撮影スタイルのカメラ市場の拡大、関税影響の見直し、米国での自社量産は「ハードルが高い」"
+    },
+    {
+      "key": "eetj_2026_01_15", "inDeck": true, "itemType": "webpage", "affiliation": "ソニー",
+      "publisher": "EE Times Japan", "title": "iPhoneのイメージセンサー、ソニーの独占供給「崩壊のとき」は近いのか", "dateLabel": "2026-01-15", "date": "2026-01-15",
+      "url": "https://eetimes.itmedia.co.jp/ee/articles/2601/15/news062.html",
+      "files": ["sources/web/2026_EE Times Japan_iPhoneのイメージセンサー、ソニーの独占供給「崩壊のとき」は近いのか.html"], "status": "saved",
+      "note": "約10年続いたとされる独占供給、米国の関税政策と製造回帰を背景にしたSamsung採用の観測"
+    },
+    {
+      "key": "eetj_2026_04_17", "inDeck": true, "itemType": "webpage", "affiliation": "ソニー",
+      "publisher": "EE Times Japan", "title": "経産省がソニー画像センサー新工場に最大600億円補助", "dateLabel": "2026-04-17", "date": "2026-04-17",
+      "url": "https://eetimes.itmedia.co.jp/ee/articles/2604/17/news121.html",
+      "files": ["sources/web/2026_EE Times Japan_経産省がソニー画像センサー新工場に最大600億円補助.html"], "status": "saved",
+      "note": "経産相の「AI時代のキーデバイス」発言、JASMからのロジック供給"
+    },
+    {
+      "key": "eetj_2026_05_08", "inDeck": true, "itemType": "webpage", "affiliation": "ソニー",
+      "publisher": "EE Times Japan", "title": "「画素の製造もパートナーと」十時氏が語る、ソニー×TSMC合弁の狙いと期待", "dateLabel": "2026-05-08", "date": "2026-05-08",
+      "url": "https://eetimes.itmedia.co.jp/ee/articles/2605/08/news114.html",
+      "files": ["sources/web/2026_EE Times Japan_十時氏が語るソニー×TSMC合弁の狙いと期待.html"], "status": "saved",
+      "note": "合弁はファブライト戦略の第一歩、フィジカルAIでセンサー需要が大きく拡大する可能性（十時CEO）"
+    },
+    {
+      "key": "eetj_2026_05_14", "inDeck": true, "itemType": "webpage", "affiliation": "ソニー",
+      "publisher": "EE Times Japan", "title": "ソニーセミコンCTOに聞く――イメージセンサー技術革新の核", "dateLabel": "2026-05-14", "date": "2026-05-14",
+      "url": "https://eetimes.itmedia.co.jp/ee/articles/2605/11/news104.html",
+      "files": [
+        "sources/web/2026_EE Times Japan_ソニーセミコンCTOに聞く（前編）_p1.html",
+        "sources/web/2026_EE Times Japan_ソニーセミコンCTOに聞く（前編）_p2.html",
+        "sources/web/2026_EE Times Japan_ソニーセミコンCTOに聞く（前編）_p3.html"
+      ], "status": "saved",
+      "note": "CMOSへの転換と積層型の背景、技術進化の3つの方向、タテとヨコの高密度化、2段画素の歩留まり"
+    },
+    {
+      "key": "eetj_2026_05_15", "inDeck": true, "itemType": "webpage", "affiliation": "ソニー",
+      "publisher": "EE Times Japan", "title": "「技術ナンバーワンであり続ける」 ソニーセミコンCTOが語る技術戦略", "dateLabel": "2026-05-15", "date": "2026-05-15",
+      "url": "https://eetimes.itmedia.co.jp/ee/articles/2605/15/news024.html",
+      "files": [
+        "sources/web/2026_EE Times Japan_ソニーセミコンCTOが語る技術戦略（後編）_p1.html",
+        "sources/web/2026_EE Times Japan_ソニーセミコンCTOが語る技術戦略（後編）_p2.html",
+        "sources/web/2026_EE Times Japan_ソニーセミコンCTOが語る技術戦略（後編）_p3.html"
+      ], "status": "saved",
+      "note": "車載・産業の技術戦略、技術の循環、フィジカルAI、中国勢への見方、インテリジェントシステム開発部門（2025年9月新設）"
+    },
+    {
+      "key": "eetj_2026_05_18", "inDeck": true, "itemType": "webpage", "affiliation": "ソニー",
+      "publisher": "EE Times Japan", "title": "iPhone好調で過去最高も、「世界一」維持へ動くソニー半導体", "dateLabel": "2026-05-18", "date": "2026-05-18",
+      "url": "https://eetimes.itmedia.co.jp/ee/articles/2605/18/news060.html",
+      "files": ["sources/web/2026_EE Times Japan_iPhone好調で過去最高も、「世界一」維持へ動くソニー半導体.html"], "status": "saved",
+      "note": "2025年度のイメージセンサー売上1兆9,832億円のうちモバイル向け1兆5,611億円（ソニー補足資料による）、2026年度は体制整備の年"
+    },
+    {
+      "key": "eetj_2026_07_23", "inDeck": true, "itemType": "webpage", "affiliation": "ソニー",
+      "publisher": "EE Times Japan", "title": "三菱電機とソニー、AIビジョンセンサーで新会社設立へ", "dateLabel": "2026-07-23", "date": "2026-07-23",
+      "url": "https://eetimes.itmedia.co.jp/ee/articles/2607/23/news079.html",
+      "files": ["sources/web/2026_EE Times Japan_三菱電機とソニー、AIビジョンセンサーで新会社設立へ.html"], "status": "saved",
+      "note": "三菱電機とSSSの合弁（工場向けAIビジョンセンサー）"
+    },
+    {
+      "key": "eetj_2026_07_31", "inDeck": true, "itemType": "webpage", "affiliation": "ソニー",
+      "publisher": "EE Times Japan", "title": "ソニー半導体は1Q過去最高益、スマホ市況停滞も主要顧客ら拡大", "dateLabel": "2026-07-31", "date": "2026-07-31",
+      "url": "https://eetimes.itmedia.co.jp/ee/articles/2607/31/news110.html",
+      "files": [
+        "sources/web/2026_EE Times Japan_ソニー半導体は1Q過去最高益_p1.html",
+        "sources/web/2026_EE Times Japan_ソニー半導体は1Q過去最高益_p2.html"
+      ], "status": "saved",
+      "note": "ウエハー生産能力 月15.8万枚、合弁の準備費用約100億円、地震の影響の見立て（2016年は復旧に約3か月）"
+    },
+    {
+      "key": "eetj_2026_08_12", "inDeck": true, "itemType": "webpage", "affiliation": "ソニー",
+      "publisher": "EE Times Japan", "title": "ソニーとTSMC、イメージセンサー合弁会社に7470億円 熊本で29年量産", "dateLabel": "2026-08-12", "date": "2026-08-12",
+      "url": "https://eetimes.itmedia.co.jp/ee/articles/2608/12/news054.html",
+      "files": [
+        "sources/web/2026_EE Times Japan_ソニーとTSMC、イメージセンサー合弁会社に7470億円_p1.html",
+        "sources/web/2026_EE Times Japan_ソニーとTSMC、イメージセンサー合弁会社に7470億円_p2.html"
+      ], "status": "saved",
+      "note": "合弁の確定契約の詳細、画素側は自社・ロジック側はTSMCという従来の分担"
+    },
+    {
+      "key": "eetj_2026_08_26", "inDeck": true, "itemType": "webpage", "affiliation": "ソニー",
+      "publisher": "EE Times Japan", "title": "25年のイメージセンサー市場は過去最高、ソニーはシェア5割", "dateLabel": "2026-08-26", "date": "2026-08-26",
+      "url": "https://eetimes.itmedia.co.jp/ee/articles/2608/26/news049.html",
+      "files": [
+        "sources/web/2026_EE Times Japan_25年のイメージセンサー市場は過去最高、ソニーはシェア5割_p1.html",
+        "sources/web/2026_EE Times Japan_25年のイメージセンサー市場は過去最高、ソニーはシェア5割_p2.html"
+      ], "status": "saved",
+      "note": "Yoleの調査：2025年の市場253億ドル（+9%）、2031年303億ドル（年3.1%）、地域別シェア（日本51%・中国21%・韓国17%）、3層積層がiPhone・OPPO向けに"
+    },
+    {
+      "key": "eetj_2026_09_03", "inDeck": true, "itemType": "webpage", "affiliation": "ソニー",
+      "publisher": "EE Times Japan", "title": "ついにイメージセンサー世界シェア5割、ソニーが迎える正念場", "dateLabel": "2026-09-03", "date": "2026-09-03",
+      "url": "https://eetimes.itmedia.co.jp/ee/articles/2609/03/news054.html",
+      "files": ["sources/web/2026_EE Times Japan_ついにイメージセンサー世界シェア5割、ソニーが迎える正念場.html"], "status": "saved",
+      "note": "外部調査でもシェア5割に到達、ソニー自社調べでは既に5割超・60%目標"
+    },
+    {
+      "key": "sony_bsm2025_iss_pdf", "inDeck": false, "itemType": "presentation", "affiliation": "ソニー",
+      "publisher": "ソニーグループ", "title": "Business Segment Presentation 2025: Imaging & Sensing Solutions（資料PDF）", "dateLabel": "2025-06-13", "date": "2025-06-13",
+      "url": "https://www.sony.com/en/SonyInfo/IR/library/presen/business_segment_meeting/pdf/2025/ISS_E.pdf",
+      "files": [], "status": "not_fetched", "reasonKey": "sony_ir_reason",
+      "note": "2025年の事業説明会の資料。内容は EE Times Japan（2025-06-13・06-19・07-07）の報道で確認した"
+    },
+    {
+      "key": "sony_fy2025_supplemental", "inDeck": false, "itemType": "report", "affiliation": "ソニー",
+      "publisher": "ソニーグループ", "title": "2025年度 連結業績 補足資料（Supplemental Information）", "dateLabel": "2026-05-08", "date": "2026-05-08",
+      "url": "https://www.sony.com/ja/SonyInfo/IR/library/presen/er/",
+      "files": [], "status": "not_fetched", "reasonKey": "sony_ir_reason",
+      "note": "イメージセンサー売上とモバイル向け売上の内訳。数値は EE Times Japan（2026-05-18）の記事で確認した（URLは決算説明会資料の一覧ページ）"
+    },
+    {
+      "key": "sony_bsm2024_iss", "inDeck": false, "itemType": "presentation", "affiliation": "ソニー",
+      "publisher": "ソニーグループ", "title": "2024年 事業説明会 イメージング＆センシング・ソリューション分野（資料）", "dateLabel": "2024-05-31", "date": "2024-05-31",
+      "url": "https://www.sony.com/ja/SonyInfo/IR/library/presen/business_segment_meeting/",
+      "files": [], "status": "not_fetched", "reasonKey": "sony_ir_reason",
+      "note": "第5次中計の方針、3つの事業領域、車載シェア目標。内容は EE Times Japan（2024-06-03）の報道で確認した（URLは事業説明会の一覧ページ）"
+    }
+  ]
+}

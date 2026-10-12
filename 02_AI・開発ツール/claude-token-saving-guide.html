@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIトークン節約ガイド（Claude / GPT-5.3〜5.5 / GitHub Copilot）</title>
+<style>
+  /* ===== 定数的な設計値はここにまとめる ===== */
+  :root {
+    --sidebar-width: 270px;
+    --main-max-width: 880px;
+    --color-bg: #faf9f5;
+    --color-text: #2d2a26;
+    --color-accent: #b45f3c;
+    --color-accent-light: #f3e5dc;
+    --color-panel: #ffffff;
+    --color-border: #e2ddd4;
+    --color-note-bg: #fdf6ec;
+    --color-good: #2e7d32;
+    --color-bad: #c62828;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Hiragino Sans", "Yu Gothic", "Meiryo", sans-serif;
+    background: var(--color-bg);
+    color: var(--color-text);
+    line-height: 1.9;
+  }
+
+  /* ===== 左パネル（目次） ===== */
+  nav#toc {
+    position: fixed;
+    top: 0; left: 0;
+    width: var(--sidebar-width);
+    height: 100vh;
+    overflow-y: auto;
+    background: var(--color-panel);
+    border-right: 1px solid var(--color-border);
+    padding: 24px 16px;
+  }
+  nav#toc h2 { font-size: 15px; margin: 0 0 12px; color: var(--color-accent); }
+  nav#toc ul { list-style: none; margin: 0; padding: 0; }
+  nav#toc li { margin: 6px 0; }
+  nav#toc a {
+    text-decoration: none;
+    color: var(--color-text);
+    font-size: 13px;
+    display: block;
+    padding: 4px 8px;
+    border-radius: 6px;
+  }
+  nav#toc a:hover { background: var(--color-accent-light); }
+
+  /* ===== 本文 ===== */
+  main {
+    margin-left: var(--sidebar-width);
+    padding: 40px 32px 120px;
+    max-width: var(--main-max-width);
+  }
+  h1 { font-size: 25px; border-bottom: 3px solid var(--color-accent); padding-bottom: 12px; }
+  h2 {
+    font-size: 20px;
+    margin-top: 56px;
+    padding: 8px 14px;
+    background: var(--color-accent-light);
+    border-left: 6px solid var(--color-accent);
+    border-radius: 4px;
+  }
+  h3 { font-size: 16px; margin-top: 32px; color: var(--color-accent); }
+  table { border-collapse: collapse; width: 100%; margin: 16px 0; background: var(--color-panel); font-size: 14px; }
+  th, td { border: 1px solid var(--color-border); padding: 10px 12px; text-align: left; }
+  th { background: var(--color-accent-light); }
+  code {
+    background: #efece5;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: Menlo, Consolas, monospace;
+    font-size: 13px;
+  }
+  .note {
+    background: var(--color-note-bg);
+    border-left: 5px solid var(--color-accent);
+    padding: 12px 16px;
+    border-radius: 4px;
+    margin: 16px 0;
+  }
+  .good { color: var(--color-good); font-weight: bold; }
+  .bad { color: var(--color-bad); font-weight: bold; }
+  ul li { margin: 6px 0; }
+
+  /* ===== トップへ戻るボタン ===== */
+  #back-to-top {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: none;
+    background: var(--color-accent);
+    color: #fff;
+    font-size: 22px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+    z-index: 100;
+  }
+  #back-to-top:hover { opacity: 0.85; }
+
+  /* ===== スマホ・狭い画面対応 ===== */
+  @media (max-width: 800px) {
+    nav#toc {
+      position: static;
+      width: 100%;
+      height: auto;
+      border-right: none;
+      border-bottom: 1px solid var(--color-border);
+    }
+    main { margin-left: 0; padding: 24px 16px 120px; }
+    #back-to-top { right: 16px; bottom: 16px; width: 46px; height: 46px; }
+  }
+</style>
+</head>
+<body>
+
+<nav id="toc">
+  <h2>目次</h2>
+  <ul>
+    <li><a href="#intro">1. はじめに：トークンとは</a></li>
+    <li><a href="#common">2. 全サービス共通の節約原則</a></li>
+    <li><a href="#claude">3. Claude（Opus / Sonnet）</a></li>
+    <li><a href="#gpt">4. GPT-5.3 / 5.4 / 5.5</a></li>
+    <li><a href="#copilot">5. GitHub Copilot</a></li>
+    <li><a href="#compare">6. サービス横断の使い分け</a></li>
+    <li><a href="#antipattern">7. やりがちなムダづかい</a></li>
+    <li><a href="#checklist">8. チェックリスト</a></li>
+  </ul>
+</nav>
+
+<main id="top">
+<h1>AIトークン節約ガイド<br><small>Claude（Opus / Sonnet）・GPT-5.3〜5.5・GitHub Copilot 対応版</small></h1>
+<p>AIサービスの利用量は「トークン」や「リクエスト」という単位で計算されます。このレポートでは、<strong>Claude、GPT-5.3〜5.5、GitHub Copilot</strong>の3つを対象に、専門知識がなくても実践できる節約ポイントを解説します。（料金情報は2026年7月時点の調査に基づきます）</p>
+
+<h2 id="intro">1. はじめに：トークンとは</h2>
+<p>トークンは、AIが文章を処理するときの「文字のかたまり」の単位です。日本語ではおおよそ<strong>1文字＝1〜2トークン</strong>が目安です。</p>
+<ul>
+  <li><strong>入力トークン</strong>：あなたが送る文章＋過去の会話履歴＋読み込んだファイルの中身</li>
+  <li><strong>出力トークン</strong>：AIが返す文章（入力より単価が高い。Claude・GPTとも約5〜6倍）</li>
+</ul>
+<div class="note">
+<strong>大事なポイント：</strong>AIとの会話は「毎回、過去の履歴を全部送り直す」仕組みです。会話が長くなるほど、1回の質問で消費するトークンが雪だるま式に増えます。これはClaudeでもGPTでも共通です。なお、GitHub Copilotだけは課金単位が「トークン」ではなく「リクエスト回数×モデル係数」という別方式です（第5章で解説）。
+</div>
+
+<h2 id="common">2. 全サービス共通の節約原則</h2>
+<p>どのサービスでも効く、普遍的な5原則です。</p>
+<table>
+  <tr><th>原則</th><th>理由</th></tr>
+  <tr><td>① 作業の重さに合ったモデルを選ぶ</td><td>最上位モデルと標準モデルで料金が2〜7倍違う</td></tr>
+  <tr><td>② 会話を短く保つ・話題ごとに区切る</td><td>履歴は毎回送り直されるため、長い会話ほど高くつく</td></tr>
+  <tr><td>③ 最初の指示を具体的にまとめる</td><td>聞き返しのやりとり（＝追加消費）が減る</td></tr>
+  <tr><td>④ 読ませる資料・範囲を絞る</td><td>ファイル丸ごとは入力トークンを大量消費</td></tr>
+  <tr><td>⑤ 出力形式を指定する（簡潔に・変更箇所だけ等）</td><td>出力トークンは入力より単価が高い</td></tr>
+</table>
+
+<h2 id="claude">3. Claude（Opus / Sonnet）</h2>
+<h3>料金の目安（100万トークンあたり）</h3>
+<table>
+  <tr><th>モデル</th><th>入力 / 出力</th><th>向いている作業</th></tr>
+  <tr><td>Opus 4.8</td><td>$5 / $25</td><td>複雑な設計・大きな実装・長時間の自律作業</td></tr>
+  <tr><td>Sonnet 5</td><td>$3 / $15</td><td>日常的なコーディング・文書作成・分析</td></tr>
+  <tr><td>Haiku 4.5</td><td>$1 / $5</td><td>簡単な質問・分類・要約などの軽い作業</td></tr>
+</table>
+<h3>Claude特有の節約ポイント</h3>
+<ul>
+  <li><strong>プロンプトキャッシュ</strong>：同じ会話を続けている間、履歴の先頭部分は<strong>約10分の1の割引価格</strong>で再利用されます。有効期限は約5分。連続作業は間を空けず、同じ会話・同じモデルで進めるのが得です</li>
+  <li><span class="bad">✕ 途中でモデルを切り替える</span>：OpusとSonnetのキャッシュは別々なので、切り替えた直後は割引が効きません</li>
+  <li><strong>Claude Codeのコマンド</strong>：<code>/clear</code>（話題が変わったら履歴リセット）、<code>/compact</code>（長い会話を要約して圧縮）、<code>/model</code>（モデル切り替え）</li>
+  <li><strong>CLAUDE.mdの整理</strong>：ルールファイルは毎回自動で読み込まれます。使っていないルールを削ると恒久的に入力が減ります</li>
+</ul>
+
+<h2 id="gpt">4. GPT-5.3 / 5.4 / 5.5</h2>
+<h3>料金の目安（100万トークンあたり）</h3>
+<table>
+  <tr><th>モデル</th><th>入力 / 出力</th><th>位置づけ</th></tr>
+  <tr><td>GPT-5.5</td><td>$5 / $30</td><td>最上位。複雑な推論・難しい問題向け</td></tr>
+  <tr><td>GPT-5.4</td><td>$2.5 / $15</td><td>標準。日常作業のバランス型</td></tr>
+  <tr><td>GPT-5.3-Codex</td><td>$1.75 / $14</td><td>コーディング特化。プログラミング作業向け</td></tr>
+</table>
+<h3>GPT特有の節約ポイント</h3>
+<ul>
+  <li><strong>キャッシュ入力の割引</strong>：Claudeと同様、繰り返し送られる履歴部分は約10分の1（GPT-5.5で$0.50/100万トークン）になります。同じ会話を続けている間は自動で効きます</li>
+  <li><strong>Batch / Flex処理で半額</strong>：「すぐに答えが要らない仕事」（夜間の一括処理など）は、Batch APIを使うと<strong>入力・出力とも50%オフ</strong>（GPT-5.5なら$2.5/$15）になります</li>
+  <li><span class="bad">✕ 長すぎる入力に注意</span>：GPT-5.5は入力が27.2万トークンを超えると、そのセッション全体が<strong>入力2倍・出力1.5倍</strong>の割増料金になります。巨大な資料を丸ごと読ませる前に、分割や要約を検討しましょう</li>
+  <li><strong>推論の深さ（reasoning effort）を調整</strong>：GPTシリーズは「どれだけ深く考えるか」を設定できます。簡単な作業は低め、難しい作業だけ高めにすると出力トークン（＝考えた分も課金対象）を節約できます</li>
+  <li><strong>コーディングならGPT-5.3-Codex</strong>：プログラミング作業はGPT-5.5より約3分の1の入力単価で済みます</li>
+</ul>
+
+<h2 id="copilot">5. GitHub Copilot</h2>
+<p>Copilotはトークンではなく<strong>「プレミアムリクエスト」</strong>という回数制です。1回の依頼につき「モデルごとの係数」分だけ月間枠が減ります。</p>
+<h3>モデル係数の目安</h3>
+<table>
+  <tr><th>モデル</th><th>係数（1依頼あたりの消費）</th></tr>
+  <tr><td>GPT-5 mini など（同梱モデル）</td><td><strong>0倍（消費なし）</strong></td></tr>
+  <tr><td>Sonnet 4.6 / GPT-5.4</td><td>1倍</td></tr>
+  <tr><td>Opus 4.6</td><td>3倍</td></tr>
+  <tr><td>Opus 4.7 / GPT-5.5</td><td>7.5倍</td></tr>
+  <tr><td>Copilotコードレビュー</td><td>13倍（2026年6月以降）</td></tr>
+</table>
+<h3>Copilot特有の節約ポイント</h3>
+<ul>
+  <li><span class="good">◎ 0倍モデルを使い倒す</span>：要件の確認、方針の相談、ログの分析、タスク分解などの「会話中心の作業」は同梱モデル（0倍）に回すと、枠を一切消費しません</li>
+  <li><span class="good">◎ Autoモデル選択で1割引</span>：モデルを自動選択にすると、対象モデルの係数が10%割引になります</li>
+  <li><strong>エージェントモードの内部ループは無料</strong>：エージェントが1つの依頼の中で何度もファイルを読み書きしても、消費は最初の1依頼分だけです。細かく何度も指示するより、1回の依頼にまとめる方が得です</li>
+  <li><span class="bad">✕ 高係数モデルで雑談しない</span>：GPT-5.5（7.5倍）で軽い質問をすると、1倍モデルの7.5回分を一瞬で消費します</li>
+  <li><span class="bad">✕ コードレビューの多用に注意</span>：1回13倍と最も高コスト。本当に必要なプルリクエストに絞りましょう</li>
+  <li><strong>2026年6月からの制度変更</strong>：回数制（プレミアムリクエスト）から「GitHub AI Credits」という利用量ベースの課金に移行しました。考え方は同じで、「高いモデルほど消費が大きい」構図は変わりません</li>
+</ul>
+
+<h2 id="compare">6. サービス横断の使い分け</h2>
+<p>3サービスを併用している場合の、コスト効率がよい役割分担の例です。</p>
+<table>
+  <tr><th>作業内容</th><th>おすすめ</th><th>理由</th></tr>
+  <tr><td>要件整理・壁打ち・相談</td><td>Copilotの0倍モデル、またはチャットアプリ</td><td>枠・トークンをほぼ消費しない</td></tr>
+  <tr><td>日常のコーディング</td><td>Sonnet 5 / GPT-5.4 / GPT-5.3-Codex（係数1倍クラス）</td><td>品質と価格のバランスが最良</td></tr>
+  <tr><td>複雑な設計・難しいバグ調査</td><td>Opus 4.8 / GPT-5.5</td><td>高いが、やり直しが減って結果的に安い</td></tr>
+  <tr><td>夜間の一括処理・急がない大量作業</td><td>GPTのBatch API</td><td>50%オフ</td></tr>
+  <tr><td>コード補完（入力中の提案）</td><td>Copilot標準補完</td><td>プレミアム枠を消費しない</td></tr>
+</table>
+<div class="note">
+<strong>考え方のコツ：</strong>「上流（考える仕事）は高いモデル、下流（手を動かす仕事）は安いモデル」が基本ですが、<strong>相談・確認のような軽い会話はさらに下の無料枠・低単価モデルに回す</strong>のが3サービス併用時の最大の節約です。
+</div>
+
+<h2 id="antipattern">7. やりがちなムダづかい</h2>
+<table>
+  <tr><th>ムダづかいパターン</th><th>対象</th><th>改善方法</th></tr>
+  <tr><td>1つの会話で何日も作業を続ける</td><td>Claude / GPT</td><td>区切りごとに履歴をリセット（<code>/clear</code>等）</td></tr>
+  <tr><td>巨大なファイルを丸ごと貼り付ける</td><td>全サービス</td><td>必要な部分だけ抜粋。GPT-5.5は27.2万トークン超で割増になる点にも注意</td></tr>
+  <tr><td>あいまいな指示→聞き返し→修正の繰り返し</td><td>全サービス</td><td>最初に目的・条件・完成イメージをまとめて伝える</td></tr>
+  <tr><td>簡単な質問にも最上位モデルを使う</td><td>全サービス</td><td>軽い作業はSonnet / GPT-5.4 / 0倍モデルへ</td></tr>
+  <tr><td>毎回「コード全体を出力して」と頼む</td><td>Claude / GPT</td><td>「変更箇所だけ」と指定（出力単価は入力の5〜6倍）</td></tr>
+  <tr><td>会話の途中で頻繁にモデルを切り替える</td><td>Claude / GPT</td><td>キャッシュ割引が切れるため、1作業は同じモデルで通す</td></tr>
+  <tr><td>高係数モデル（7.5倍）で軽い相談をする</td><td>Copilot</td><td>相談は0倍の同梱モデルに回す</td></tr>
+  <tr><td>細かい指示を何度も分けて出す</td><td>Copilot</td><td>1依頼にまとめる（エージェントの内部処理は追加消費なし）</td></tr>
+</table>
+
+<h2 id="checklist">8. チェックリスト</h2>
+<p>作業を始める前に、この6つを確認するだけで大きく変わります。</p>
+<ul>
+  <li>☐ この作業に合ったモデル・サービスを選んだか（相談→無料枠、普通→標準、難問→最上位）</li>
+  <li>☐ 前の話題と関係ないなら履歴をリセットしたか</li>
+  <li>☐ 指示に「目的・条件・完成イメージ」を含めたか</li>
+  <li>☐ 読ませるファイル・範囲を絞ったか</li>
+  <li>☐ 回答の形式（簡潔に・変更箇所だけ等）を指定したか</li>
+  <li>☐ （Copilot）高係数モデルを使う必然性があるか</li>
+</ul>
+<div class="note">
+<strong>まとめ：</strong>効果が大きい順に、<strong>①モデル・サービスの使い分け → ②会話を短く保つ → ③無料枠・低係数モデルの活用（Copilot） → ④入力を絞る → ⑤出力形式の指定 → ⑥キャッシュ・Batchの活用</strong>です。まずは①と②から始めるのがおすすめです。
+</div>
+
+<h3>参考情報源（2026年7月調査）</h3>
+<ul style="font-size: 13px;">
+  <li><a href="https://developers.openai.com/api/docs/pricing">OpenAI API Pricing（公式）</a></li>
+  <li><a href="https://www.morphllm.com/openai-api-pricing">OpenAI API Pricing 2026 per-token table</a></li>
+  <li><a href="https://docs.github.com/en/copilot/reference/copilot-billing/request-based-billing-legacy/copilot-requests">GitHub Docs: Requests in GitHub Copilot</a></li>
+  <li><a href="https://smartscope.blog/en/generative-ai/github-copilot/github-copilot-premium-request-optimization/">Copilot Premium Request Optimization</a></li>
+  <li><a href="https://dev.classmethod.jp/articles/shoma-github-copilot-pricing-major-revision-2026-june-1-premium-requests-to-github-ai-credits/">2026年6月のCopilot料金改定（GitHub AI Credits）</a></li>
+</ul>
+
+</main>
+
+<button id="back-to-top" title="トップへ戻る" onclick="window.scrollTo({top: 0, behavior: 'smooth'});">▲</button>
+
+</body>
+</html>

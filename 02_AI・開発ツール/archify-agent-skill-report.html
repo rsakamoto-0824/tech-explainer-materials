@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Archify 解説レポート — 検証付きアーキテクチャ図生成スキル</title>
+<style>
+  :root {
+    --fs-xs: 13px; --fs-sm: 14px; --fs-base: 16px; --fs-md: 18px; --fs-lg: 22px; --fs-xl: 30px;
+    --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px; --sp-6: 24px; --sp-8: 32px; --sp-12: 48px; --sp-16: 64px;
+    --r-sm: 6px; --r-md: 10px; --r-lg: 14px;
+    --c-bg: #f6f7f9; --c-card: #ffffff; --c-text: #14181f; --c-muted: #5a6472; --c-border: #dfe3e8;
+    --c-accent: #2f6feb; --c-accent-soft: #eef3fc;
+    --c-bad: #c62828; --c-bad-soft: #fff1ee;
+    --c-good: #2e7d32; --c-good-soft: #eef7ee;
+    --c-warn: #8a5a00; --c-warn-soft: #fff5d6;
+    --c-code-bg: #1c2230; --c-code-text: #e3e8ef;
+    --c-arch: #6e4bb8;
+    --sidebar-w: 276px;
+    --shadow-sm: 0 1px 2px rgba(16,24,40,.05);
+    --shadow-md: 0 4px 16px rgba(16,24,40,.08);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: var(--sp-4); }
+  body { margin: 0; font-family: "Hiragino Sans", "Yu Gothic", "Meiryo", system-ui, -apple-system, sans-serif; font-size: var(--fs-base); line-height: 1.75; color: var(--c-text); background: var(--c-bg); -webkit-font-smoothing: antialiased; }
+  :focus-visible { outline: 3px solid #ffb300; outline-offset: 2px; border-radius: 4px; }
+  .skip-link { position: absolute; left: var(--sp-2); top: -60px; z-index: 100; background: var(--c-accent); color: #fff; padding: var(--sp-3) var(--sp-4); border-radius: var(--r-sm); text-decoration: none; transition: top .15s; }
+  .skip-link:focus { top: var(--sp-2); }
+
+  .layout { display: grid; grid-template-columns: var(--sidebar-w) 1fr; min-height: 100vh; }
+  aside.sidebar { background: #1c2230; color: #cdd3dc; padding: var(--sp-6) var(--sp-4); position: sticky; top: 0; align-self: start; height: 100vh; overflow-y: auto; }
+  .sidebar-title { display: flex; gap: var(--sp-3); align-items: flex-start; color: #fff; text-decoration: none; padding: var(--sp-3); border-radius: var(--r-md); background: rgba(255,255,255,.06); margin-bottom: var(--sp-6); min-height: 44px; }
+  .sidebar-title:hover { background: rgba(255,255,255,.12); }
+  .sidebar-title .lbl { font-weight: 700; font-size: var(--fs-sm); line-height: 1.5; }
+  .sidebar-title small { display: block; font-weight: 400; color: #9aa4b2; font-size: var(--fs-xs); }
+  aside.sidebar h2 { font-size: var(--fs-xs); letter-spacing: .08em; color: #8b94a3; margin: 0 0 var(--sp-3); text-transform: uppercase; }
+  aside.sidebar ol { list-style: none; margin: 0; padding: 0; }
+  aside.sidebar li { margin-bottom: var(--sp-1); }
+  aside.sidebar a.toc-link { display: block; color: #cdd3dc; text-decoration: none; font-size: var(--fs-sm); padding: 10px var(--sp-3); border-radius: var(--r-sm); line-height: 1.45; }
+  aside.sidebar a.toc-link:hover { background: rgba(255,255,255,.09); color: #fff; }
+  aside.sidebar a.toc-link[aria-current="true"] { background: var(--c-accent); color: #fff; font-weight: 700; }
+  aside.sidebar .toc-sub { padding-left: var(--sp-4); font-size: var(--fs-xs); }
+
+  main { padding: var(--sp-12) var(--sp-8) var(--sp-16); max-width: 1020px; }
+  header.top { margin-bottom: var(--sp-12); }
+  header.top h1 { font-size: var(--fs-xl); line-height: 1.35; margin: 0 0 var(--sp-4); }
+  .lead { font-size: var(--fs-md); color: var(--c-muted); margin: 0 0 var(--sp-6); max-width: 76ch; }
+  .env { background: var(--c-card); border: 1px solid var(--c-border); border-radius: var(--r-md); padding: var(--sp-4) var(--sp-6); box-shadow: var(--shadow-sm); }
+  .env dl { display: grid; grid-template-columns: max-content 1fr; gap: var(--sp-2) var(--sp-6); margin: 0; font-size: var(--fs-sm); }
+  .env dt { color: var(--c-muted); }
+  .env dd { margin: 0; font-weight: 600; }
+
+  section.chapter { margin-bottom: var(--sp-16); scroll-margin-top: var(--sp-4); }
+  section.chapter > h2 { font-size: var(--fs-lg); margin: 0 0 var(--sp-4); padding-bottom: var(--sp-3); border-bottom: 2px solid var(--c-border); }
+  h3 { font-size: var(--fs-md); margin: var(--sp-8) 0 var(--sp-3); }
+  h4 { font-size: var(--fs-base); margin: var(--sp-6) 0 var(--sp-2); }
+  p, li { max-width: 82ch; }
+
+  .note { border-radius: var(--r-md); padding: var(--sp-4) var(--sp-6); margin: var(--sp-4) 0; border: 1px solid transparent; }
+  .note .note-t { font-weight: 700; display: flex; align-items: center; gap: var(--sp-2); margin-bottom: var(--sp-2); }
+  .note p:last-child, .note ul:last-child, .note ol:last-child { margin-bottom: 0; }
+  .note.tip { background: var(--c-good-soft); border-color: #bcd9bd; } .note.tip .note-t { color: var(--c-good); }
+  .note.warn { background: var(--c-warn-soft); border-color: #e6d391; } .note.warn .note-t { color: var(--c-warn); }
+  .note.stop { background: var(--c-bad-soft); border-color: #f0c3ba; } .note.stop .note-t { color: var(--c-bad); }
+  .note.info { background: var(--c-accent-soft); border-color: #c3d7f5; } .note.info .note-t { color: var(--c-accent); }
+
+  table { width: 100%; border-collapse: collapse; margin: var(--sp-4) 0; font-size: var(--fs-sm); background: var(--c-card); }
+  caption { text-align: left; font-weight: 700; padding-bottom: var(--sp-2); font-size: var(--fs-base); }
+  th, td { border: 1px solid var(--c-border); padding: 10px var(--sp-3); text-align: left; vertical-align: top; line-height: 1.65; }
+  thead th { background: #eef1f5; font-weight: 700; }
+  tbody tr:nth-child(even) { background: #fafbfc; }
+  .tbl-wrap { overflow-x: auto; }
+
+  kbd { display: inline-block; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: var(--fs-xs); background: #eef1f5; border: 1px solid #c6ced9; border-bottom-width: 2px; border-radius: 5px; padding: 2px 7px; white-space: nowrap; color: #24303f; }
+  code { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: .93em; background: #eef1f5; padding: 2px 6px; border-radius: 4px; word-break: break-word; }
+
+  .codeblock { position: relative; margin: var(--sp-4) 0; }
+  .codeblock .cap { font-size: var(--fs-xs); color: var(--c-muted); margin-bottom: var(--sp-2); }
+  .codeblock pre { background: var(--c-code-bg); color: var(--c-code-text); padding: var(--sp-6); padding-right: 108px; border-radius: var(--r-md); overflow-x: auto; margin: 0; line-height: 1.7; font-size: var(--fs-sm); }
+  .codeblock pre code { background: none; padding: 0; color: inherit; }
+  .copy-btn { position: absolute; top: 10px; right: 10px; min-height: 36px; min-width: 84px; background: #38445a; color: #fff; border: 1px solid #4c5a74; border-radius: var(--r-sm); font-size: var(--fs-xs); cursor: pointer; font-family: inherit; padding: 0 var(--sp-3); }
+  .copy-btn:hover { background: #46536d; }
+  .copy-msg { font-size: var(--fs-xs); margin-top: var(--sp-2); min-height: 1.2em; }
+  .copy-msg.ok { color: var(--c-good); } .copy-msg.ng { color: var(--c-bad); }
+
+  ol.steps { counter-reset: st; list-style: none; padding: 0; margin: var(--sp-4) 0; }
+  ol.steps > li { counter-increment: st; position: relative; padding: 0 0 var(--sp-4) 46px; margin-bottom: var(--sp-2); }
+  ol.steps > li::before { content: counter(st); position: absolute; left: 0; top: 1px; width: 30px; height: 30px; border-radius: 50%; background: var(--c-arch); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: var(--fs-sm); }
+
+  .pipeline { display: grid; gap: var(--sp-2); margin: var(--sp-6) 0; }
+  .pipe-step { background: var(--c-card); border: 1px solid var(--c-border); border-radius: var(--r-md); padding: var(--sp-4); display: grid; grid-template-columns: 40px 1fr; gap: var(--sp-4); align-items: start; box-shadow: var(--shadow-sm); }
+  .pipe-step .n { width: 32px; height: 32px; border-radius: 8px; background: var(--c-arch); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: var(--fs-sm); }
+  .pipe-step .t { font-weight: 700; margin-bottom: 2px; }
+  .pipe-step .d { font-size: var(--fs-sm); color: var(--c-muted); }
+  .pipe-arrow { text-align: center; color: var(--c-muted); font-size: var(--fs-sm); line-height: 1; }
+
+  .type-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--sp-4); margin: var(--sp-4) 0; }
+  .type-card { background: var(--c-card); border: 1px solid var(--c-border); border-radius: var(--r-md); padding: var(--sp-4) var(--sp-6); box-shadow: var(--shadow-sm); }
+  .type-card h4 { margin-top: 0; }
+  .type-card p { font-size: var(--fs-sm); color: var(--c-muted); margin: 0; }
+  .type-card .use { display: block; margin-top: var(--sp-2); font-size: var(--fs-sm); color: var(--c-text); }
+
+  .fact { background: var(--c-card); border: 1px solid var(--c-border); border-radius: var(--r-md); padding: var(--sp-4); text-align: center; box-shadow: var(--shadow-sm); }
+  .fact .v { font-size: 26px; font-weight: 700; color: var(--c-arch); line-height: 1.3; }
+  .fact .k { font-size: var(--fs-xs); color: var(--c-muted); }
+  .fact-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: var(--sp-3); margin: var(--sp-4) 0; }
+
+  .back-to-top { position: fixed; right: var(--sp-6); bottom: var(--sp-6); z-index: 50; width: 56px; height: 56px; border-radius: 50%; border: 1px solid var(--c-border); background: var(--c-card); color: var(--c-text); box-shadow: var(--shadow-md); cursor: pointer; font-size: var(--fs-xs); font-family: inherit; line-height: 1.2; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; }
+  .back-to-top:hover { background: var(--c-accent); color: #fff; border-color: var(--c-accent); }
+  .back-to-top .ic { font-size: var(--fs-base); }
+  .toc-toggle { display: none; }
+  .src-list { font-size: var(--fs-sm); }
+  .src-list li { margin-bottom: var(--sp-2); }
+
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    aside.sidebar { position: static; height: auto; padding: var(--sp-4); }
+    .toc-toggle { display: block; width: 100%; min-height: 44px; background: rgba(255,255,255,.1); color: #fff; border: 1px solid rgba(255,255,255,.2); border-radius: var(--r-sm); font-size: var(--fs-sm); font-family: inherit; cursor: pointer; margin-bottom: var(--sp-3); }
+    aside.sidebar ol[hidden] { display: none; }
+    aside.sidebar h2 { display: none; }
+    main { padding: var(--sp-6) var(--sp-4) var(--sp-16); }
+    header.top h1 { font-size: var(--fs-lg); }
+    .env dl { grid-template-columns: 1fr; gap: 2px var(--sp-2); }
+    .env dt { margin-top: var(--sp-2); }
+    .back-to-top { right: var(--sp-3); bottom: var(--sp-3); width: 52px; height: 52px; }
+    .codeblock pre { padding-right: var(--sp-4); padding-top: 52px; }
+  }
+  @media print { aside.sidebar, .back-to-top, .copy-btn { display: none; } .layout { grid-template-columns: 1fr; } body { background: #fff; } }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">本文へスキップ</a>
+<div class="layout">
+  <aside class="sidebar" aria-label="目次">
+    <a href="#top" class="sidebar-title">
+      <span aria-hidden="true">🗺️</span>
+      <span class="lbl">Archify 解説レポート<small>クリックで先頭へ戻る</small></span>
+    </a>
+    <button class="toc-toggle" type="button" id="toc-toggle" aria-expanded="false" aria-controls="toc">目次を開く ▾</button>
+    <h2>目次</h2>
+    <ol id="toc">
+      <li><a class="toc-link" href="#ch0">0. Archifyとは（3分で把握）</a></li>
+      <li><a class="toc-link" href="#ch1">1. 何を解決する道具か</a></li>
+      <li><a class="toc-link" href="#ch2">2. 仕組み — 4段階の流れ</a></li>
+      <li><a class="toc-link" href="#ch3">3. 作れる5種類の図</a></li>
+      <li><a class="toc-link" href="#ch4">4. 検証ゲート（本質部分）</a></li>
+      <li><a class="toc-link" href="#ch5">5. 導入手順</a></li>
+      <li><a class="toc-link toc-sub" href="#ch5-1">　5-1 前提の確認</a></li>
+      <li><a class="toc-link toc-sub" href="#ch5-2">　5-2 インストール</a></li>
+      <li><a class="toc-link" href="#ch6">6. 使い方</a></li>
+      <li><a class="toc-link toc-sub" href="#ch6-2">　6-2 CLIコマンド</a></li>
+      <li><a class="toc-link" href="#ch7">7. この環境での活用案</a></li>
+      <li><a class="toc-link" href="#ch8">8. 限界と注意点</a></li>
+      <li><a class="toc-link" href="#ch9">9. 導入判断のまとめ</a></li>
+      <li><a class="toc-link" href="#src">出典</a></li>
+    </ol>
+  </aside>
+
+  <main id="main">
+    <header class="top" id="top">
+      <h1>Archify 解説レポート<br>検証付きアーキテクチャ図生成スキル</h1>
+      <p class="lead">
+        自然言語の説明から、構成図・フロー図などを<strong>「検証を通過した」インタラクティブなHTML</strong>として生成する、AIエージェント向けのスキルです。
+        Claude Code や Codex CLI に追加して、会話の中で図を作らせます。
+      </p>
+      <div class="env">
+        <dl>
+          <dt>正式名称 / 提供元</dt>
+          <dd>Archify（tt-a1i/archify）</dd>
+          <dt>ライセンス / 実装</dt>
+          <dd>MIT ／ JavaScript（Node.js）</dd>
+          <dt>バージョン</dt>
+          <dd>リリース v2.16.0（2026-08-30）／ スキル定義 v2.17</dd>
+          <dt>対応エージェント</dt>
+          <dd>Claude Code ／ Codex CLI ／ Cursor ／ OpenCode ほか</dd>
+          <dt>調査日</dt>
+          <dd>2026年9月6日（公式リポジトリとスキル定義ファイルを直接確認）</dd>
+        </dl>
+      </div>
+      <div class="fact-row">
+        <div class="fact"><div class="v">49,564</div><div class="k">GitHub スター</div></div>
+        <div class="fact"><div class="v">3,215</div><div class="k">フォーク</div></div>
+        <div class="fact"><div class="v">5種類</div><div class="k">作れる図の種類</div></div>
+        <div class="fact"><div class="v">MIT</div><div class="k">ライセンス</div></div>
+      </div>
+      <div class="note warn">
+        <div class="note-t"><span aria-hidden="true">⚠️</span>同名の別物にご注意</div>
+        <p>「Archify」という名前は他にもあります。VS Code Marketplace には無関係な同名拡張が2件（インストール数191件・22件）存在し、ブラウザ上でWebアプリ構成を見る別サービスもあります。<strong>本レポートが扱うのは、AIエージェント用スキルの Archify（tt-a1i/archify）です。</strong></p>
+      </div>
+    </header>
+
+    <!-- 0 -->
+    <section class="chapter" id="ch0">
+      <h2>0. Archifyとは（3分で把握）</h2>
+      <p>ひとことで言うと、<strong>「AIに構成図を描かせるとき、デタラメな線を引かせないための仕組み」</strong>です。</p>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:26%">観点</th><th>内容</th></tr></thead>
+        <tbody>
+          <tr><td>何をするか</td><td>システムの説明文（またはリポジトリの中身）から、構成図をHTMLファイルとして生成する</td></tr>
+          <tr><td>誰が使うか</td><td>Claude Code / Codex CLI などのAIエージェントを使っている人</td></tr>
+          <tr><td>どこで動くか</td><td><strong>手元のPC</strong>。Node.js製のプログラムがローカルで図を組み立てる</td></tr>
+          <tr><td>出てくるもの</td><td>1ファイルで完結するHTML（外部依存なし）。PNG / SVG / WebM 等への書き出しも可能</td></tr>
+          <tr><td>他と何が違うか</td><td>図を出す前に<strong>機械的な検証</strong>を通す。検証に落ちたら理由が機械可読な形で返る</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </section>
+
+    <!-- 1 -->
+    <section class="chapter" id="ch1">
+      <h2>1. 何を解決する道具か</h2>
+      <p>AIに「この構成を図にして」と頼むと、それらしい図はすぐ出てきます。問題は<strong>その図が正しいかどうかを誰も確かめていない</strong>ことです。</p>
+      <div class="tbl-wrap">
+      <table>
+        <caption>従来のやり方との比較</caption>
+        <thead><tr><th style="width:24%">観点</th><th style="width:38%">AIにMermaid等を書かせる</th><th>Archify</th></tr></thead>
+        <tbody>
+          <tr><td>生成の仕方</td><td>AIが図の記法を直接書く</td><td>AIは<strong>型付きJSON</strong>を書き、図は決まった手順で組み立てられる</td></tr>
+          <tr><td>存在しない接続</td><td>もっともらしく描かれても気づけない</td><td>スキーマと検証で弾かれる</td></tr>
+          <tr><td>線の重なり・ラベル被り</td><td>目視で直すしかない</td><td>レイアウトと経路のチェック項目がある</td></tr>
+          <tr><td>失敗したとき</td><td>「なんかおかしい」で終わる</td><td>規則コード・対象・計測値・使える修正手段がJSONで返る</td></tr>
+          <tr><td>再現性</td><td>頼むたびに違う図になる</td><td>同じJSONからは同じ図が出る（決定的）</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <div class="note info">
+        <div class="note-t"><span aria-hidden="true">💡</span>核心</div>
+        <p>Archifyの価値は「きれいな図が出ること」ではなく、<strong>AIと図の間に検証を挟んで、AIの創作を機械的に止めること</strong>にあります。図の見栄えは結果として付いてくるものです。</p>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section class="chapter" id="ch2">
+      <h2>2. 仕組み — 4段階の流れ</h2>
+      <div class="pipeline">
+        <div class="pipe-step"><span class="n">1</span><div><div class="t">説明する（人間）</div><div class="d">「この構成を図にして」と会話で頼む。リポジトリを見せて実コードから起こさせることもできる。貼り付けたMermaid（flowchart / sequenceDiagram / stateDiagram）を入力にすることもできる</div></div></div>
+        <div class="pipe-arrow" aria-hidden="true">▼</div>
+        <div class="pipe-step"><span class="n">2</span><div><div class="t">型付きJSONを書く（AI）</div><div class="d">図そのものではなく、<strong>中間表現（IR）となるJSON</strong>を生成する。図の種類ごとにスキーマが決まっており、自由に書けない</div></div></div>
+        <div class="pipe-arrow" aria-hidden="true">▼</div>
+        <div class="pipe-step"><span class="n">3</span><div><div class="t">検証する（Archify）</div><div class="d">スキーマ・レイアウト・描画・経路・ラベル間隔をチェック。<strong>落ちたら図は出ない</strong>。理由が機械可読なJSONで返り、AIがそれを見て直す</div></div></div>
+        <div class="pipe-arrow" aria-hidden="true">▼</div>
+        <div class="pipe-step"><span class="n">4</span><div><div class="t">組み立てて渡す（Archify）</div><div class="d">検証を通ったJSONから、1ファイル完結のHTMLを決定的に生成。ダーク／ライト切替、任意でアニメーション付き</div></div></div>
+      </div>
+      <div class="note tip">
+        <div class="note-t"><span aria-hidden="true">✅</span>ここが効いている</div>
+        <p>AIが触るのは<strong>段階2のJSONだけ</strong>で、図の描画そのものには関与しません。だから「AIが線を1本でっち上げる」ことが構造的に起きにくくなっています。</p>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section class="chapter" id="ch3">
+      <h2>3. 作れる5種類の図</h2>
+      <p>種類は5つに限定されています。何でも描ける汎用ツールではなく、<strong>用途を絞ることで検証を可能にしている</strong>設計です。</p>
+      <div class="type-grid">
+        <div class="type-card">
+          <h4>architecture（構成図）</h4>
+          <p>コンポーネント、サービス、ストレージ、信頼境界</p>
+          <span class="use">用途：システム全体像、クラウド構成、ネットワーク構成</span>
+        </div>
+        <div class="type-card">
+          <h4>workflow（業務・処理フロー）</h4>
+          <p>承認ゲート、ツール呼び出し、手順書、CI/CD</p>
+          <span class="use">用途：開発フロー、リリース手順、承認プロセス</span>
+        </div>
+        <div class="type-card">
+          <h4>sequence（シーケンス図）</h4>
+          <p>API呼び出しの順序、キャッシュのフォールバック、認証の流れ</p>
+          <span class="use">用途：処理の時系列、システム間のやり取り</span>
+        </div>
+        <div class="type-card">
+          <h4>dataflow（データフロー）</h4>
+          <p>パイプライン、系統（リネージ）、個人情報の流れ、利用先</p>
+          <span class="use">用途：ETL、データの出どころと行き先の整理</span>
+        </div>
+        <div class="type-card">
+          <h4>lifecycle（状態遷移）</h4>
+          <p>状態、リトライ、待機、終了状態</p>
+          <span class="use">用途：ジョブの状態管理、リトライ設計</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section class="chapter" id="ch4">
+      <h2>4. 検証ゲート — このツールの本質</h2>
+      <p>成果物を渡す前に、次の観点で検査されます。</p>
+      <div class="tbl-wrap">
+      <table>
+        <caption>検証の5観点</caption>
+        <thead><tr><th style="width:30%">検証</th><th>見ているもの</th></tr></thead>
+        <tbody>
+          <tr><td>スキーマ検証</td><td>JSONが図の種類ごとの型定義に沿っているか</td></tr>
+          <tr><td>レイアウト検証</td><td>要素の配置が破綻していないか</td></tr>
+          <tr><td>HTML/SVG描画検証</td><td>実際に描画できるか</td></tr>
+          <tr><td>経路検証</td><td>線の引き回しが成立しているか</td></tr>
+          <tr><td>ラベルと経路の間隔検証</td><td>文字が線に被って読めなくなっていないか</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h3>品質プロファイル：basic と showcase の違い</h3>
+      <div class="note warn">
+        <div class="note-t"><span aria-hidden="true">⚠️</span>「検証が通った」の意味は2種類ある</div>
+        <ul>
+          <li><strong>基本検証</strong>＝チェック項目 <strong>4件</strong> のみ。これは showcase 合格ではありません</li>
+          <li><strong>showcase 合格</strong>＝チェック項目 <strong>9件すべて</strong>で、構成エラー0件・警告0件</li>
+        </ul>
+        <p>スキル定義では、利用者が明示的に密な図を求めない限り <code>showcase</code> を既定にするよう指示されています。受け取った図の品質を確かめたいときは、<strong>9項目の検証結果が出ているか</strong>を見てください。</p>
+      </div>
+
+      <h3>検証に落ちたときの挙動</h3>
+      <p>失敗すると、次の情報を含む機械可読なJSONが返ります。AIはこれを読んで修正します。</p>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:26%">項目</th><th>内容</th></tr></thead>
+        <tbody>
+          <tr><td>規則コード</td><td>どの検査に落ちたか</td></tr>
+          <tr><td>対象（subject）</td><td>どのノード・どの線が問題か</td></tr>
+          <tr><td>証拠（evidence）</td><td>実測値。「何ピクセル足りない」など</td></tr>
+          <tr><td>使える修正（supportedFixes）</td><td>認められている直し方の選択肢</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p>スキル定義には、<strong>2回続けて改善しなければ修正を打ち切り、未解決の内容を正直に報告する</strong>という指示も含まれています。無限に直そうとして時間を浪費しない作りです。</p>
+    </section>
+
+    <!-- 5 -->
+    <section class="chapter" id="ch5">
+      <h2>5. 導入手順</h2>
+
+      <h3 id="ch5-1">5-1 前提の確認（この環境では確認済み）</h3>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:30%">前提</th><th style="width:24%">要件</th><th>この環境の実測</th></tr></thead>
+        <tbody>
+          <tr><td>Node.js</td><td><code>^22.19.0</code> または <code>>=24.0.0</code></td><td>✅ v24.14.1（条件を満たす）</td></tr>
+          <tr><td>npm / npx</td><td>必要</td><td>✅ npm 11.11.0 ／ npx あり</td></tr>
+          <tr><td>スキルの置き場所</td><td>エージェントごとのskillsフォルダ</td><td>✅ <code>~/.claude/skills</code>（9件）と <code>~/.codex/skills</code>（8件）が既に運用中</td></tr>
+          <tr><td>Archify自体</td><td>—</td><td>❌ 未導入</td></tr>
+          <tr><td>リポジトリ</td><td>不要</td><td>説明文だけでも図は作れる</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h3 id="ch5-2">5-2 インストール</h3>
+      <p>用途に応じて3通りあります。</p>
+      <div class="codeblock">
+        <div class="cap">A. まず試すだけ（インストールしない・おすすめ）</div>
+        <button class="copy-btn" type="button" data-copy>コピー</button>
+        <pre><code>npx skills use tt-a1i/archify@archify --agent codex</code></pre>
+        <p class="copy-msg" role="status" aria-live="polite"></p>
+      </div>
+      <div class="codeblock">
+        <div class="cap">B. 全体に導入する（推奨される標準手順）</div>
+        <button class="copy-btn" type="button" data-copy>コピー</button>
+        <pre><code>npx skills add tt-a1i/archify -g</code></pre>
+        <p class="copy-msg" role="status" aria-live="polite"></p>
+      </div>
+      <div class="codeblock">
+        <div class="cap">C. Cursor向けに対話なしで導入する</div>
+        <button class="copy-btn" type="button" data-copy>コピー</button>
+        <pre><code>npx -y skills add tt-a1i/archify --skill archify --agent cursor --global --copy --yes</code></pre>
+        <p class="copy-msg" role="status" aria-live="polite"></p>
+      </div>
+      <div class="note tip">
+        <div class="note-t"><span aria-hidden="true">✅</span>導入後の動作確認</div>
+        <p>スキルのフォルダに入って次を実行すると、環境の点検とサンプル生成ができます。<code>demo</code> は実際のHTMLを出力するので、成果物の雰囲気を最初に掴めます。</p>
+        <div class="codeblock" style="margin-top:var(--sp-3)">
+          <button class="copy-btn" type="button" data-copy>コピー</button>
+          <pre><code>node bin/archify.mjs doctor
+node bin/archify.mjs demo /tmp/archify-demo</code></pre>
+          <p class="copy-msg" role="status" aria-live="polite"></p>
+        </div>
+      </div>
+      <div class="note info">
+        <div class="note-t"><span aria-hidden="true">💡</span>Claude Code と Codex の両方に入れる場合</div>
+        <p>この環境は <code>~/.claude/skills</code> と <code>~/.codex/skills</code> を同じ内容で運用しています。Archifyも<strong>両方に入れるか、片方だけにするかを最初に決めて揃えておく</strong>と、後で「片方では図が作れない」という混乱を避けられます。</p>
+      </div>
+    </section>
+
+    <!-- 6 -->
+    <section class="chapter" id="ch6">
+      <h2>6. 使い方</h2>
+
+      <h3 id="ch6-1">6-1 基本は「会話で頼む」だけ</h3>
+      <p>導入後は、エージェントとの会話でそのまま依頼します。コマンドを覚える必要はありません。</p>
+      <div class="codeblock">
+        <div class="cap">依頼の例</div>
+        <button class="copy-btn" type="button" data-copy>コピー</button>
+        <pre><code>litho-overlay-dashboard の構成図を作って。
+Vertica から DirectQuery でデータを取り、Power BI のセマンティックモデルを
+経由してレポートに表示される流れが分かるようにしてほしい。</code></pre>
+        <p class="copy-msg" role="status" aria-live="polite"></p>
+      </div>
+      <p>エージェントが図の種類を選び、JSONを書き、検証し、HTMLを出力します。うまくいかない場合は検証結果をもとに自動で修正を試みます。</p>
+
+      <h3 id="ch6-2">6-2 CLIコマンド（自分で確認したいとき）</h3>
+      <div class="tbl-wrap">
+      <table>
+        <caption>主なコマンド</caption>
+        <thead><tr><th style="width:20%">コマンド</th><th>用途</th></tr></thead>
+        <tbody>
+          <tr><td><code>doctor</code></td><td>環境の点検。動かないときの一次確認</td></tr>
+          <tr><td><code>demo</code></td><td>サンプル一式を出力。最初に雰囲気を掴む</td></tr>
+          <tr><td><code>guide</code></td><td>説明文を渡して、作り方の案内を得る</td></tr>
+          <tr><td><code>validate</code></td><td><strong>検証だけ行う</strong>。図は出力しない</td></tr>
+          <tr><td><code>preview</code></td><td>HTMLを生成して確認する</td></tr>
+          <tr><td><code>deliver</code></td><td><strong>最終的な受け渡し</strong>。これが合格判定を兼ねる</td></tr>
+          <tr><td><code>compare</code></td><td>2つの構成図を比較し、差分を図にする</td></tr>
+          <tr><td><code>brands</code></td><td>製品ロゴ・ブランド表記を検索する</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <div class="codeblock">
+        <div class="cap">検証と受け渡しの実行例（showcase品質）</div>
+        <button class="copy-btn" type="button" data-copy>コピー</button>
+        <pre><code>node bin/archify.mjs validate workflow examples/agent-tool-call.workflow.json --quality showcase --json
+
+node bin/archify.mjs deliver workflow examples/agent-tool-call.workflow.json /tmp/workflow.html --quality showcase --open --json</code></pre>
+        <p class="copy-msg" role="status" aria-live="polite"></p>
+      </div>
+      <div class="note warn">
+        <div class="note-t"><span aria-hidden="true">⚠️</span>「終了コードが0以外＝失敗」</div>
+        <p><code>deliver</code> が失敗した場合、前回の出力ファイルがそのまま残ります。<strong>古い成功時のファイルを見て「できた」と勘違いしやすい</strong>ので、必ず実行結果の成否を確認してください。</p>
+      </div>
+
+      <h3 id="ch6-3">6-3 出力できる形式</h3>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:26%">形式</th><th>用途</th></tr></thead>
+        <tbody>
+          <tr><td>HTML（1ファイル完結）</td><td>既定の出力。外部ファイルに依存しないので、そのまま配布・埋め込みできる</td></tr>
+          <tr><td>PNG / SVG</td><td>資料への貼り付け。SVGはGitでの差分管理にも向く</td></tr>
+          <tr><td>WebM</td><td>動きのある説明用</td></tr>
+          <tr><td>シェアカード（1200×630 PNG）</td><td>READMEやリリースノートの見出し画像</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </section>
+
+    <!-- 7 -->
+    <section class="chapter" id="ch7">
+      <h2>7. この環境での活用案</h2>
+      <p>手元のリポジトリに当てはめると、次のような使い道が考えられます。</p>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:20%">図の種類</th><th style="width:34%">題材</th><th>効果</th></tr></thead>
+        <tbody>
+          <tr><td><code>architecture</code></td><td>litho-overlay-dashboard の Vertica DirectQuery 構成</td><td>接続先・複合モデル・レポートの関係が1枚で伝わる。設計文書に添付できる</td></tr>
+          <tr><td><code>workflow</code></td><td>ブランチ → 実装 → PR → 確認 → マージ の開発フロー</td><td>運用ルールを図で共有できる</td></tr>
+          <tr><td><code>dataflow</code></td><td>計測CSV → 前処理 → Zernike分解 → ダッシュボード</td><td>データの出どころと加工段階が追える。引き継ぎ資料に効く</td></tr>
+          <tr><td><code>sequence</code></td><td>Python API と社内Webアプリのやり取り</td><td>処理順序の認識合わせ</td></tr>
+          <tr><td><code>lifecycle</code></td><td>Power BI データセットの更新状態（成功／失敗／リトライ）</td><td>異常時の扱いを明示できる</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <div class="note tip">
+        <div class="note-t"><span aria-hidden="true">✅</span>既存のHTML手順書と相性が良い</div>
+        <p>出力が1ファイル完結のHTMLなので、これまで作ってきた手順書やレポートに<strong>そのまま組み込めます</strong>。SVGで書き出せばMarkdownからも参照でき、Gitでの差分管理も可能です。導入済みの Draw.io 拡張が「自分で描く図」なのに対し、Archifyは「説明から起こす図」で、役割が重なりません。</p>
+      </div>
+    </section>
+
+    <!-- 8 -->
+    <section class="chapter" id="ch8">
+      <h2>8. 限界と注意点</h2>
+
+      <div class="note stop">
+        <div class="note-t"><span aria-hidden="true">🛑</span>「検証を通った」＝「事実と一致する」ではない</div>
+        <p>これが最も重要な注意点です。Archifyの検証が保証するのは、<strong>図として成立していること（スキーマ・レイアウト・描画・経路）</strong>であって、<strong>描かれた内容が実際のシステムと合っているかではありません</strong>。元の説明が間違っていれば、検証を通った美しい間違いが出てきます。図の内容は人間が確認してください。</p>
+      </div>
+
+      <div class="note warn">
+        <div class="note-t"><span aria-hidden="true">⚠️</span>機密情報の扱い</div>
+        <p>Archify本体は手元で動きますが、<strong>図の元になる説明はAIエージェントを経由します</strong>。社内システムの構成図を作るということは、その構成をAIに説明することと同じです。既存のAI利用と同じ基準で判断してください。なお生成された図（HTML/PNG）はローカルに保存され、自動でどこかに公開されることはありません。</p>
+      </div>
+
+      <div class="tbl-wrap">
+      <table>
+        <caption>設計上、対応していないこと</caption>
+        <thead><tr><th style="width:36%">対象外</th><th>意味</th></tr></thead>
+        <tbody>
+          <tr><td>汎用の自動レイアウト</td><td>どんな図でも自動で整えてくれるわけではない。5種類の型に沿って作る</td></tr>
+          <tr><td>Mermaidの自動解析</td><td>貼り付けたMermaidを入力にはできるが、既存図を自動で読み込む機能ではない</td></tr>
+          <tr><td>ホスティング（共有URL）</td><td>ファイルを配る方式。共有の仕組みは自前で用意する</td></tr>
+          <tr><td>画面上での編集（WYSIWYG）</td><td>マウスで図を直す機能はない。JSONを直して作り直す</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h3>その他、把握しておくとよい点</h3>
+      <ul>
+        <li><strong>主要ノードは12個まで</strong>が推奨です。大きなシステムは分割して複数枚にする前提です</li>
+        <li><strong>更新チェックは通知のみ</strong>で、勝手に更新はされません。スキル定義に「導入済みのバージョンは変更しない」「利用者が判断する」と明記されています</li>
+        <li>公開Issueは118件あり、活発に開発中です（最終更新：2026-09-06）。仕様変更の可能性を織り込んでください</li>
+        <li>この種のツールは紹介記事が多く、GitHubスター数などの数値が記事ごとに大きく食い違っています。<strong>数字は公式リポジトリで直接確認する</strong>のが確実です（本レポートの数値はAPIから取得したものです）</li>
+      </ul>
+    </section>
+
+    <!-- 9 -->
+    <section class="chapter" id="ch9">
+      <h2>9. 導入判断のまとめ</h2>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:28%">観点</th><th>評価</th></tr></thead>
+        <tbody>
+          <tr><td>導入の手間</td><td><strong>小さい</strong>。前提のNode環境は条件を満たしており、コマンド1つで試せる</td></tr>
+          <tr><td>既存環境との衝突</td><td><strong>なし</strong>。スキルの追加のみで、VS Code拡張やPython環境に影響しない</td></tr>
+          <tr><td>効果が出やすい場面</td><td>設計文書・引き継ぎ資料・手順書に図が要るとき</td></tr>
+          <tr><td>効果が薄い場面</td><td>図を1枚だけ手早く描きたいとき（Draw.ioの方が速い）</td></tr>
+          <tr><td>リスク</td><td>図の内容の正しさは保証されない。機密構成をAIに説明する点の判断が必要</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <div class="note tip">
+        <div class="note-t"><span aria-hidden="true">✅</span>おすすめの進め方</div>
+        <ol style="margin:0;padding-left:1.4em">
+          <li>まず<strong>インストールせずに試す</strong>（5-2のA）</li>
+          <li><code>demo</code> でサンプルを出力し、成果物の質を自分の目で確認する</li>
+          <li>機密性の低い題材（例：開発フローの図）で1枚作ってみる</li>
+          <li>実務で使えると判断したら、Claude Code と Codex のどちらに入れるかを決めて導入する</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- 出典 -->
+    <section class="chapter" id="src">
+      <h2>出典</h2>
+      <ul class="src-list">
+        <li>公式リポジトリ（README・スキル定義・メタデータを直接確認）：<a href="https://github.com/tt-a1i/archify">github.com/tt-a1i/archify</a></li>
+        <li>公式ドキュメントサイト：<a href="https://tt-a1i.github.io/archify/">tt-a1i.github.io/archify/</a></li>
+        <li>導入手順の解説記事：<a href="https://docs.bswen.com/blog/2026-08-28-archify-claude-code-cursor-codex-architecture-diagrams/">BSWEN — How to Use Archify with Claude Code, Cursor and Codex</a></li>
+        <li>日本語の紹介記事：<a href="https://note.com/shali_note/n/nf372483a63c6">note — archifyでアーキテクチャ図を作る手順</a> ／ <a href="https://note.com/shali_note/n/n5f9d2306d73b">note — archifyの5つの検証ゲート</a></li>
+      </ul>
+      <p style="font-size:var(--fs-sm);color:var(--c-muted)">
+        本レポートの数値・コマンド・仕様は、公式リポジトリのAPIおよび <code>README.md</code>・<code>archify/SKILL.md</code> から取得したものを優先しています。
+        紹介記事は導入手順の裏付けとして参照しました。前提環境（Node.js等）の記載は、この端末で実測した値です。
+      </p>
+    </section>
+  </main>
+</div>
+
+<button class="back-to-top" type="button" id="back-to-top" aria-label="ページ先頭へ戻る" title="ページ先頭へ戻る">
+  <span class="ic" aria-hidden="true">↑</span><span aria-hidden="true">先頭</span>
+</button>
+
+<script>
+(function () {
+  "use strict";
+  document.getElementById('back-to-top').addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    var t = document.getElementById('top');
+    if (t) { t.setAttribute('tabindex', '-1'); t.focus({ preventScroll: true }); }
+  });
+
+  var toggle = document.getElementById('toc-toggle');
+  var toc = document.getElementById('toc');
+  function applyWidth() {
+    if (window.matchMedia('(max-width: 900px)').matches) {
+      toc.hidden = toggle.getAttribute('aria-expanded') !== 'true';
+    } else { toc.hidden = false; }
+  }
+  toggle.addEventListener('click', function () {
+    var expanded = toggle.getAttribute('aria-expanded') === 'true';
+    toggle.setAttribute('aria-expanded', String(!expanded));
+    toggle.textContent = !expanded ? '目次を閉じる ▴' : '目次を開く ▾';
+    applyWidth();
+  });
+  window.addEventListener('resize', applyWidth);
+  applyWidth();
+
+  var links = Array.prototype.slice.call(document.querySelectorAll('a.toc-link'));
+  var targets = links.map(function (a) { return document.querySelector(a.getAttribute('href')); }).filter(Boolean);
+  function highlight() {
+    var pos = window.scrollY + 120, current = null;
+    targets.forEach(function (el) { if (el.offsetTop <= pos) { current = el.id; } });
+    links.forEach(function (a) {
+      if (a.getAttribute('href') === '#' + current) { a.setAttribute('aria-current', 'true'); }
+      else { a.removeAttribute('aria-current'); }
+    });
+  }
+  window.addEventListener('scroll', highlight, { passive: true });
+  highlight();
+
+  document.querySelectorAll('[data-copy]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var wrap = btn.closest('.codeblock');
+      var text = wrap.querySelector('code').innerText;
+      var msg = wrap.querySelector('.copy-msg');
+      function ok() { msg.textContent = 'コピーしました。'; msg.className = 'copy-msg ok'; }
+      function ng() { msg.textContent = 'コピーできませんでした。ブラウザがこのページでのコピーを許可していないためです。コード部分を選択して手動でコピーしてください。'; msg.className = 'copy-msg ng'; }
+      function fallback() {
+        try {
+          var ta = document.createElement('textarea');
+          ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+          document.body.appendChild(ta); ta.select();
+          var done = document.execCommand('copy');
+          document.body.removeChild(ta);
+          done ? ok() : ng();
+        } catch (e) { ng(); }
+      }
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(ok).catch(fallback);
+      } else { fallback(); }
+    });
+  });
+})();
+</script>
+</body>
+</html>

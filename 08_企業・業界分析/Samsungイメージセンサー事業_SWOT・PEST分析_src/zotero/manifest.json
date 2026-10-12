@@ -1,0 +1,912 @@
+{
+ "base": "/Users/sakamoto/04_プログラミング/ClaudeCode/GitHub/技術解説資料/08_企業・業界分析/Samsungイメージセンサー事業_SWOT・PEST分析_src",
+ "case_collection": "2026-09-28_Samsungイメージセンサー事業分析",
+ "unread_tag": "未読",
+ "items": [
+  {
+   "key": "samsung_q2_2026",
+   "itemType": "report",
+   "title": "Samsung Electronics Announces Second Quarter 2026 Results",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/イメージセンサー",
+    "所属/Samsung"
+   ],
+   "creators": [],
+   "date": "2026-07-30",
+   "fields": {
+    "url": "https://news.samsung.com/global/samsung-electronics-announces-second-quarter-2026-results",
+    "accessDate": "2026-09-28",
+    "institution": "Samsung Electronics",
+    "reportType": "決算発表（プレスリリース）"
+   },
+   "files": [
+    "sources/web/2026_Samsung Electronics_Second quarter 2026 results.html"
+   ],
+   "importId": "samsung-cis-swot:c375907c8df0d379ab3832f2e856c063acca30d7643fd2e22cd6689df1bc5f59"
+  },
+  {
+   "key": "samsung_q1_2026",
+   "itemType": "report",
+   "title": "Samsung Electronics Announces First Quarter 2026 Results",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/イメージセンサー",
+    "所属/Samsung"
+   ],
+   "creators": [],
+   "date": "2026-04-30",
+   "fields": {
+    "url": "https://news.samsung.com/global/samsung-electronics-announces-first-quarter-2026-results",
+    "accessDate": "2026-09-28",
+    "institution": "Samsung Electronics",
+    "reportType": "決算発表（プレスリリース）"
+   },
+   "files": [
+    "sources/web/2026_Samsung Electronics_First quarter 2026 results.html"
+   ],
+   "importId": "samsung-cis-swot:3d666aae00683f8cacd8ccd0c61820c23634cba54c8630daea67033db34008fd"
+  },
+  {
+   "key": "samsung_auto4ac_2021",
+   "itemType": "webpage",
+   "title": "Samsung Introduces Its First ISOCELL Image Sensor Tailored for Automotive Applications",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/イメージセンサー",
+    "所属/Samsung"
+   ],
+   "creators": [],
+   "date": "2021-07-13",
+   "fields": {
+    "url": "https://news.samsung.com/global/samsung-introduces-its-first-isocell-image-sensor-tailored-for-automotive-applications",
+    "accessDate": "2026-09-28",
+    "websiteTitle": "Samsung Electronics"
+   },
+   "files": [
+    "sources/web/2021_Samsung Electronics_ISOCELL Auto 4AC first automotive ISOCELL.html"
+   ],
+   "importId": "samsung-cis-swot:08137bbdd82310d5c6b9c5c5e849bdb1275d9ae38687c2c4c89a9360cfa9190f"
+  },
+  {
+   "key": "samsung_hp1_2021",
+   "itemType": "webpage",
+   "title": "Samsung Brings Advanced Ultra-Fine Pixel Technologies to New Mobile Image Sensors",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/イメージセンサー",
+    "所属/Samsung"
+   ],
+   "creators": [],
+   "date": "2021-09-02",
+   "fields": {
+    "url": "https://news.samsung.com/global/samsung-brings-advanced-ultra-fine-pixel-technologies-to-new-mobile-image-sensors",
+    "accessDate": "2026-09-28",
+    "websiteTitle": "Samsung Electronics"
+   },
+   "files": [
+    "sources/web/2021_Samsung Electronics_ISOCELL HP1 and GN5 ultra-fine pixel technologies.html"
+   ],
+   "importId": "samsung-cis-swot:2c366d3ebb1cbfdc0845088837996f5425753c7e7ebabf821f49f9eb15aefbd7"
+  },
+  {
+   "key": "samsung_vizion_2023",
+   "itemType": "webpage",
+   "title": "Samsung Unveils Two New ISOCELL Vizion Sensors Tailored for Robotics and XR Applications",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/イメージセンサー",
+    "所属/Samsung"
+   ],
+   "creators": [],
+   "date": "2023-12-19",
+   "fields": {
+    "url": "https://news.samsung.com/global/samsung-unveils-two-new-isocell-vizion-sensors-tailored-for-robotics-and-xr-applications",
+    "accessDate": "2026-09-28",
+    "websiteTitle": "Samsung Electronics"
+   },
+   "files": [
+    "sources/web/2023_Samsung Electronics_ISOCELL Vizion 63D and 931 for robotics and XR.html"
+   ],
+   "importId": "samsung-cis-swot:c7e7b4702bc9e3be25f91151bd0481bd4635d46ed287ccba82189fbe5aa3902c"
+  },
+  {
+   "key": "samsung_hp9_2024",
+   "itemType": "webpage",
+   "title": "Samsung Unveils Versatile Image Sensors for Superior Smartphone Photography",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/イメージセンサー",
+    "所属/Samsung"
+   ],
+   "creators": [],
+   "date": "2024-06-27",
+   "fields": {
+    "url": "https://news.samsung.com/global/samsung-unveils-versatile-image-sensors-for-superior-smartphone-photography",
+    "accessDate": "2026-09-28",
+    "websiteTitle": "Samsung Electronics"
+   },
+   "files": [
+    "sources/web/2024_Samsung Electronics_ISOCELL HP9, GNJ and JN5.html"
+   ],
+   "importId": "samsung-cis-swot:a3d8005ec3d35ffc92e4721780bb4bcc504500840ddcf4d96128b99542363a72"
+  },
+  {
+   "key": "samsung_hp5_ces_2026",
+   "itemType": "webpage",
+   "title": "[CES Innovation Awards 2026 Honoree] ISOCELL HP5: Advancing Mobile Imaging with the Industry’s Smallest 0.5㎛ Pixels",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/イメージセンサー",
+    "所属/Samsung"
+   ],
+   "creators": [],
+   "date": "2026-01-08",
+   "fields": {
+    "url": "https://news.samsungsemiconductor.com/global/ces-innovation-awards-2026-honoree-isocell-hp5-advancing-mobile-imaging-with-the-industrys-smallest-0-5%E3%8E%9B-pixels/",
+    "accessDate": "2026-09-28",
+    "websiteTitle": "Samsung Semiconductor"
+   },
+   "files": [
+    "sources/web/2026_Samsung Semiconductor_ISOCELL HP5 CES Innovation Awards 2026 honoree.html"
+   ],
+   "importId": "samsung-cis-swot:f1a56e89f768a25bf8718565a656f224a62a7964df3137bc797f32cdfa84de0d"
+  },
+  {
+   "key": "thelec_2021_08",
+   "itemType": "webpage",
+   "title": "Samsung narrows CIS market share with Sony in 2020",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/イメージセンサー",
+    "所属/Samsung"
+   ],
+   "creators": [],
+   "date": "2021-08-13",
+   "fields": {
+    "url": "https://www.thelec.net/news/articleView.html?idxno=3231",
+    "accessDate": "2026-09-28",
+    "websiteTitle": "THE ELEC"
+   },
+   "files": [
+    "sources/web/2021_THE ELEC_Samsung narrows CIS market share with Sony in 2020.html"
+   ],
+   "importId": "samsung-cis-swot:24c2304ddede0e79dcc33c6f0103cd8363420e6242071a743cf8115c84fd5c08"
+  },
+  {
+   "key": "eetj_2023_07_27",
+   "itemType": "webpage",
+   "title": "首位ソニーが3年ぶりシェア拡大、2022年CIS市場",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/イメージセンサー",
+    "所属/Yole Group"
+   ],
+   "creators": [],
+   "date": "2023-07-27",
+   "fields": {
+    "url": "https://eetimes.itmedia.co.jp/ee/articles/2307/27/news084.html",
+    "accessDate": "2026-09-28",
+    "websiteTitle": "EE Times Japan"
+   },
+   "files": [
+    "sources/web/2023_EE Times Japan_首位ソニーが3年ぶりシェア拡大、2022年CIS市場_p1.html",
+    "sources/web/2023_EE Times Japan_首位ソニーが3年ぶりシェア拡大、2022年CIS市場_p2.html"
+   ],
+   "importId": "samsung-cis-swot:08bae1c0015d651e658336454565b641a3fba3063b89ddffa2357ac99c4e028b"
+  },
+  {
+   "key": "yole_2024_07",
+   "itemType": "webpage",
+   "title": "Sony is set to capture 50% of the CIS market",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/イメージセンサー",
+    "所属/Yole Group"
+   ],
+   "creators": [],
+   "date": "2024-07-03",
+   "fields": {
+    "url": "https://www.yolegroup.com/press-release/sony-is-set-to-capture-50-of-the-cis-market/",
+    "accessDate": "2026-09-28",
+    "websiteTitle": "Yole Group"
+   },
+   "files": [
+    "sources/web/2024_Yole Group_Sony is set to capture 50% of the CIS market.html"
+   ],
+   "importId": "samsung-cis-swot:5cea014933ecbfd72b420cdc174ed15e5089c477f8ded9f73e42026717a5680c"
+  },
+  {
+   "key": "eetj_2024_07_04",
+   "itemType": "webpage",
+   "title": "首位ソニーはシェア45％に拡大、2023年のCMOSイメージセンサー市場",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/イメージセンサー",
+    "所属/Yole Group"
+   ],
+   "creators": [],
+   "date": "2024-07-04",
+   "fields": {
+    "url": "https://eetimes.itmedia.co.jp/ee/articles/2407/04/news078.html",
+    "accessDate": "2026-09-28",
+    "websiteTitle": "EE Times Japan"
+   },
+   "files": [
+    "sources/web/2024_EE Times Japan_首位ソニーはシェア45％に拡大、2023年のCIS市場_p1.html",
+    "sources/web/2024_EE Times Japan_首位ソニーはシェア45％に拡大、2023年のCIS市場_p2.html"
+   ],
+   "importId": "samsung-cis-swot:8027bf3eae2aa62369b9c19423c7a74ba17f9baf11d4ce3f91a63bbf41f90b6c"
+  },
+  {
+   "key": "eetj_2025_05_28",
+   "itemType": "webpage",
+   "title": "24年のスマホ用CIS出荷台数、首位はソニーで2位＆3位に中国勢",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/イメージセンサー",
+    "所属/Counterpoint Research"
+   ],
+   "creators": [],
+   "date": "2025-05-28",
+   "fields": {
+    "url": "https://eetimes.itmedia.co.jp/ee/articles/2505/28/news061.html",
+    "accessDate": "2026-09-28",
+    "websiteTitle": "EE Times Japan"
+   },
+   "files": [
+    "sources/web/2025_EE Times Japan_24年のスマホ用CIS出荷台数、首位はソニーで2位＆3位に中国勢.html"
+   ],
+   "importId": "samsung-cis-swot:6ce7b0a25509c874e8e3f1783cc220cf6e264eb3147b106c79c8e7214e60cf76"
+  },
+  {
+   "key": "yole_2025_07",
+   "itemType": "webpage",
+   "title": "CIS market to reach more than $30 billion by 2030, driven by mobile, automotive, and security applications",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/イメージセンサー",
+    "所属/Yole Group"
+   ],
+   "creators": [],
+   "date": "2025-07-28",
+   "fields": {
+    "url": "https://www.yolegroup.com/press-release/cis-market-to-reach-more-than-30-billion-by-2030-driven-by-mobile-automotive-and-security-applications/",
+    "accessDate": "2026-09-28",
+    "websiteTitle": "Yole Group"
+   },
+   "files": [
+    "sources/web/2025_Yole Group_CIS market to reach more than 30 billion USD by 2030.html"
+   ],
+   "importId": "samsung-cis-swot:d12babcba896bfb4c4c5fd70339fd7f29fe987225a756671e522505ebfa56c5a"
+  },
+  {
+   "key": "eetj_2025_08_07",
+   "itemType": "webpage",
+   "title": "2024年のイメージセンサー市場もソニーがトップ、高まる中国の存在感",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/イメージセンサー",
+    "所属/Yole Group"
+   ],
+   "creators": [],
+   "date": "2025-08-07",
+   "fields": {
+    "url": "https://eetimes.itmedia.co.jp/ee/articles/2508/07/news045.html",
+    "accessDate": "2026-09-28",
+    "websiteTitle": "EE Times Japan"
+   },
+   "files": [
+    "sources/web/2025_EE Times Japan_2024年のイメージセンサー市場もソニーがトップ、高まる中国の存在感.html"
+   ],
+   "importId": "samsung-cis-swot:71cd495c2305ce590f52a23718e21b2c3c0020d703d8b2e2cd7294a96e10998f"
+  },
+  {
+   "key": "yole_2026",
+   "itemType": "webpage",
+   "title": "CIS industry: Sony extends its lead as China overtakes South Korea",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/イメージセンサー",
+    "所属/Yole Group"
+   ],
+   "creators": [],
+   "date": "2026-08-03",
+   "fields": {
+    "url": "https://www.yolegroup.com/press-release/cis-industry-sony-extends-its-lead-as-china-overtakes-south-korea/",
+    "accessDate": "2026-09-28",
+    "websiteTitle": "Yole Group"
+   },
+   "files": [
+    "sources/web/2026_Yole Group_CIS industry Sony extends its lead as China overtakes South Korea.html"
+   ],
+   "importId": "samsung-cis-swot:6d18684885178bf57fe6efaf5556945f59447327565e4d8e35b6a4e7a7c1768c"
+  },
+  {
+   "key": "eetj_2026_08_26",
+   "itemType": "webpage",
+   "title": "25年のイメージセンサー市場は過去最高、ソニーはシェア5割",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/イメージセンサー",
+    "所属/Yole Group"
+   ],
+   "creators": [],
+   "date": "2026-08-26",
+   "fields": {
+    "url": "https://eetimes.itmedia.co.jp/ee/articles/2608/26/news049.html",
+    "accessDate": "2026-09-28",
+    "websiteTitle": "EE Times Japan"
+   },
+   "files": [
+    "sources/web/2026_EE Times Japan_25年のイメージセンサー市場は過去最高、ソニーはシェア5割_p1.html",
+    "sources/web/2026_EE Times Japan_25年のイメージセンサー市場は過去最高、ソニーはシェア5割_p2.html"
+   ],
+   "importId": "samsung-cis-swot:1e1b943f375e18dff58de6ef5b1324f69653a66ce257d9c3b01b843923c3c354"
+  },
+  {
+   "key": "dclife_map2027",
+   "itemType": "webpage",
+   "title": "CMOSセンサー世界シェア2025（日経業界地図2027年版の紹介）",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/イメージセンサー",
+    "所属/日本経済新聞社"
+   ],
+   "creators": [],
+   "date": "2026-08-21",
+   "fields": {
+    "url": "https://dclife.jp/archives/18627",
+    "accessDate": "2026-09-28",
+    "websiteTitle": "デジカメライフ"
+   },
+   "files": [
+    "sources/web/2026_デジカメライフ_日経業界地図 CMOSイメージセンサー出荷額ベース世界シェア2025.html"
+   ],
+   "importId": "samsung-cis-swot:bf25999836a8caac79be86d613b5ee719ae4b7277b80a71a970080c545b484f1"
+  },
+  {
+   "key": "ithome_2026",
+   "itemType": "webpage",
+   "title": "报告称国产 CMOS 厂商豪威 2025 年全球份额首超三星，位居世界第二",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/イメージセンサー"
+   ],
+   "creators": [],
+   "date": "2026-09-07",
+   "fields": {
+    "url": "https://www.ithome.com/0/999/120.htm",
+    "accessDate": "2026-09-28",
+    "websiteTitle": "IT之家"
+   },
+   "files": [
+    "sources/web/2026_IT之家_豪威2025年全球份额首超三星.html"
+   ],
+   "importId": "samsung-cis-swot:c312dc5cdf6603c6a7b6b24c7bb978a28585ee874e0226d45f3917aacb42d566"
+  },
+  {
+   "key": "techinsights_q2_2025",
+   "itemType": "webpage",
+   "title": "Smartphone Image Sensor Market Share Q2 2025",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/イメージセンサー",
+    "所属/TechInsights"
+   ],
+   "creators": [],
+   "date": "2025-09-05",
+   "fields": {
+    "url": "https://www.techinsights.com/blog/narrative-smartphone-image-sensor-market-share-q2-2025",
+    "accessDate": "2026-09-28",
+    "websiteTitle": "TechInsights"
+   },
+   "files": [
+    "sources/web/2025_TechInsights_Smartphone image sensor market share Q2 2025.html"
+   ],
+   "importId": "samsung-cis-swot:08f4fa3a0f5e1e2c418688d95dba7c67f314b879e2cb6a98136d49b74f3c57fe"
+  },
+  {
+   "key": "edaily_2018",
+   "itemType": "webpage",
+   "title": "“이미지센서 캐파 전환 결정된 바 없어”-삼성전자 컨콜（イメージセンサーへの能力転換は未定：サムスン電子の決算説明会）",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/イメージセンサー",
+    "所属/Samsung"
+   ],
+   "creators": [],
+   "date": "2018-04-26",
+   "fields": {
+    "url": "https://edaily.co.kr/News/Read?mediaCodeNo=257&newsId=02974966619180056",
+    "accessDate": "2026-09-28",
+    "websiteTitle": "Edaily（이데일리）"
+   },
+   "files": [
+    "sources/web/2018_Edaily_이미지센서 캐파 전환 결정된 바 없어（삼성전자 컨콜）.html"
+   ],
+   "importId": "samsung-cis-swot:02eeaf4e17edb20bee3a6f1bbbe57dcda5437eab1f4f98c1de0167dc04c9cf57"
+  },
+  {
+   "key": "trendforce_2025_03",
+   "itemType": "webpage",
+   "title": "SK hynix Reportedly Exits CIS to Focus on AI amid Weak Demand and Fierce China Competition",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/イメージセンサー",
+    "所属/SK hynix"
+   ],
+   "creators": [],
+   "date": "2025-03-06",
+   "fields": {
+    "url": "https://www.trendforce.com/news/2025/03/06/news-sk-hynix-reportedly-exits-cis-to-focus-on-ai-memory-amid-weak-demand-and-fierce-china-competition/",
+    "accessDate": "2026-09-28",
+    "websiteTitle": "TrendForce"
+   },
+   "files": [
+    "sources/web/2025_TrendForce_SK hynix reportedly exits CIS to focus on AI memory.html"
+   ],
+   "importId": "samsung-cis-swot:da67cb1a8d9333d8e59dacf0916d08b1d64e20723e96138d81a866f454ab791f"
+  },
+  {
+   "key": "digitimes_2026_04",
+   "itemType": "webpage",
+   "title": "Samsung System LSI talent exits raise risks for Exynos and image sensors",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/イメージセンサー",
+    "所属/Samsung"
+   ],
+   "creators": [],
+   "date": "2026-04-16",
+   "fields": {
+    "url": "https://www.digitimes.com/news/a20260415PD234/samsung-lsi-exynos-cis-talent-design.html",
+    "accessDate": "2026-09-28",
+    "websiteTitle": "DIGITIMES"
+   },
+   "files": [
+    "sources/web/2026_DIGITIMES_Samsung System LSI talent exits raise risks for Exynos and image sensors.html"
+   ],
+   "importId": "samsung-cis-swot:a5102f6f749a2822565844d61aa794927b9bf48e2dd6c89eb2e6a9de3823eb39"
+  },
+  {
+   "key": "koreaherald_2026_01",
+   "itemType": "webpage",
+   "title": "Long-stalled chip bill clears National Assembly",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/イメージセンサー",
+    "所属/韓国政府"
+   ],
+   "creators": [],
+   "date": "2026-01-29",
+   "fields": {
+    "url": "https://www.koreaherald.com/article/10665897",
+    "accessDate": "2026-09-28",
+    "websiteTitle": "The Korea Herald"
+   },
+   "files": [
+    "sources/web/2026_The Korea Herald_Long-stalled chip bill clears National Assembly.html"
+   ],
+   "importId": "samsung-cis-swot:4adef0d93f910c9dd94cc4c58634236056fe5d156a6b7f061de40a3ce367e706"
+  },
+  {
+   "key": "idc_2026_05",
+   "itemType": "webpage",
+   "title": "Worldwide Smartphone Market to Decline 13.9% in 2026 as Memory Crisis and US-Iran War Constrain Growth",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/イメージセンサー",
+    "所属/IDC"
+   ],
+   "creators": [],
+   "date": "2026-05-26",
+   "fields": {
+    "url": "https://www.idc.com/resource-center/blog/worldwide-smartphone-market-to-decline-13-9-in-2026-as-memory-crisis-and-us-iran-war-constrain-growth/",
+    "accessDate": "2026-09-28",
+    "websiteTitle": "IDC"
+   },
+   "files": [
+    "sources/web/2026_IDC_Worldwide smartphone market to decline 13.9% in 2026.html"
+   ],
+   "importId": "samsung-cis-swot:3d3d9918ff4ad2ebf4fa327224a1c75652dac749530626683c258cbab67eda7a"
+  },
+  {
+   "key": "idc_2026_08",
+   "itemType": "webpage",
+   "title": "Smartphone Shipments Set for Record 16.7% Drop in 2026, as the Memory Crisis Hits Full Force",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/イメージセンサー",
+    "所属/IDC"
+   ],
+   "creators": [],
+   "date": "2026-08-26",
+   "fields": {
+    "url": "https://www.idc.com/resource-center/blog/smartphone-shipments-set-for-record-16-7-drop-in-2026-as-the-memory-crisis-hits-full-force/",
+    "accessDate": "2026-09-28",
+    "websiteTitle": "IDC"
+   },
+   "files": [
+    "sources/web/2026_IDC_Smartphone shipments set for record 16.7% drop in 2026.html"
+   ],
+   "importId": "samsung-cis-swot:14d85faf330370b420f3b4d15d6c170d1a683bf46b0afbc603f0d1e846597929"
+  },
+  {
+   "key": "gsmarena_s26u",
+   "itemType": "webpage",
+   "title": "Samsung Galaxy S26 Ultra review: Camera - photo and video quality",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/イメージセンサー",
+    "所属/Samsung"
+   ],
+   "creators": [],
+   "date": "2026-03-06",
+   "fields": {
+    "url": "https://www.gsmarena.com/samsung_galaxy_s26_ultra-review-2939p5.php",
+    "accessDate": "2026-09-28",
+    "websiteTitle": "GSMArena"
+   },
+   "files": [
+    "sources/web/2026_GSMArena_Samsung Galaxy S26 Ultra review camera.html"
+   ],
+   "importId": "samsung-cis-swot:ec750c435177f2b7fc8f5d960e576a7acff14acdaca409e5f24444f01cc84f1b"
+  },
+  {
+   "key": "apple_2025_08",
+   "itemType": "webpage",
+   "title": "Apple increases U.S. commitment to $600 billion, announces ambitious program",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/イメージセンサー",
+    "所属/Apple"
+   ],
+   "creators": [],
+   "date": "2025-08-06",
+   "fields": {
+    "url": "https://www.apple.com/newsroom/2025/08/apple-increases-us-commitment-to-600-billion-usd-announces-ambitious-program/",
+    "accessDate": "2026-09-28",
+    "websiteTitle": "Apple"
+   },
+   "files": [
+    "sources/web/2025_Apple_Apple increases US commitment to 600 billion USD.html"
+   ],
+   "importId": "samsung-cis-swot:6cd016a0e4182e9078e83d619688488129021d34ab7c15612f022f3fa9fb4235"
+  },
+  {
+   "key": "trendforce_2025_08",
+   "itemType": "webpage",
+   "title": "Samsung Tapped to Produce Apple’s New Chips at Austin Fab, Likely iPhone Image Sensors",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/イメージセンサー",
+    "所属/Samsung"
+   ],
+   "creators": [],
+   "date": "2025-08-07",
+   "fields": {
+    "url": "https://www.trendforce.com/news/2025/08/07/news-samsung-tapped-to-produce-apples-new-chips-at-austin-fab-likely-for-iphone-image-sensors/",
+    "accessDate": "2026-09-28",
+    "websiteTitle": "TrendForce"
+   },
+   "files": [
+    "sources/web/2025_TrendForce_Samsung tapped to produce Apple new chips at Austin fab.html"
+   ],
+   "importId": "samsung-cis-swot:2fa0a4986af487a212c0e435f68e43fec053a1d33e12bcb6d577fd98c870ecaa"
+  },
+  {
+   "key": "digitimes_2025_08",
+   "itemType": "webpage",
+   "title": "Samsung reportedly planning to produce iPhone image sensors in Texas, but keep packaging in Korea",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/イメージセンサー",
+    "所属/Samsung"
+   ],
+   "creators": [],
+   "date": "2025-08-11",
+   "fields": {
+    "url": "https://www.digitimes.com/news/a20250811PD218/samsung-texas-fab-cis-apple-iphone-packaging.html",
+    "accessDate": "2026-09-28",
+    "websiteTitle": "DIGITIMES"
+   },
+   "files": [
+    "sources/web/2025_DIGITIMES_Samsung to produce iPhone image sensors in Texas but keep packaging in Korea.html"
+   ],
+   "importId": "samsung-cis-swot:d78dc06bc64a3ca0395c59397a16ca215a24f22dd590f21e7f34dd73fe22c163"
+  },
+  {
+   "key": "macrumors_2025_10",
+   "itemType": "webpage",
+   "title": "Suppliers Already Preparing for iPhone 18's Camera",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/イメージセンサー",
+    "所属/Samsung"
+   ],
+   "creators": [],
+   "date": "2025-10-15",
+   "fields": {
+    "url": "https://www.macrumors.com/2025/10/15/suppliers-already-preparing-for-iphone-18-camera/",
+    "accessDate": "2026-09-28",
+    "websiteTitle": "MacRumors"
+   },
+   "files": [
+    "sources/web/2025_MacRumors_Suppliers already preparing for iPhone 18 camera.html"
+   ],
+   "importId": "samsung-cis-swot:e7f364390aed7661804a3c37b95d57c66df867f542675189ea0654488b1c874f"
+  },
+  {
+   "key": "macrumors_2025_12",
+   "itemType": "webpage",
+   "title": "Advanced iPhone 18 Camera Sensor to Be Made in Texas",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/イメージセンサー",
+    "所属/Samsung"
+   ],
+   "creators": [],
+   "date": "2025-12-24",
+   "fields": {
+    "url": "https://www.macrumors.com/2025/12/24/iphone-18-camera-sensor-to-be-made-in-texas/",
+    "accessDate": "2026-09-28",
+    "websiteTitle": "MacRumors"
+   },
+   "files": [
+    "sources/web/2025_MacRumors_iPhone 18 camera sensor to be made in Texas.html"
+   ],
+   "importId": "samsung-cis-swot:a6f37ebf96581c45133490693863ce4dc9a68c281f2c760c27b3eeb29ce5124b"
+  },
+  {
+   "key": "9to5mac_2025_12",
+   "itemType": "webpage",
+   "title": "iPhone 18 Pro camera sensors look set to be made in the USA",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/イメージセンサー",
+    "所属/Samsung"
+   ],
+   "creators": [],
+   "date": "2025-12-24",
+   "fields": {
+    "url": "https://9to5mac.com/2025/12/24/iphone-18-pro-camera-sensors-look-set-to-be-made-in-the-usa/",
+    "accessDate": "2026-09-28",
+    "websiteTitle": "9to5Mac"
+   },
+   "files": [
+    "sources/web/2025_9to5Mac_iPhone 18 Pro camera sensors look set to be made in the USA.html"
+   ],
+   "importId": "samsung-cis-swot:9565aa123f83b14f9757360c68d2f7c6337e7dc9009eece6bbd9b43dc37a7349"
+  },
+  {
+   "key": "sammyfans_2026_01",
+   "itemType": "webpage",
+   "title": "Apple could pay Samsung $1.5 billion a year for iPhone camera",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/イメージセンサー",
+    "所属/Samsung"
+   ],
+   "creators": [],
+   "date": "2026-01-11",
+   "fields": {
+    "url": "https://www.sammyfans.com/2026/01/11/apple-could-pay-samsung-1-5-billion-a-year-for-iphone-camera/",
+    "accessDate": "2026-09-28",
+    "websiteTitle": "Sammy Fans"
+   },
+   "files": [
+    "sources/web/2026_Sammy Fans_Apple could pay Samsung 1.5 billion a year for iPhone camera.html"
+   ],
+   "importId": "samsung-cis-swot:b29a11061d8331ab63f199023d3e457d21157575bab6369d9eaea2a7121a44f6"
+  },
+  {
+   "key": "sammyfans_2026_07",
+   "itemType": "webpage",
+   "title": "Apple iPhone 18 adopts Samsung camera sensors",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/イメージセンサー",
+    "所属/Samsung"
+   ],
+   "creators": [],
+   "date": "2026-07-03",
+   "fields": {
+    "url": "https://www.sammyfans.com/2026/07/03/apple-reportedly-adopts-samsung-camera-sensors/",
+    "accessDate": "2026-09-28",
+    "websiteTitle": "Sammy Fans"
+   },
+   "files": [
+    "sources/web/2026_Sammy Fans_Apple iPhone 18 reportedly adopts Samsung camera sensors.html"
+   ],
+   "importId": "samsung-cis-swot:913dd80d0cba6017a1d0a25220b801f4b3377553664b811b96b0d85efe0d6575"
+  },
+  {
+   "key": "eetj_2026_01_15",
+   "itemType": "webpage",
+   "title": "iPhoneのイメージセンサー、ソニーの独占供給「崩壊のとき」は近いのか",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/イメージセンサー",
+    "所属/Samsung"
+   ],
+   "creators": [],
+   "date": "2026-01-15",
+   "fields": {
+    "url": "https://eetimes.itmedia.co.jp/ee/articles/2601/15/news062.html",
+    "accessDate": "2026-09-28",
+    "websiteTitle": "EE Times Japan"
+   },
+   "files": [
+    "sources/web/2026_EE Times Japan_iPhoneのイメージセンサー、ソニーの独占供給「崩壊のとき」は近いのか.html"
+   ],
+   "importId": "samsung-cis-swot:0cd82249f1950a2bca33e0eaeb7a4afb37ae0dc00b33f1ebc0b1dbe7a744bb2d"
+  },
+  {
+   "key": "nist_chips_samsung",
+   "itemType": "webpage",
+   "title": "Samsung Electronics (Texas)",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/イメージセンサー",
+    "所属/米国政府"
+   ],
+   "creators": [],
+   "date": "2026-09",
+   "fields": {
+    "url": "https://www.nist.gov/chips/samsung-electronics-texas-taylor",
+    "accessDate": "2026-09-28",
+    "websiteTitle": "NIST（CHIPS for America）"
+   },
+   "files": [
+    "sources/web/2026_NIST CHIPS_Samsung Electronics (Texas) award.html"
+   ],
+   "importId": "samsung-cis-swot:bbc5e94b2afe0837d608c2859c046c5a7681e659fffe602ff29b84143ba3aa38"
+  },
+  {
+   "key": "wh_2025_11",
+   "itemType": "webpage",
+   "title": "Joint Fact Sheet on President Donald J. Trump’s Meeting with President Lee Jae Myung",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/イメージセンサー",
+    "所属/米国政府"
+   ],
+   "creators": [],
+   "date": "2025-11-13",
+   "fields": {
+    "url": "https://www.whitehouse.gov/fact-sheets/2025/11/joint-fact-sheet-on-president-donald-j-trumps-meeting-with-president-lee-jae-myung/",
+    "accessDate": "2026-09-28",
+    "websiteTitle": "The White House"
+   },
+   "files": [
+    "sources/web/2025_The White House_Joint fact sheet on President Trump's meeting with President Lee Jae Myung.html"
+   ],
+   "importId": "samsung-cis-swot:02d830fb6248e18269f6d759bef7304e74724c9ae8f024905e8cc22212b95d23"
+  },
+  {
+   "key": "skadden_2026_02",
+   "itemType": "webpage",
+   "title": "The Supreme Court Ends IEEPA Tariffs, Bringing Fresh Uncertainty for Companies",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/イメージセンサー"
+   ],
+   "creators": [],
+   "date": "2026-02-24",
+   "fields": {
+    "url": "https://www.skadden.com/insights/publications/2026/02/the-supreme-court-ends-ieepa-tariffs",
+    "accessDate": "2026-09-28",
+    "websiteTitle": "Skadden"
+   },
+   "files": [
+    "sources/web/2026_Skadden_The Supreme Court ends IEEPA tariffs.html"
+   ],
+   "importId": "samsung-cis-swot:8eeab53734f496d8d8f5e0b07926dc77343dae72427d39e7b4a9fac0f37b5ac2"
+  },
+  {
+   "key": "strtrade_232",
+   "itemType": "webpage",
+   "title": "Section 232 Tariffs on Semiconductors",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/イメージセンサー"
+   ],
+   "creators": [],
+   "date": "2026-09",
+   "fields": {
+    "url": "https://www.strtrade.com/trade-news-resources/tariff-actions-resources/section-232-investigation-semiconductors",
+    "accessDate": "2026-09-28",
+    "websiteTitle": "Sandler, Travis & Rosenberg"
+   },
+   "files": [
+    "sources/web/2026_Sandler Travis & Rosenberg_Section 232 tariffs on semiconductors.html"
+   ],
+   "importId": "samsung-cis-swot:a6467831e4e2b580e26e8ca4be3815e9f407d2d756eb49162ec3d899a30ace8f"
+  },
+  {
+   "key": "sss_lytia_l910",
+   "itemType": "webpage",
+   "title": "LOFIC搭載のモバイル用CMOSイメージセンサーを商品化",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/イメージセンサー",
+    "所属/ソニー"
+   ],
+   "creators": [],
+   "date": "2026-06-17",
+   "fields": {
+    "url": "https://www.sony-semicon.com/ja/info/2026/2026061701.html",
+    "accessDate": "2026-09-28",
+    "websiteTitle": "ソニーセミコンダクタソリューションズ"
+   },
+   "files": [
+    "sources/web/2026_ソニーセミコンダクタソリューションズ_LOFIC搭載モバイル用センサー LYTIA L910.html"
+   ],
+   "importId": "samsung-cis-swot:ed8b18b46b7e45bad086dc538ee0d1a01381a640b08a4537bced0c06b46ce81a"
+  },
+  {
+   "key": "sss_tsmc_jv",
+   "itemType": "webpage",
+   "title": "TSMCと次世代イメージセンサーにおける合弁会社の設立に関する確定契約を締結",
+   "collection": "05_資料",
+   "tags": [
+    "種別/資料",
+    "分野/イメージセンサー",
+    "所属/ソニー"
+   ],
+   "creators": [],
+   "date": "2026-08-11",
+   "fields": {
+    "url": "https://www.sony-semicon.com/ja/news/2026/2026081101.html",
+    "accessDate": "2026-09-28",
+    "websiteTitle": "ソニーセミコンダクタソリューションズ"
+   },
+   "files": [
+    "sources/web/2026_ソニーセミコンダクタソリューションズ_TSMCとの合弁会社設立の確定契約.html"
+   ],
+   "importId": "samsung-cis-swot:42cc77f9f5c7eaf96d16fc6f2ab382d054475d90269f9ae0bd71cc5c192276bb"
+  }
+ ],
+ "existing_references": []
+}
