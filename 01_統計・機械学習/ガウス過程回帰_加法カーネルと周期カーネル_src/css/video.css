@@ -24,7 +24,7 @@ html, body { margin: 0; height: 100%; background: #0e0e0d; overflow: hidden; }
   font-size: 29px; line-height: 1.5; color: #f0efec;
   border-top: 1px solid #33332f; text-wrap: balance;
 }
-.caption .katex { font-size: 1.08em; margin: 0 0.12em; }
+.caption .katex { font-size: 1.08em; margin: 0 0.12em; white-space: nowrap; }
 .caption-text { text-wrap: balance; word-break: auto-phrase; }
 .txt .katex { margin: 0 0.1em; }
 

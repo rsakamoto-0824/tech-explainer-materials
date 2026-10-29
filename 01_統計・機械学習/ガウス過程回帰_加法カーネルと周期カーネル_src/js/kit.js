@@ -34,6 +34,7 @@ window.KIT = (() => {
     '周期カーネル',
     '加法カーネル① 構造の足し算',
     '加法カーネル② 入力次元の足し算',
+    '加法カーネル③ 質的変数',
     '積カーネル ― 局所周期',
     'まとめ',
   ];
@@ -112,6 +113,27 @@ window.KIT = (() => {
     ctx.globalAlpha *= alpha;
     ctx.imageSmoothingEnabled = smooth;
     ctx.drawImage(image, x, y, w, h);
+    ctx.restore();
+  }
+
+  // 行列の値を色で描く（0〜max を青の濃さで）。rowMark の行に黄色の線を引く
+  function drawMatrixHeat(ctx, x, y, size, values, max, { rowMark = null, alpha = 1 } = {}) {
+    const n = values.length;
+    const image = heatmapCanvas(n, n, (i, j) => seqColor(values[i][j] / max));
+    drawImage(ctx, image, x, y, size, size, { alpha });
+    ctx.save();
+    ctx.globalAlpha *= alpha;
+    ctx.strokeStyle = C.axis;
+    ctx.strokeRect(x - 0.5, y - 0.5, size + 1, size + 1);
+    if (rowMark !== null) {
+      ctx.strokeStyle = C.yellow;
+      ctx.lineWidth = 2.5;
+      const ry = y + ((rowMark + 0.5) / n) * size;
+      ctx.beginPath();
+      ctx.moveTo(x, ry);
+      ctx.lineTo(x + size, ry);
+      ctx.stroke();
+    }
     ctx.restore();
   }
 
@@ -349,7 +371,7 @@ window.KIT = (() => {
   return {
     W, H, C, SERIES, FONT, CHAPTERS,
     clamp, ramp, lerp, easeOut, easeInOut, keyframes,
-    rgba, hexToRgb, seqColor, divColor, heatmapCanvas, drawImage,
+    rgba, hexToRgb, seqColor, divColor, heatmapCanvas, drawImage, drawMatrixHeat,
     fmt, texNum, texFactor, canvasText, roundRect, Plot, legend, colorBar,
   };
 })();

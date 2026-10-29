@@ -25,7 +25,8 @@
   const KIND_COLOR = { theory: C.theory, visual: C.visual, summary: C.text2, title: C.muted };
   const KATEX_OPTIONS = { throwOnError: true, strict: 'ignore', trust: (c) => c.command === '\\htmlClass' };
 
-  const scenes = window.SCENES;
+  // 場面は章の番号順に並べる（同じ章の中はファイルに書いた順のまま）
+  const scenes = window.SCENES.sort((a, b) => a.chapter - b.chapter);
   const params = new URLSearchParams(location.search);
 
   // ---- 文字: "$...$" の部分を KaTeX で描く。文字列はすべてこのファイル群の中で書いたもの ----
