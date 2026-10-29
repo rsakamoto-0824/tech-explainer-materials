@@ -1073,7 +1073,7 @@
     kind: 'summary',
     title: '全体のふりかえり',
     beats: [
-      beat('まとめです。GP は、カーネルという「似ている度合いの計算」で、関数の性質を指定する方法でした。', 9),
+      beat(R`まとめです。GP は、カーネルという「似ている度合いの計算」で、関数の性質を指定する方法でした。なめらかさは Matérn の $\nu$ で選べます。`, 10),
       beat('予測は α と k* の内積。周期カーネルは円への写像、加法カーネルは部品の足し算、質的変数は一致カーネルの足し算として計算できます。', 11),
       beat('カーネルの和と積を組み合わせれば、データについての仮定を、そのまま式に書けます。'),
       beat('実務では、入出力の標準化、周期 p の初期値、最適化の初期値の振り直しに注意してください。', 9),
@@ -1081,6 +1081,7 @@
     build(ui) {
       const points = [
         [0, R`GP は関数の上の正規分布。カーネル $k(x,x')$ が「2点の値がどれだけ連動するか」を決める`],
+        [0, R`Matérn はなめらかさ $\nu$ を選べる（$m$ 回微分できる $\iff \nu > m$）。$\nu \to \infty$ で RBF`],
         [0, R`予測平均 $\mu_* = \mathbf{k}_*^{\top}\boldsymbol{\alpha}$（カーネルの山の重ね合わせ）。分散はデータの位置だけで決まる`],
         [1, R`周期カーネル ＝ $x$ を円に写してから RBF。1周期ずれた点は相関 1`],
         [1, R`加法カーネル ＝ 独立な部品の和。$K$ も予測平均も、部品ごとの足し算に分解できる`],
@@ -1088,9 +1089,9 @@
         [1, R`質的変数 ＝ 一致カーネルを足す。ずれは $\sigma_c^2 \sum_{i \in c} \alpha_i$、データの少ないカテゴリほど 0 へ縮む`],
         [2, R`和は OR、積は AND。仮定をカーネルの式として組み立てる`],
       ];
-      points.forEach(([at, text], i) => ui.text(`<span class="toc-num">${i + 1}</span>${text}`, { x: LEFT_X, y: 128 + i * 54, size: 25, at, delay: (i % 3) * 0.6 }));
-      ui.card({ x: LEFT_X, y: 530, w: 1420, h: 120, title: '実務での注意', at: 3 });
-      ui.text(R`入出力の標準化 ／ 周期 $p$ の初期値は対象の知識から ／ 周辺尤度の最大化は初期値を変えて複数回 ／ $n$ が数千を超えたら近似手法も検討`, { x: LEFT_X + 30, y: 590, size: 22, at: 3, delay: 0.4 });
+      points.forEach(([at, text], i) => ui.text(`<span class="toc-num">${i + 1}</span>${text}`, { x: LEFT_X, y: 124 + i * 50, size: 25, at, delay: (i % 3) * 0.6 }));
+      ui.card({ x: LEFT_X, y: 540, w: 1420, h: 116, title: '実務での注意', at: 3 });
+      ui.text(R`入出力の標準化 ／ 周期 $p$ の初期値は対象の知識から ／ 周辺尤度の最大化は初期値を変えて複数回 ／ $n$ が数千を超えたら近似手法も検討`, { x: LEFT_X + 30, y: 598, size: 22, at: 3, delay: 0.4 });
       ui.text('参考文献：C. E. Rasmussen & C. K. I. Williams, Gaussian Processes for Machine Learning, MIT Press, 2006 ／ D. Duvenaud, H. Nickisch & C. E. Rasmussen, Additive Gaussian Processes, NeurIPS 2011 ／ D. Duvenaud, Automatic Model Construction with Gaussian Processes, PhD thesis, 2014', {
         x: LEFT_X, y: 672, w: 1420, size: 17, color: C.muted, lh: 1.5, at: 3, delay: 1,
       });

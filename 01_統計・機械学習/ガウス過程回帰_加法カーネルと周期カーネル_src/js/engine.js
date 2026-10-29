@@ -315,7 +315,7 @@
       chapterNo.textContent = scene.kind === 'summary' ? '' : `第${scene.chapter}章`;
       headerTitle.innerHTML = rich(scene.title);
     }
-    partLabel.textContent = scene.chapter >= 1 && scene.chapter <= 4 ? '基礎編' : scene.chapter >= 5 && scene.chapter <= 9 ? '発展編' : '';
+    partLabel.textContent = scene.kind === 'title' || scene.kind === 'summary' ? '' : scene.chapter <= 4 ? '基礎編' : '発展編';
     activeIndex = index;
     activeBeat = -1;
   }

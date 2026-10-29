@@ -40,7 +40,7 @@ const VIEWPORT = { width: 1600, height: 900 };
 const DEVICE_SCALE = 1.2; // 1600×900 → 1920×1080
 const JPEG_QUALITY = 95;
 // CRF 22 ＋ animation（平らな色の多い図向け）で、26分の動画を GitHub の警告（50MB）より小さくする
-const X264 = ['-c:v', 'libx264', '-preset', 'medium', '-crf', '22', '-tune', 'animation', '-pix_fmt', 'yuv420p', '-profile:v', 'high'];
+const X264 = ['-c:v', 'libx264', '-preset', 'slow', '-crf', '24', '-tune', 'animation', '-pix_fmt', 'yuv420p', '-profile:v', 'high'];
 
 const MIME = {
   '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.mjs': 'text/javascript; charset=utf-8',
@@ -210,6 +210,8 @@ const narrationDir = path.join(root, 'narration');
 const clipDir = path.join(narrationDir, 'clips');
 const clipPath = (key) => path.join(clipDir, `${key.replace(':', '_')}.aiff`);
 const VOICE_SAMPLE_RATE = 24000;
+// 声だけの音声なので 24kHz・32kbps で足りる（動画全体を GitHub の警告 50MB 未満に収めるため）
+const AUDIO_BITRATE = '32k';
 
 function run(command, commandArgs) {
   const result = spawnSync(command, commandArgs, { maxBuffer: 1 << 30 });
@@ -273,7 +275,7 @@ if (mode === 'mux') {
   }
   const result = path.join(out, `${name}-voice.mp4`);
   const ff = ffmpeg(['-i', video, '-f', 'f32le', '-ar', String(VOICE_SAMPLE_RATE), '-ac', '1', '-i', '-',
-    '-map', '0:v', '-map', '1:a', '-c:v', 'copy', '-af', 'loudnorm=I=-16:TP=-1.5:LRA=11', '-ar', '48000', '-c:a', 'aac', '-b:a', '48k',
+    '-map', '0:v', '-map', '1:a', '-c:v', 'copy', '-af', 'loudnorm=I=-16:TP=-1.5:LRA=11', '-ar', String(VOICE_SAMPLE_RATE), '-c:a', 'aac', '-b:a', AUDIO_BITRATE,
     '-movflags', '+faststart', '-shortest', result], 'pipe');
   await write(ff, Buffer.from(track.buffer));
   ff.stdin.end();

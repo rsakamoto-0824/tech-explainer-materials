@@ -40,6 +40,75 @@
     return variance * Math.exp((-2 * s * s) / lengthScale ** 2);
   };
 
+  // ---- Matérn カーネル（なめらかさ ν） ----
+  // ガンマ関数の対数（ランチョス近似）。ν が大きいと Γ(ν) そのものは桁あふれするので対数で扱う
+  const LANCZOS = [
+    0.99999999999980993, 676.5203681218851, -1259.1392167224028, 771.32342877765313, -176.61502916214059,
+    12.507343278686905, -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7,
+  ];
+  function logGamma(x) {
+    if (x < 0.5) return Math.log(Math.PI / Math.sin(Math.PI * x)) - logGamma(1 - x);
+    const shifted = x - 1;
+    const t = shifted + 7.5;
+    let series = LANCZOS[0];
+    for (let i = 1; i < LANCZOS.length; i++) series += LANCZOS[i] / (shifted + i);
+    return 0.5 * Math.log(2 * Math.PI) + (shifted + 0.5) * Math.log(t) - t + Math.log(series);
+  }
+
+  // 変形ベッセル関数 K_ν(z) の対数。K_ν(z) = ∫₀^∞ exp(−z cosh t) cosh(νt) dt を台形則で積分する。
+  // 被積分関数は t = 0 で傾きが 0 のなめらかな関数なので、台形則で十分に正確になる（半整数の閉じた式と照合済み）
+  const BESSEL_STEPS = 600;
+  const BESSEL_TAIL = 60; // 被積分関数の対数が、山の高さよりこれだけ下がった所で積分を打ち切る
+  const CLOSED_FORM_MAX_ORDER = 20; // これより大きい半整数の ν は、閉じた式の階乗があふれるので K_ν で計算する
+  function logBesselK(nu, z) {
+    const logCosh = (v) => v + Math.log1p(Math.exp(-2 * v)) - Math.LN2;
+    const logIntegrand = (t) => -z * Math.cosh(t) + logCosh(nu * t);
+    let top = 0.25;
+    let peak = Math.max(logIntegrand(0), logIntegrand(top));
+    while (logIntegrand(top) > peak - BESSEL_TAIL) {
+      top *= 1.25;
+      peak = Math.max(peak, logIntegrand(top));
+    }
+    const h = top / BESSEL_STEPS;
+    const values = Array.from({ length: BESSEL_STEPS + 1 }, (_, i) => logIntegrand(i * h) + (i === 0 || i === BESSEL_STEPS ? -Math.LN2 : 0));
+    const max = Math.max(...values);
+    return Math.log(h) + max + Math.log(values.reduce((acc, v) => acc + Math.exp(v - max), 0));
+  }
+
+  // 相関 k(r)/σ_f² を ρ = r/ℓ の関数として返す。ν = 1/2, 3/2, 5/2 … は閉じた式、ν = ∞ は RBF、それ以外は K_ν を使う
+  function maternCorrelation(nu) {
+    if (nu === Infinity) return (rho) => Math.exp(-0.5 * rho * rho);
+    const order = nu - 0.5;
+    if (Number.isInteger(order) && order <= CLOSED_FORM_MAX_ORDER) {
+      // k = exp(−√(2ν)ρ) · p!/(2p)! · Σ_{i=0}^{p} (p+i)!/(i!(p−i)!) · (2√(2ν)ρ)^{p−i}　（Rasmussen & Williams 式 4.16）
+      const factorial = (m) => Math.exp(logGamma(m + 1));
+      const coefficients = Array.from({ length: order + 1 }, (_, i) => (factorial(order) / factorial(2 * order)) * (factorial(order + i) / (factorial(i) * factorial(order - i))));
+      return (rho) => {
+        const z = Math.sqrt(2 * nu) * rho;
+        return Math.exp(-z) * coefficients.reduce((acc, c, i) => acc + c * (2 * z) ** (order - i), 0);
+      };
+    }
+    const logScale = (1 - nu) * Math.LN2 - logGamma(nu);
+    return (rho) => {
+      const z = Math.sqrt(2 * nu) * rho;
+      if (z < 1e-9) return 1;
+      return Math.exp(logScale + nu * Math.log(z) + logBesselK(nu, z));
+    };
+  }
+
+  const matern = ({ variance = 1, lengthScale = 1, nu = 1.5 } = {}) => {
+    const correlation = maternCorrelation(nu);
+    return (a, b) => variance * correlation(Math.abs(a - b) / lengthScale);
+  };
+
+  // スペクトル密度（角周波数 ω の確率密度。k(r) = σ_f² ∫ p(ω) cos(ωr) dω）。
+  // Matérn は自由度 2ν・尺度 1/ℓ の t 分布、ν = ∞（RBF）は分散 1/ℓ² の正規分布になる
+  function maternSpectralDensity({ lengthScale = 1, nu = 1.5 } = {}) {
+    if (nu === Infinity) return (omega) => (lengthScale / Math.sqrt(2 * Math.PI)) * Math.exp(-0.5 * (lengthScale * omega) ** 2);
+    const logNormalizer = logGamma(nu + 0.5) - logGamma(nu) - 0.5 * Math.log(2 * nu * Math.PI);
+    return (omega) => lengthScale * Math.exp(logNormalizer - (nu + 0.5) * Math.log1p((lengthScale * omega) ** 2 / (2 * nu)));
+  }
+
   const sum = (...kernels) => (a, b) => kernels.reduce((acc, k) => acc + k(a, b), 0);
   const product = (...kernels) => (a, b) => kernels.reduce((acc, k) => acc * k(a, b), 1);
   // 多次元の入力 [x1, x2] のうち、1つの次元だけを見るカーネル
@@ -188,7 +257,7 @@
 
   return {
     createRandom, standardNormals, linspace,
-    rbf, periodic, sum, product, onDim,
+    rbf, periodic, sum, product, onDim, matern, maternCorrelation, maternSpectralDensity, logGamma,
     gram, withDiagonal, dot, cholesky, solveLower, choleskySolve, determinant, multiplyLower,
     sampleFunctions, fit, predict, posteriorSamples, logMarginalLikelihood,
   };
