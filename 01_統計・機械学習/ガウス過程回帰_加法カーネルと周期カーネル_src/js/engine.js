@@ -37,14 +37,30 @@
       .join('');
   const plainLength = (text) => text.replace(/\$([^$]+)\$/g, (_, m) => 'x'.repeat(Math.ceil(m.replace(/\\[a-zA-Z]+|[{}^_]/g, '').length / 1.5))).replace(/<[^>]+>/g, '').length;
 
-  // ---- 時間割を組む ----
+  // ---- 読み上げ（narration.js の原稿と、narration/seconds.js の音声の長さ。無ければ字幕だけの動画になる） ----
+  const NARRATION = window.NARRATION || {};
+  const NARRATION_SECONDS = window.NARRATION_SECONDS || {};
+  const NARRATION_LEAD = 0.3; // 字幕が出てから声が始まるまで
+  const NARRATION_TAIL = 0.7; // 声が終わってから次の字幕まで
+  const beatKey = (scene, i) => `${scene.id}:${i}`;
+  scenes.forEach((scene) => {
+    const lines = NARRATION[scene.id];
+    if (Object.keys(NARRATION).length && (!lines || lines.length !== scene.beats.length)) {
+      console.warn(`narration: ${scene.id} の原稿の数（${lines ? lines.length : 0}）が字幕の数（${scene.beats.length}）と合いません`);
+    }
+    scene.beats.forEach((b, i) => (b.n = lines && lines[i]));
+  });
+
+  // ---- 時間割を組む（声が字幕の時間より長いときは、その字幕を延ばす） ----
   let clock = 0;
   scenes.forEach((scene) => {
     scene.beatStarts = [];
     let u = SCENE_LEAD;
-    scene.beats.forEach((b) => {
+    scene.beats.forEach((b, i) => {
       scene.beatStarts.push(u);
-      b.dur = b.d ?? clamp(BEAT_BASE_SECONDS + plainLength(b.c) / READ_CHARS_PER_SECOND, BEAT_MIN_SECONDS, BEAT_MAX_SECONDS);
+      const reading = b.d ?? clamp(BEAT_BASE_SECONDS + plainLength(b.c) / READ_CHARS_PER_SECOND, BEAT_MIN_SECONDS, BEAT_MAX_SECONDS);
+      const spoken = NARRATION_SECONDS[beatKey(scene, i)];
+      b.dur = spoken ? Math.max(reading, NARRATION_LEAD + spoken + NARRATION_TAIL) : reading;
       u += b.dur;
     });
     scene.beatStarts.push(u); // 終わりの印（at に beats.length を書くと「最後まで出ない」）
@@ -347,7 +363,11 @@
     stage.style.top = `${(window.innerHeight - H * scale) / 2}px`;
   }
 
-  window.ARCH = { ready: false, duration: DURATION, fps: FPS, posterTime, phases, render };
+  // 字幕ごとの時刻と原稿（tools/render.mjs の voice・mux で声を作り、時刻に合わせて並べる）
+  const beats = scenes.flatMap((scene) =>
+    scene.beats.map((b, i) => ({ key: beatKey(scene, i), t0: scene.t0 + scene.beatStarts[i], dur: b.dur, caption: b.c, narration: b.n || null })),
+  );
+  window.ARCH = { ready: false, duration: DURATION, fps: FPS, posterTime, phases, beats, narrationLead: NARRATION_LEAD, render };
 
   (async () => {
     fitStage();

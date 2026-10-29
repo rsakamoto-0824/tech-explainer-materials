@@ -3,7 +3,7 @@
 ガウス過程回帰（GPR）を基礎から発展まで解説する動画 `../ガウス過程回帰_加法カーネルと周期カーネル.mp4` の生成元です。
 理論（式）と図解（グラフ）を交互に進め、後半で加法カーネルと周期カーネルの具体的な計算を扱います。
 
-- 1920×1080、30fps、H.264、約21分、音声なし（字幕つき）
+- 1920×1080、30fps、H.264、約22分、字幕と読み上げ音声つき（Mac の声 Kyoko、AAC 48kbps）
 - 作り方はスキル「動く構成図（animated-arch-diagram）」の録画方式を使っています。時刻 t を入れると必ず同じ絵が出るページを作り、ヘッドレス Chrome で1コマずつ撮って ffmpeg で MP4 にします。
 
 ## 構成（26場面）
@@ -34,6 +34,8 @@
 | `js/gp-math.js` | GP の計算（カーネル、コレスキー分解、予測、周辺尤度、サンプル）。乱数は種を固定 |
 | `js/scenes-basic.js` | 基礎編の場面（はじめに、第1〜4章） |
 | `js/scenes-kernel.js` | 発展編の場面（第5〜10章） |
+| `js/narration.js` | 字幕ごとの読み上げ原稿（数式は読み方に直し、読み間違えやすい漢字はかなで書く） |
+| `narration/seconds.js` | 字幕ごとの声の長さ（`voice` で自動生成）。声が字幕の時間より長いと、その字幕を延ばす |
 | `js/engine.js` | 場面の一覧を時刻 t の絵にする（字幕、見出し、進み具合の帯） |
 | `css/video.css` | 画面の見た目 |
 | `tools/render.mjs` | 書き出し（スキルの render.mjs を元に、並列の書き出し・場面ごとの確認・http サーバーを追加） |
@@ -54,14 +56,26 @@ node tools/render.mjs video gpr --workers 4   # 書き出し（out/gpr.mp4 と o
 node tools/render.mjs serve                   # ブラウザで確認するための URL を表示
 ```
 
+音声つきの動画は、次の順で作ります（声の長さで字幕の時間が変わるため、映像は声を作ったあとに書き出す）。
+
+```bash
+node tools/render.mjs voice                   # 原稿を音声にする（narration/clips/）、長さを narration/seconds.js に書く
+caffeinate -i node tools/render.mjs video gpr --workers 4   # 新しい時間割で映像を書き出す
+node tools/render.mjs mux gpr                 # 音声を字幕の時刻に並べて重ねる（out/gpr-voice.mp4）
+```
+
+声は `--voice`、速さは `--rate`（語/分。既定 200、Mac の標準は 180）で変えられます。
+高音質の声（Kyoko や Otoya の「拡張」「プレミアム」）を使うときは、システム設定の［アクセシビリティ］→［読み上げコンテンツ］→［システムの声］→［声を管理］で追加してから、`say -v '?'` に出る名前を `--voice` に渡し、上の3つをやり直します。
+
 ブラウザで見るときは `serve` が表示する URL を開きます（KaTeX のフォントは `file://` では読めないため）。
 `?scene=6V` でその場面から、`?t=660` でその時刻に止めて表示します。再生中はスペースで一時停止、←→ で5秒戻る・進む、[ ] で前・次の場面です。
 
 ## 注意事項
 
 - 認証情報や環境変数は使いません。
-- `out/`（確認画像と書き出し途中のファイル）と `node_modules/` は Git に含めません。
-- 書き出しは Mac（8コア、4並列）で約30分かかりました（37,768コマ、MP4 は約37MB）。`--workers` で並列の数を変えられます。
+- `out/`（確認画像と書き出し途中のファイル）、`narration/clips/`（音声ファイル）、`node_modules/` は Git に含めません。
+- 読み上げは Mac の `say` コマンドを使うため、`voice` は Mac でだけ動きます。
+- 書き出しは Mac（8コア、4並列）で約18〜30分かかりました（39,631コマ。音声つき MP4 は約46MB）。`--workers` で並列の数を変えられます。
 - 書き出しの途中でスリープすると撮影が止まることがあるため、Mac では `caffeinate -i node tools/render.mjs video gpr --workers 4` のように実行します。
 
 ## 参考文献
