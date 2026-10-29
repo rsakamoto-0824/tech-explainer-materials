@@ -5,10 +5,13 @@
 //   node tools/render.mjs stills 2.5,7.1                → out/still-<秒>.png（原寸 1920×1080）
 //   node tools/render.mjs video [名前=gpr] [--workers 4] → out/<名前>.mp4 + <名前>-poster.png
 //   node tools/render.mjs serve                         → ブラウザで確認するための http サーバー（Ctrl+C で終了）
+//   node tools/render.mjs voice [--voice Kyoko --rate 200] → js/narration.js の原稿を音声にし、長さを narration/seconds.js に書く
+//   node tools/render.mjs mux [名前=gpr]                 → 音声を字幕の時刻に並べ、out/<名前>.mp4 と重ねて out/<名前>-voice.mp4 にする
+//   声の長さで字幕の時間が延びるので、voice のあとは video で映像を書き出し直してから mux する
 //   どれにも --page <html> を付けると別のページを撮る。既定は gpr.html
 // KaTeX のフォントは file:// から読めない（CORS で止まる）ため、ページは毎回この中の小さな http サーバーから開く。
 import { chromium } from 'playwright-core';
-import { spawn } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 import { once } from 'node:events';
 import http from 'node:http';
 import fs from 'node:fs';
@@ -28,6 +31,9 @@ const takeOption = (name, fallback) => {
 const PAGE = takeOption('--page', 'gpr.html');
 const SCENE = takeOption('--scene', null);
 const WORKERS = Number(takeOption('--workers', 4));
+// 読み上げ: Mac の say コマンドの声と速さ（語/分。標準は 180。200 で約1割速い）
+const VOICE = takeOption('--voice', 'Kyoko');
+const VOICE_RATE = Number(takeOption('--rate', 200));
 const [mode = 'info', ...args] = argv;
 
 const VIEWPORT = { width: 1600, height: 900 };
@@ -196,6 +202,82 @@ if (mode === 'video') {
   fs.unlinkSync(list);
   fs.writeFileSync(path.join(out, `${name}-poster.png`), await shot(page, posterTime));
   console.log(`${mp4}  (${total} frames, ${((Date.now() - started) / 60000).toFixed(1)} min)`);
+}
+
+// ---- 読み上げ ----
+const narrationDir = path.join(root, 'narration');
+const clipDir = path.join(narrationDir, 'clips');
+const clipPath = (key) => path.join(clipDir, `${key.replace(':', '_')}.aiff`);
+const VOICE_SAMPLE_RATE = 24000;
+
+function run(command, commandArgs) {
+  const result = spawnSync(command, commandArgs, { maxBuffer: 1 << 30 });
+  if (result.status !== 0) throw new Error(`${command} failed: ${result.stderr?.toString()}`);
+  return result.stdout;
+}
+const audioSeconds = (file) => Number(run('ffprobe', ['-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', file]).toString().trim());
+// 音声ファイルを 24kHz・1ch の 32bit 浮動小数の並びにする
+function decodeAudio(file) {
+  const raw = run('ffmpeg', ['-v', 'error', '-i', file, '-f', 'f32le', '-ac', '1', '-ar', String(VOICE_SAMPLE_RATE), '-']);
+  const samples = new Float32Array(raw.length / 4);
+  for (let i = 0; i < samples.length; i++) samples[i] = raw.readFloatLE(i * 4);
+  return samples;
+}
+
+if (mode === 'voice') {
+  fs.mkdirSync(clipDir, { recursive: true });
+  const beats = await page.evaluate(() => ARCH.beats);
+  const seconds = {};
+  let made = 0;
+  for (const b of beats) {
+    if (!b.narration) {
+      console.warn(`原稿がありません: ${b.key}`);
+      continue;
+    }
+    const file = clipPath(b.key);
+    // 原稿・声・速さが前回と同じなら作り直さない
+    const recipe = `${VOICE}|${VOICE_RATE}|${b.narration}`;
+    const recipeFile = `${file}.txt`;
+    if (!fs.existsSync(file) || !fs.existsSync(recipeFile) || fs.readFileSync(recipeFile, 'utf8') !== recipe) {
+      run('say', ['-v', VOICE, '-r', String(VOICE_RATE), '-o', file, b.narration]);
+      fs.writeFileSync(recipeFile, recipe);
+      made++;
+    }
+    seconds[b.key] = Number(audioSeconds(file).toFixed(3));
+  }
+  const total = Object.values(seconds).reduce((a, b) => a + b, 0);
+  fs.writeFileSync(
+    path.join(narrationDir, 'seconds.js'),
+    `// 自動生成（node tools/render.mjs voice --voice ${VOICE} --rate ${VOICE_RATE}）。字幕ごとの声の長さ（秒）。engine.js がこれで字幕の時間を延ばす\nwindow.NARRATION_SECONDS = ${JSON.stringify(seconds, null, 2)};\n`,
+  );
+  console.log(`${Object.keys(seconds).length} 本（新しく作った ${made} 本）、声の合計 ${(total / 60).toFixed(1)} 分 → narration/seconds.js`);
+}
+
+if (mode === 'mux') {
+  const name = args[0] || 'gpr';
+  const video = path.join(out, `${name}.mp4`);
+  const videoSeconds = audioSeconds(video);
+  if (Math.abs(videoSeconds - DUR) > 0.5) throw new Error(`映像の長さ ${videoSeconds.toFixed(1)} 秒が今の時間割 ${DUR.toFixed(1)} 秒と合いません。voice のあとに video で書き出し直してください`);
+  const { beats, narrationLead } = await page.evaluate(() => ({ beats: ARCH.beats, narrationLead: ARCH.narrationLead }));
+  const track = new Float32Array(Math.ceil(DUR * VOICE_SAMPLE_RATE));
+  let placed = 0;
+  for (const b of beats) {
+    const file = clipPath(b.key);
+    if (!b.narration || !fs.existsSync(file)) continue;
+    const samples = decodeAudio(file);
+    const start = Math.round((b.t0 + narrationLead) * VOICE_SAMPLE_RATE);
+    if (samples.length / VOICE_SAMPLE_RATE + narrationLead > b.dur) console.warn(`声が次の字幕にはみ出します: ${b.key}`);
+    for (let i = 0; i < samples.length && start + i < track.length; i++) track[start + i] += samples[i];
+    placed++;
+  }
+  const result = path.join(out, `${name}-voice.mp4`);
+  const ff = ffmpeg(['-i', video, '-f', 'f32le', '-ar', String(VOICE_SAMPLE_RATE), '-ac', '1', '-i', '-',
+    '-map', '0:v', '-map', '1:a', '-c:v', 'copy', '-af', 'loudnorm=I=-16:TP=-1.5:LRA=11', '-ar', '48000', '-c:a', 'aac', '-b:a', '48k',
+    '-movflags', '+faststart', '-shortest', result], 'pipe');
+  await write(ff, Buffer.from(track.buffer));
+  ff.stdin.end();
+  await finish(ff);
+  console.log(`${result}（声 ${placed} 本）`);
 }
 
 await browser.close();
