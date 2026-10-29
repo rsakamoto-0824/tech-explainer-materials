@@ -1,0 +1,50 @@
+/* video.css — 動画の画面（論理 1600×900、暗い背景） */
+html, body { margin: 0; height: 100%; background: #0e0e0d; overflow: hidden; }
+#stage {
+  position: absolute; left: 0; top: 0; width: 1600px; height: 900px; overflow: hidden;
+  transform-origin: 0 0; background: #1a1a19; color: #f0efec;
+  font-family: 'Hiragino Sans', 'Noto Sans JP', 'Yu Gothic UI', sans-serif; font-weight: 400;
+  font-feature-settings: 'palt' 0; -webkit-font-smoothing: antialiased;
+}
+.content, .scenes, .scene { position: absolute; inset: 0; }
+.plot { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; }
+
+/* 見出し: 左上に「理論 / 図解」の札、章番号、題名 */
+.header { position: absolute; left: 56px; top: 30px; display: flex; align-items: center; gap: 16px; }
+.badge { padding: 5px 16px; border-radius: 999px; font-size: 21px; font-weight: 700; color: #1a1a19; letter-spacing: 0.08em; }
+.chapter-no { font-size: 22px; color: #8f8e86; font-weight: 600; }
+.header-title { font-size: 31px; font-weight: 700; }
+.part-label { position: absolute; right: 56px; top: 38px; font-size: 19px; color: #8f8e86; }
+
+/* 字幕 */
+.captions { position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; }
+.caption {
+  position: absolute; left: 90px; width: 1420px; top: 774px; height: 96px; display: none;
+  align-items: center; justify-content: center; text-align: center;
+  font-size: 29px; line-height: 1.5; color: #f0efec;
+  border-top: 1px solid #33332f; text-wrap: balance;
+}
+.caption .katex { font-size: 1.08em; margin: 0 0.12em; }
+.caption-text { text-wrap: balance; word-break: auto-phrase; }
+.txt .katex { margin: 0 0.1em; }
+
+/* 部品 */
+.el { position: absolute; box-sizing: border-box; isolation: isolate; }
+.txt { line-height: 1.55; }
+.tex .katex { font-size: 1em; }
+.katex .text, .katex .textrm { font-family: KaTeX_Main, 'Hiragino Sans', sans-serif; }
+.glowable { border-radius: 10px; padding: 4px 12px; margin: -4px -12px; }
+.card { border: 1.5px solid #3a3a37; border-radius: 16px; background: #222220; }
+.card-title { position: absolute; left: 24px; top: 16px; font-size: 21px; font-weight: 700; color: #c3c2b7; }
+.trow { display: flex; align-items: center; border-radius: 8px; }
+.thead { color: #8f8e86; font-weight: 600; border-bottom: 1px solid #3a3a37; border-radius: 0; }
+.tcell { padding: 0 8px; box-sizing: border-box; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.hlbox { position: absolute; border: 2px solid; border-radius: 8px; opacity: 0; pointer-events: none; z-index: -1; }
+.toc-num { display: inline-block; width: 52px; color: #8f8e86; font-weight: 700; }
+.pill { display: inline-block; padding: 2px 12px; border-radius: 999px; font-size: 0.8em; font-weight: 700; color: #1a1a19; margin-right: 8px; }
+
+/* 進み具合の帯と時刻表示 */
+.progress { position: absolute; left: 0; bottom: 0; width: 100%; height: 6px; background: #121211; }
+.progress-seg { position: absolute; top: 0; height: 100%; box-shadow: inset -1px 0 0 #121211; }
+.progress-fill { position: absolute; left: 0; top: 0; height: 100%; background: rgba(240, 239, 236, 0.55); }
+.stamp { position: absolute; right: 16px; top: 8px; font: 600 16px Menlo, monospace; color: #ffd166; background: rgba(0,0,0,0.6); padding: 2px 8px; border-radius: 6px; display: none; }
