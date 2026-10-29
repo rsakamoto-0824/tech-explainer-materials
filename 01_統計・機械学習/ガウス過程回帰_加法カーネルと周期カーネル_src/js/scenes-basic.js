@@ -37,7 +37,7 @@
           size: 26,
           at: 1,
           delay: 0.12 * i,
-          glow: i >= 5 && i <= 7 ? [{ from: 2, color: C.yellow }] : undefined,
+          glow: i >= 5 && i <= 8 ? [{ from: 2, color: C.yellow }] : undefined,
         });
       });
       ui.text(`<span class="pill" style="background:${C.theory}">理論</span>式で考える`, { x: 210, y: 610, size: 24, at: 1, delay: 1.4 });

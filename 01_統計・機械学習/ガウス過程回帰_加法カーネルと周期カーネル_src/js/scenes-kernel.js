@@ -1,7 +1,8 @@
-// scenes-kernel.js — 発展編の場面（第5〜10章: 組み合わせ規則、周期カーネル、加法カーネル、積カーネル、まとめ）。
+// scenes-kernel.js — 発展編の場面（第5〜8章と第10〜11章: 組み合わせ規則、周期カーネル、加法カーネル、積カーネル、まとめ）。
+// 第9章（質的変数）は scenes-categorical.js。並び順は engine.js が章の番号でそろえる。
 // 書き方は scenes-basic.js と同じ。表や字幕に出す数値は、ここで実際に計算した値を使う。
 (() => {
-  const { W, C, SERIES, Plot, fmt, texNum, canvasText, legend, seqColor, divColor, heatmapCanvas, drawImage, colorBar, keyframes, ramp, lerp, clamp, rgba } = KIT;
+  const { W, C, SERIES, Plot, fmt, texNum, canvasText, legend, seqColor, divColor, heatmapCanvas, drawImage, drawMatrixHeat, colorBar, keyframes, ramp, lerp, clamp, rgba } = KIT;
   const G = GPM;
   const SCENES = (window.SCENES = window.SCENES || []);
   const beat = (c, d) => ({ c, d });
@@ -16,27 +17,6 @@
   const ADDITIVE_KERNEL = G.sum(TREND_KERNEL, SEASON_KERNEL);
   const UNIT_PERIODIC = G.periodic({ variance: 1, lengthScale: 1, period: PERIOD });
   const UNIT_RBF = G.rbf({ variance: 1, lengthScale: 1 });
-
-  // 行列を数字の画像として描く（小さな行列用）
-  function drawMatrixHeat(ctx, x, y, size, values, max, { rowMark = null, alpha = 1 } = {}) {
-    const n = values.length;
-    const image = heatmapCanvas(n, n, (i, j) => seqColor(values[i][j] / max));
-    drawImage(ctx, image, x, y, size, size, { alpha });
-    ctx.save();
-    ctx.globalAlpha *= alpha;
-    ctx.strokeStyle = C.axis;
-    ctx.strokeRect(x - 0.5, y - 0.5, size + 1, size + 1);
-    if (rowMark !== null) {
-      ctx.strokeStyle = C.yellow;
-      ctx.lineWidth = 2.5;
-      const ry = y + ((rowMark + 0.5) / n) * size;
-      ctx.beginPath();
-      ctx.moveTo(x, ry);
-      ctx.lineTo(x + size, ry);
-      ctx.stroke();
-    }
-    ctx.restore();
-  }
 
   // ---------------------------------------------------------------- 第5章 理論
   SCENES.push({
@@ -1006,8 +986,8 @@
   const LONG_RBF = TREND_KERNEL;
   const productRows = [1, 3, 6].map((r) => ({ r, per: UNIT_PERIODIC(0, r), rbf: LONG_RBF(0, r) }));
   SCENES.push({
-    id: '9T',
-    chapter: 9,
+    id: '10T',
+    chapter: 10,
     kind: 'theory',
     title: '積カーネル ― 局所周期',
     beats: [
@@ -1040,8 +1020,8 @@
 
   // ---------------------------------------------------------------- 第9章 図解
   SCENES.push({
-    id: '9V',
-    chapter: 9,
+    id: '10V',
+    chapter: 10,
     kind: 'visual',
     title: '周期だけ・和・積のサンプル',
     beats: [
@@ -1088,13 +1068,13 @@
 
   // ---------------------------------------------------------------- まとめ
   SCENES.push({
-    id: '10',
-    chapter: 10,
+    id: '11',
+    chapter: 11,
     kind: 'summary',
     title: '全体のふりかえり',
     beats: [
       beat('まとめです。GP は、カーネルという「似ている度合いの計算」で、関数の性質を指定する方法でした。', 9),
-      beat('予測は α と k* の内積。周期カーネルは円への写像、加法カーネルは部品の足し算として計算できます。', 10),
+      beat('予測は α と k* の内積。周期カーネルは円への写像、加法カーネルは部品の足し算、質的変数は一致カーネルの足し算として計算できます。', 11),
       beat('カーネルの和と積を組み合わせれば、データについての仮定を、そのまま式に書けます。'),
       beat('実務では、入出力の標準化、周期 p の初期値、最適化の初期値の振り直しに注意してください。', 9),
     ],
@@ -1105,9 +1085,10 @@
         [1, R`周期カーネル ＝ $x$ を円に写してから RBF。1周期ずれた点は相関 1`],
         [1, R`加法カーネル ＝ 独立な部品の和。$K$ も予測平均も、部品ごとの足し算に分解できる`],
         [1, R`入力次元の加法 ＝ $f_1(x_1) + f_2(x_2)$。交互作用なしと引き換えに、遠くまで予測できる`],
+        [1, R`質的変数 ＝ 一致カーネルを足す。ずれは $\sigma_c^2 \sum_{i \in c} \alpha_i$、データの少ないカテゴリほど 0 へ縮む`],
         [2, R`和は OR、積は AND。仮定をカーネルの式として組み立てる`],
       ];
-      points.forEach(([at, text], i) => ui.text(`<span class="toc-num">${i + 1}</span>${text}`, { x: LEFT_X, y: 135 + i * 62, size: 26, at, delay: (i % 3) * 0.6 }));
+      points.forEach(([at, text], i) => ui.text(`<span class="toc-num">${i + 1}</span>${text}`, { x: LEFT_X, y: 128 + i * 54, size: 25, at, delay: (i % 3) * 0.6 }));
       ui.card({ x: LEFT_X, y: 530, w: 1420, h: 120, title: '実務での注意', at: 3 });
       ui.text(R`入出力の標準化 ／ 周期 $p$ の初期値は対象の知識から ／ 周辺尤度の最大化は初期値を変えて複数回 ／ $n$ が数千を超えたら近似手法も検討`, { x: LEFT_X + 30, y: 590, size: 22, at: 3, delay: 0.4 });
       ui.text('参考文献：C. E. Rasmussen & C. K. I. Williams, Gaussian Processes for Machine Learning, MIT Press, 2006 ／ D. Duvenaud, H. Nickisch & C. E. Rasmussen, Additive Gaussian Processes, NeurIPS 2011 ／ D. Duvenaud, Automatic Model Construction with Gaussian Processes, PhD thesis, 2014', {

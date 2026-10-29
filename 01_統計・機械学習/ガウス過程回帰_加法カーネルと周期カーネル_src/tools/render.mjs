@@ -39,7 +39,8 @@ const [mode = 'info', ...args] = argv;
 const VIEWPORT = { width: 1600, height: 900 };
 const DEVICE_SCALE = 1.2; // 1600×900 → 1920×1080
 const JPEG_QUALITY = 95;
-const X264 = ['-c:v', 'libx264', '-preset', 'medium', '-crf', '20', '-pix_fmt', 'yuv420p', '-profile:v', 'high'];
+// CRF 22 ＋ animation（平らな色の多い図向け）で、26分の動画を GitHub の警告（50MB）より小さくする
+const X264 = ['-c:v', 'libx264', '-preset', 'medium', '-crf', '22', '-tune', 'animation', '-pix_fmt', 'yuv420p', '-profile:v', 'high'];
 
 const MIME = {
   '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.mjs': 'text/javascript; charset=utf-8',
