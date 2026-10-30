@@ -12,6 +12,8 @@
   const LEFT_X = 90;
   const CARD_X = 1010;
   const CARD_W = 500;
+  // 第2章 理論で、2点の距離 r を見せる数直線（右の、計算例の表が出る前の空き）
+  const DISTANCE_LINE = { x: CARD_X + 20, y: 320, w: 460, h: 10, xr: [0, 5], yr: [0, 1] };
 
   // ---------------------------------------------------------------- はじめに
   SCENES.push({
@@ -209,40 +211,102 @@
     kind: 'theory',
     title: 'RBF カーネルの計算',
     beats: [
-      beat(R`最もよく使うのが RBF カーネル（ガウスカーネル）です。2点の距離 $r = |x - x'|$ だけで決まります。`),
-      beat(R`$\sigma_f^2$ は関数の縦の振れ幅を決めます。$r = 0$ のとき、$k$ は $\sigma_f^2$ になります。`),
+      beat(R`最もよく使うのが RBF カーネル（ガウスカーネル）です。式の中には、2点の差 $x - x'$ だけが出てきます。`),
+      beat(R`そこで、2点の距離を $r = |x - x'|$ と書きます。x 軸の上で2点がどれだけ離れているかを表す、0 以上の数です。`, 9),
+      beat(R`$(x - x')^2 = r^2$ なので、$k$ は $r$ だけで決まります。2点をそろって動かしても、$r$ が同じなら $k$ は変わりません。`, 10),
+      beat(R`$\sigma_f^2$ は関数の縦の振れ幅を決めます。$r = 0$（同じ点）のとき、$k$ は $\sigma_f^2$ になります。`),
       beat(R`$\ell$ は長さスケール。$r$ が $\ell$ と同じくらいになると、相関は大きく下がります。`),
       beat(R`$\sigma_f^2 = 1,\ \ell = 1$ で計算すると、$r = 1$ で 0.607、$r = 2$ で 0.135、$r = 3$ でほぼ 0 です。`, 10),
       beat(R`3点 $x = 0, 1, 3$ なら、すべての組み合わせを計算して 3×3 の行列 $K$ を作ります。`),
       beat(R`$K$ は対称で、対角はすべて $\sigma_f^2$。カーネルは、この行列が必ず正定値になる関数でなければなりません。`, 10),
     ],
     build(ui) {
-      ui.tex(R`k_{\mathrm{RBF}}(x,x') = \htmlClass{hlS}{\sigma_f^2}\, \exp\!\left(-\frac{(x-x')^2}{2\,\htmlClass{hlL}{\ell}^{2}}\right)`, {
+      ui.tex(R`k_{\mathrm{RBF}}(x,x') = \htmlClass{hlS}{\sigma_f^2}\, \exp\!\left(-\frac{\htmlClass{hlR}{(x-x')^2}}{2\,\htmlClass{hlL}{\ell}^{2}}\right)`, {
         x: LEFT_X, y: 150, size: 46,
-        hl: [{ cls: 'hlS', from: 1, to: 2, color: C.blue }, { cls: 'hlL', from: 2, to: 3, color: C.orange }],
+        hl: [
+          { cls: 'hlR', from: 1, to: 3, color: C.yellow },
+          { cls: 'hlS', from: 3, to: 4, color: C.blue },
+          { cls: 'hlL', from: 4, to: 5, color: C.orange },
+        ],
       });
-      ui.text(R`$\sigma_f^2$：縦の振れ幅（分散）`, { x: LEFT_X + 30, y: 270, size: 26, color: C.text2, at: 1 });
-      ui.text(R`$\ell$：横の長さスケール（どれだけ離れると似なくなるか）`, { x: LEFT_X + 30, y: 314, size: 26, color: C.text2, at: 2 });
+      ui.text(R`$r = |x - x'|$：2点の距離（x 軸の上の離れ具合）`, { x: LEFT_X + 30, y: 270, size: 26, color: C.text2, at: 1 });
+      ui.text(R`$\sigma_f^2$：縦の振れ幅（分散）`, { x: LEFT_X + 30, y: 314, size: 26, color: C.text2, at: 3 });
+      ui.text(R`$\ell$：横の長さスケール（どれだけ離れると似なくなるか）`, { x: LEFT_X + 30, y: 358, size: 26, color: C.text2, at: 4 });
+      // 右の数直線（draw で描く）の下に、r で書いた式を出す
+      ui.tex(R`k = \sigma_f^2 \exp\!\left(-\frac{r^2}{2\ell^2}\right)`, { x: DISTANCE_LINE.x, y: 402, size: 32, at: 2, until: 5 });
+      ui.text(R`$\sigma_f^2 = 1,\ \ell = 1$ のとき`, { x: DISTANCE_LINE.x, y: 503, size: 21, color: C.text2, at: 2, until: 5 });
 
       const kernel = G.rbf({ variance: 1, lengthScale: 1 });
-      ui.card({ x: CARD_X, y: 150, w: CARD_W, h: 340, title: R`計算例（$\sigma_f^2 = 1,\ \ell = 1$）`, at: 3 });
+      ui.card({ x: CARD_X, y: 150, w: CARD_W, h: 340, title: R`計算例（$\sigma_f^2 = 1,\ \ell = 1$）`, at: 5 });
       const distances = [0, 0.5, 1, 2, 3];
       ui.table({
-        x: CARD_X + 24, y: 210, widths: [130, 150, 170], size: 24, rowH: 44, at: 3,
+        x: CARD_X + 24, y: 210, widths: [130, 150, 170], size: 24, rowH: 44, at: 5,
         header: ['$r$', R`$r^2/2\ell^2$`, '$k$'],
         rows: distances.map((r) => [String(r), String((r * r) / 2), fmt(kernel(0, r), 3)]),
         rowDelay: 0.6,
-        glowRows: { 2: [{ from: 3, to: 4, color: C.yellow }], 3: [{ from: 3, to: 4, color: C.yellow }] },
+        glowRows: { 2: [{ from: 5, to: 6, color: C.yellow }], 3: [{ from: 5, to: 6, color: C.yellow }] },
       });
 
       const xs = [0, 1, 3];
       const K = G.gram(xs, xs, kernel);
       const cell = (v) => (v === 1 ? '1' : texNum(v, 3));
-      ui.text(R`3点 $x = (0,\ 1,\ 3)$ のとき`, { x: LEFT_X, y: 410, size: 26, color: C.text2, at: 4 });
-      ui.tex(R`K = \begin{bmatrix} ${K.map((row) => Array.from(row).map(cell).join(' & ')).join(' \\\\ ')} \end{bmatrix}`, { x: LEFT_X + 30, y: 460, size: 36, at: 4 });
+      ui.text(R`3点 $x = (0,\ 1,\ 3)$ のとき`, { x: LEFT_X, y: 430, size: 26, color: C.text2, at: 6 });
+      ui.tex(R`K = \begin{bmatrix} ${K.map((row) => Array.from(row).map(cell).join(' & ')).join(' \\\\ ')} \end{bmatrix}`, { x: LEFT_X + 30, y: 480, size: 36, at: 6 });
       ui.text(R`対称・対角は $\sigma_f^2$・正定値（どんな $\mathbf{v} \neq \mathbf{0}$ でも $\mathbf{v}^{\top} K\, \mathbf{v} > 0$）`, {
-        x: LEFT_X, y: 640, size: 26, at: 5, glow: [{ from: 5, color: C.yellow }],
+        x: LEFT_X, y: 660, size: 26, at: 7, glow: [{ from: 7, color: C.yellow }],
       });
+      return { kernel, line: new Plot(DISTANCE_LINE) };
+    },
+    // 右の数直線: 2点 x, x′ と距離 r。r が同じなら k も同じ → 同じ点（r = 0）→ r = ℓ と動かす
+    draw(ctx, s, st) {
+      const show = s.win(1, 5);
+      if (show <= 0.001) return;
+      ctx.globalAlpha = show;
+      const L = st.line;
+      const xa = keyframes(s.u, [[s.bt(2) + 0.8, 1], [s.bt(2) + 4.8, 2.5]]);
+      const xb = keyframes(s.u, [[s.bt(2) + 0.8, 3], [s.bt(2) + 4.8, 4.5], [s.bt(3) + 0.6, 4.5], [s.bt(3) + 2.6, 2.5], [s.bt(4) + 0.6, 2.5], [s.bt(4) + 2.6, 3.5]]);
+      const r = Math.abs(xb - xa);
+      canvasText(ctx, '2点の距離 r', L.x, 196, { size: 21, color: C.text, weight: 700 });
+      ctx.strokeStyle = C.axis;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(L.x, L.y);
+      ctx.lineTo(L.x + L.w, L.y);
+      ctx.stroke();
+      for (const v of [0, 1, 2, 3, 4, 5]) {
+        ctx.beginPath();
+        ctx.moveTo(L.sx(v), L.y);
+        ctx.lineTo(L.sx(v), L.y + 6);
+        ctx.stroke();
+        canvasText(ctx, String(v), L.sx(v), L.y + 28, { size: 16, color: C.muted, align: 'center' });
+      }
+      // r を表す括弧（2点の上）
+      const bracketY = L.y - 44;
+      ctx.strokeStyle = C.yellow;
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(L.sx(xa), bracketY + 10);
+      ctx.lineTo(L.sx(xa), bracketY);
+      ctx.lineTo(L.sx(xb), bracketY);
+      ctx.lineTo(L.sx(xb), bracketY + 10);
+      ctx.stroke();
+      canvasText(ctx, `r = ${fmt(r, 2)}`, L.sx((xa + xb) / 2), bracketY - 12, { size: 20, color: C.yellow, align: 'center', weight: 700 });
+      [xa, xb].forEach((x) => {
+        ctx.beginPath();
+        ctx.arc(L.sx(x), L.y, 9, 0, Math.PI * 2);
+        ctx.fillStyle = C.text;
+        ctx.fill();
+      });
+      if (r < 0.2) {
+        canvasText(ctx, 'x = x′', L.sx(xa), L.y + 58, { size: 19, color: C.text2, align: 'center' });
+      } else {
+        canvasText(ctx, 'x', L.sx(Math.min(xa, xb)), L.y + 58, { size: 19, color: C.text2, align: 'center' });
+        canvasText(ctx, 'x′', L.sx(Math.max(xa, xb)), L.y + 58, { size: 19, color: C.text2, align: 'center' });
+      }
+      const kAlpha = s.win(2, 5);
+      if (kAlpha > 0.001) {
+        canvasText(ctx, `k = ${fmt(st.kernel(xa, xb), 3)}`, L.x + 250, 527, { size: 22, color: C.yellow, weight: 700, alpha: kAlpha });
+      }
     },
   });
 
