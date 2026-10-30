@@ -5,7 +5,7 @@
 //   node tools/render.mjs stills 2.5,7.1                → out/still-<秒>.png（原寸 1920×1080）
 //   node tools/render.mjs video [名前=gpr] [--workers 4] → out/<名前>.mp4 + <名前>-poster.png
 //   node tools/render.mjs serve                         → ブラウザで確認するための http サーバー（Ctrl+C で終了）
-//   node tools/render.mjs voice [--voice Kyoko --rate 200] → js/narration.js の原稿を音声にし、長さを narration/seconds.js に書く
+//   node tools/render.mjs voice [--voice Kyoko --rate 220] → js/narration.js の原稿を音声にし、長さを narration/seconds.js に書く
 //   node tools/render.mjs mux [名前=gpr]                 → 音声を字幕の時刻に並べ、out/<名前>.mp4 と重ねて out/<名前>-voice.mp4 にする
 //   声の長さで字幕の時間が延びるので、voice のあとは video で映像を書き出し直してから mux する
 //   どれにも --page <html> を付けると別のページを撮る。既定は gpr.html
@@ -31,9 +31,9 @@ const takeOption = (name, fallback) => {
 const PAGE = takeOption('--page', 'gpr.html');
 const SCENE = takeOption('--scene', null);
 const WORKERS = Number(takeOption('--workers', 4));
-// 読み上げ: Mac の say コマンドの声と速さ（語/分。標準は 180。200 で約1割速い）
+// 読み上げ: Mac の say コマンドの声と速さ（語/分。標準は 180。220 で、もとの 200 の約1.1倍速い）
 const VOICE = takeOption('--voice', 'Kyoko');
-const VOICE_RATE = Number(takeOption('--rate', 200));
+const VOICE_RATE = Number(takeOption('--rate', 220));
 const [mode = 'info', ...args] = argv;
 
 const VIEWPORT = { width: 1600, height: 900 };
