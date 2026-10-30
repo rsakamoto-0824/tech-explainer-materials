@@ -7,6 +7,10 @@
   const FPS = 30;
   const CANVAS_SCALE = 1.2; // 論理 1600×900 を 1920×1080 で描く
 
+  // 動画全体の速さ。時間割と場面の動きは下の秒数（速さ 1）で組み、動画の t 秒には「時間割の t × PACE 秒」を映す。
+  // 声も render.mjs の --rate 220 で約1.1倍速く読むので、声の長さは PACE 倍して時間割の秒に直す
+  const PACE = 1.1;
+
   // 時間割（秒）
   const SCENE_LEAD = 0.5; // 場面の最初の字幕が出るまで
   const SCENE_TAIL = 0.8; // 最後の字幕のあと、次の場面まで
@@ -60,8 +64,8 @@
     scene.beats.forEach((b, i) => {
       scene.beatStarts.push(u);
       const reading = b.d ?? clamp(BEAT_BASE_SECONDS + plainLength(b.c) / READ_CHARS_PER_SECOND, BEAT_MIN_SECONDS, BEAT_MAX_SECONDS);
-      const spoken = NARRATION_SECONDS[beatKey(scene, i)];
-      b.dur = spoken ? Math.max(reading, NARRATION_LEAD + spoken + NARRATION_TAIL) : reading;
+      const spokenSeconds = NARRATION_SECONDS[beatKey(scene, i)];
+      b.dur = spokenSeconds ? Math.max(reading, NARRATION_LEAD + spokenSeconds * PACE + NARRATION_TAIL) : reading;
       u += b.dur;
     });
     scene.beatStarts.push(u); // 終わりの印（at に beats.length を書くと「最後まで出ない」）
@@ -72,6 +76,9 @@
     scene.elements = [];
   });
   const DURATION = clock;
+  // 時間割の秒 → 動画の秒（外に出す時刻はすべて動画の秒にする）
+  const toVideoSeconds = (s) => s / PACE;
+  const VIDEO_DURATION = toVideoSeconds(DURATION);
 
   // ---- 画面の骨組み ----
   const make = (tag, className, parent) => {
@@ -194,9 +201,9 @@
     });
   });
 
-  const phases = scenes.map((s) => ({ id: s.id, kind: s.kind, t0: s.t0, t1: s.t1, caption: `${s.id} ${s.title}` }));
+  const phases = scenes.map((s) => ({ id: s.id, kind: s.kind, t0: toVideoSeconds(s.t0), t1: toVideoSeconds(s.t1), caption: `${s.id} ${s.title}` }));
   const posterScene = scenes.find((s) => s.poster) || scenes[0];
-  const posterTime = posterScene.t0 + (posterScene.poster ?? 4);
+  const posterTime = toVideoSeconds(posterScene.t0 + (posterScene.poster ?? 4));
 
   // 式の一部（\htmlClass{名前}{…}）を囲む枠: フォントが読み込まれたあとに位置を測って作る
   function measureHighlights() {
@@ -320,8 +327,9 @@
     activeBeat = -1;
   }
 
+  // t は動画の秒。中では時間割の秒（time）で描く
   function render(t, { stamp: showStamp = false } = {}) {
-    const time = clamp(t, 0, DURATION - 1e-6);
+    const time = clamp(t * PACE, 0, DURATION - 1e-6);
     let index = scenes.findIndex((s) => time < s.t1);
     if (index < 0) index = scenes.length - 1;
     if (index !== activeIndex) activate(index);
@@ -353,7 +361,7 @@
 
     progressFill.style.width = `${(time / DURATION) * 100}%`;
     stamp.style.display = showStamp ? 'block' : 'none';
-    if (showStamp) stamp.textContent = `${time.toFixed(1)}s  ${scene.id}`;
+    if (showStamp) stamp.textContent = `${toVideoSeconds(time).toFixed(1)}s  ${scene.id}`;
   }
 
   // ---- ブラウザで見るとき: 画面に合わせて縮める ----
@@ -366,9 +374,9 @@
 
   // 字幕ごとの時刻と原稿（tools/render.mjs の voice・mux で声を作り、時刻に合わせて並べる）
   const beats = scenes.flatMap((scene) =>
-    scene.beats.map((b, i) => ({ key: beatKey(scene, i), t0: scene.t0 + scene.beatStarts[i], dur: b.dur, caption: b.c, narration: b.n || null })),
+    scene.beats.map((b, i) => ({ key: beatKey(scene, i), t0: toVideoSeconds(scene.t0 + scene.beatStarts[i]), dur: toVideoSeconds(b.dur), caption: b.c, narration: b.n || null })),
   );
-  window.ARCH = { ready: false, duration: DURATION, fps: FPS, posterTime, phases, beats, narrationLead: NARRATION_LEAD, render };
+  window.ARCH = { ready: false, duration: VIDEO_DURATION, fps: FPS, posterTime, phases, beats, narrationLead: toVideoSeconds(NARRATION_LEAD), render };
 
   (async () => {
     fitStage();
@@ -389,21 +397,22 @@
       return;
     }
     const startScene = scenes.find((s) => s.id === params.get('scene'));
-    let playhead = startScene ? startScene.t0 : Number(params.get('start') || 0);
+    // playhead は動画の秒（場面の区切りは phases で動画の秒になっている）
+    let playhead = startScene ? toVideoSeconds(startScene.t0) : Number(params.get('start') || 0);
     let paused = false;
     let last = performance.now();
     window.addEventListener('keydown', (e) => {
       if (e.code === 'Space') paused = !paused;
       if (e.code === 'ArrowRight') playhead += 5;
       if (e.code === 'ArrowLeft') playhead = Math.max(0, playhead - 5);
-      const i = scenes.findIndex((s) => playhead < s.t1);
-      if (e.code === 'BracketRight' && i < scenes.length - 1) playhead = scenes[i + 1].t0;
-      if (e.code === 'BracketLeft') playhead = scenes[Math.max(0, playhead - scenes[i].t0 < 1 ? i - 1 : i)].t0;
+      const i = phases.findIndex((p) => playhead < p.t1);
+      if (e.code === 'BracketRight' && i < phases.length - 1) playhead = phases[i + 1].t0;
+      if (e.code === 'BracketLeft') playhead = phases[Math.max(0, playhead - phases[i].t0 < 1 ? i - 1 : i)].t0;
     });
     const loop = (now) => {
       if (!paused) playhead += (now - last) / 1000;
       last = now;
-      if (playhead >= DURATION) playhead = 0;
+      if (playhead >= VIDEO_DURATION) playhead = 0;
       render(playhead, { stamp: true });
       requestAnimationFrame(loop);
     };
