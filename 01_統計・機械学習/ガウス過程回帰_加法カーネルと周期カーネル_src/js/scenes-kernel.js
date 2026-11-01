@@ -10,11 +10,8 @@
   const LEFT_X = 90;
   const TITLE = { size: 21, color: C.text, weight: 700 };
 
-  // 発展編で共通に使うカーネル（周期 p = 1）
-  const PERIOD = 1;
-  const TREND_KERNEL = G.rbf({ variance: 1, lengthScale: 3 });
-  const SEASON_KERNEL = G.periodic({ variance: 0.5, lengthScale: 1, period: PERIOD });
-  const ADDITIVE_KERNEL = G.sum(TREND_KERNEL, SEASON_KERNEL);
+  // 発展編で共通に使うカーネル（周期 p = 1）と、第7章の例のデータ（example-data.js。想定質問の動画と共通）
+  const { PERIOD, TREND_KERNEL, SEASON_KERNEL, ADDITIVE_KERNEL, trendTruth, seasonTruth, DECOMP_X, DECOMP_Y, DECOMP_NOISE_VARIANCE, DECOMP_MODEL } = EXAMPLE_DATA.decomposition;
   const UNIT_PERIODIC = G.periodic({ variance: 1, lengthScale: 1, period: PERIOD });
   const UNIT_RBF = G.rbf({ variance: 1, lengthScale: 1 });
 
@@ -493,7 +490,10 @@
     title: '加法カーネル① トレンド ＋ 季節',
     beats: [
       beat('加法カーネルは、関数を「独立な部品の和」と考えるところから出てきます。'),
-      beat('和の共分散を展開すると、独立なので交差する項は 0 になり、2つの共分散だけが残ります。', 9),
+      beat(R`「独立」とは、$f_1$ の値を知っても、$f_2$ について何も分からないということです。トレンドと季節が、別々の原因で動くイメージです。`, 11),
+      beat(R`独立なら、掛けた値の平均は、平均どうしの積になります。平均は 0 なので、$f_1$ と $f_2$ の共分散は、どの2点の組でも 0 です。`, 11),
+      beat('和の共分散を展開すると、交差する項は、いま見た理由で 0 になり、2つの共分散だけが残ります。', 10),
+      beat('もし部品どうしが連動していたら、交差する項が残り、カーネルは単純な和になりません。足し算は「独立」という仮定に支えられています。', 11),
       beat('したがってカーネルも和になります。ここではトレンド用の RBF と、季節用の周期カーネルを足します。', 9),
       beat(R`数値で確かめます。$r = 0.5$ では、トレンドは強く連動（${fmt(rowOf(0.5).k1, 3)}）、季節は逆位相で弱い（${fmt(rowOf(0.5).k2, 3)}）。`, 10),
       beat(R`$r = 1$ では季節が1周して 0.5 に戻り、合計 ${fmt(rowOf(1).k1 + rowOf(1).k2, 3)}。$r = 3$ でもトレンドが残り ${fmt(rowOf(3).k1 + rowOf(3).k2, 3)} です。`, 10),
@@ -501,21 +501,29 @@
     ],
     build(ui) {
       ui.tex(R`f(x) = \textcolor{${C.blue}}{f_1(x)} + \textcolor{${C.orange}}{f_2(x)},\qquad \textcolor{${C.blue}}{f_1 \sim \mathcal{GP}(0, k_1)},\ \ \textcolor{${C.orange}}{f_2 \sim \mathcal{GP}(0, k_2)}\ \ \text{（独立）}`, { x: LEFT_X, y: 128, size: 34 });
-      ui.tex(R`\operatorname{Cov}(f, f') = \operatorname{Cov}(f_1, f_1') + \underbrace{\operatorname{Cov}(f_1, f_2') + \operatorname{Cov}(f_2, f_1')}_{=\,0\ \text{（独立）}} + \operatorname{Cov}(f_2, f_2')`, { x: LEFT_X, y: 200, size: 31, at: 1 });
-      ui.text(R`（$f = f(x),\ f' = f(x')$ と略記）`, { x: LEFT_X + 1140, y: 214, size: 20, color: C.muted, at: 1 });
-      ui.tex(R`k(x,x') = \textcolor{${C.blue}}{k_1(x,x')} + \textcolor{${C.orange}}{k_2(x,x')}`, { x: LEFT_X, y: 335, size: 42, at: 2, glow: [{ from: 2, to: 3, color: C.yellow }] });
-      ui.text(R`$k_1$：RBF（$\sigma^2 = 1,\ \ell = 3$）… ゆっくりしたトレンド`, { x: LEFT_X + 20, y: 430, size: 25, color: C.text2, at: 2, delay: 0.6 });
-      ui.text(R`$k_2$：周期（$\sigma^2 = 0.5,\ p = 1,\ \ell = 1$）… 季節変動`, { x: LEFT_X + 20, y: 476, size: 25, color: C.text2, at: 2, delay: 1.2 });
-      ui.tex(R`K = K_1 + K_2\qquad (K_{ij} = k_1(x_i, x_j) + k_2(x_i, x_j))`, { x: LEFT_X, y: 610, size: 36, at: 5, glow: [{ from: 5, color: C.yellow }] });
+      ui.tex(R`\operatorname{Cov}(f, f') = \operatorname{Cov}(f_1, f_1') + \underbrace{\operatorname{Cov}(f_1, f_2') + \operatorname{Cov}(f_2, f_1')}_{=\,0\ \text{（独立）}} + \operatorname{Cov}(f_2, f_2')`, { x: LEFT_X, y: 200, size: 31, at: 3 });
+      ui.text(R`（$f = f(x),\ f' = f(x')$ と略記）`, { x: LEFT_X + 1140, y: 214, size: 20, color: C.muted, at: 3 });
+      // 「独立」の意味と、交差する項が 0 になる理由（カーネルの式が出る前に消す）
+      ui.card({ x: LEFT_X, y: 330, w: 1420, h: 270, title: '「独立」とは', at: 1, until: 5 });
+      ui.text(R`$f_1$ の値を知っても、$f_2$ の分布は変わらない（トレンドと季節は、別々の原因で動く）`, { x: LEFT_X + 30, y: 385, size: 25, at: 1, delay: 0.3, until: 5 });
+      ui.tex(R`\mathbb{E}\big[f_1(x)\, f_2(x')\big] = \mathbb{E}\big[f_1(x)\big]\ \mathbb{E}\big[f_2(x')\big] = 0 \times 0 = 0\quad\Longrightarrow\quad \operatorname{Cov}\big(f_1(x),\, f_2(x')\big) = 0`, {
+        x: LEFT_X + 30, y: 445, size: 30, at: 2, until: 5, glow: [{ from: 2, to: 3, color: C.yellow }],
+      });
+      ui.text('独立なら「積の平均 ＝ 平均の積」。平均は 0 なので、どの2点の組でも共分散は 0', { x: LEFT_X + 30, y: 505, size: 22, color: C.text2, at: 2, delay: 0.6, until: 5 });
+      ui.text(R`部品どうしが連動していると、交差する項が残る → $k \neq k_1 + k_2$`, { x: LEFT_X + 30, y: 550, size: 24, color: C.orange, at: 4, until: 5 });
+      ui.tex(R`k(x,x') = \textcolor{${C.blue}}{k_1(x,x')} + \textcolor{${C.orange}}{k_2(x,x')}`, { x: LEFT_X, y: 335, size: 42, at: 5, glow: [{ from: 5, to: 6, color: C.yellow }] });
+      ui.text(R`$k_1$：RBF（$\sigma^2 = 1,\ \ell = 3$）… ゆっくりしたトレンド`, { x: LEFT_X + 20, y: 430, size: 25, color: C.text2, at: 5, delay: 0.6 });
+      ui.text(R`$k_2$：周期（$\sigma^2 = 0.5,\ p = 1,\ \ell = 1$）… 季節変動`, { x: LEFT_X + 20, y: 476, size: 25, color: C.text2, at: 5, delay: 1.2 });
+      ui.tex(R`K = K_1 + K_2\qquad (K_{ij} = k_1(x_i, x_j) + k_2(x_i, x_j))`, { x: LEFT_X, y: 610, size: 36, at: 8, glow: [{ from: 8, color: C.yellow }] });
 
-      ui.card({ x: 900, y: 315, w: 610, h: 270, title: '計算例（2点の距離 $r$ ごと）', at: 3 });
+      ui.card({ x: 900, y: 315, w: 610, h: 270, title: '計算例（2点の距離 $r$ ごと）', at: 6 });
       ui.table({
-        x: 920, y: 365, widths: [90, 150, 150, 180], size: 24, rowH: 40, at: 3,
+        x: 920, y: 365, widths: [90, 150, 150, 180], size: 24, rowH: 40, at: 6,
         header: ['$r$', '$k_1$', '$k_2$', '$k = k_1 + k_2$'],
         rows: additiveRows.map(({ r, k1, k2 }) => [String(r), fmt(k1, 3), fmt(k2, 3), `<b>${fmt(k1 + k2, 3)}</b>`]),
-        rowAt: [3, 3, 4, 4, 4],
+        rowAt: [6, 6, 7, 7, 7],
         rowDelay: 0,
-        glowRows: { 1: [{ from: 3, to: 4, color: C.yellow }], 2: [{ from: 4, to: 5, color: C.yellow }], 3: [{ from: 4, to: 5, color: C.yellow }] },
+        glowRows: { 1: [{ from: 6, to: 7, color: C.yellow }], 2: [{ from: 7, to: 8, color: C.yellow }], 3: [{ from: 7, to: 8, color: C.yellow }] },
       });
     },
   });
@@ -616,14 +624,7 @@
     },
   });
 
-  // 第7章の分解の例（トレンド ＋ 季節。真の関数は説明用に作ったもの）
-  const trendTruth = (x) => 0.9 * Math.sin(0.5 * x - 0.3) - 0.1;
-  const seasonTruth = (x) => 0.45 * Math.sin(2 * Math.PI * x) + 0.15 * Math.cos(4 * Math.PI * x + 0.3);
-  const DECOMP_X = G.linspace(0, 4.5, 37);
-  const DECOMP_NOISE = G.standardNormals(DECOMP_X.length, 701);
-  const DECOMP_Y = Float64Array.from(DECOMP_X, (x, i) => trendTruth(x) + seasonTruth(x) + 0.07 * DECOMP_NOISE[i]);
-  const DECOMP_NOISE_VARIANCE = 0.07 ** 2;
-  const DECOMP_MODEL = G.fit(DECOMP_X, DECOMP_Y, ADDITIVE_KERNEL, DECOMP_NOISE_VARIANCE);
+  // 第7章の分解の例で、外挿の値を計算する点
   const DECOMP_XSTAR = 5.5;
 
   // ---------------------------------------------------------------- 第7章 理論（予測の分解）
@@ -671,7 +672,7 @@
       beat('加法カーネル（RBF ＋ 周期）の予測です。データの外でも、季節の揺れを保ったまま伸びていきます。', 9),
       beat(R`同じ $\boldsymbol{\alpha}$ を使ってトレンド部分 $\mathbf{k}_{1*}^{\top}\boldsymbol{\alpha}$ だけを取り出すと、ゆっくりした変化が現れます。`, 10),
       beat(R`季節部分 $\mathbf{k}_{2*}^{\top}\boldsymbol{\alpha}$ を取り出すと、1周期の揺れが現れます。点線は、データを作った真の部品です。`, 10),
-      beat(R`$x = ${DECOMP_XSTAR}$ で、2つの部品の値を足すと、上の予測と一致します。分解は近似ではなく、式どおりの恒等式です。`, 10),
+      beat(R`$x = ${DECOMP_XSTAR}$ で、2つの部品の値を足すと、上の予測と一致します。`, 8),
       beat('比較として RBF だけの予測（紫の点線）を重ねると、データの外ではすぐに平均 0 へ戻ってしまいます。', 9),
       beat('部品ごとの帯は合計の帯より広めです。一定の高さをどちらの部品が受け持つかは、データだけでは決まらないためです。', 11),
     ],
@@ -995,7 +996,6 @@
       beat(R`掛けた RBF のために、周期がずれるほど相関が弱まります。$r = 1$ で ${fmt(productRows[0].per * productRows[0].rbf, 3)}、$r = 6$ で ${fmt(productRows[2].per * productRows[2].rbf, 3)} です。`, 10),
       beat('つまり「近い周期どうしは同じ形、遠い周期は違ってよい」という仮定になります。'),
       beat('季節の形が毎年同じなら和、少しずつ変わるなら積、と仮定に合わせて組み立てます。'),
-      beat('有名な CO₂ 濃度の例（Rasmussen & Williams, 2006）でも、長期トレンド、局所周期、中期の変動などを足し合わせたカーネルが使われています。', 12),
     ],
     build(ui) {
       ui.tex(R`k_{\mathrm{LocPer}}(x,x') = k_{\mathrm{Per}}(x,x')\cdot k_{\mathrm{RBF}}(x,x')`, { x: LEFT_X, y: 135, size: 42 });
@@ -1014,7 +1014,6 @@
         R`季節の形が少しずつ変わる → 積 $\ k_{\mathrm{RBF}} \cdot k_{\mathrm{Per}}$`,
         R`両方ある → $k_{\mathrm{RBF}} + k_{\mathrm{RBF}} \cdot k_{\mathrm{Per}} + \cdots$`,
       ].forEach((line, i) => ui.text(line, { x: 925, y: 350 + i * 70, size: 24, at: 3, delay: 0.4 + i * 0.7 }));
-      ui.text('参考：Rasmussen & Williams (2006) 5.4.3節　マウナロア山の CO₂ 濃度', { x: LEFT_X, y: 640, size: 22, color: C.muted, at: 4 });
     },
   });
 
@@ -1073,15 +1072,14 @@
     kind: 'summary',
     title: '全体のふりかえり',
     beats: [
-      beat(R`まとめです。GP は、カーネルという「似ている度合いの計算」で、関数の性質を指定する方法でした。なめらかさは Matérn の $\nu$ で選べます。`, 10),
+      beat(R`まとめです。ガウス過程は、カーネルという「似ている度合いの計算」で、関数の性質を指定する方法でした。なめらかさは Matérn の $\nu$ で選べます。`, 10),
       beat('予測は α と k* の内積。周期カーネルは円への写像、加法カーネルは部品の足し算、質的変数は一致カーネルの足し算として計算できます。', 11),
       beat('カーネルの和と積を組み合わせれば、データについての仮定を、そのまま式に書けます。'),
-      beat('実務では、入出力の標準化、周期 p の初期値、最適化の初期値の振り直しに注意してください。', 9),
     ],
     build(ui) {
       const points = [
-        [0, R`GP は関数の上の正規分布。カーネル $k(x,x')$ が「2点の値がどれだけ連動するか」を決める`],
-        [0, R`Matérn はなめらかさ $\nu$ を選べる（$m$ 回微分できる $\iff \nu > m$）。$\nu \to \infty$ で RBF`],
+        [0, R`ガウス過程は関数の上の正規分布（有限個の点では多変量正規分布）。カーネル $k(x,x')$ が2点の連動を決める`],
+        [0, R`Matérn はなめらかさ $\nu$ を選べる（$m$ 回微分できる $\iff \nu > m$）。スペクトル密度で見ると $\nu \to \infty$ で RBF`],
         [0, R`予測平均 $\mu_* = \mathbf{k}_*^{\top}\boldsymbol{\alpha}$（カーネルの山の重ね合わせ）。分散はデータの位置だけで決まる`],
         [1, R`周期カーネル ＝ $x$ を円に写してから RBF。1周期ずれた点は相関 1`],
         [1, R`加法カーネル ＝ 独立な部品の和。$K$ も予測平均も、部品ごとの足し算に分解できる`],
@@ -1090,11 +1088,24 @@
         [2, R`和は OR、積は AND。仮定をカーネルの式として組み立てる`],
       ];
       points.forEach(([at, text], i) => ui.text(`<span class="toc-num">${i + 1}</span>${text}`, { x: LEFT_X, y: 124 + i * 50, size: 25, at, delay: (i % 3) * 0.6 }));
-      ui.card({ x: LEFT_X, y: 540, w: 1420, h: 116, title: '実務での注意', at: 3 });
-      ui.text(R`入出力の標準化 ／ 周期 $p$ の初期値は対象の知識から ／ 周辺尤度の最大化は初期値を変えて複数回 ／ $n$ が数千を超えたら近似手法も検討`, { x: LEFT_X + 30, y: 598, size: 22, at: 3, delay: 0.4 });
       ui.text('参考文献：C. E. Rasmussen & C. K. I. Williams, Gaussian Processes for Machine Learning, MIT Press, 2006 ／ D. Duvenaud, H. Nickisch & C. E. Rasmussen, Additive Gaussian Processes, NeurIPS 2011 ／ D. Duvenaud, Automatic Model Construction with Gaussian Processes, PhD thesis, 2014', {
-        x: LEFT_X, y: 672, w: 1420, size: 17, color: C.muted, lh: 1.5, at: 3, delay: 1,
+        x: LEFT_X, y: 600, w: 1420, size: 17, color: C.muted, lh: 1.5, at: 2, delay: 1,
       });
+    },
+  });
+
+  // ---------------------------------------------------------------- おわり（動画の終わりが分かるように、最後に1枚置く）
+  SCENES.push({
+    id: 'end',
+    chapter: 12,
+    kind: 'title',
+    title: 'おわり',
+    beats: [beat('これで、ガウス過程回帰の解説は終わりです。よくある質問への答えは、別の動画にまとめています。', 9)],
+    build(ui) {
+      ui.text('おわり', { x: 0, y: 220, w: W, align: 'center', size: 96, weight: 800 });
+      ui.text('ご視聴ありがとうございました', { x: 0, y: 380, w: W, align: 'center', size: 36, color: C.text2, delay: 0.4 });
+      ui.text('ガウス過程回帰 ― カーネルの計算を、式と図で交互に理解する', { x: 0, y: 480, w: W, align: 'center', size: 24, color: C.muted, delay: 0.8 });
+      ui.text('よくある質問は、別の動画「ガウス過程回帰 想定質問と回答」で解説しています', { x: 0, y: 560, w: W, align: 'center', size: 24, color: C.text2, delay: 1.2 });
     },
   });
 })();

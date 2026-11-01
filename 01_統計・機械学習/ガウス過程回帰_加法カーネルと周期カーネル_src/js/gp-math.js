@@ -243,6 +243,29 @@
     return normalsList.map((z) => multiplyLower(L, z).map((v, i) => v + mean[i]));
   }
 
+  // 加法カーネルの部品ごとの事後分布。部品をまたいだ共分散も返す（部品どうしは事後に相関する）。
+  // Cov[f_a(x), f_b(x′) | y] = k_a(x, x′)·[a = b] − k_a(x, X)ᵀ (K + σ_n² I)⁻¹ k_b(X, x′)
+  function partsPosterior(model, xTest, partKernels) {
+    const V = partKernels.map((k) => xTest.map((x) => solveLower(model.L, Float64Array.from(model.xTrain, (xt) => k(x, xt)))));
+    const means = partKernels.map((k) => predict(model, xTest, k, { withVariance: false }).mean);
+    const covariance = (a, i, b, j) => (a === b ? partKernels[a](xTest[i], xTest[j]) : 0) - dot(V[a][i], V[b][j]);
+    return { means, covariance };
+  }
+  // 部品をまとめて引いた事後サンプル（部品どうしの相関を保つ）。返り値は [サンプル][部品] の配列
+  function samplePartsPosterior(model, xTest, partKernels, normalsList, jitter = 1e-6) {
+    const { means, covariance } = partsPosterior(model, xTest, partKernels);
+    const n = xTest.length;
+    const size = partKernels.length * n;
+    const joint = Array.from({ length: size }, (_, r) =>
+      Float64Array.from({ length: size }, (_, c) => covariance(Math.floor(r / n), r % n, Math.floor(c / n), c % n) + (r === c ? jitter : 0)),
+    );
+    const L = cholesky(joint, { lenient: true });
+    return normalsList.map((z) => {
+      const f = multiplyLower(L, z);
+      return means.map((mean, a) => Float64Array.from(mean, (v, i) => v + f[a * n + i]));
+    });
+  }
+
   // 対数周辺尤度 = 当てはまり + 複雑さの罰則 + 定数
   function logMarginalLikelihood(xTrain, yTrain, kernel, noiseVariance) {
     const model = fit(xTrain, yTrain, kernel, noiseVariance);
@@ -259,6 +282,6 @@
     createRandom, standardNormals, linspace,
     rbf, periodic, sum, product, onDim, matern, maternCorrelation, maternSpectralDensity, logGamma,
     gram, withDiagonal, dot, cholesky, solveLower, choleskySolve, determinant, multiplyLower,
-    sampleFunctions, fit, predict, posteriorSamples, logMarginalLikelihood,
+    sampleFunctions, fit, predict, posteriorSamples, partsPosterior, samplePartsPosterior, logMarginalLikelihood,
   };
 })();

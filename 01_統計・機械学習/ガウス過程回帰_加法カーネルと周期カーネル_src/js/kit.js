@@ -26,7 +26,7 @@ window.KIT = (() => {
   const FONT = "'Hiragino Sans', 'Noto Sans JP', 'Yu Gothic UI', sans-serif";
 
   const CHAPTERS = [
-    'ガウス過程とは',
+    'ガウス過程とは ― 全体像と多変量正規分布',
     'カーネルの計算 ― RBF と Matérn',
     'データで条件づけて予測する',
     'ハイパーパラメータの決め方',

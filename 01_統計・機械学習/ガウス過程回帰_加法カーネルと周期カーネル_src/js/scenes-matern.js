@@ -56,7 +56,7 @@
     kind: 'theory',
     title: R`Matérn カーネル ― なめらかさ $\nu$`,
     beats: [
-      beat('RBF のサンプルは、何回でも微分できるほどなめらかです。実際のデータは、もっとごつごつしていることがあります。'),
+      beat('RBF のサンプルは、何回でも微分できるほどなめらかです。実際のデータは、もっとガタガタしていることがあります。'),
       beat(R`そこで使うのが Matérn（マターン）カーネルです。$\sigma_f^2$ と $\ell$ に加えて、なめらかさを決める $\nu$（ニュー）を持ちます。`, 10),
       beat(R`$K_\nu$ は変形ベッセル関数、$\Gamma$ はガンマ関数です。$\nu$ が 1/2、3/2、5/2 のときは、簡単な式になります。`, 10),
       beat(R`$\nu = 1/2$ は指数カーネル $\exp(-r/\ell)$ です。$r = 0$ で山の頂上がとがっています。`),
@@ -118,11 +118,11 @@
   });
 
   // ---------------------------------------------------------------- 第2章 図解（Matérn）
-  // 拡大する範囲（x = 2〜2.25 を 20 倍に）。この範囲だけ細かい格子を足して、拡大しても線が角ばらないようにする
+  // 拡大する範囲（x = 2〜2.25。全体 0〜5 の 20 分の 1）。この範囲だけ細かい格子を足して、拡大しても線が角ばらないようにする
   const ZOOM_RANGE = [2, 2.25];
   const COARSE_STEP = 0.025;
   const FINE_STEP = 0.0025;
-  // 対角に足す小さな値。ふつうの 1e-6（標準偏差 0.001 の揺れ）だと、20 倍に拡大したときに
+  // 対角に足す小さな値。ふつうの 1e-6（標準偏差 0.001 の揺れ）だと、拡大したときに
   // なめらかなはずの ν = 5/2 や RBF の線まで細かく揺れて見えるため、ここだけ小さくする
   const ZOOM_JITTER = 1e-10;
 
@@ -135,7 +135,7 @@
       beat(R`上から $\nu = 1/2,\ 3/2,\ 5/2,\ \infty$（RBF）。左がカーネルの形、右が事前分布からのサンプルです。乱数は4つとも同じです。`, 10),
       beat(R`左は $x - x'$ の関数として描いています。$\nu = 1/2$ は頂上がとがり、$\nu$ が大きいほど頂上が丸くなります。`, 10),
       beat(R`この違いが、サンプルのなめらかさに出ます。$\nu = 1/2$ はギザギザ、$\nu = 5/2$ と RBF はなめらかです。`, 9),
-      beat(R`$x = 2$〜$2.25$ の狭い範囲を、20 倍に拡大してみます。`, 7),
+      beat(R`$x = 2$〜$2.25$ の狭い範囲を、拡大してみます。`, 7),
       beat(R`拡大しても、$\nu = 1/2$ はギザギザのままです。どこまで拡大しても、なめらかになりません。これが「微分できない」ということです。`, 11),
       beat(R`$\nu = 3/2$ 以上は、拡大するとなめらかな曲線になり、直線に近づきます。接線が引ける、つまり微分できるということです。`, 11),
       beat(R`もとの範囲に戻ります。$\nu$ は「どこまで細かく見ても、なめらかか」を決めるパラメータです。`, 9),
@@ -218,8 +218,231 @@
         ctx.restore();
       });
       if (zoom > 0.02) {
-        canvasText(ctx, `拡大中：x = ${fmt(xr[0], 2)}〜${fmt(xr[1], 2)}（${fmt(5 / width, 0)} 倍）`, 1500, 140, { size: 20, color: C.yellow, align: 'right', weight: 700, alpha: Math.min(1, zoom * 3) });
+        canvasText(ctx, `拡大中：x = ${fmt(xr[0], 2)}〜${fmt(xr[1], 2)}`, 1500, 140, { size: 20, color: C.yellow, align: 'right', weight: 700, alpha: Math.min(1, zoom * 3) });
       }
+    },
+  });
+
+  // ---------------------------------------------------------------- 第2章 理論（スペクトル密度）
+  // 右に描く「細かさの違う波」と「RBF の p(ω)」（カードの背景はキャンバスに描く。DOM のカードは不透明で、絵が隠れるため）
+  const WAVE_CASES = [
+    { omega: 0.5, label: 'ω = 0.5（ゆっくりした波）' },
+    { omega: 2, label: 'ω = 2' },
+    { omega: 6, label: 'ω = 6（細かい波）' },
+  ];
+  const SPECTRUM_EXAMPLES = [
+    { lengthScale: 1, label: 'ℓ = 1', color: C.text },
+    { lengthScale: 2, label: 'ℓ = 2（ゆっくりした波が中心）', color: C.orange },
+  ];
+  function drawPanel(ctx, x, y, w, h, title) {
+    ctx.fillStyle = C.panel;
+    ctx.strokeStyle = '#3a3a37';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.roundRect(x, y, w, h, 16);
+    ctx.fill();
+    ctx.stroke();
+    canvasText(ctx, title, x + 24, y + 38, { size: 21, color: C.text2, weight: 700 });
+  }
+
+  SCENES.push({
+    id: '2T-S',
+    chapter: 2,
+    kind: 'theory',
+    title: 'スペクトル密度 ― カーネルを波に分ける',
+    beats: [
+      beat(R`$\nu \to \infty$ で RBF になる理由を見る前に、「スペクトル密度」という道具を説明します。`, 7),
+      beat(R`距離だけで決まるカーネル $k(r)$ は、いろいろな細かさの波 $\cos(\omega r)$ を、重み $p(\omega)$ で足し合わせて作れます。`, 10),
+      beat(R`$\omega$ は波の細かさ（角周波数）です。$\omega$ が小さいとゆっくり、大きいと短い距離で細かく上下する波になります。`, 10),
+      beat(R`$p(\omega)$ は「どの細かさの波を、どれだけ混ぜるか」の配分です。これをスペクトル密度と呼びます。`, 9),
+      beat(R`$p(\omega)$ は 0 以上で、面積は 1。確率密度と同じ形なので「波の細かさの分布」と見られます（ボホナーの定理）。`, 11),
+      beat(R`$r = 0$ ではどの波も $\cos 0 = 1$ なので $k(0) = \sigma_f^2$。$r$ が増えると波どうしが打ち消し合い、$k(r)$ は小さくなります。`, 11),
+      beat(R`例：RBF の $p(\omega)$ は、平均 0・分散 $1/\ell^2$ の正規分布。$\ell$ が大きいほど、ゆっくりした波が中心になります。`, 10),
+      beat('細かい波の重みが大きいほど関数はガタガタに、ゆっくりした波に集中するほど、なめらかになります。', 9),
+    ],
+    build(ui) {
+      ui.text('カーネル ＝ いろいろな細かさの波の重ね合わせ', { x: LEFT_X, y: 128, size: 28, weight: 700, glow: [{ from: 0, to: 1, color: C.yellow }] });
+      ui.tex(R`k(r) = \sigma_f^2 \int_{-\infty}^{\infty} \htmlClass{hlP}{p(\omega)}\, \htmlClass{hlW}{\cos(\omega r)}\, d\omega`, {
+        x: LEFT_X, y: 192, size: 36, at: 1,
+        hl: [{ cls: 'hlW', from: 1, to: 3, color: C.blue }, { cls: 'hlP', from: 3, to: 5, color: C.orange }],
+      });
+      ui.text(R`$\omega$：波の細かさ（角周波数）。大きいほど細かい`, { x: LEFT_X + 30, y: 305, size: 24, color: C.text2, at: 2 });
+      ui.text(R`$p(\omega)$：スペクトル密度（どの細かさの波を、どれだけ混ぜるか）`, { x: LEFT_X + 30, y: 347, size: 24, color: C.text2, at: 3 });
+      ui.tex(R`p(\omega) \ge 0,\qquad \int_{-\infty}^{\infty} p(\omega)\, d\omega = 1`, { x: LEFT_X, y: 405, size: 28, at: 4 });
+      ui.text('（ボホナーの定理）', { x: LEFT_X + 470, y: 425, size: 22, color: C.text2, at: 4, delay: 0.5 });
+      ui.tex(R`k(0) = \sigma_f^2 \int p(\omega)\cdot 1\, d\omega = \sigma_f^2`, { x: LEFT_X, y: 500, size: 28, at: 5 });
+      ui.tex(R`p_{\mathrm{RBF}}(\omega) = \frac{\ell}{\sqrt{2\pi}} \exp\!\left(-\frac{\ell^2 \omega^2}{2}\right)`, { x: LEFT_X, y: 580, size: 28, at: 6 });
+      ui.text(R`正規分布（分散 $1/\ell^2$）`, { x: LEFT_X + 470, y: 598, size: 22, color: C.text2, at: 6, delay: 0.5 });
+      ui.text('細かい波が多い → ガタガタ ／ ゆっくりした波だけ → なめらか', { x: LEFT_X, y: 680, size: 25, weight: 700, at: 7, glow: [{ from: 7, color: C.yellow }] });
+      return {
+        rs: G.linspace(0, 6, 241),
+        omegas: G.linspace(0, 4, 161),
+        wavePlots: WAVE_CASES.map((_, i) => new Plot({ x: CARD_X + 40, y: 222 + i * 74, w: 420, h: 48, xr: [0, 6], yr: [-1.15, 1.15] })),
+        spectrumPlot: new Plot({ x: CARD_X + 60, y: 512, w: 400, h: 135, xr: [0, 4], yr: [0, 0.85] }),
+      };
+    },
+    draw(ctx, s, st) {
+      const waves = s.win(2);
+      if (waves > 0.001) {
+        ctx.save();
+        ctx.globalAlpha = waves;
+        drawPanel(ctx, CARD_X, 140, CARD_W, 300, '細かさの違う波 cos(ωr)');
+        WAVE_CASES.forEach((w, i) => {
+          const P = st.wavePlots[i];
+          canvasText(ctx, w.label, P.x, P.y - 6, { size: 17, color: C.text2 });
+          P.hline(ctx, 0, { color: C.grid, dash: null, width: 1 });
+          P.line(ctx, st.rs, st.rs.map((r) => Math.cos(w.omega * r)), { color: C.blue, width: 2.5, upto: s.p(2, 1.2, 0.3 + i * 0.4) });
+        });
+        canvasText(ctx, 'r →', CARD_X + CARD_W - 30, 432, { size: 17, color: C.muted, align: 'right' });
+        ctx.restore();
+      }
+      const spectrum = s.win(6);
+      if (spectrum > 0.001) {
+        ctx.save();
+        ctx.globalAlpha = spectrum;
+        drawPanel(ctx, CARD_X, 462, CARD_W, 240, 'RBF の p(ω)');
+        const P = st.spectrumPlot;
+        P.axes(ctx, { xticks: [0, 1, 2, 3, 4], yticks: [], xlabel: 'ω' });
+        SPECTRUM_EXAMPLES.forEach((e, i) => {
+          const p = G.maternSpectralDensity({ nu: Infinity, lengthScale: e.lengthScale });
+          P.line(ctx, st.omegas, st.omegas.map(p), { color: e.color, width: 3, upto: s.p(6, 1.2, 0.4 + i * 0.6) });
+        });
+        SPECTRUM_EXAMPLES.forEach((e, i) => legend(ctx, [{ label: e.label, color: e.color }], CARD_X + 210, 548 + i * 30, { size: 16 }));
+        ctx.restore();
+      }
+    },
+  });
+
+  // ---------------------------------------------------------------- 第2章 図解（波を足してカーネルを作る）
+  // k_Ω(r) = σ_f² ∫_{−Ω}^{Ω} p(ω) cos(ωr) dω（Ω まで足した途中の形）を、先に Ω ごとに積分しておく
+  const PARTIAL_OMEGA_MAX = 40;
+  const PARTIAL_OMEGA_STEP = 0.01;
+  const PARTIAL_R = G.linspace(0, 3, 121);
+  function cumulativeKernel(spectrum) {
+    const omegas = G.linspace(0, PARTIAL_OMEGA_MAX, Math.round(PARTIAL_OMEGA_MAX / PARTIAL_OMEGA_STEP) + 1);
+    return PARTIAL_R.map((r) => {
+      const cumulative = new Float64Array(omegas.length);
+      let previous = spectrum(0);
+      for (let j = 1; j < omegas.length; j++) {
+        const current = spectrum(omegas[j]) * Math.cos(omegas[j] * r);
+        // 左右対称なので 0〜Ω を2倍する（台形則）
+        cumulative[j] = cumulative[j - 1] + PARTIAL_OMEGA_STEP * (previous + current);
+        previous = current;
+      }
+      return cumulative;
+    });
+  }
+  // r ∈ [−3, 3] の形（r ≥ 0 の値を左右に折り返す）
+  function partialKernel(cumulative, omegaMax) {
+    const position = Math.min(omegaMax, PARTIAL_OMEGA_MAX) / PARTIAL_OMEGA_STEP;
+    const j = Math.floor(position);
+    const frac = position - j;
+    const half = cumulative.map((c) => (j + 1 < c.length ? c[j] + frac * (c[j + 1] - c[j]) : c[c.length - 1]));
+    return [...half.slice(1).reverse(), ...half];
+  }
+  const SYMMETRIC_R = [...PARTIAL_R.slice(1).reverse().map((r) => -r), ...PARTIAL_R];
+  const ROUGH_COLOR = C.blue;
+
+  SCENES.push({
+    id: '2V-S',
+    chapter: 2,
+    kind: 'visual',
+    title: '波を足して、カーネルを作る',
+    beats: [
+      beat(R`RBF（$\ell = 1$）のスペクトル密度 $p(\omega)$ です。横軸 $\omega$ が波の細かさ、高さがその波の重みです。`, 9),
+      beat(R`下は、いま足している波 $\cos(\omega r)$。$\omega$ が小さいとゆっくり、大きいと細かく揺れます。`, 9),
+      beat(R`$\omega$ の小さい方から、重みを掛けた波を足していきます。塗った範囲までを足したものが、右の線です。`, 10),
+      beat('ゆっくりした波だけでは、幅の広い山です。細かい波まで足すと、RBF の形にぴったり重なります。', 10),
+      beat(R`$r = 0$ では、どの波も 1。足した高さは塗った面積の合計で、全部足すと 1 になります。`, 9),
+      beat(R`次に、裾の重い $p(\omega)$（Matérn、$\nu = 1/2$）に替えます。細かい波の重みが、遠くまで残っています。`, 10),
+      beat(R`細かい波をどんどん足しても、とがった頂上を作るには、さらに細かい波が必要です。これがガタガタしたサンプルの正体です。`, 11),
+      beat('スペクトル密度は「波の細かさの配分」。裾が軽いほどなめらか、重いほどガタガタな関数になります。', 9),
+    ],
+    build() {
+      const rbfSpectrum = G.maternSpectralDensity({ nu: Infinity });
+      const roughSpectrum = G.maternSpectralDensity({ nu: 0.5 });
+      const omegas = G.linspace(0, 8, 321);
+      return {
+        omegas,
+        rbfDensity: omegas.map(rbfSpectrum),
+        roughDensity: omegas.map(roughSpectrum),
+        rbfCumulative: cumulativeKernel(rbfSpectrum),
+        roughCumulative: cumulativeKernel(roughSpectrum),
+        rbfShape: SYMMETRIC_R.map((r) => RBF_CORRELATION(Math.abs(r))),
+        roughShape: SYMMETRIC_R.map((r) => Math.exp(-Math.abs(r))),
+        pPlot: new Plot({ x: 110, y: 190, w: 620, h: 220, xr: [0, 8], yr: [0, 0.45] }),
+        wPlot: new Plot({ x: 110, y: 540, w: 620, h: 160, xr: [-3, 3], yr: [-1.2, 1.2] }),
+        kPlot: new Plot({ x: 880, y: 190, w: 620, h: 510, xr: [-3, 3], yr: [-0.25, 1.1] }),
+      };
+    },
+    draw(ctx, s, st) {
+      // Ω: 足した範囲。前半は RBF を 0 → 4、後半は ν = 1/2 を 1 → 40（対数で）
+      const omegaRbf = keyframes(s.u, [[s.bt(2) + 0.5, 0.02], [s.bt(2) + 4, 0.8], [s.bt(3) + 0.5, 0.8], [s.bt(3) + 4, 4]]);
+      const omegaRough = keyframes(s.u, [[s.bt(5) + 1.5, 1], [s.bt(6) + 0.5, 3], [s.bt(6) + 6.5, PARTIAL_OMEGA_MAX]], { log: true });
+      const mix = s.p(5, 1.5);
+      const omegaMax = mix < 0.5 ? omegaRbf : omegaRough;
+      const sumShown = s.p(2, 0.6, 0.3);
+      const appear = s.p(0, 0.8);
+      ctx.globalAlpha = appear;
+
+      // 左上: p(ω)。Ω まで塗る
+      const P = st.pPlot;
+      const density = st.rbfDensity.map((v, i) => v + mix * (st.roughDensity[i] - v));
+      canvasText(ctx, `スペクトル密度 p(ω)：${mix < 0.5 ? 'RBF（ℓ = 1）' : 'Matérn（ν = 1/2）'}`, P.x, P.y - 46, TITLE);
+      P.axes(ctx, { xticks: [0, 2, 4, 6, 8], yticks: [0, 0.2, 0.4], xlabel: 'ω（波の細かさ）', fmtY: (v) => fmt(v, 1) });
+      if (sumShown > 0.001) {
+        const upto = Math.min(omegaMax, 8);
+        const xs = st.omegas.filter((w) => w <= upto);
+        P.band(ctx, xs, xs.map(() => 0), xs.map((_, i) => density[i]), { color: C.yellow, alpha: 0.35 * sumShown });
+        const label = omegaMax > 8 ? `ω ≤ ${fmt(omegaMax, 0)} まで足した` : `ω ≤ ${fmt(omegaMax, 2)} まで足した`;
+        canvasText(ctx, label, P.x + P.w, P.y - 16, { size: 19, color: C.yellow, align: 'right', weight: 600, alpha: sumShown });
+      }
+      P.line(ctx, st.omegas, density, { color: mix < 0.5 ? C.text : ROUGH_COLOR, width: 3 });
+      if (s.win(5, 7) > 0.001) {
+        P.shade(ctx, 4, 8, { color: C.yellow, alpha: 0.1 * s.win(5, 7) });
+        canvasText(ctx, '裾（細かい波）が残る', P.sx(6), P.y + 26, { size: 18, color: C.yellow, align: 'center', alpha: s.win(5, 7) });
+      }
+
+      // 左下: いま足している波 cos(ωr)
+      const waveOmega = s.beat === 1 ? keyframes(s.u, [[s.bt(1) + 0.5, 0.5], [s.bt(1) + 5, 6]], { log: true }) : Math.max(omegaMax, 0.3);
+      const W = st.wPlot;
+      const wave = s.p(1, 0.6);
+      if (wave > 0.001) {
+        ctx.save();
+        ctx.globalAlpha *= wave;
+        canvasText(ctx, `いま足している波 cos(ωr)（ω = ${fmt(waveOmega, waveOmega < 10 ? 1 : 0)}）`, W.x, W.y - 30, TITLE);
+        W.axes(ctx, { xticks: [-3, 0, 3], yticks: [-1, 0, 1], xlabel: 'r' });
+        const rs = G.linspace(-3, 3, 1201);
+        W.line(ctx, rs, rs.map((r) => Math.cos(waveOmega * r)), { color: C.blue, width: 2.5 });
+        ctx.restore();
+      }
+
+      // 右: 足した結果 k_Ω(r) と、全部足した形
+      const K = st.kPlot;
+      canvasText(ctx, '波を足した結果 k(r)', K.x, K.y - 46, TITLE);
+      K.axes(ctx, { xticks: [-3, -2, -1, 0, 1, 2, 3], yticks: [0, 0.5, 1], xlabel: 'r', fmtY: (v) => fmt(v, 1) });
+      K.line(ctx, SYMMETRIC_R, st.rbfShape, { ...RBF_STYLE, width: 2.5, alpha: 1 - mix });
+      K.line(ctx, SYMMETRIC_R, st.roughShape, { color: ROUGH_COLOR, width: 2.5, dash: [10, 7], alpha: mix });
+      if (sumShown > 0.001) {
+        const rbfPart = partialKernel(st.rbfCumulative, omegaMax);
+        const roughPart = partialKernel(st.roughCumulative, omegaMax);
+        const partial = mix < 0.5 ? rbfPart : roughPart;
+        K.line(ctx, SYMMETRIC_R, partial, { color: C.yellow, width: 3.5, alpha: sumShown * (1 - 2 * Math.min(mix, 1 - mix)) });
+        const peak = partial[PARTIAL_R.length - 1];
+        const peakGlow = s.win(4, 5);
+        if (peakGlow > 0.001) {
+          K.dots(ctx, [0], [peak], { color: C.yellow, r: 8, alpha: peakGlow });
+          K.label(ctx, `k(0) = 塗った面積 = ${fmt(peak, 3)}`, 0, peak, { dx: 16, dy: -12, size: 19, color: C.yellow, weight: 600, alpha: peakGlow });
+        }
+        if (mix > 0.5) {
+          const gap = s.win(6);
+          K.label(ctx, `頂上 ${fmt(peak, 3)}（全部足すと 1）`, 0, peak, { dx: 16, dy: -12, size: 19, color: C.yellow, weight: 600, alpha: gap });
+        }
+      }
+      legend(ctx, [
+        { label: '足した結果', color: C.yellow },
+        mix < 0.5 ? { label: 'RBF（全部足した形）', ...RBF_STYLE } : { label: '指数カーネル（ν = 1/2）', color: ROUGH_COLOR, dash: [10, 7] },
+      ], K.x + 260, K.y - 48);
     },
   });
 
@@ -233,14 +456,14 @@
     title: R`$\nu \to \infty$ で RBF になる理由`,
     beats: [
       beat(R`$\nu$ を大きくすると、Matérn カーネルは RBF カーネルに近づき、$\nu \to \infty$ の極限で一致します（$\ell$ は同じまま）。`, 10),
-      beat(R`理由は、カーネルを「波の重ね合わせ」で見ると分かります。距離だけで決まるカーネルは、波 $\cos(\omega r)$ を重み $p(\omega)$ で平均したものです。`, 11),
-      beat(R`$\omega$ は波の細かさ（角周波数）、$p(\omega)$ はスペクトル密度です。面積が 1 の、確率密度の形をしています（ボホナーの定理）。`, 11),
+      beat(R`前の図解で見たとおり、距離だけで決まるカーネルは、波 $\cos(\omega r)$ を重み $p(\omega)$（スペクトル密度）で平均したものです。`, 11),
+      beat(R`$p(\omega)$ は面積 1 の確率密度の形です（ボホナーの定理）。2つのカーネルを比べるには、$p(\omega)$ を比べればよいわけです。`, 11),
       beat(R`RBF の $p(\omega)$ は正規分布、Matérn の $p(\omega)$ は自由度 $2\nu$ の t 分布です。`, 8),
       beat(R`t 分布は、自由度を無限大にすると正規分布になります。$(1 + a/\nu)^{-\nu} \to e^{-a}$ を使うと、式でも確かめられます。`, 11),
       beat(R`重み $p(\omega)$ が一致するので、それで平均したカーネルも一致します。これが「$\nu \to \infty$ で RBF」の理由です。`, 10),
       beat(R`有限の $\nu$ では t 分布の裾が重く、細かい波が残ります。$m$ 回微分できるのは、$\omega^{2m}$ の平均が有限な $\nu > m$ のときだけです。`, 12),
       beat(R`RBF との差の最大値は、$\nu = 1/2$ で 0.288、5/2 で 0.084、10 で 0.023、100 で 0.002。ほぼ $0.23/\nu$ の速さで小さくなります。`, 12),
-      beat(R`Rasmussen & Williams は、$\nu \ge 7/2$ になると、ノイズのある有限のデータからは RBF とほとんど区別できないと述べています。`, 11),
+      beat(R`実務上は、$\nu \ge 7/2$ になると、RBF とほとんど同じになります。`, 8),
     ],
     build(ui) {
       // 最初の字幕では結論だけを見せる（同じ場所に、次の字幕から波の重ね合わせの式が出る）

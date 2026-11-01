@@ -10,29 +10,14 @@
   const LEFT_X = 90;
   const TITLE = { size: 21, color: C.text, weight: 700 };
 
-  // 入力は [x, カテゴリ]。x のカーネルと、カテゴリのカーネル（一致カーネル δ）を組み合わせる
-  const CATEGORIES = ['A', 'B', 'C'];
-  const CATEGORY_VARIANCE = 0.25; // σ_c²
-  const X_KERNEL = G.rbf({ variance: 1, lengthScale: 1 });
+  // 入力は [x, カテゴリ]。x のカーネルと、カテゴリのカーネル（一致カーネル δ）を組み合わせる。
+  // 例のデータ（3台の装置）とカーネルは example-data.js（想定質問の動画と共通）
+  const { CATEGORIES, CATEGORY_VARIANCE, X_KERNEL, same, sharedShape, TRUE_OFFSETS, DEMO_POINTS, DEMO_Y, DEMO_NOISE_VARIANCE, DEMO_MODEL } = EXAMPLE_DATA.categorical;
+  const additiveKernel = EXAMPLE_DATA.categorical.categoryAdditiveKernel;
   const INDIVIDUAL_KERNEL = G.rbf({ variance: 0.3, lengthScale: 0.6 });
-  const same = (a, b) => (a === b ? 1 : 0);
   const xOnlyKernel = (a, b) => X_KERNEL(a[0], b[0]);
-  const additiveKernel = (a, b) => X_KERNEL(a[0], b[0]) + CATEGORY_VARIANCE * same(a[1], b[1]);
   const productKernel = (a, b) => X_KERNEL(a[0], b[0]) * same(a[1], b[1]);
   const sharedIndividualKernel = (a, b) => X_KERNEL(a[0], b[0]) + INDIVIDUAL_KERNEL(a[0], b[0]) * same(a[1], b[1]);
-
-  // 例のデータ: 3台の装置。共通の形にずれが乗る（真の関数は説明用に作ったもの）。C はデータが3点だけ
-  const sharedShape = (x) => 0.8 * Math.sin(1.3 * x) + 0.25 * x - 0.2;
-  const TRUE_OFFSETS = { A: 0.5, B: -0.1, C: -0.6 };
-  const DEMO_POINTS = [
-    ...G.linspace(0.1, 3.9, 10).map((x) => [x, 'A']),
-    ...G.linspace(0.3, 3.7, 9).map((x) => [x, 'B']),
-    ...[0.2, 0.7, 1.2].map((x) => [x, 'C']),
-  ];
-  const DEMO_NOISE = G.standardNormals(DEMO_POINTS.length, 951);
-  const DEMO_Y = Float64Array.from(DEMO_POINTS, ([x, c], i) => sharedShape(x) + TRUE_OFFSETS[c] + 0.06 * DEMO_NOISE[i]);
-  const DEMO_NOISE_VARIANCE = 0.06 ** 2;
-  const DEMO_MODEL = G.fit(DEMO_POINTS, DEMO_Y, additiveKernel, DEMO_NOISE_VARIANCE);
   // カテゴリ c のずれの推定 = σ_c² ×（そのカテゴリのデータの α の合計）
   const offsetOf = (c) => CATEGORY_VARIANCE * DEMO_POINTS.reduce((total, p, i) => total + (p[1] === c ? DEMO_MODEL.alpha[i] : 0), 0);
   const centered = (values) => {
@@ -256,7 +241,7 @@
     beats: [
       beat('3台の装置 A・B・C で測ったデータです。装置ごとに一定のずれがあり、C は x が小さい所の3点しかありません。', 10),
       beat('左：カテゴリを無視すると、1本の曲線しか引けず、装置ごとのずれを表せません。帯は細いのに、外れています。', 10),
-      beat('中央：カテゴリごとに別々の GP（積）では、C はデータのない所で平均 0 に戻り、帯も広がります。', 9),
+      beat('中央：カテゴリごとに別々のガウス過程（積）では、C はデータのない所で平均 0 に戻り、帯も広がります。', 9),
       beat('右：加法カーネルでは、A と B から学んだ共通の形に C のずれを足すので、データのない所の C も当たります。', 10),
       beat('下の棒は、推定したずれと真のずれです。ずれ全体の高さは共通の形と分けられないため、平均を引いて比べています。', 11),
     ],
