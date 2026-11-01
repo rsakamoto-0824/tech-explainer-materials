@@ -25,6 +25,7 @@
       beat('ガウス過程回帰（GPR）を、基礎から発展まで順に見ていきます。'),
       beat('理論（式）と図解（グラフ）を交互に進めます。左上の札で、いまどちらかが分かります。'),
       beat('後半の主役は、加法カーネルと周期カーネルの具体的な計算です。', 6),
+      beat('まず、ガウス過程回帰の全体像と、その土台になる多変量正規分布から始めます。', 6),
     ],
     build(ui) {
       ui.text('ガウス過程回帰', { x: 0, y: 110, w: W, align: 'center', size: 78, weight: 800 });
@@ -39,7 +40,7 @@
           size: 26,
           at: 1,
           delay: 0.12 * i,
-          glow: i >= 5 && i <= 8 ? [{ from: 2, color: C.yellow }] : undefined,
+          glow: i >= 5 && i <= 8 ? [{ from: 2, to: 3, color: C.yellow }] : i === 0 ? [{ from: 3, color: C.yellow }] : undefined,
         });
       });
       ui.text(`<span class="pill" style="background:${C.theory}">理論</span>式で考える`, { x: 210, y: 610, size: 24, at: 1, delay: 1.4 });
@@ -647,7 +648,7 @@
       beat(R`山の高さを $\alpha_i$ 倍します。$\alpha_i$ が負なら、下向きの山になります。`),
       beat(R`3つの山を足し合わせると、予測平均 $\mu(x)$ の曲線になります。`),
       beat(R`$x_* = 2$ では、3つの山の値を足すと、さきほど計算した $\mu_* = ${texNum(G.predict(EXAMPLE_MODEL, [EXAMPLE_XSTAR]).mean[0], 3)}$ と一致します。`, 10),
-      beat('データから遠い所では、どの山も 0 に近いので、予測平均も 0 に戻ります。RBF の予測は外挿が苦手です。', 10),
+      beat('データから遠いところでは、どの山も 0 に近いので、予測平均も 0 に戻ります。RBF の予測は外挿が苦手です。', 10),
       beat('帯（±2σ）を重ねると、データの近くで細く、離れると広がるのが分かります。'),
     ],
     build() {

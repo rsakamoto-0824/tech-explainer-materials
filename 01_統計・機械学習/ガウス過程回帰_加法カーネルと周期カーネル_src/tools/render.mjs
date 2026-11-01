@@ -39,8 +39,8 @@ const [mode = 'info', ...args] = argv;
 const VIEWPORT = { width: 1600, height: 900 };
 const DEVICE_SCALE = 1.2; // 1600×900 → 1920×1080
 const JPEG_QUALITY = 95;
-// CRF 22 ＋ animation（平らな色の多い図向け）で、26分の動画を GitHub の警告（50MB）より小さくする
-const X264 = ['-c:v', 'libx264', '-preset', 'slow', '-crf', '24', '-tune', 'animation', '-pix_fmt', 'yuv420p', '-profile:v', 'high'];
+// CRF 26 ＋ animation（平らな色の多い図向け）で、約35分の本編を GitHub の警告（50MB）より小さくする
+const X264 = ['-c:v', 'libx264', '-preset', 'slow', '-crf', '26', '-tune', 'animation', '-pix_fmt', 'yuv420p', '-profile:v', 'high'];
 
 const MIME = {
   '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.mjs': 'text/javascript; charset=utf-8',
@@ -208,6 +208,8 @@ if (mode === 'video') {
 // ---- 読み上げ ----
 const narrationDir = path.join(root, 'narration');
 const clipDir = path.join(narrationDir, 'clips');
+// 声の長さのファイルはページごとに分ける（gpr.html → seconds.js、faq.html → seconds-faq.js）。声のファイルは場面の id で分かれる
+const secondsFile = PAGE === 'gpr.html' ? 'seconds.js' : `seconds-${path.basename(PAGE, '.html')}.js`;
 const clipPath = (key) => path.join(clipDir, `${key.replace(':', '_')}.aiff`);
 const VOICE_SAMPLE_RATE = 24000;
 // 声だけの音声なので 24kHz・32kbps で足りる（動画全体を GitHub の警告 50MB 未満に収めるため）
@@ -217,6 +219,17 @@ function run(command, commandArgs) {
   const result = spawnSync(command, commandArgs, { maxBuffer: 1 << 30 });
   if (result.status !== 0) throw new Error(`${command} failed: ${result.stderr?.toString()}`);
   return result.stdout;
+}
+// say はまれに止まったまま返らないことがあるため、時間切れで打ち切って作り直す
+const SAY_TIMEOUT_MS = 60000;
+const SAY_RETRIES = 3;
+function speak(text, file) {
+  for (let attempt = 1; ; attempt++) {
+    const result = spawnSync('say', ['-v', VOICE, '-r', String(VOICE_RATE), '-o', file, text], { timeout: SAY_TIMEOUT_MS });
+    if (result.status === 0) return;
+    if (attempt >= SAY_RETRIES) throw new Error(`say failed: ${file}`);
+    console.log(`retry say (${path.basename(file)})`);
+  }
 }
 const audioSeconds = (file) => Number(run('ffprobe', ['-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', file]).toString().trim());
 // 音声ファイルを 24kHz・1ch の 32bit 浮動小数の並びにする
@@ -242,7 +255,7 @@ if (mode === 'voice') {
     const recipe = `${VOICE}|${VOICE_RATE}|${b.narration}`;
     const recipeFile = `${file}.txt`;
     if (!fs.existsSync(file) || !fs.existsSync(recipeFile) || fs.readFileSync(recipeFile, 'utf8') !== recipe) {
-      run('say', ['-v', VOICE, '-r', String(VOICE_RATE), '-o', file, b.narration]);
+      speak(b.narration, file);
       fs.writeFileSync(recipeFile, recipe);
       made++;
     }
@@ -250,10 +263,10 @@ if (mode === 'voice') {
   }
   const total = Object.values(seconds).reduce((a, b) => a + b, 0);
   fs.writeFileSync(
-    path.join(narrationDir, 'seconds.js'),
-    `// 自動生成（node tools/render.mjs voice --voice ${VOICE} --rate ${VOICE_RATE}）。字幕ごとの声の長さ（秒）。engine.js がこれで字幕の時間を延ばす\nwindow.NARRATION_SECONDS = ${JSON.stringify(seconds, null, 2)};\n`,
+    path.join(narrationDir, secondsFile),
+    `// 自動生成（node tools/render.mjs voice --page ${PAGE} --voice ${VOICE} --rate ${VOICE_RATE}）。字幕ごとの声の長さ（秒）。engine.js がこれで字幕の時間を延ばす\nwindow.NARRATION_SECONDS = ${JSON.stringify(seconds, null, 2)};\n`,
   );
-  console.log(`${Object.keys(seconds).length} 本（新しく作った ${made} 本）、声の合計 ${(total / 60).toFixed(1)} 分 → narration/seconds.js`);
+  console.log(`${Object.keys(seconds).length} 本（新しく作った ${made} 本）、声の合計 ${(total / 60).toFixed(1)} 分 → narration/${secondsFile}`);
 }
 
 if (mode === 'mux') {

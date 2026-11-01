@@ -319,10 +319,11 @@
       header.style.display = 'flex';
       badge.textContent = KIND_LABEL[scene.kind];
       badge.style.background = KIND_COLOR[scene.kind];
-      chapterNo.textContent = scene.kind === 'summary' ? '' : `第${scene.chapter}章`;
+      // 章番号と右上の「基礎編・発展編」は、場面の chapterLabel・part で置きかえられる（想定質問の動画で使う）
+      chapterNo.textContent = scene.chapterLabel ?? (scene.kind === 'summary' ? '' : `第${scene.chapter}章`);
       headerTitle.innerHTML = rich(scene.title);
     }
-    partLabel.textContent = scene.kind === 'title' || scene.kind === 'summary' ? '' : scene.chapter <= 4 ? '基礎編' : '発展編';
+    partLabel.textContent = scene.part ?? (scene.kind === 'title' || scene.kind === 'summary' ? '' : scene.chapter <= 4 ? '基礎編' : '発展編');
     activeIndex = index;
     activeBeat = -1;
   }
