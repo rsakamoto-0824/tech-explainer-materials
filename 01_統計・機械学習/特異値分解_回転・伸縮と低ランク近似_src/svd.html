@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>特異値分解の解説動画</title>
+<link rel="stylesheet" href="node_modules/katex/dist/katex.min.css">
+<link rel="stylesheet" href="css/video.css">
+<link rel="icon" href="data:,">
+</head>
+<body>
+<div id="stage"></div>
+<!-- kit.js = 描画の小道具、svd-math.js = 特異値分解の計算と例のデータ、scenes-*.js = 場面の中身、engine.js = 時刻 t の絵にする加工機 -->
+<script src="node_modules/katex/dist/katex.min.js"></script>
+<script src="js/kit.js"></script>
+<script src="js/svd-math.js"></script>
+<!-- scenes-plane.js = 2×2 のせん断で見る第1〜3章、scenes-data.js = 画像と点群で見る第4〜6章とまとめ -->
+<script src="js/scenes-plane.js"></script>
+<script src="js/scenes-data.js"></script>
+<!-- narration.js = 読み上げ原稿、narration/seconds.js = 声の長さ（voice で自動生成。無ければ字幕だけの動画） -->
+<script src="js/narration.js"></script>
+<script src="narration/seconds.js"></script>
+<script src="js/engine.js"></script>
+</body>
+</html>
