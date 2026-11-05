@@ -296,10 +296,37 @@
     return loss;
   }
 
+  // ---- 有限の幅の NTK（勾配の内積）----
+  // Θ_H(x, x') = Σ_p ∂f(x)/∂θ_p ∂f(x')/∂θ_p。v で微分した項と、w・a で微分した項の和
+  function empiricalNtk(net, x1, x2) {
+    let s = 0;
+    for (let j = 0; j < net.width; j++) {
+      const u1 = SIGMA_W * net.w[j] * x1 + SIGMA_A * net.a[j];
+      const u2 = SIGMA_W * net.w[j] * x2 + SIGMA_A * net.a[j];
+      if (u1 > 0 && u2 > 0) s += u1 * u2 + net.v[j] * net.v[j] * (SIGMA_W * SIGMA_W * x1 * x2 + SIGMA_A * SIGMA_A);
+    }
+    return (SIGMA_V2 * s) / net.width;
+  }
+  // 点 xi の誤差 1 だけを使って重みを1回更新したとき（学習率 eta）の出力の動きを、学習率で割って返す。
+  // 更新は θ ← θ − η ∇f(xi)。eta が小さければ、返す値は empiricalNtk(net, x, xi) に近い
+  function gradientStepShape(net, xi, eta, xs) {
+    const c = outputScale(net.width);
+    const moved = { width: net.width, w: net.w.slice(), a: net.a.slice(), v: net.v.slice() };
+    for (let j = 0; j < net.width; j++) {
+      const u = SIGMA_W * net.w[j] * xi + SIGMA_A * net.a[j];
+      if (u <= 0) continue;
+      moved.v[j] -= eta * c * u;
+      moved.w[j] -= eta * c * net.v[j] * SIGMA_W * xi;
+      moved.a[j] -= eta * c * net.v[j] * SIGMA_A;
+    }
+    return xs.map((x) => (netAt(net, x) - netAt(moved, x)) / eta);
+  }
+
   root.NNM = {
     SIGMA_W, SIGMA_A, SIGMA_V2, DATA_X, DATA_Y, NOISE_VAR, GRID, GRID_MIN, GRID_MAX,
     makeRandom, relu, angleParts, nngp, ntk, dot, cholesky, symmetricEigen,
     gpPosterior, meanTrajectory, trajectory,
     randomNet, outputScale, unitAt, netAt, features, featureKernels, featurePosterior, lastLayerTrajectory, trainFull,
+    empiricalNtk, gradientStepShape,
   };
 })(typeof window !== 'undefined' ? window : globalThis);
