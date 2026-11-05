@@ -1,7 +1,7 @@
-// scenes-tps.js — 第5〜8章（TPS、RBF と TPS の関係、平滑化 TPS、画像の変形）、まとめ、おわり。書き方は scenes-basic.js と同じ。
+// scenes-tps.js — 第5〜7章（TPS、RBF と TPS の関係、平滑化 TPS）、まとめ、おわり。書き方は scenes-basic.js と同じ。
 // 曲げエネルギー・交差検証の誤差などの数値は、rbf-math.js で計算した値を表示する（読み上げ原稿にも同じ値を書いている）。
 (() => {
-  const { W, C, Plot, fmt, texNum, canvasText, keyframes, lerp, rgba, clamp, legend } = KIT;
+  const { W, C, Plot, fmt, canvasText, keyframes, rgba, clamp, legend } = KIT;
   const M = RBFM;
   const V3 = VIEW3D;
   const SCENES = (window.SCENES = window.SCENES || []);
@@ -157,7 +157,7 @@
       beat(R`$\varphi$ に $r^2\log r$、$p$ に平面を選んだものが TPS。TPS は RBF の特別な場合です。`, 9),
       beat('逆に、曲げエネルギー最小という条件から出発すると、答えは必ずこの RBF の形になります。形は RBF、理由はエネルギー最小。2つの見方が同じ答えに行き着きます。', 13),
       beat(R`この考え方を次元に合わせて広げたのが多重調和スプライン。1次元では $r^3$、2次元では $r^2\log r$、3次元では $r$ になります。`, 11),
-      beat('TPS には幅のパラメータがありません。座標の単位を変えても、増えた分は平面の項に吸収され、同じ面になります。', 10),
+      beat('TPS には幅のパラメータがありません。全部の座標を同じ倍率で変えても、増えた分は平面の項に吸収され、同じ面になります。', 10),
     ],
     build(ui) {
       ui.tex(R`s(\mathbf{x}) = \sum_j w_j\,\htmlClass{hlPhi}{\varphi}(\lVert\mathbf{x}-\mathbf{x}_j\rVert) + \htmlClass{hlP}{p(\mathbf{x})}`, {
@@ -174,7 +174,7 @@
       ui.text(R`曲げエネルギー $J[f]$ が最小`, { x: LEFT_X + 514, y: 446, size: 22, at: 2, delay: 0.5 });
       ui.text('⇄', { x: LEFT_X + 425, y: 426, size: 40, weight: 700, at: 2, delay: 0.8 });
       ui.text('→ 同じ答えに行き着く', { x: LEFT_X + 300, y: 530, size: 23, weight: 700, color: C.yellow, at: 2, delay: 1.2 });
-      ui.text('スケール不変：座標を $a$ 倍しても同じ面（幅の調整がいらない理由）', { x: LEFT_X, y: 604, size: 23, at: 4 });
+      ui.text('スケール不変：全部の座標を $a$ 倍しても同じ面（幅の調整がいらない理由）', { x: LEFT_X, y: 604, size: 23, at: 4 });
       ui.tex(R`\varphi(ar) = a^2\varphi(r) + a^2\log a\cdot r^2\ \ \to\ \ \text{増えた } r^2 \text{ の分は平面に吸収}`, { x: LEFT_X, y: 652, size: 24, at: 4, delay: 0.6 });
 
       ui.card({ x: CARD_X + 20, y: 124, w: CARD_W - 20, h: 400, title: '多重調和スプライン（2階微分のエネルギー）', at: 3 });
@@ -270,7 +270,7 @@
       beat('外側へ広げます。ガウスは点から離れると 0 へ戻り、TPS は平面に沿って伸びていきます。', 10),
       beat(R`ガウスは $\varepsilon$ を変えると、面の形が変わります。TPS には、調整するものがありません。`, 10),
       beat('使い分けを、表にまとめます。', 4),
-      beat('何回でも微分できるなめらかさや、局所的な山が欲しいならガウス。調整なしで、自然な面や変形が欲しいなら TPS が向いています。', 12),
+      beat('何回でも微分できるなめらかさや、局所的な山が欲しいならガウス。調整なしで、なだらかで自然な面が欲しいなら TPS が向いています。', 12),
     ],
     build(ui) {
       ui.text(R`ガウス RBF（$\varepsilon$ を変えられる）`, { ...TITLE, x: 120, y: 120, until: 3 });
@@ -284,7 +284,7 @@
           ['点から離れると', '0 に戻る', '平面に沿って伸びる'],
           ['なめらかさ', '何回でも微分できる', '点の上で2階微分が log で発散'],
           ['計算の安定性', R`$\varepsilon$ が小さいと不安定`, '比較的安定'],
-          ['向く用途', '局所的な山、カーネル法', '地形・面内分布、画像の変形'],
+          ['向く用途', '局所的な山、カーネル法', '地形や面内分布など、なだらかな面'],
         ],
         at: 3, rowDelay: 0.35, glowRows: [[{ from: 4, color: C.yellow }], null, null, null, null, [{ from: 4, color: C.yellow }]],
       });
@@ -414,165 +414,6 @@
     },
   });
 
-  // ---------------------------------------------------------------- 第8章 理論（画像の変形）
-  SCENES.push({
-    id: '8T',
-    chapter: 8,
-    kind: 'theory',
-    title: '応用 ― 画像の変形（ワープ）',
-    beats: [
-      beat('TPS がよく使われるのが、画像の変形です。2枚の画像で、対応する点（ランドマーク）を決めます。', 9),
-      beat('変形後の横の位置と縦の位置を、それぞれ TPS で補間します（ブックスタイン、1989年）。', 9),
-      beat(R`平面の部分は、アフィン変換（平行移動・回転・拡大・せん断）を受け持ちます。残りの $r^2\log r$ の部分が、曲げを表します。`, 11),
-      beat('ほかにも、地形の標高図、医用画像の位置合わせ、ウェーハ面内の計測値の補間、メッシュの変形などに使われます。', 11),
-    ],
-    build(ui) {
-      ui.tex(R`\mathbf{x}_j \ \longmapsto\ \mathbf{x}'_j\qquad (j = 1, \dots, n)`, { x: LEFT_X, y: 126, size: 34 });
-      ui.text('2枚の画像で、対応する点（ランドマーク）を決める', { x: LEFT_X + 20, y: 196, size: 23, color: C.text2, delay: 0.6 });
-      ui.tex(R`\mathbf{x}' = \bigl( f_x(\mathbf{x}),\ f_y(\mathbf{x}) \bigr),\qquad f_x,\ f_y\ \text{はそれぞれ TPS}`, { x: LEFT_X, y: 268, size: 32, at: 1 });
-      ui.text('横の位置と縦の位置を、別々に補間する', { x: LEFT_X + 20, y: 334, size: 23, color: C.text2, at: 1, delay: 0.6 });
-      ui.tex(R`f_x(\mathbf{x}) = \underbrace{a_0 + a_1x + a_2y}_{\text{アフィン（平面）}} + \underbrace{\sum_j w_j^{(x)}\, r_j^2\log r_j}_{\text{曲げ}}`, { x: LEFT_X, y: 410, size: 32, at: 2, glow: [{ from: 2, to: 3 }] });
-      ui.text('アフィン変換 ＝ 平行移動・回転・拡大・せん断（曲げエネルギー 0）', { x: LEFT_X + 20, y: 530, size: 23, color: C.text2, at: 2, delay: 0.6 });
-
-      ui.card({ x: CARD_X + 20, y: 126, w: CARD_W - 20, h: 380, title: 'TPS が使われる場面', at: 3 });
-      ['画像の変形・位置合わせ', '地形の標高図（等高線）', '医用画像の位置合わせ', 'ウェーハ面内の計測値の補間', '3次元メッシュの変形'].forEach((text, i) =>
-        ui.text(`・${text}`, { x: CARD_X + 50, y: 186 + i * 58, size: 23, at: 3, delay: 0.3 + 0.25 * i }),
-      );
-    },
-  });
-
-  // ---------------------------------------------------------------- 第8章 図解（ランドマークで顔を変形する）
-  const WARP_RANGE = 1.25;
-  const PANEL_SOURCE = { x: 100, y: 200, size: 400 };
-  const PANEL_TARGET = { x: 580, y: 140, size: 560 };
-  const toPanel = (panel, [x, y]) => [panel.x + ((x + WARP_RANGE) / (2 * WARP_RANGE)) * panel.size, panel.y + ((WARP_RANGE - y) / (2 * WARP_RANGE)) * panel.size];
-  const GRID_STEP = 0.25;
-  const GRID_SAMPLES = 50;
-  const GRID_LINES = (() => {
-    const lines = [];
-    for (let v = -WARP_RANGE; v <= WARP_RANGE + 1e-9; v += GRID_STEP) {
-      lines.push(sampleXs(-WARP_RANGE, WARP_RANGE, GRID_SAMPLES).map((t) => [v, t]));
-      lines.push(sampleXs(-WARP_RANGE, WARP_RANGE, GRID_SAMPLES).map((t) => [t, v]));
-    }
-    return lines;
-  })();
-  const L = M.LANDMARKS;
-  const circle = ([cx, cy], r, count = 72) => Array.from({ length: count + 1 }, (_, i) => [cx + r * Math.cos((2 * Math.PI * i) / count), cy + r * Math.sin((2 * Math.PI * i) / count)]);
-  // 顔の部品（輪郭、目、鼻、口）。口は両はしと真ん中のランドマークを通る放物線
-  const FACE = [
-    circle([0, 0], 0.84, 120),
-    circle(L[4], 0.11, 36),
-    circle(L[5], 0.11, 36),
-    [[0, 0.14], [-0.07, -0.04], [0.07, -0.04]],
-    sampleXs(-1, 1, 40).map((t) => [L[8][0] * t, L[9][1] + (L[8][1] - L[9][1]) * t * t]),
-  ];
-  // 動かした先: アフィン（回転 12°、縮小 0.88、移動）、笑顔（口の両はしを上げる）、目を外へ
-  const AFFINE = (() => {
-    const angle = (12 * Math.PI) / 180;
-    const scale = 0.88;
-    const shift = [0.06, 0.04];
-    return ([x, y]) => [scale * (Math.cos(angle) * x - Math.sin(angle) * y) + shift[0], scale * (Math.sin(angle) * x + Math.cos(angle) * y) + shift[1]];
-  })();
-  const SMILE = { 7: [-0.46, -0.2], 8: [0.46, -0.2], 9: [0, -0.5] };
-  const EYES = { 4: [-0.47, 0.4], 5: [0.47, 0.4] };
-  const thinPlate = M.BASIS.thinPlate();
-  function warpModel(targets) {
-    const fx = M.fit(L, targets.map((p) => p[0]), thinPlate, { degree: 1 });
-    const fy = M.fit(L, targets.map((p) => p[1]), thinPlate, { degree: 1 });
-    // 横と縦の曲げエネルギーの和（J = 8π Σ wⱼ yⱼ を両方の座標で）
-    const energy = M.thinPlateEnergy(fx) + M.thinPlateEnergy(fy);
-    return { map: (p) => [fx.at(p), fy.at(p)], energy };
-  }
-  function polyline(ctx, points, { color = C.text, width = 2, alpha = 1, close = false } = {}) {
-    ctx.save();
-    ctx.globalAlpha *= alpha;
-    ctx.strokeStyle = color;
-    ctx.lineWidth = width;
-    ctx.lineJoin = 'round';
-    ctx.beginPath();
-    points.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)));
-    if (close) ctx.closePath();
-    ctx.stroke();
-    ctx.restore();
-  }
-  function drawPicture(ctx, panel, map, alpha) {
-    ctx.save();
-    ctx.beginPath();
-    ctx.rect(panel.x, panel.y, panel.size, panel.size);
-    ctx.clip();
-    ctx.fillStyle = '#20201e';
-    ctx.fillRect(panel.x, panel.y, panel.size, panel.size);
-    GRID_LINES.forEach((line) => polyline(ctx, line.map((p) => toPanel(panel, map(p))), { color: '#4a4a45', width: 1.3, alpha }));
-    FACE.forEach((part, i) => polyline(ctx, part.map((p) => toPanel(panel, map(p))), { color: i === 0 ? C.text : C.text2, width: i === 0 ? 3 : 2.5, alpha, close: i === 3 }));
-    ctx.restore();
-    ctx.save();
-    ctx.globalAlpha = alpha;
-    ctx.strokeStyle = C.axis;
-    ctx.strokeRect(panel.x + 0.5, panel.y + 0.5, panel.size, panel.size);
-    ctx.restore();
-  }
-  const dot = (ctx, [x, y], { r = 7, fill = null, stroke = C.text, alpha = 1 } = {}) => {
-    ctx.save();
-    ctx.globalAlpha *= alpha;
-    ctx.beginPath();
-    ctx.arc(x, y, r, 0, Math.PI * 2);
-    if (fill) {
-      ctx.fillStyle = fill;
-      ctx.fill();
-    }
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = stroke;
-    ctx.stroke();
-    ctx.restore();
-  };
-  SCENES.push({
-    id: '8V',
-    chapter: 8,
-    kind: 'visual',
-    title: 'ランドマークで顔を変形する',
-    beats: [
-      beat(`顔の絵に ${L.length} 個のランドマークを置きます。左がもとの絵、右が変形後です。`, 8),
-      beat('すべての点を同じように回転・縮小・移動します。平面の部分だけで表せるので、格子はまっすぐなまま。曲げエネルギーは 0 です。', 12),
-      beat('次に、口の両はしを上げます。まわりの格子がなめらかに引っぱられて、笑顔になります。', 9),
-      beat('目の位置も外側へ広げます。動かした点の近くほど大きく、遠くほど小さく変形します。', 9),
-      beat('ランドマーク以外の場所は、曲げエネルギーが最小になるように、自然に決まります。', 8),
-    ],
-    build(ui) {
-      ui.text('もとの絵', { ...TITLE, x: PANEL_SOURCE.x, y: PANEL_SOURCE.y - 40 });
-      ui.text('変形後（TPS で写す）', { ...TITLE, x: PANEL_TARGET.x, y: PANEL_TARGET.y - 36 });
-      ui.text('○ もとの位置　● 動かした先', { x: 1180, y: 160, size: 20, color: C.text2 });
-      ui.text('アフィン変換だけ<br>（回転・縮小・移動）', { x: 1180, y: 300, size: 22, color: C.text, at: 1, until: 2, glow: [{ from: 1, to: 2, color: C.aqua }] });
-      ui.text('口の両はしを上げる', { x: 1180, y: 300, size: 22, at: 2, until: 3, delay: 1.2, glow: [{ from: 2, to: 3, color: C.orange }] });
-      ui.text('目を外側へ広げる', { x: 1180, y: 300, size: 22, at: 3, glow: [{ from: 3, color: C.orange }] });
-    },
-    draw(ctx, s) {
-      const affineK = s.p(1, 2.0) * (1 - s.p(2, 1.2));
-      const smileK = s.p(2, 2.2, 1.2);
-      const eyesK = s.p(3, 2.2);
-      const targets = L.map((p, j) => {
-        const a = AFFINE(p);
-        const smile = SMILE[j] || p;
-        const eyes = EYES[j] || p;
-        return [0, 1].map((k) => p[k] + affineK * (a[k] - p[k]) + smileK * (smile[k] - p[k]) + eyesK * (eyes[k] - p[k]));
-      });
-      const model = warpModel(targets);
-      const a = s.p(0, 0.6);
-      drawPicture(ctx, PANEL_SOURCE, (p) => p, a);
-      drawPicture(ctx, PANEL_TARGET, model.map, a);
-      const marks = s.p(0, 0.6, 0.8);
-      L.forEach((p, j) => {
-        dot(ctx, toPanel(PANEL_SOURCE, p), { r: 6, fill: C.yellow, stroke: C.bg, alpha: marks });
-        const from = toPanel(PANEL_TARGET, p);
-        const to = toPanel(PANEL_TARGET, targets[j]);
-        if (Math.hypot(to[0] - from[0], to[1] - from[1]) > 3) polyline(ctx, [from, to], { color: C.yellow, width: 2, alpha: marks * 0.8 });
-        dot(ctx, from, { r: 6, stroke: C.text2, alpha: marks });
-        dot(ctx, to, { r: 6, fill: C.yellow, stroke: C.bg, alpha: marks });
-      });
-      canvasText(ctx, '曲げエネルギー', 1180, 560, { size: 21, color: C.text2, alpha: a });
-      canvasText(ctx, fmt(Math.max(0, model.energy), 2), 1180, 616, { size: 44, color: C.text, weight: 800, alpha: a });
-    },
-  });
-
   // ---------------------------------------------------------------- まとめ
   SCENES.push({
     id: '9',
@@ -582,7 +423,7 @@
     beats: [
       beat(R`まとめです。RBF 補間は、距離だけで決まる山を、重みつきで足し合わせる方法。ガウスなどは、幅 $\varepsilon$ の調整が必要です。`, 11),
       beat(R`TPS は、$r^2\log r$ に平面を足した RBF で、曲げエネルギーが最小の板。調整がいらず、外側では平面に沿います。`, 11),
-      beat('ノイズには平滑化を使います。画像の変形や面内分布の補間など、幅広く使われています。', 9),
+      beat('ノイズには平滑化を使います。説明変数が3つ以上なら標準化し、変数が増えるほど平面に近づくことに注意します。', 10),
     ],
     build(ui) {
       const points = [
@@ -591,13 +432,13 @@
         [1, R`多重調和スプライン（$r^3$、$r^2\log r$）は多項式を足す。重みの条件 ＝ 力とモーメントのつり合い`],
         [1, R`TPS ＝ $\varphi = r^2\log r$ ＋ 平面の RBF ＝ 曲げエネルギー最小の板。調整なし・スケール不変`],
         [2, R`ノイズには平滑化 $\lambda$（0 で補間、∞ で最小二乗の平面）。ガウス過程回帰と同じ枠組み`],
-        [2, '応用：画像の変形（ワープ）、地形、ウェーハ面内などの分布の補間'],
+        [2, '説明変数が3つ以上：式はそのまま解ける。標準化が必要で、変数が増えるほど「平面 ＋ 点のまわりの山」に近づく'],
       ];
       points.forEach(([at, text], i) => ui.text(`<span class="toc-num">${i + 1}</span>${text}`, { x: LEFT_X, y: 124 + i * 62, size: 25, at, delay: (i % 2) * 0.6 }));
-      ui.text('参考文献：J. Duchon, Splines minimizing rotation-invariant semi-norms in Sobolev spaces, Lecture Notes in Math. 571, Springer, 1977, 85–100 ／ F. L. Bookstein, Principal warps: thin-plate splines and the decomposition of deformations, IEEE Trans. PAMI 11 (1989) 567–585 ／ R. L. Hardy, Multiquadric equations of topography and other irregular surfaces, J. Geophys. Res. 76 (1971) 1905–1915 ／ G. Wahba, Spline Models for Observational Data, SIAM, 1990 ／ H. Wendland, Scattered Data Approximation, Cambridge Univ. Press, 2005 ／ G. E. Fasshauer, Meshfree Approximation Methods with MATLAB, World Scientific, 2007', {
+      ui.text('参考文献：J. Duchon, Splines minimizing rotation-invariant semi-norms in Sobolev spaces, Lecture Notes in Math. 571, Springer, 1977, 85–100 ／ R. L. Hardy, Multiquadric equations of topography and other irregular surfaces, J. Geophys. Res. 76 (1971) 1905–1915 ／ G. Wahba, Spline Models for Observational Data, SIAM, 1990 ／ H. Wendland, Scattered Data Approximation, Cambridge Univ. Press, 2005 ／ G. E. Fasshauer, Meshfree Approximation Methods with MATLAB, World Scientific, 2007 ／ N. El Karoui, The spectrum of kernel random matrices, Ann. Statist. 38 (2010) 1–50 ／ K. Beyer et al., When is "nearest neighbor" meaningful?, ICDT 1999, LNCS 1540, 217–235', {
         x: LEFT_X, y: 520, w: 1420, size: 16, color: C.muted, lh: 1.5, at: 2, delay: 1,
       });
-      ui.text('例のデータは、説明用に式と乱数（種を固定）で作ったものです', { x: LEFT_X, y: 700, size: 16, color: C.muted, at: 2, delay: 1.4 });
+      ui.text('例のデータは、説明用に式と乱数（種を固定）で作ったものです', { x: LEFT_X, y: 712, size: 16, color: C.muted, at: 2, delay: 1.4 });
     },
   });
 
