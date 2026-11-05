@@ -39,8 +39,8 @@ const [mode = 'info', ...args] = argv;
 const VIEWPORT = { width: 1600, height: 900 };
 const DEVICE_SCALE = 1.2; // 1600×900 → 1920×1080
 const JPEG_QUALITY = 95;
-// CRF 23 ＋ animation（平らな色の多い図向け）。約15分の動画で 30MB 前後に収まる
-const X264 = ['-c:v', 'libx264', '-preset', 'slow', '-crf', '23', '-tune', 'animation', '-pix_fmt', 'yuv420p', '-profile:v', 'high'];
+// CRF 24 ＋ animation（平らな色の多い図向け）。約17分半の動画を GitHub の警告（50MB）より小さく収める
+const X264 = ['-c:v', 'libx264', '-preset', 'slow', '-crf', '24', '-tune', 'animation', '-pix_fmt', 'yuv420p', '-profile:v', 'high'];
 
 const MIME = {
   '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.mjs': 'text/javascript; charset=utf-8',

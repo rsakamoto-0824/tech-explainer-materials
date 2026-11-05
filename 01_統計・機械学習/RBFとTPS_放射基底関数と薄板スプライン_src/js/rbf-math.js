@@ -1,4 +1,4 @@
-// rbf-math.js — RBF 補間・TPS の計算と、説明用のデータ（1次元・2次元の点、ノイズつきの点、顔の絵のランドマーク）。
+// rbf-math.js — RBF 補間・TPS の計算と、説明用のデータ（1次元・2次元の点、ノイズつきの点、多変数の実験の関数）。
 // 乱数は種を固定する。録画で同じ時刻 t に必ず同じ絵を出すため。
 // node からも読めるように、window が無ければ globalThis に置く（数値の確認用: node tools/check-math.mjs）。
 // 点は座標の配列（1次元なら [x]、2次元なら [x, y]）で持つ。
@@ -268,13 +268,32 @@
   ];
   const DATA2_Y = DATA2_P.map(surface2D);
 
-  // 顔の絵のランドマーク（[−1, 1]²）。四すみ、目、鼻、口
-  const LANDMARKS = [
-    [-1, -1], [1, -1], [1, 1], [-1, 1],
-    [-0.34, 0.3], [0.34, 0.3],
-    [0, -0.02],
-    [-0.4, -0.38], [0.4, -0.38], [0, -0.46],
-  ];
+  // ================================================================ 説明変数が3つ以上の実験（tools/make-data.mjs が使う）
+  // 平均 0・標準偏差 1 の独立な正規乱数で、d 個の説明変数を持つ点を n 個作る（標準化したデータにあたる）
+  function standardPoints(n, d, seed) {
+    const values = standardNormals(n * d, seed);
+    return Array.from({ length: n }, (_, i) => Array.from({ length: d }, (_, k) => values[i * d + k]));
+  }
+  // 効くのは最初の2変数だけ（1次の部分 + 曲がった部分）。3つ目以降は「関係のない変数」
+  const relevantTarget = (p) => 0.8 * p[0] + 0.5 * p[1] + Math.sin(1.6 * p[0]) * Math.cos(1.2 * p[1]);
+  // 3変数すべてが効く関数（単位の実験に使う）
+  const threeVariableTarget = (p) => relevantTarget(p) + 0.8 * Math.sin(1.4 * p[2]);
+
+  // 平面（1次式）の最小二乗: PᵀP c = Pᵀy を解く
+  function fitPlane(points, values) {
+    const m = points[0].length + 1;
+    const A = Array.from({ length: m }, () => new Float64Array(m));
+    const b = new Float64Array(m);
+    points.forEach((p, i) => {
+      const row = polyTerms(p, 1);
+      for (let r = 0; r < m; r++) {
+        b[r] += row[r] * values[i];
+        for (let c = 0; c < m; c++) A[r][c] += row[r] * row[c];
+      }
+    });
+    const coefficients = solve(A, b);
+    return { c: coefficients, at: (p) => polyTerms(p, 1).reduce((sum, v, k) => sum + coefficients[k] * v, 0) };
+  }
 
   return {
     createRandom, standardNormals, BASIS, distance, solve, kernelMatrix, fit,
@@ -282,6 +301,7 @@
     secondDerivativesThinPlate, secondDerivativesGaussian, energyDensity, bendingEnergyNumeric, thinPlateEnergy, cubicEnergy1D,
     smoothingSpline1D, leaveOneOutError,
     curve1D, DATA1_X, DATA1_Y, LINE1_Y, NOISY_X, NOISY_Y, NOISE_SD,
-    surface2D, DATA2_P, DATA2_Y, LANDMARKS,
+    surface2D, DATA2_P, DATA2_Y,
+    standardPoints, relevantTarget, threeVariableTarget, fitPlane,
   };
 })();

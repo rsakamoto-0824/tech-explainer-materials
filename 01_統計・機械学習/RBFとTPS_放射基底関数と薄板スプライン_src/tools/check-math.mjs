@@ -55,4 +55,30 @@ const expect = (label, text) => {
 expect('曲げエネルギー（TPS とガウス）', `ティーピーエスは${f(energyTps, 0)}、ガウスは${f(energyGauss, 0)}`);
 expect('交差検証で選ぶ λ', `ラムダが、${f(bestLambda, 2)}あたりで最小`);
 expect('ノイズつきの点の数', `ノイズを含む、${M.NOISY_X.length}個の点`);
+
+// ---- 第8章: make-data.mjs の結果と原稿の数値 ----
+globalThis.window = {};
+new Function(fs.readFileSync(path.join(root, 'js/multi-data.js'), 'utf8').replace('window.MULTI_DATA', 'globalThis.window.MULTI_DATA'))();
+const D = globalThis.window.MULTI_DATA;
+const histogram50 = D.histograms.find((h) => h.d === 50);
+const unit = (scale) => D.units.find((u) => u.scale === scale).tps;
+const worst = Math.max(...D.errors.map((e) => e.gaussFixed));
+expect('点の数', `点の数は${D.pointCount}のまま`);
+expect('d = 50 の最近傍', `平均距離の${f(histogram50.nearestRatio, 2)}倍`);
+expect('単位の実験', `${f(unit(1), 2)}から${f(unit(100), 2)}へ、約${f(unit(100) / unit(1), 1)}倍`);
+expect('ε 固定のガウスの誤差', `誤差が${f(worst, 1)}まで`);
+// 距離のばらつきの近似式 1/√(2d) と、実験の値を並べる
+D.histograms.forEach((h) => console.log(`d=${h.d}: 距離のばらつき ${h.relativeSd}（近似式 ${f(1 / Math.sqrt(2 * h.d))}）`));
+// 多項式の項数: m = ⌊d/2⌋ + 1 のとき、(m−1) 次以下の項の数は C(d+m−1, m−1)
+const binomial = (n, k) => { let v = 1; for (let i = 1; i <= k; i++) v = (v * (n - k + i)) / i; return Math.round(v); };
+[2, 3, 4, 5, 6, 10].forEach((d) => { const m = Math.floor(d / 2) + 1; console.log(`d=${d}: m=${m}、多項式の項数 ${binomial(d + m - 1, m - 1)}`); });
+expect('d = 10 の多項式の項数', `${binomial(15, 5)}個になります`);
+// 幅を距離に合わせたガウスの条件数（2変数・200点）。ここが倍精度の限界を超えていないかを見る
+{
+  const points = M.standardPoints(D.pointCount, 2, 1002);
+  const distances = [];
+  for (let i = 0; i < points.length; i++) for (let j = i + 1; j < points.length; j++) distances.push(M.distance(points[i], points[j]));
+  const med = [...distances].sort((a, b) => a - b)[Math.floor(distances.length / 2)];
+  console.log(`d=2 の ε = 1/距離の中央値 = ${f(1 / med)}: 条件数 ${M.conditionNumber(M.kernelMatrix(points, M.BASIS.gaussian(1 / med))).toExponential(1)}`);
+}
 process.exit(failed ? 1 : 0);
