@@ -22,6 +22,11 @@
   const maxGap = (a, b) => Math.max(...a.map((v, i) => Math.abs(v - b[i])));
   const lower = (mean, sd) => mean.map((m, i) => m - 2 * sd[i]);
   const upper = (mean, sd) => mean.map((m, i) => m + 2 * sd[i]);
+  // カードの背景を透明にする（カードの中にキャンバスの図を描くため）
+  const seeThrough = (el) => {
+    el.node.style.background = 'transparent';
+    return el;
+  };
   const shadeOutside = (ctx, P, alpha) => {
     P.shade(ctx, M.GRID_MIN, IN_DATA[0], { alpha: 0.05 * alpha });
     P.shade(ctx, IN_DATA[1], M.GRID_MAX, { alpha: 0.05 * alpha });
@@ -225,23 +230,21 @@
     kind: 'theory',
     title: CHAPTERS[5],
     beats: [
-      beat('全部の層を学習すると、出力は重みの1次式ではありません。ところが幅が広いと、学習しても、1つ1つの重みはほとんど動きません。', 10),
+      beat('全部の層を学習すると、出力は重みの1次式ではありません。ところが幅が広いと、1つ1つの重みはほとんど動きません。多くの重みが少しずつ動くだけで、出力は十分に変わるからです。', 13),
       beat(R`そこで、初期値のまわりで1次近似します。重み全体を $\boldsymbol\theta$ とすると、ネットは、勾配 $\nabla_{\boldsymbol\theta} f_0(x)$ を特徴量とする線形モデルになります。`, 11),
-      beat(R`この線形モデルのカーネルが NTK（ニューラル・タンジェント・カーネル）$\Theta$ です。幅が無限なら、初期値によらず一定で、学習中も変わりません（ジャコほか 2018）。`, 12),
+      beat(R`この線形モデルのカーネルが NTK（ニューラル・タンジェント・カーネル）$\Theta$ です。勾配の内積で、タンジェントは接線という意味です（ジャコほか 2018）。`, 12),
+      beat('勾配の内積は、重みを少し動かしたとき、2点の出力がどれだけ同じ向きに動くかを表します。大きいほど、一緒に動きます。', 10),
       beat(R`ReLU の隠れ層1つでは、$\Theta$ は NNGP カーネル $K$ に、内側の重みとしきい値で微分した項を足したものです。`, 10),
-      beat(R`第5章と同じ計算で、初期値についての期待値は $\Theta(x, X)\,\Theta^{-1}\mathbf{y}$。ガウス過程回帰の平均と同じ形で、カーネルだけが NTK に変わります（リーほか 2019）。`, 12),
     ],
     build(ui) {
       ui.text('全部の層を学習：出力は重みの1次式ではない', { x: LEFT_X, y: 120, size: 23 });
       ui.text('→ しかし幅が広いと、1つ1つの重みはほとんど動かない', { x: LEFT_X, y: 162, size: 23, delay: 0.8 });
       ui.tex(R`f_t(x) \approx f_0(x) + \nabla_{\boldsymbol\theta} f_0(x)^\top\,(\boldsymbol\theta_t - \boldsymbol\theta_0)`, { x: LEFT_X, y: 222, size: 30, at: 1 });
       ui.text(R`初期値のまわりの1次近似 → 勾配 $\nabla_{\boldsymbol\theta} f_0(x)$ を特徴量とする線形モデル`, { x: LEFT_X, y: 282, size: 21, color: C.text2, at: 1, delay: 0.6 });
-      ui.tex(R`\Theta(x, x') = \nabla_{\boldsymbol\theta} f(x)^\top\,\nabla_{\boldsymbol\theta} f(x')`, { x: LEFT_X, y: 340, size: 30, at: 2 });
-      ui.text('NTK（ジャコほか 2018）', { x: LEFT_X + 480, y: 348, size: 22, color: C.text2, at: 2, delay: 0.5 });
-      ui.text('幅が無限なら、初期値によらず一定で、学習中も変わらない', { x: LEFT_X, y: 402, size: 21, color: C.text2, at: 2, delay: 0.9 });
-      ui.tex(R`\Theta(x, x') = \underbrace{K(x, x')}_{\mathbf{v}\ \text{で微分}} + \underbrace{\sigma_v^2\,\big(\sigma_a^2 + \sigma_w^2\,x x'\big)\,\frac{\pi - \psi}{2\pi}}_{w,\ a\ \text{で微分}}`, { x: LEFT_X, y: 456, size: 28, at: 3 });
-      ui.tex(R`\mathbb{E}_{\boldsymbol\theta_0}\big[f_\infty(x)\big] = \Theta(x, X)\,\Theta^{-1}\mathbf{y}`, { x: LEFT_X, y: 596, size: 30, at: 4 });
-      ui.text(R`ガウス過程回帰の平均と同じ形で、カーネルが $K$ → $\Theta$（リーほか 2019）`, { x: LEFT_X, y: 664, size: 23, weight: 700, color: C.yellow, at: 4, delay: 0.5, glow: [{ from: 4 }] });
+      ui.tex(R`\Theta(x, x') = \nabla_{\boldsymbol\theta} f(x)^\top\,\nabla_{\boldsymbol\theta} f(x') = \sum_{p} \frac{\partial f(x)}{\partial \theta_p}\,\frac{\partial f(x')}{\partial \theta_p}`, { x: LEFT_X, y: 336, size: 27, at: 2 });
+      ui.text('NTK ＝ 勾配の内積。タンジェント ＝ 接線（ジャコほか 2018）', { x: LEFT_X, y: 424, size: 21, color: C.text2, at: 2, delay: 0.6 });
+      ui.text(R`重みを少し動かしたとき、$x$ と $x'$ の出力が同じ向きに動くほど大きい`, { x: LEFT_X, y: 472, size: 23, weight: 700, color: C.yellow, at: 3, glow: [{ from: 3, to: 4 }] });
+      ui.tex(R`\Theta(x, x') = \underbrace{K(x, x')}_{\mathbf{v}\ \text{で微分}} + \underbrace{\sigma_v^2\,\big(\sigma_a^2 + \sigma_w^2\,x x'\big)\,\frac{\pi - \psi}{2\pi}}_{w,\ a\ \text{で微分}}`, { x: LEFT_X, y: 546, size: 28, at: 4 });
 
       ui.card({ x: CARD_X, y: 128, w: CARD_W, h: 300, title: '2つのカーネル', at: 2 });
       ui.table({
@@ -254,6 +257,163 @@
         ],
         at: 2, rowAt: [2, 4, 4], delay: 0.6,
       });
+    },
+  });
+
+  // ---------------------------------------------------------------- 第6章 図解（NTK の形）
+  // 幅 4000 のネットで、1つの点の誤差だけを使って重みを1回更新し、出力の動きを NTK の式と比べる
+  const STEP_WIDTH = 4000;
+  const STEP_ETA = 0.001; // 1次近似が成り立つ小さな学習率
+  const STEP_POINTS = [0.3, -1.5, 2.1]; // データ点から選ぶ
+  const STEP_NET = M.randomNet(STEP_WIDTH, M.makeRandom(606));
+  // 更新した点の動きを 1 にそろえる（「その点を 1 動かすと、ほかの x がどれだけ動くか」が読める）
+  const STEP_CURVES = STEP_POINTS.map((xi) => {
+    const own = M.gradientStepShape(STEP_NET, xi, STEP_ETA, [xi])[0];
+    return {
+      xi,
+      moved: M.gradientStepShape(STEP_NET, xi, STEP_ETA, GRID).map((v) => v / own),
+      formula: GRID.map((x) => M.ntk(x, xi) / M.ntk(xi, xi)),
+    };
+  });
+  // ネットごとの NTK Θ_H(x, 0.3)。幅を広げると、乱数によらず式の線に集まる
+  const BUNDLE_X = 0.3;
+  const BUNDLE_WIDTHS = [10, 100, 4000];
+  const BUNDLE_COUNT = 8;
+  const BUNDLES = BUNDLE_WIDTHS.map((width, i) => {
+    const random = M.makeRandom(6100 + i);
+    return Array.from({ length: BUNDLE_COUNT }, () => {
+      const net = M.randomNet(width, random);
+      return GRID.map((x) => M.empiricalNtk(net, x, BUNDLE_X));
+    });
+  });
+  const BUNDLE_FORMULA = GRID.map((x) => M.ntk(x, BUNDLE_X));
+  const percent = (v) => (v >= 0.1 ? `${fmt(v * 100, 0)}%` : `${fmt(v * 100, 1)}%`);
+  SCENES.push({
+    id: '6A',
+    chapter: 6,
+    kind: 'visual',
+    title: 'NTK は、1回の更新で関数が動く形',
+    beats: [
+      beat(R`NTK の形を見ます。幅 ${STEP_WIDTH} のネットで、$x = ${STEP_POINTS[0]}$ の点の誤差だけを使い、重みを1回更新しました。黄色は出力の動きで、この点の動きを 1 にそろえています。`, 12),
+      beat('オレンジの点線は、NTK の式です。2つはほぼ重なります。NTK は、1回の更新で関数が動く形です。更新した点で尖っています。', 11),
+      beat(R`別の点の誤差を使うと、形が変わります。どの点の誤差が、どの $x$ をどれだけ動かすかを、NTK が決めています。`, 10),
+      beat('右は、乱数で作ったネットごとの NTK です。幅 10 ではばらばらですが、幅を広げると、大数の法則で、どのネットも式の線に近づきます。', 11),
+      beat(`下の表のとおり、幅 ${STEP_WIDTH} では、初期値によるずれも、学習の前後の変化も小さくなります。幅が無限なら、どちらも 0 です。`, 10),
+    ],
+    build(ui) {
+      ui.card({ x: 860, y: 452, w: 650, h: 238, title: '幅と、NTK のずれ・変化', at: 4 });
+      ui.table({
+        x: 880, y: 496, widths: [120, 240, 240], size: 20, rowH: 37,
+        header: ['幅', '初期値によるずれ', '学習の前後の変化'],
+        rows: DATA.ntkWidths.map((r) => [String(r.width), percent(r.spread), percent(r.change)]),
+        at: 4, rowDelay: 0.3, delay: 0.4,
+      });
+      return {};
+    },
+    draw(ctx, s) {
+      const P = new Plot({ x: 120, y: 170, w: 640, h: 470, xr: [M.GRID_MIN, M.GRID_MAX], yr: [-0.5, 2.25] });
+      const a0 = s.p(0, 0.6, 0.2);
+      P.axes(ctx, { xticks: [-4, -3, -2, -1, 0, 1, 2, 3, 4], yticks: [0, 1, 2], xlabel: 'x', ylabel: '出力の動き（更新した点の動き ＝ 1）', alpha: a0 });
+      // 1本目は字幕0、2本目・3本目は字幕2で順に出す。いま見せる線以外は薄くする
+      const growth = [s.p(0, 1.8, 1.0), s.p(2, 1.4, 0.3), s.p(2, 1.4, 3.2)];
+      const current = s.u >= s.bt(2) + 3.2 ? 2 : s.u >= s.bt(2) + 0.3 ? 1 : 0;
+      const formulaFirst = s.p(1, 0.6, 0.3);
+      STEP_CURVES.forEach((curve, i) => {
+        const grow = growth[i];
+        if (grow <= 0) return;
+        const dim = i === current ? 1 : 0.28;
+        P.line(ctx, GRID, curve.moved, { color: D.COLOR.mean, width: 3.5, upto: grow, alpha: dim });
+        P.line(ctx, GRID, curve.formula, { color: D.COLOR.ntk, width: 2.6, dash: [8, 6], upto: grow, alpha: dim * (i === 0 ? formulaFirst : 1) });
+        P.vline(ctx, curve.xi, { color: C.text, from: 0, to: 1, alpha: dim * 0.7 });
+        P.dots(ctx, [curve.xi], [1], { r: 6, color: D.COLOR.data, alpha: dim * grow });
+        P.label(ctx, `x = ${fmt(curve.xi, 1)}`, curve.xi, -0.32, { size: 17, color: C.text2, align: 'center', alpha: dim * grow });
+      });
+      const kink = s.p(1, 0.6, 3.5) * (1 - s.p(2, 0.4));
+      if (kink > 0) P.label(ctx, '更新した点で尖る', STEP_POINTS[0], 1, { dx: -6, dy: -20, size: 19, color: C.text, align: 'center', weight: 700, alpha: kink });
+      legend(ctx, [{ color: D.COLOR.mean, label: `1回の更新の動き（幅 ${STEP_WIDTH}）` }, { color: D.COLOR.ntk, dash: [8, 6], label: 'NTK の式' }], P.x, P.y + P.h + 70, { alpha: a0 });
+
+      // 右: ネットごとの NTK（幅を 10 → 100 → 4000 と切りかえる）
+      const a3 = s.p(3, 0.6, 0.2);
+      if (a3 <= 0) return;
+      const Q = new Plot({ x: 880, y: 170, w: 620, h: 220, xr: [M.GRID_MIN, M.GRID_MAX], yr: [0, 8] });
+      const start = s.bt(3) + 0.8;
+      const stage = keyframes(s.u, [[start + 2.2, 0], [start + 3.0, 1], [start + 5.2, 1], [start + 6.0, 2]]);
+      ctx.save();
+      ctx.globalAlpha = a3;
+      Q.axes(ctx, { xticks: [-4, -2, 0, 2, 4], yticks: [0, 2, 4, 6, 8], xlabel: 'x', ylabel: `Θ(x, ${BUNDLE_X})` });
+      BUNDLES.forEach((lines, i) => {
+        const alpha = clamp(1 - Math.abs(stage - i));
+        if (alpha > 0) lines.forEach((ys) => Q.line(ctx, GRID, ys, { color: D.COLOR.net, width: 1.5, alpha: 0.65 * alpha }));
+      });
+      Q.line(ctx, GRID, BUNDLE_FORMULA, { color: D.COLOR.ntk, width: 2.6, dash: [8, 6] });
+      canvasText(ctx, `幅 H = ${BUNDLE_WIDTHS[Math.round(stage)]}`, Q.x + 14, Q.y + 24, { size: 22, color: C.text, weight: 800 });
+      ctx.restore();
+      legend(ctx, [{ color: D.COLOR.net, label: `ネット ${BUNDLE_COUNT} 個` }, { color: D.COLOR.ntk, dash: [8, 6], label: 'NTK の式' }], Q.x + 330, Q.y + 18, { alpha: a3, gap: 18, size: 16 });
+    },
+  });
+
+  // ---------------------------------------------------------------- 第6章 理論（NTK が学習の動きを決める）
+  // 例のデータ6点での NTK の固有値と固有ベクトル（固有値の大きい順。向きは成分の和が 0 以上になるようにそろえる）
+  const NTK_EIGEN = (() => {
+    const { values, vectors } = M.symmetricEigen(M.DATA_X.map((a) => M.DATA_X.map((b) => M.ntk(a, b))));
+    return values
+      .map((value, k) => {
+        const raw = vectors.map((row) => row[k]);
+        const sign = raw.reduce((a, b) => a + b, 0) >= 0 ? 1 : -1;
+        const u = raw.map((v) => v * sign);
+        return { value, u, changes: u.slice(1).filter((v, i) => v * u[i] < 0).length };
+      })
+      .sort((a, b) => b.value - a.value);
+  })();
+  const NTK_RATE_RATIO = NTK_EIGEN[0].value / NTK_EIGEN[NTK_EIGEN.length - 1].value;
+  const EIGEN_ROW_Y = 214;
+  const EIGEN_ROW_H = 86;
+  const SUBSCRIPT = ['₁', '₂', '₃', '₄', '₅', '₆'];
+  SCENES.push({
+    id: '6B',
+    chapter: 6,
+    kind: 'theory',
+    title: 'NTK が学習の動きを決める',
+    beats: [
+      beat('勾配降下法の1回の更新は、各データ点の誤差に、その点の勾配を掛けて足した方向です。', 8),
+      beat(R`出力の変化は、勾配と重みの変化の内積なので、ここに NTK が現れます。データ点の誤差が、NTK の重みで、ほかの $x$ に伝わります。`, 11),
+      beat(R`データ点の出力をまとめると、誤差は指数関数で減ります。NTK の固有値 $\lambda_k$ が大きい方向ほど、速く減ります。`, 10),
+      beat(`右は、この例の固有ベクトルです。固有値が小さいほど符号の変化が多く、細かい形です。大きな形を先に学び、細かい形はあとから学びます。速さの差は、最大で約${Math.round(NTK_RATE_RATIO / 5) * 5}倍です。`, 12),
+      beat(R`第5章と同じ計算で、初期値についての期待値は $\Theta(x, X)\,\Theta^{-1}\mathbf{y}$。ガウス過程回帰の平均と同じ形で、カーネルだけが NTK に変わります（リーほか 2019）。`, 12),
+    ],
+    build(ui) {
+      ui.tex(R`\Delta\boldsymbol\theta = -\eta \sum_{i=1}^{n} \big(f(x_i) - y_i\big)\,\nabla_{\boldsymbol\theta} f(x_i)`, { x: LEFT_X, y: 118, size: 28 });
+      ui.text('1回の更新：誤差 × その点の勾配 を足した方向', { x: LEFT_X, y: 204, size: 21, color: C.text2, delay: 0.6 });
+      ui.tex(R`\Delta f(x) \approx \nabla_{\boldsymbol\theta} f(x)^\top \Delta\boldsymbol\theta = -\eta \sum_{i=1}^{n} \Theta(x, x_i)\,\big(f(x_i) - y_i\big)`, { x: LEFT_X, y: 246, size: 27, at: 1 });
+      ui.text(R`データ点の誤差が、NTK の重みで $x$ に伝わる`, { x: LEFT_X, y: 332, size: 22, weight: 700, color: C.yellow, at: 1, delay: 0.6, glow: [{ from: 1, to: 2 }] });
+      ui.tex(R`f_t(X) - \mathbf{y} = e^{-\eta\,\Theta\,t}\,\big(f_0(X) - \mathbf{y}\big)`, { x: LEFT_X, y: 396, size: 28, at: 2 });
+      ui.text(R`固有値 $\lambda_k$ の方向の誤差は $e^{-\eta\lambda_k t}$ で減る → 大きな固有値の方向から学ぶ`, { x: LEFT_X, y: 458, w: 900, size: 22, at: 2, delay: 0.6 });
+      ui.text(`大きな形が先、細かい形はあと（速さの差は最大で約${Math.round(NTK_RATE_RATIO / 5) * 5}倍）`, { x: LEFT_X, y: 514, size: 22, at: 3 });
+      ui.tex(R`\mathbb{E}_{\boldsymbol\theta_0}\big[f_\infty(x)\big] = \Theta(x, X)\,\Theta^{-1}\mathbf{y}`, { x: LEFT_X, y: 586, size: 30, at: 4 });
+      ui.text(R`ガウス過程回帰の平均と同じ形で、カーネルが $K$ → $\Theta$（リーほか 2019）`, { x: LEFT_X, y: 656, size: 23, weight: 700, color: C.yellow, at: 4, delay: 0.5, glow: [{ from: 4 }] });
+
+      seeThrough(ui.card({ x: CARD_X, y: 128, w: CARD_W, h: 612, title: 'この例の NTK（データ6点）の固有ベクトル', at: 2 }));
+    },
+    draw(ctx, s) {
+      const a2 = s.p(2, 0.6, 0.4);
+      if (a2 <= 0) return;
+      const changesAlpha = s.p(3, 0.6, 0.4);
+      ctx.save();
+      ctx.globalAlpha = a2;
+      canvasText(ctx, '固有値', CARD_X + 28, 198, { size: 17, color: C.muted });
+      canvasText(ctx, '固有ベクトル（6点の値）', CARD_X + 156, 198, { size: 17, color: C.muted });
+      canvasText(ctx, '符号の変化', CARD_X + 372, 198, { size: 17, color: C.muted, alpha: changesAlpha });
+      NTK_EIGEN.forEach((mode, k) => {
+        const y = EIGEN_ROW_Y + k * EIGEN_ROW_H;
+        const P = new Plot({ x: CARD_X + 156, y: y + 4, w: 190, h: 66, xr: [-0.5, 5.5], yr: [-1, 1] });
+        const xs = mode.u.map((_, i) => i);
+        canvasText(ctx, `λ${SUBSCRIPT[k]} = ${fmt(mode.value, mode.value < 10 ? 2 : 1)}`, CARD_X + 28, y + 44, { size: 20, color: C.text, weight: 700 });
+        P.hline(ctx, 0, { color: C.axis, dash: null, width: 1 });
+        P.line(ctx, xs, mode.u, { color: D.COLOR.ntk, width: 2.5 });
+        P.dots(ctx, xs, mode.u, { r: 4, color: D.COLOR.ntk, ring: null });
+        canvasText(ctx, `${mode.changes} 回`, CARD_X + 372, y + 44, { size: 20, color: C.text, weight: 700, alpha: changesAlpha });
+      });
+      ctx.restore();
     },
   });
 
@@ -422,7 +582,7 @@
         [0, R`重みを乱数で決めたネットは、幅 $H \to \infty$ でガウス過程になる（中心極限定理、ニール 1996）`],
         [0, 'カーネルはネットの形で決まる（ReLU はアークコサイン・カーネル、深いネットは層ごとに順に計算）'],
         [1, 'ベイズ推論：事後分布 ＝ NNGP カーネルのガウス過程回帰（期待値も分散も一致）'],
-        [1, '勾配降下法：初期値で平均した予測 ＝ カーネル回帰の式（最後の層だけ → NNGP、全部の層 → NTK）'],
+        [1, '勾配降下法：初期値で平均した予測 ＝ カーネル回帰の式（最後の層だけ → NNGP、全部の層 → NTK ＝ 勾配の内積）'],
         [2, R`条件：幅 $\infty$、出力に $1/\sqrt{H}$、二乗誤差、小さな学習率、収束まで`],
         [2, R`限界：有限の幅のずれ（およそ $1/\sqrt{H}$）と特徴の学習。ガウス過程回帰は「広いネットの平均」の理論のモデル`],
       ];

@@ -1,5 +1,5 @@
 // make-data.mjs — 動画で使う「学習したネット」の結果を前もって計算し、js/nn-data.js に書く。node tools/make-data.mjs
-// 全部の層の学習は時間がかかる（約2分半）ため、ページを開くたびには計算しない。乱数の種を固定しているので、何度実行しても同じ結果になる。
+// 全部の層の学習は時間がかかる（約3分）ため、ページを開くたびには計算しない。乱数の種を固定しているので、何度実行しても同じ結果になる。
 // あわせて、カーネルの式と乱数での平均の一致など、原稿に書いた数値の確認も表示する。
 import fs from 'node:fs';
 import path from 'node:path';
@@ -19,6 +19,8 @@ const FULL_ETA = 0.05; // 学習率（NTK の最大固有値 ≈ 21.6 なので�
 const FULL_STEPS = 3000;
 const LAZY_WIDTHS = [10, 30, 100, 300, 1000, 3000];
 const LAZY_NETS = 10;
+const NTK_WIDTHS = [10, 100, 1000, 4000];
+const NTK_NETS = 20;
 const GAP_WIDTHS = [10, 30, 100, 300, 1000, 3000, 10000];
 const GAP_DRAWS = 100;
 const DIGITS = 4;
@@ -122,7 +124,27 @@ const lazy = LAZY_WIDTHS.map((width) => {
   return { width, change: round(change) };
 });
 
-// ---- 5. 幅と、事後平均のずれ（最後の層だけをベイズ推論。σ_n² = NOISE_VAR）----
+// ---- 5. 幅と NTK: 初期値によるずれ（式との差）と、学習の前後の変化（どちらも行列のフロベニウスノルムの比）----
+const ntkMatrixOf = (net) => M.DATA_X.map((a) => M.DATA_X.map((b) => M.empiricalNtk(net, a, b)));
+const frobenius = (A) => Math.sqrt(A.flat().reduce((s, v) => s + v * v, 0));
+const minus = (A, B) => A.map((row, i) => row.map((v, j) => v - B[i][j]));
+const ntkFormula = M.DATA_X.map((a) => M.DATA_X.map((b) => M.ntk(a, b)));
+const ntkRandom = M.makeRandom(4040);
+const ntkWidths = NTK_WIDTHS.map((width) => {
+  let spread = 0;
+  let change = 0;
+  for (let m = 0; m < NTK_NETS; m++) {
+    const net = M.randomNet(width, ntkRandom);
+    const before = ntkMatrixOf(net);
+    spread += frobenius(minus(before, ntkFormula)) / frobenius(ntkFormula);
+    M.trainFull(net, { eta: FULL_ETA, steps: FULL_STEPS });
+    change += frobenius(minus(ntkMatrixOf(net), before)) / frobenius(before);
+  }
+  console.log(`幅 ${width}: NTK の初期値によるずれ ${f((spread / NTK_NETS) * 100, 1)}%、学習の前後の変化 ${f((change / NTK_NETS) * 100, 1)}%`);
+  return { width, spread: round(spread / NTK_NETS), change: round(change / NTK_NETS) };
+});
+
+// ---- 6. 幅と、事後平均のずれ（最後の層だけをベイズ推論。σ_n² = NOISE_VAR）----
 const gapRandom = M.makeRandom(31);
 const gpNoisy = M.gpPosterior(M.nngp, grid, M.NOISE_VAR).mean;
 const gaps = GAP_WIDTHS.map((width) => {
@@ -136,10 +158,11 @@ const gaps = GAP_WIDTHS.map((width) => {
   return { width, gap: round(gap) };
 });
 
-const header = `// 自動生成（node tools/make-data.mjs）。手で直さない。\n// 全部の層を勾配降下法で学習したネット（幅 ${FULL_WIDTHS.join('・')}、各 ${FULL_NETS} 個、学習率 ${FULL_ETA}、${FULL_STEPS} 回）の出力と平均、幅ごとの「内側の重みが動いた割合」と「事後平均のずれ」\n`;
+const header = `// 自動生成（node tools/make-data.mjs）。手で直さない。\n// 全部の層を勾配降下法で学習したネット（幅 ${FULL_WIDTHS.join('・')}、各 ${FULL_NETS} 個、学習率 ${FULL_ETA}、${FULL_STEPS} 回）の出力と平均、幅ごとの「内側の重みが動いた割合」「NTK のずれと変化」「事後平均のずれ」\n`;
 const data = {
   full: { nets: FULL_NETS, eta: FULL_ETA, steps: FULL_STEPS, runs: fullRuns },
   lazy,
+  ntkWidths,
   gaps,
 };
 fs.writeFileSync(path.join(root, 'js/nn-data.js'), `${header}window.NN_DATA = ${JSON.stringify(data)};\n`);
