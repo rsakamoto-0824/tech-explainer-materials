@@ -67,7 +67,6 @@
     title: 'はじめに',
     beats: [
       beat('ガウス過程回帰とニューラルネットの関係を、式と図を使って解説します。', 7),
-      beat('理論（式）と図解（グラフ）を交互に進めます。左上の札で、いまどちらかが分かります。'),
       beat('全部で7章です。はじめに、この動画のポイントを4つにまとめます。'),
     ],
     build(ui) {
@@ -82,10 +81,8 @@
           delay: 0.6 + 0.12 * i,
         });
       });
-      ui.text(`<span class="pill" style="background:${C.theory}">理論</span>式で考える`, { x: 130, y: 540, size: 24, at: 1 });
-      ui.text(`<span class="pill" style="background:${C.visual}">図解</span>図で見る`, { x: 130, y: 588, size: 24, at: 1, delay: 0.2 });
-      ui.text(`<span class="pill" style="background:${C.yellow}">ポイント</span>最初に、この動画の要点を4つ`, { x: 830, y: 540, size: 24, at: 2 });
-      ui.text('例のデータは説明用に式で作った6点です。図の数値は、乱数（種を固定）で作ったネットで計算しました', { x: 830, y: 594, w: 680, size: 20, color: C.muted, at: 2, delay: 0.4, lh: 1.5 });
+      ui.text(`<span class="pill" style="background:${C.yellow}">ポイント</span>最初に、この動画の要点を4つ`, { x: 130, y: 540, size: 24, at: 1 });
+      ui.text('例のデータは説明用に式で作った6点です。図の数値は、乱数（種を固定）で作ったネットで計算しました', { x: 130, y: 594, w: 680, size: 20, color: C.muted, at: 1, delay: 0.4, lh: 1.5 });
     },
   });
 
