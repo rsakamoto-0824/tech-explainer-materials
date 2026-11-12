@@ -36,11 +36,11 @@
     kind: 'title',
     title: 'はじめに',
     beats: [
-      beat('ガウス過程回帰を、式と図で、基礎から予測まで解説します。もとの解説動画から、カーネルの組み合わせなどの発展的な話を除いた短縮版です。', 10),
+      beat('ガウス過程回帰を、式と図で、基礎から予測まで解説します。最後に、実務で使うときの手順と注意もまとめます。', 9),
       beat('全部で7章です。はじめに、この動画のポイントを4つにまとめます。', 6),
     ],
     build(ui) {
-      ui.text('ガウス過程回帰 ― 短縮版', { x: 134, y: 112, size: 24, color: C.theory, weight: 700 });
+      ui.text('ガウス過程回帰 ― 基礎から予測まで', { x: 134, y: 112, size: 24, color: C.theory, weight: 700 });
       ui.text('<span class="mincho">ガウス過程回帰</span>', { x: 128, y: 146, size: 86, weight: 600, delay: 0.2 });
       ui.text('関数に正規分布を置き、データで条件づけて予測する', { x: 134, y: 280, size: 30, color: C.text2, delay: 0.5 });
       CHAPTERS.forEach((title, i) => {
@@ -198,16 +198,20 @@
       beat('ガウス過程回帰は、形を決めません。関数そのものに、確率の分布を置きます。', 7),
       beat(R`$m(x)$ は平均の関数で、ふつうは 0 とします。$k(x, x')$ はカーネルで、2点の値の共分散を表します。`, 10),
       beat('データを見たあとの分布、つまり予測は、多変量正規分布の条件づけで求まります。次の章で、その道具を準備します。', 10),
+      beat('ガウス過程回帰は、データが少ないとき、予測の不確かさも知りたいとき、関数の形が分からないときに向いています。実験の条件を選ぶベイズ最適化でも使われます。', 12),
     ],
     build(ui) {
       ui.tex(R`y = f(x) + \varepsilon,\qquad \varepsilon \sim \mathcal{N}(0,\ \sigma_n^2)`, { x: LEFT_X, y: 130, size: 34 });
       ui.text('観測 ＝ 関数の値 ＋ ノイズ', { x: LEFT_X + 520, y: 140, size: 22, color: C.text2, delay: 0.6 });
       ui.text(R`ふつうの回帰：形を決めてパラメータを推定（例 $f(x) = a + bx$）`, { x: LEFT_X, y: 232, size: 24, at: 1 });
       ui.tex(R`f \sim \mathcal{GP}\big(m(x),\ k(x, x')\big)`, { x: LEFT_X, y: 320, size: 38, at: 2 });
-      ui.text('ガウス過程回帰：関数そのものに分布を置く', { x: LEFT_X + 480, y: 334, size: 22, color: C.text2, at: 2, delay: 0.6 });
+      ui.text('ガウス過程回帰：関数に分布を置く', { x: LEFT_X + 480, y: 334, size: 22, color: C.text2, at: 2, delay: 0.6 });
       ui.text(R`$m(x)$：平均の関数（ふつうは 0）`, { x: LEFT_X + 20, y: 430, size: 24, at: 3 });
       ui.text(R`$k(x, x')$：カーネル ＝ $\operatorname{Cov}\big[f(x),\ f(x')\big]$`, { x: LEFT_X + 20, y: 482, size: 24, at: 3, delay: 0.5 });
-      ui.text('→ 予測 ＝ 多変量正規分布の条件づけ（第2章・第5章）', { x: LEFT_X, y: 610, size: 27, weight: 700, color: C.yellow, at: 4, glow: [{ from: 4 }] });
+      ui.text('→ 予測 ＝ 多変量正規分布の条件づけ（第2章・第5章）', { x: LEFT_X, y: 610, size: 27, weight: 700, color: C.yellow, at: 4, glow: [{ from: 4, to: 5 }] });
+
+      ui.card({ x: CARD_X, y: 128, w: CARD_W, h: 250, title: '使いどころ', at: 5, glow: [{ from: 5 }] });
+      ['データが少ない（数十〜数千点）', '予測の不確かさも知りたい', '関数の形が分からない', '実験条件の探索（ベイズ最適化）'].forEach((text, i) => ui.text(`・${text}`, { x: CARD_X + 28, y: 180 + i * 46, size: 22, at: 5, delay: 0.3 + 0.3 * i }));
 
       ui.card({ x: CARD_X, y: 400, w: CARD_W, h: 300, title: 'この動画の用語', at: 2 });
       ui.table({
@@ -446,6 +450,62 @@
         LONG_SAMPLES.forEach((ys, i) => Q.line(ctx, XS, ys, { color: S.sampleColor(i), width: 2.6, alpha: a4 }));
         canvasText(ctx, `ℓ = ${LONG_ELL}`, Q.x + 16, Q.y + 30, { size: 26, color: C.text, weight: 800, alpha: a4 });
       }
+    },
+  });
+
+  // ---------------------------------------------------------------- 第3章 図解（カーネル行列を色で見る）
+  const MATRIX_N = 25;
+  const MATRIX_XS = G.linspace(0, 6, MATRIX_N);
+  const MATRIX_ELLS = [0.5, 2];
+  const MATRIX_IMAGES = MATRIX_ELLS.map((ell) => {
+    const kernel = G.rbf({ variance: 1, lengthScale: ell });
+    return KIT.heatmapCanvas(MATRIX_N, MATRIX_N, (i, j) => KIT.seqColor(kernel(MATRIX_XS[i], MATRIX_XS[j])));
+  });
+  const MATRIX_SAMPLES = MATRIX_ELLS.map((ell) => S.samples(XS, G.rbf({ variance: 1, lengthScale: ell }), 3, 320));
+  SCENES.push({
+    id: '3V-2',
+    chapter: 3,
+    kind: 'visual',
+    title: 'カーネル行列を色で見る',
+    beats: [
+      beat('25個の点どうしのカーネルを、行列にして色で表しました。濃いほど値が大きく、対角は同じ点どうしなので、最大の1です。', 10),
+      beat(`対角から離れるほど、つまり2点が離れるほど、薄くなります。右は、この行列から引いた関数です。長さスケールは ${MATRIX_ELLS[0]} です。`, 10),
+      beat(`長さスケールを ${MATRIX_ELLS[1]} にすると、濃い帯が太くなります。離れた点どうしも、似た値をとるようになるからです。`, 9),
+      beat('帯が細い行列からは細かく揺れる関数、太い行列からはゆっくり変わる関数が生まれます。カーネル行列が、関数の性質を決めています。', 11),
+    ],
+    build() {
+      return {};
+    },
+    draw(ctx, s) {
+      const size = 440;
+      const x0 = 150;
+      const y0 = 200;
+      const a0 = s.p(0, 0.6, 0.2);
+      const k = s.p(2, 1.6, 0.3); // 長さスケールの切りかえ（0 → 1）
+      KIT.drawImage(ctx, MATRIX_IMAGES[0], x0, y0, size, size, { alpha: a0 * (1 - k) });
+      KIT.drawImage(ctx, MATRIX_IMAGES[1], x0, y0, size, size, { alpha: a0 * k });
+      ctx.save();
+      ctx.globalAlpha = a0;
+      ctx.strokeStyle = C.axis;
+      ctx.strokeRect(x0 - 0.5, y0 - 0.5, size + 1, size + 1);
+      [0, 2, 4, 6].forEach((v) => {
+        const p = x0 + (v / 6) * size;
+        canvasText(ctx, String(v), p, y0 + size + 26, { size: 16, color: C.muted, align: 'center' });
+        canvasText(ctx, String(v), x0 - 12, y0 + (v / 6) * size + 5, { size: 16, color: C.muted, align: 'right' });
+      });
+      canvasText(ctx, "x′", x0 + size, y0 + size + 50, { size: 18, color: C.text2, align: 'right' });
+      canvasText(ctx, 'x', x0 - 34, y0 - 12, { size: 18, color: C.text2 });
+      canvasText(ctx, `ℓ = ${k < 0.5 ? MATRIX_ELLS[0] : MATRIX_ELLS[1]}`, x0, y0 - 24, { size: 26, color: C.text, weight: 800 });
+      ctx.restore();
+      KIT.colorBar(ctx, x0 + size + 24, y0, 18, size, KIT.seqColor, { min: 0, max: 1, ticks: [0, 0.5, 1], digits: 1, label: 'k' });
+      const a1 = s.p(1, 0.6, 0.6);
+      if (a1 <= 0) return;
+      const Q = new Plot({ x: 760, y: 190, w: 740, h: 480, xr: [0, 6], yr: [-3, 3] });
+      Q.axes(ctx, { xticks: xTicks, yticks: [-2, -1, 0, 1, 2], xlabel: 'x', ylabel: 'f(x)', alpha: a1 });
+      MATRIX_SAMPLES.forEach((set, m) => {
+        const alpha = a1 * (m === 0 ? 1 - k : k);
+        if (alpha > 0) set.forEach((ys, i) => Q.line(ctx, XS, ys, { color: S.sampleColor(i), width: 2.5, alpha }));
+      });
     },
   });
 

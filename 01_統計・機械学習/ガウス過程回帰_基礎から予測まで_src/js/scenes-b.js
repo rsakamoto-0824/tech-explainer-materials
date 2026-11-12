@@ -1,6 +1,6 @@
 // scenes-b.js — 第5〜7章（予測の式、ノイズとハイパーパラメータ、実務での注意）、まとめ、おわり。書き方は scenes-a.js と同じ。
 (() => {
-  const { W, C, CHAPTERS, Plot, fmt, canvasText, keyframes, clamp, legend } = KIT;
+  const { W, C, CHAPTERS, Plot, fmt, texNum, canvasText, keyframes, clamp, legend } = KIT;
   const G = GPM;
   const D = SHORT_DATA;
   const S = SDRAW;
@@ -112,6 +112,73 @@
     },
   });
 
+  // ---------------------------------------------------------------- 第5章 理論（データ3点で計算する）
+  const EX_X = [1, 2, 4];
+  const EX_Y = [0.9, 0.6, -0.7];
+  const EX_STAR = 3;
+  const EX_NOISE = 0.01;
+  const EX_KERNEL = G.rbf({ variance: 1, lengthScale: 1 });
+  const EX_MODEL = G.fit(EX_X, EX_Y, EX_KERNEL, EX_NOISE);
+  const EX_KY = EX_X.map((a, i) => EX_X.map((b, j) => EX_KERNEL(a, b) + (i === j ? EX_NOISE : 0)));
+  const EX_KSTAR = EX_X.map((b) => EX_KERNEL(EX_STAR, b));
+  const EX_POINT = G.predict(EX_MODEL, [EX_STAR]);
+  const EX_MEAN = EX_POINT.mean[0];
+  const EX_VAR = EX_POINT.variance[0];
+  const EX_REDUCTION = EX_KERNEL(EX_STAR, EX_STAR) - EX_VAR; // データで分かった分 k*ᵀ(K+σ²I)⁻¹k*
+  const EX_XS = G.linspace(0, 5, 201);
+  const EX_CURVE = G.predict(EX_MODEL, EX_XS);
+  const matrixTex = (rows) => `\\begin{bmatrix} ${rows.map((row) => row.map((v) => texNum(v, 3)).join(' & ')).join(' \\\\ ')} \\end{bmatrix}`;
+  const columnTex = (values) => matrixTex(values.map((v) => [v]));
+  SCENES.push({
+    id: '5T-2',
+    chapter: 5,
+    kind: 'theory',
+    title: 'データ3点で計算してみる',
+    beats: [
+      beat(R`データ3点で、実際に計算してみます。$x = 1, 2, 4$ の3点から、$x_* = 3$ の値を予測します。カーネルは $\sigma_f = 1$、$\ell = 1$ の RBF、ノイズの分散は 0.01 です。`, 12),
+      beat(`まず、データ点どうしのカーネル行列に、ノイズの分散を足します。近い1と2は ${fmt(EX_KERNEL(1, 2), 2)}、遠い1と4は ${fmt(EX_KERNEL(1, 4), 2)} です。`, 10),
+      beat(R`次に、重み $\boldsymbol\alpha$ を連立方程式で求めます。実際の計算では、コレスキー分解を使います。`, 8),
+      beat(R`予測点とデータ点のカーネル $\mathbf{k}_*$ を作り、$\boldsymbol\alpha$ との内積をとると、予測の平均は ${fmt(EX_MEAN, 2)} です。`, 10),
+      beat(`分散は、1 から ${fmt(EX_REDUCTION, 2)} を引いて ${fmt(EX_VAR, 2)}、標準偏差は ${fmt(Math.sqrt(EX_VAR), 2)} です。右の図の $x = 3$ の点が、この平均と帯に当たります。`, 11),
+    ],
+    build(ui) {
+      ui.text(R`データ：$x = 1, 2, 4$、$y = ${EX_Y.map((v) => texNum(v, 1)).join(',\ ')}$　予測する点：$x_* = ${EX_STAR}$`, { x: LEFT_X, y: 118, size: 23 });
+      ui.text(R`カーネル：RBF（$\sigma_f = 1,\ \ell = 1$）、ノイズの分散 $\sigma_n^2 = ${EX_NOISE}$`, { x: LEFT_X, y: 160, size: 23, color: C.text2, delay: 0.5 });
+      ui.tex(R`K + \sigma_n^2 I = ${matrixTex(EX_KY)}`, { x: LEFT_X, y: 214, size: 27, at: 1 });
+      ui.tex(R`\boldsymbol\alpha = \big(K + \sigma_n^2 I\big)^{-1}\mathbf{y} = ${columnTex(Array.from(EX_MODEL.alpha))}`, { x: LEFT_X, y: 340, size: 27, at: 2 });
+      ui.tex(R`\mathbf{k}_* = ${columnTex(EX_KSTAR)},\qquad \mu_* = \mathbf{k}_*^\top \boldsymbol\alpha = ${texNum(EX_MEAN, 3)}`, { x: LEFT_X, y: 466, size: 27, at: 3 });
+      ui.tex(R`\sigma_*^2 = 1 - \mathbf{k}_*^\top \big(K + \sigma_n^2 I\big)^{-1}\mathbf{k}_* = 1 - ${texNum(EX_REDUCTION, 3)} = ${texNum(EX_VAR, 3)}`, { x: LEFT_X, y: 604, size: 27, at: 4 });
+      ui.text(R`標準偏差 $\sigma_* = ${texNum(Math.sqrt(EX_VAR), 3)}$`, { x: LEFT_X, y: 668, size: 23, weight: 700, color: C.yellow, at: 4, delay: 0.6 });
+      const card = ui.card({ x: CARD_X, y: 214, w: CARD_W, h: 470, title: 'この3点での予測', at: 0 });
+      card.node.style.background = 'transparent';
+    },
+    draw(ctx, s) {
+      const a0 = s.p(0, 0.6, 0.4);
+      if (a0 <= 0) return;
+      const P = new Plot({ x: CARD_X + 60, y: 280, w: CARD_W - 100, h: 330, xr: [0, 5], yr: [-1.8, 1.8] });
+      ctx.save();
+      ctx.globalAlpha = a0;
+      P.axes(ctx, { xticks: [0, 1, 2, 3, 4, 5], yticks: [-1, 0, 1], xlabel: 'x' });
+      const a3 = s.p(3, 0.8, 0.4);
+      if (a3 > 0) S.drawPrediction(ctx, P, EX_XS, EX_CURVE, { alpha: a3, width: 3 });
+      P.vline(ctx, EX_STAR, { color: C.yellow, width: 2 });
+      const a4 = s.p(4, 0.6, 0.4);
+      if (a4 > 0) {
+        const sd = Math.sqrt(EX_VAR);
+        ctx.strokeStyle = C.yellow;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(P.sx(EX_STAR), P.sy(EX_MEAN - 2 * sd));
+        ctx.lineTo(P.sx(EX_STAR), P.sy(EX_MEAN + 2 * sd));
+        ctx.stroke();
+      }
+      if (a3 > 0) P.dots(ctx, [EX_STAR], [EX_MEAN], { r: 7, color: C.yellow, ring: C.bg, alpha: a3 });
+      S.drawData(ctx, P, EX_X, EX_Y, { r: 7 });
+      P.label(ctx, 'x* = 3', EX_STAR, 1.8, { dy: 18, dx: 8, size: 17, color: C.text2 });
+      ctx.restore();
+    },
+  });
+
   // ---------------------------------------------------------------- 第6章 理論（ノイズとハイパーパラメータ）
   SCENES.push({
     id: '6T',
@@ -153,9 +220,11 @@
   const SMALL_ELL = 0.2;
   const LARGE_ELL = 3;
   const ELLS = G.linspace(Math.log(0.15), Math.log(3.2), 140).map(Math.exp);
-  const LML = ELLS.map((l) => G.logMarginalLikelihood(D.DATA_X, D.DATA_Y, D.kernelOf(l), D.BEST_NOISE_VAR).total);
+  const LML_PARTS = ELLS.map((l) => G.logMarginalLikelihood(D.DATA_X, D.DATA_Y, D.kernelOf(l), D.BEST_NOISE_VAR));
+  const LML = LML_PARTS.map((r) => r.total);
   const predictWith = (l) => G.predict(G.fit(D.DATA_X, D.DATA_Y, D.kernelOf(l), D.BEST_NOISE_VAR), XS);
   const LML_YR = [-12, -4];
+  const PARTS_YR = [-30, 10];
   SCENES.push({
     id: '6V',
     chapter: 6,
@@ -166,6 +235,7 @@
       beat(`大きすぎると（$\\ell = ${LARGE_ELL}$）、平均はゆるやかすぎて、データの山と谷を表せません。`, 8),
       beat(`右は、$\\ell$ を動かしたときの対数周辺尤度です。最大になるのは $\\ell \\approx ${fmt(D.BEST.lengthScale, 2)}$ で、このときの予測が左の図です。`, 10),
       beat('真の関数（点線）の大きな形を、よくとらえています。細かい揺れは7点では分からないので、帯の中に収めています。', 10),
+      beat(R`右の図を2つの項に分けました。$\ell$ が小さいと当てはまりは良いのですが罰則が大きく、$\ell$ が大きいと罰則は小さくなるものの、当てはまりが急に悪くなります。`, 12),
     ],
     build() {
       return {};
@@ -183,15 +253,67 @@
 
       const a2 = s.p(2, 0.6, 0.2);
       if (a2 <= 0) return;
-      const Q = new Plot({ x: 960, y: 200, w: 540, h: 400, xr: [ELLS[0], ELLS[ELLS.length - 1]], yr: LML_YR, logx: true });
+      const parts = s.p(4, 1.0, 0.3); // 合計だけ → 2つの項
+      const current = G.logMarginalLikelihood(D.DATA_X, D.DATA_Y, D.kernelOf(ell), D.BEST_NOISE_VAR);
+      const totalOnly = new Plot({ x: 960, y: 200, w: 540, h: 400, xr: [ELLS[0], ELLS[ELLS.length - 1]], yr: LML_YR, logx: true });
+      const withParts = new Plot({ x: 960, y: 200, w: 540, h: 400, xr: [ELLS[0], ELLS[ELLS.length - 1]], yr: PARTS_YR, logx: true });
+      const xAxis = { xticks: [0.2, 0.5, 1, 2, 3], fmtX: (v) => String(v), xlabel: '長さスケール ℓ' };
       ctx.save();
-      ctx.globalAlpha = a2;
-      Q.axes(ctx, { xticks: [0.2, 0.5, 1, 2, 3], yticks: [-12, -10, -8, -6, -4], fmtX: (v) => String(v), xlabel: '長さスケール ℓ', ylabel: '対数周辺尤度' });
-      Q.line(ctx, ELLS, LML, { color: C.blue, width: 3 });
-      const current = G.logMarginalLikelihood(D.DATA_X, D.DATA_Y, D.kernelOf(ell), D.BEST_NOISE_VAR).total;
-      Q.vline(ctx, ell, { color: C.text2 });
-      Q.dots(ctx, [ell], [clamp(current, LML_YR[0], LML_YR[1])], { r: 7, color: C.yellow, ring: C.bg });
+      ctx.globalAlpha = a2 * (1 - parts);
+      if (1 - parts > 0) {
+        totalOnly.axes(ctx, { ...xAxis, yticks: [-12, -10, -8, -6, -4], ylabel: '対数周辺尤度' });
+        totalOnly.line(ctx, ELLS, LML, { color: C.blue, width: 3 });
+        totalOnly.vline(ctx, ell, { color: C.text2 });
+        totalOnly.dots(ctx, [ell], [clamp(current.total, LML_YR[0], LML_YR[1])], { r: 7, color: C.yellow, ring: C.bg });
+      }
       ctx.restore();
+      if (parts > 0) {
+        ctx.save();
+        ctx.globalAlpha = a2 * parts;
+        withParts.axes(ctx, { ...xAxis, yticks: [-30, -20, -10, 0, 10], ylabel: '対数周辺尤度とその2つの項' });
+        withParts.line(ctx, ELLS, LML_PARTS.map((r) => r.dataFit), { color: C.orange, width: 2.6 });
+        withParts.line(ctx, ELLS, LML_PARTS.map((r) => r.complexity), { color: C.aqua, width: 2.6 });
+        withParts.line(ctx, ELLS, LML, { color: C.blue, width: 3 });
+        withParts.vline(ctx, ell, { color: C.text2 });
+        ctx.restore();
+        legend(ctx, [{ color: C.orange, label: '当てはまり' }, { color: C.aqua, label: '複雑さの罰則' }, { color: C.blue, label: '合計' }], 960, 690, { alpha: a2 * parts, gap: 22 });
+      }
+    },
+  });
+
+  // ---------------------------------------------------------------- 第6章 図解（ノイズの大きさを変える）
+  const NOISE_LOW = 0.02;
+  const NOISE_HIGH = 0.6;
+  const predictWithNoise = (sn) => G.predict(G.fit(D.DATA_X, D.DATA_Y, D.BEST_KERNEL, sn * sn), XS);
+  SCENES.push({
+    id: '6V-2',
+    chapter: 6,
+    kind: 'visual',
+    title: 'ノイズの大きさを変える',
+    beats: [
+      beat(`ノイズの大きさを変えてみます。$\\sigma_n = ${NOISE_LOW}$ と小さくすると、平均は、すべての点をほぼちょうど通ります。`, 9),
+      beat(`$\\sigma_n = ${NOISE_HIGH}$ と大きくすると、点のずれをノイズとみなすので、平均はなだらかになり、帯も広がります。`, 10),
+      beat(`周辺尤度で選んだ $\\sigma_n \\approx ${fmt(D.BEST.noise, 2)}$ は、その中間です。データを作ったノイズ ${fmt(D.NOISE_SD, 2)} に近い値が選ばれています。`, 11),
+      beat('測定のばらつきの大きさが分かっているときは、その値を参考に、ノイズの範囲を決めることもできます。', 9),
+    ],
+    build() {
+      return {};
+    },
+    draw(ctx, s) {
+      const P = new Plot({ ...BIG, xr: [0, 6], yr: [-2.5, 2.5] });
+      const a0 = s.p(0, 0.6, 0.2);
+      const noise = keyframes(s.u, [[s.bt(0), NOISE_LOW], [s.bt(1), NOISE_LOW], [s.bt(1) + 1.8, NOISE_HIGH], [s.bt(2), NOISE_HIGH], [s.bt(2) + 1.8, D.BEST.noise]], { log: true });
+      P.axes(ctx, { xticks: xTicks, yticks: [-2, -1, 0, 1, 2], xlabel: 'x', ylabel: 'f(x)', alpha: a0 });
+      S.drawPrediction(ctx, P, XS, predictWithNoise(noise), { alpha: a0 });
+      S.drawData(ctx, P, D.DATA_X, D.DATA_Y, { alpha: a0 });
+      canvasText(ctx, 'ノイズの標準偏差', READ_X, 230, { size: 20, color: C.text2, alpha: a0 });
+      canvasText(ctx, `σn = ${fmt(noise, 2)}`, READ_X, 282, { size: 38, color: C.text, weight: 800, alpha: a0 });
+      const lml = G.logMarginalLikelihood(D.DATA_X, D.DATA_Y, D.BEST_KERNEL, noise * noise).total;
+      canvasText(ctx, '対数周辺尤度', READ_X, 360, { size: 20, color: C.text2, alpha: a0 });
+      canvasText(ctx, fmt(lml, 2), READ_X, 406, { size: 34, color: C.text, weight: 800, alpha: a0 });
+      const a2 = s.p(2, 0.6, 1.8);
+      if (a2 > 0) canvasText(ctx, `データを作ったノイズ ${fmt(D.NOISE_SD, 2)}`, READ_X, 470, { size: 20, color: C.text2, alpha: a2 });
+      legend(ctx, [{ color: S.COLOR.mean, label: '予測の平均' }, { kind: 'band', color: S.COLOR.mean, label: '±2σ' }, { kind: 'dot', color: S.COLOR.data, label: 'データ' }], P.x, P.y + P.h + 70, { alpha: a0 });
     },
   });
 
@@ -204,19 +326,18 @@
     beats: [
       beat(R`計算の中心は、$n$ 行 $n$ 列の行列のコレスキー分解です。計算量は $n^3$、記憶する量は $n^2$ に比例します。`, 10),
       beat('数千点までは、ふつうのパソコンで計算できます。それより多いときは、代表点を使う近似などを検討します。', 9),
-      beat('入力と出力は、平均 0、分散 1 に標準化してから使います。長さスケールや、事前の平均 0 という仮定が合わせやすくなります。', 11),
+      beat(R`入力が複数あるときは、入力ごとに長さスケール $\ell_d$ を持たせます。$\ell_d$ が大きい入力ほど、出力への影響が小さいと読めます。`, 11),
       beat('データから離れた点では、予測は事前の平均に戻り、帯は事前の幅まで広がります。外挿は得意ではありません。', 10),
-      beat('最後に、予測の帯に新しいデータがどれくらい入るかを確かめます。2シグマの帯なら、約95パーセントが入るはずです。', 10),
     ],
     build(ui) {
       const items = [
-        [0, R`計算量 $\propto n^3$、記憶 $\propto n^2$（コレスキー分解）`],
-        [1, '数千点まではそのまま、それ以上は近似（代表点など）'],
-        [2, '入力・出力を標準化（平均 0・分散 1）してから使う'],
-        [3, '外挿は苦手：データから離れると、事前の平均と幅に戻る'],
-        [4, '帯の確かめ：2σ の帯に、新しいデータの約 95% が入るか'],
+        [0, 130, R`計算量 $\propto n^3$、記憶 $\propto n^2$（コレスキー分解）`],
+        [1, 230, '数千点まではそのまま、それ以上は近似（代表点など）'],
+        [2, 330, R`入力が複数：入力ごとの長さスケール $\ell_d$（大きいほど影響が小さい）`],
+        [3, 560, '外挿は苦手：データから離れると、事前の平均と幅に戻る'],
       ];
-      items.forEach(([at, text], i) => ui.text(`<span class="toc-num">${i + 1}</span>${text}`, { x: LEFT_X, y: 136 + i * 104, w: 1400, size: 27, at, glow: [{ from: at, to: at + 1 }] }));
+      items.forEach(([at, y, text], i) => ui.text(`<span class="toc-num">${i + 1}</span>${text}`, { x: LEFT_X, y, w: 1400, size: 27, at, glow: [{ from: at, to: at + 1 }] }));
+      ui.tex(R`k(\mathbf{x}, \mathbf{x}') = \sigma_f^2 \exp\!\left(-\sum_{d=1}^{D} \frac{(x_d - x'_d)^2}{2\ell_d^2}\right)`, { x: LEFT_X + 70, y: 400, size: 30, at: 2, delay: 0.6 });
     },
   });
 
@@ -279,6 +400,39 @@
     },
   });
 
+  // ---------------------------------------------------------------- 第7章 理論（使い方の手順）
+  const STEPS = [
+    ['標準化する', '入力と出力を、平均 0・分散 1 にそろえる'],
+    ['カーネルを選ぶ', R`迷ったら Matérn の $\nu = 5/2$ か RBF から`],
+    ['ハイパーパラメータを決める', '周辺尤度を最大化。初期値を変えて何回か試す'],
+    ['予測する', '平均だけでなく帯も見る。帯が広い場所はデータを足す候補'],
+    ['確かめる', R`学習に使っていないデータで、2σ の帯に約 95% が入るか`],
+  ];
+  SCENES.push({
+    id: '7T-2',
+    chapter: 7,
+    kind: 'theory',
+    title: '実務での使い方の手順',
+    beats: [
+      beat('実務で使うときの手順をまとめます。まず、入力と出力を、平均 0、分散 1 に標準化します。', 9),
+      beat(R`次に、カーネルを選びます。迷ったら、Matérn の $\nu = 5/2$ か、RBF から始めます。`, 8),
+      beat('ハイパーパラメータは、周辺尤度の最大化で決めます。山が複数あることがあるので、初期値を変えて何回か試します。', 10),
+      beat('予測では、平均だけでなく帯も見ます。帯が広い場所は、データを足すと効果が大きい場所です。', 9),
+      beat('最後に、学習に使っていないデータで、予測と帯の当たり具合を確かめます。MATLAB の fitrgp や、Python の scikit-learn に、同じ計算が用意されています。', 12),
+    ],
+    build(ui) {
+      STEPS.forEach(([title, body], i) => {
+        const y = 124 + i * 114;
+        ui.card({ x: LEFT_X, y, w: 860, h: 96, at: i, glow: [{ from: i, to: i + 1 }] });
+        ui.text(`<span class="toc-num">${String(i + 1).padStart(2, '0')}</span>${title}`, { x: LEFT_X + 24, y: y + 14, size: 25, weight: 700, at: i });
+        ui.text(body, { x: LEFT_X + 100, y: y + 54, w: 740, size: 20, color: C.text2, at: i, delay: 0.3 });
+      });
+      ui.card({ x: CARD_X, y: 124, w: CARD_W, h: 300, title: '計算できるツールの例', at: 4 });
+      ui.text('MATLAB：fitrgp<br><span style="color:#8a857a;font-size:18px">Statistics and Machine Learning Toolbox</span>', { x: CARD_X + 28, y: 182, size: 23, lh: 1.5, at: 4, delay: 0.4 });
+      ui.text('Python：scikit-learn の<br>GaussianProcessRegressor', { x: CARD_X + 28, y: 300, size: 23, lh: 1.5, at: 4, delay: 0.8 });
+    },
+  });
+
   // ---------------------------------------------------------------- まとめ
   SCENES.push({
     id: '8',
@@ -288,7 +442,7 @@
     beats: [
       beat('まとめです。ガウス過程回帰は、関数そのものに正規分布を置き、カーネルで2点の似ている度合いを決めます。', 9),
       beat('予測は、多変量正規分布の条件づけで求まり、平均と不確かさの帯が式で出ます。', 8),
-      beat('ハイパーパラメータは周辺尤度で決め、計算量と外挿に注意して使います。', 8),
+      beat('ハイパーパラメータは周辺尤度で決め、手順に沿って、計算量と外挿に注意しながら使います。', 9),
     ],
     build(ui) {
       const points = [
@@ -297,7 +451,7 @@
         [1, R`予測：$\mu_* = \mathbf{k}_*^\top (K + \sigma_n^2 I)^{-1}\mathbf{y}$、不確かさはデータの位置で決まる`],
         [1, '予測の平均は、データ点に置いたカーネルの山の重みつきの和'],
         [2, 'ハイパーパラメータ：周辺尤度（当てはまり ＋ 複雑さの罰則）を最大にする'],
-        [2, R`実務：計算量 $n^3$、標準化してから使う、外挿は事前に戻る、帯の当たり具合を確かめる`],
+        [2, R`実務：標準化 → カーネル選び → 周辺尤度 → 予測と帯 → 確かめる。計算量 $n^3$ と外挿に注意`],
       ];
       points.forEach(([at, text], i) => ui.text(`<span class="toc-num">${String(i + 1).padStart(2, '0')}</span>${text}`, { x: LEFT_X, y: 128 + i * 62, w: 1420, size: 24, at, delay: (i % 2) * 0.6 }));
       ui.text('参考文献：C. E. Rasmussen, C. K. I. Williams, Gaussian Processes for Machine Learning, MIT Press, 2006 ／ B. Matérn, Spatial Variation, 2nd ed., Springer, 1986 ／ M. L. Stein, Interpolation of Spatial Data: Some Theory for Kriging, Springer, 1999', {
@@ -313,11 +467,11 @@
     chapter: 9,
     kind: 'title',
     title: 'おわり',
-    beats: [beat('これで、ガウス過程回帰の短縮版の解説は終わりです。ご視聴ありがとうございました。', 6)],
+    beats: [beat('これで、ガウス過程回帰の解説は終わりです。ご視聴ありがとうございました。', 6)],
     build(ui) {
       ui.text('<span class="mincho">おわり</span>', { x: 0, y: 220, w: W, align: 'center', size: 100, weight: 600 });
       ui.text('ご視聴ありがとうございました', { x: 0, y: 390, w: W, align: 'center', size: 36, color: C.text2, delay: 0.4 });
-      ui.text('ガウス過程回帰 ― 短縮版（基礎から予測まで）', { x: 0, y: 490, w: W, align: 'center', size: 24, color: C.muted, delay: 0.8 });
+      ui.text('ガウス過程回帰 ― 基礎から予測まで', { x: 0, y: 490, w: W, align: 'center', size: 24, color: C.muted, delay: 0.8 });
     },
   });
 })();
