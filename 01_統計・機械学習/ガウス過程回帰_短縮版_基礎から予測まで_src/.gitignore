@@ -1,0 +1,5 @@
+# 確認画像と書き出し途中のファイル（完成した MP4 は親フォルダに置く）
+out/
+
+# 読み上げの音声ファイル（node tools/render.mjs voice で作り直せる）
+narration/clips/

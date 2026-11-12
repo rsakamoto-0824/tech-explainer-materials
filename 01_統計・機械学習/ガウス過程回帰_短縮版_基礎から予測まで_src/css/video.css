@@ -1,0 +1,62 @@
+/* video.css — 動画の画面（論理 1600×900）。明るい「方眼ノート」の見た目（元のガウス過程回帰の動画は暗い背景） */
+html, body { margin: 0; height: 100%; background: #d9d4c7; overflow: hidden; }
+#stage {
+  --accent: #6250d6;
+  position: absolute; left: 0; top: 0; width: 1600px; height: 900px; overflow: hidden;
+  transform-origin: 0 0; color: #22201c;
+  background-color: #f7f4ec;
+  /* 40px 角の薄い方眼 */
+  background-image:
+    linear-gradient(rgba(80, 66, 40, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(80, 66, 40, 0.055) 1px, transparent 1px);
+  background-size: 40px 40px;
+  font-family: 'Hiragino Sans', 'Noto Sans JP', 'Yu Gothic UI', sans-serif; font-weight: 400;
+  font-feature-settings: 'palt' 0; -webkit-font-smoothing: antialiased;
+}
+.content, .scenes, .scene { position: absolute; inset: 0; }
+.plot { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; }
+
+/* 見出し: 大きな章番号（明朝）、枠線だけの札、明朝の題名、章の色の罫線 */
+.header { position: absolute; left: 56px; top: 24px; display: flex; align-items: center; gap: 18px; height: 64px; }
+.chapter-no { font-family: 'Hiragino Mincho ProN', 'Yu Mincho', serif; font-size: 58px; font-weight: 600; line-height: 1; color: var(--accent); letter-spacing: 0.02em; }
+.badge { padding: 2px 12px; border-radius: 6px; border: 2px solid var(--accent); color: var(--accent); background: rgba(255, 253, 248, 0.8); font-size: 19px; font-weight: 700; letter-spacing: 0.12em; }
+.header-title { font-family: 'Hiragino Mincho ProN', 'Yu Mincho', serif; font-size: 33px; font-weight: 600; color: #22201c; }
+.rule { position: absolute; left: 56px; right: 56px; top: 98px; height: 2px; background: linear-gradient(90deg, var(--accent) 0 140px, #dcd5c5 140px); }
+.part-label { position: absolute; right: 56px; top: 50px; font-size: 18px; color: #8a857a; letter-spacing: 0.04em; }
+
+/* 字幕: 白いカード。左に章の色の帯 */
+.captions { position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; }
+.caption {
+  position: absolute; left: 110px; width: 1380px; top: 768px; height: 104px; display: none; box-sizing: border-box;
+  align-items: center; justify-content: center; text-align: center; padding: 0 30px;
+  font-size: 28px; line-height: 1.5; color: #22201c;
+  background: rgba(255, 253, 248, 0.96); border-radius: 14px; border-left: 8px solid var(--accent);
+  box-shadow: 0 2px 14px rgba(70, 58, 36, 0.13); text-wrap: balance;
+}
+.caption .katex { font-size: 1.08em; margin: 0 0.12em; white-space: nowrap; }
+.caption-text { text-wrap: balance; word-break: auto-phrase; }
+.txt .katex { margin: 0 0.1em; }
+
+/* 部品 */
+.el { position: absolute; box-sizing: border-box; isolation: isolate; }
+.txt { line-height: 1.55; }
+.tex .katex { font-size: 1em; }
+.katex .text, .katex .textrm { font-family: KaTeX_Main, 'Hiragino Sans', sans-serif; }
+.glowable { border-radius: 10px; padding: 4px 12px; margin: -4px -12px; }
+.card { border: 1px solid #e3ddcf; border-radius: 16px; background: #fffdf8; box-shadow: 0 2px 12px rgba(70, 58, 36, 0.09); }
+.card-title { position: absolute; left: 24px; top: 16px; font-size: 21px; font-weight: 700; color: #4f4b43; }
+.trow { display: flex; align-items: center; border-radius: 8px; }
+.thead { color: #8a857a; font-weight: 600; border-bottom: 1px solid #e3ddcf; border-radius: 0; }
+.tcell { padding: 0 8px; box-sizing: border-box; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.hlbox { position: absolute; border: 2px solid; border-radius: 8px; opacity: 0; pointer-events: none; z-index: -1; }
+.toc-num { display: inline-block; width: 52px; color: var(--accent); font-family: 'Hiragino Mincho ProN', serif; font-weight: 600; }
+.pill { display: inline-block; padding: 2px 12px; border-radius: 6px; font-size: 0.8em; font-weight: 700; margin-right: 8px; border: 2px solid; background: rgba(255, 253, 248, 0.8); }
+
+/* 進み具合の帯は画面の上端（元の動画は下端） */
+.progress { position: absolute; left: 0; top: 0; width: 100%; height: 6px; background: #e7e1d3; }
+.progress-seg { position: absolute; top: 0; height: 100%; box-shadow: inset -1px 0 0 #f7f4ec; }
+.progress-fill { position: absolute; left: 0; top: 0; height: 100%; background: rgba(34, 32, 28, 0.5); }
+.stamp { position: absolute; right: 16px; bottom: 8px; font: 600 16px Menlo, monospace; color: #b77800; background: rgba(255, 253, 248, 0.9); padding: 2px 8px; border-radius: 6px; display: none; }
+
+/* 題名などに使う明朝 */
+.mincho { font-family: 'Hiragino Mincho ProN', 'Yu Mincho', serif; }
