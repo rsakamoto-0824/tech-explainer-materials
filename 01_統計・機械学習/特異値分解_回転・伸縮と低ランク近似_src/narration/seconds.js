@@ -1,8 +1,7 @@
 // 自動生成（node tools/render.mjs voice --page svd.html --voice Kyoko --rate 220）。字幕ごとの声の長さ（秒）。engine.js がこれで字幕の時間を延ばす
 window.NARRATION_SECONDS = {
   "0:0": 4.104,
-  "0:1": 6.895,
-  "0:2": 6.152,
+  "0:1": 6.152,
   "1T:0": 7.715,
   "1T:1": 5.257,
   "1T:2": 7.25,

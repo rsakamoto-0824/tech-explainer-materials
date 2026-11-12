@@ -23,7 +23,6 @@
     title: 'はじめに',
     beats: [
       beat('加法ガウス過程の論文のあと、研究がどう広がったかを、式と図を使って解説します。', 8),
-      beat('理論（式）と図解（グラフ）を交互に進めます。左上の札で、いまどちらかが分かります。'),
       beat('全部で7章です。はじめに、この動画のポイントを4つにまとめます。'),
     ],
     build(ui) {
@@ -34,10 +33,8 @@
         const left = i < 4;
         ui.text(`<span class="toc-num">${i + 1}</span>${title}`, { x: left ? 130 : 830, y: 312 + (left ? i : i - 4) * 52, w: 660, size: 24, delay: 0.6 + 0.12 * i });
       });
-      ui.text(`<span class="pill" style="background:${C.theory}">理論</span>式で考える`, { x: 130, y: 550, size: 24, at: 1 });
-      ui.text(`<span class="pill" style="background:${C.visual}">図解</span>図で見る`, { x: 130, y: 598, size: 24, at: 1, delay: 0.2 });
-      ui.text(`<span class="pill" style="background:${C.yellow}">ポイント</span>最初に、この動画の要点を4つ`, { x: 830, y: 550, size: 24, at: 2 });
-      ui.text('論文の内容は要約し、図の実験はこの動画のために計算したものです', { x: 830, y: 600, w: 680, size: 20, color: C.muted, at: 2, delay: 0.4, lh: 1.5 });
+      ui.text(`<span class="pill" style="background:${C.yellow}">ポイント</span>最初に、この動画の要点を4つ`, { x: 130, y: 550, size: 24, at: 1 });
+      ui.text('論文の内容は要約し、図の実験はこの動画のために計算したものです', { x: 130, y: 600, w: 680, size: 20, color: C.muted, at: 1, delay: 0.4, lh: 1.5 });
     },
   });
 

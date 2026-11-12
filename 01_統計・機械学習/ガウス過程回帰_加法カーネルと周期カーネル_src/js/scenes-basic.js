@@ -23,28 +23,24 @@
     title: 'はじめに',
     beats: [
       beat('ガウス過程回帰（GPR）を、基礎から発展まで順に見ていきます。'),
-      beat('理論（式）と図解（グラフ）を交互に進めます。左上の札で、いまどちらかが分かります。'),
       beat('後半の主役は、加法カーネルと周期カーネルの具体的な計算です。', 6),
       beat('まず、ガウス過程回帰の全体像と、その土台になる多変量正規分布から始めます。', 6),
     ],
     build(ui) {
       ui.text('ガウス過程回帰', { x: 0, y: 110, w: W, align: 'center', size: 78, weight: 800 });
       ui.text('カーネルの計算を、式と図で交互に理解する', { x: 0, y: 222, w: W, align: 'center', size: 34, color: C.text2, delay: 0.3 });
-      ui.text('基礎編', { x: 210, y: 318, size: 22, color: C.muted, weight: 700, at: 1 });
-      ui.text('発展編', { x: 840, y: 318, size: 22, color: C.muted, weight: 700, at: 1 });
+      ui.text('基礎編', { x: 210, y: 318, size: 22, color: C.muted, weight: 700, delay: 0.6 });
+      ui.text('発展編', { x: 840, y: 318, size: 22, color: C.muted, weight: 700, delay: 0.6 });
       CHAPTERS.forEach((title, i) => {
         const basic = i < 4;
         ui.text(`<span class="toc-num">${i + 1}</span>${title}`, {
           x: basic ? 210 : 840,
           y: 362 + (basic ? i : i - 4) * 52,
           size: 26,
-          at: 1,
-          delay: 0.12 * i,
-          glow: i >= 5 && i <= 8 ? [{ from: 2, to: 3, color: C.yellow }] : i === 0 ? [{ from: 3, color: C.yellow }] : undefined,
+          delay: 0.6 + 0.12 * i,
+          glow: i >= 5 && i <= 8 ? [{ from: 1, to: 2, color: C.yellow }] : i === 0 ? [{ from: 2, color: C.yellow }] : undefined,
         });
       });
-      ui.text(`<span class="pill" style="background:${C.theory}">理論</span>式で考える`, { x: 210, y: 610, size: 24, at: 1, delay: 1.4 });
-      ui.text(`<span class="pill" style="background:${C.visual}">図解</span>グラフで見る`, { x: 210, y: 656, size: 24, at: 1, delay: 1.6 });
     },
   });
 

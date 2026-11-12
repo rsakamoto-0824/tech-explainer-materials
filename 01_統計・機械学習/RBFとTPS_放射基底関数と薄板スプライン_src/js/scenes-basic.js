@@ -60,7 +60,6 @@
     title: 'はじめに',
     beats: [
       beat('RBF と TPS を、式と図を使って解説します。散らばった点から、なめらかな面を作る方法です。', 7),
-      beat('理論（式）と図解（グラフ）を交互に進めます。左上の札で、いまどちらかが分かります。'),
       beat('全部で8章です。はじめに、この動画のポイントを4つにまとめます。'),
     ],
     build(ui) {
@@ -75,10 +74,8 @@
           delay: 0.6 + 0.12 * i,
         });
       });
-      ui.text(`<span class="pill" style="background:${C.theory}">理論</span>式で考える`, { x: 150, y: 540, size: 24, at: 1 });
-      ui.text(`<span class="pill" style="background:${C.visual}">図解</span>図で見る`, { x: 150, y: 588, size: 24, at: 1, delay: 0.2 });
-      ui.text(`<span class="pill" style="background:${C.yellow}">ポイント</span>最初に、この動画の要点を4つ`, { x: 830, y: 540, size: 24, at: 2 });
-      ui.text('例のデータは説明用に作ったものです（1次元の7点、2次元の14点など）', { x: 830, y: 594, size: 20, color: C.muted, at: 2, delay: 0.4 });
+      ui.text(`<span class="pill" style="background:${C.yellow}">ポイント</span>最初に、この動画の要点を4つ`, { x: 150, y: 540, size: 24, at: 1 });
+      ui.text('例のデータは説明用に作ったものです（1次元の7点、2次元の14点など）', { x: 150, y: 594, size: 20, color: C.muted, at: 1, delay: 0.4 });
     },
   });
 

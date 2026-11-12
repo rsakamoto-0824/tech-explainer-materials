@@ -164,7 +164,6 @@
     title: 'はじめに',
     beats: [
       beat('特異値分解（SVD）を、式と図を使って解説します。', 5),
-      beat('理論（式）と図解（グラフ）を交互に進めます。左上の札で、いまどちらかが分かります。'),
       beat('例は3つ。2×2 のせん断行列、白黒の画像、2次元のデータです。'),
     ],
     build(ui) {
@@ -180,13 +179,11 @@
           delay: 0.6 + 0.12 * i,
         });
       });
-      ui.text(`<span class="pill" style="background:${C.theory}">理論</span>式で考える`, { x: 170, y: 530, size: 24, at: 1 });
-      ui.text(`<span class="pill" style="background:${C.visual}">図解</span>図で見る`, { x: 170, y: 578, size: 24, at: 1, delay: 0.2 });
       [
         '例① 2×2 のせん断行列（第1〜3章）',
         '例② 白黒の画像（第4・5章）',
         '例③ 2次元のデータ（第6章）',
-      ].forEach((text, i) => ui.text(text, { x: 840, y: 530 + i * 48, size: 24, color: C.text2, at: 2, delay: 0.3 + i * 0.4 }));
+      ].forEach((text, i) => ui.text(text, { x: 170, y: 530 + i * 48, size: 24, color: C.text2, at: 1, delay: 0.3 + i * 0.4 }));
     },
   });
 
