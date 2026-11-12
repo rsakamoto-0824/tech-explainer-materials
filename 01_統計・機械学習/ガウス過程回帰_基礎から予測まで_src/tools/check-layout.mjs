@@ -1,5 +1,5 @@
 // check-layout.mjs — 全場面の文字のはみ出しを調べる（表のセルあふれ、カードからのはみ出し、文字とカードの重なり、画面の右端）。
-//   node tools/check-layout.mjs [ページ=gpr-short.html]
+//   node tools/check-layout.mjs [ページ=gpr-basics.html]
 // 各場面の最後の字幕の時刻で、すべての部品が出た状態を測る。見つからなければ「はみ出しなし」と表示する。
 import { chromium } from 'playwright-core';
 import http from 'node:http';
@@ -8,7 +8,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const PAGE = process.argv[2] || 'gpr-short.html';
+const PAGE = process.argv[2] || 'gpr-basics.html';
 const SCREEN_RIGHT = 1545; // これより右に文字が出たら知らせる（論理 1600 幅）
 const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.woff2': 'font/woff2' };
 const server = http.createServer((req, res) => {

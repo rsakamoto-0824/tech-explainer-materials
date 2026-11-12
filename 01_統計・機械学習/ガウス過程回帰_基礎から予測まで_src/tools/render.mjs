@@ -3,12 +3,12 @@
 //   node tools/render.mjs info                          → 尺と場面の時刻表
 //   node tools/render.mjs sheet [枚数=16] [--scene 6V1] → out/sheet.png（全体 or 1場面を等間隔に撮る。時刻入り）
 //   node tools/render.mjs stills 2.5,7.1                → out/still-<秒>.png（原寸 1920×1080）
-//   node tools/render.mjs video [名前=gpr-short] [--workers 4] → out/<名前>.mp4 + <名前>-poster.png
+//   node tools/render.mjs video [名前=gpr-basics] [--workers 4] → out/<名前>.mp4 + <名前>-poster.png
 //   node tools/render.mjs serve                         → ブラウザで確認するための http サーバー（Ctrl+C で終了）
 //   node tools/render.mjs voice [--voice Kyoko --rate 220] → js/narration.js の原稿を音声にし、長さを narration/seconds.js に書く
-//   node tools/render.mjs mux [名前=gpr-short]                 → 音声を字幕の時刻に並べ、out/<名前>.mp4 と重ねて out/<名前>-voice.mp4 にする
+//   node tools/render.mjs mux [名前=gpr-basics]                 → 音声を字幕の時刻に並べ、out/<名前>.mp4 と重ねて out/<名前>-voice.mp4 にする
 //   声の長さで字幕の時間が延びるので、voice のあとは video で映像を書き出し直してから mux する
-//   どれにも --page <html> を付けると別のページを撮る。既定は gpr-short.html
+//   どれにも --page <html> を付けると別のページを撮る。既定は gpr-basics.html
 // KaTeX のフォントは file:// から読めない（CORS で止まる）ため、ページは毎回この中の小さな http サーバーから開く。
 import { chromium } from 'playwright-core';
 import { spawn, spawnSync } from 'node:child_process';
@@ -28,7 +28,7 @@ const takeOption = (name, fallback) => {
   const at = argv.indexOf(name);
   return at >= 0 ? argv.splice(at, 2)[1] : fallback;
 };
-const PAGE = takeOption('--page', 'gpr-short.html');
+const PAGE = takeOption('--page', 'gpr-basics.html');
 const SCENE = takeOption('--scene', null);
 const WORKERS = Number(takeOption('--workers', 2)); // 8GB の Mac では2並列（4並列はスワップでディスクの空きが尽きる）
 // 読み上げ: Mac の say コマンドの声と速さ（語/分。標準は 180。220 で、もとの 200 の約1.1倍速い）
@@ -168,7 +168,7 @@ if (mode === 'stills') {
 }
 
 if (mode === 'video') {
-  const name = args[0] || 'gpr-short';
+  const name = args[0] || 'gpr-basics';
   const total = Math.round(DUR * FPS);
   const perWorker = Math.ceil(total / WORKERS);
   const mp4 = path.join(out, `${name}.mp4`);
@@ -208,8 +208,8 @@ if (mode === 'video') {
 // ---- 読み上げ ----
 const narrationDir = path.join(root, 'narration');
 const clipDir = path.join(narrationDir, 'clips');
-// 声の長さのファイルはページごとに分ける（gpr-short.html → seconds.js、ほかのページ → seconds-<名前>.js）。声のファイルは場面の id で分かれる
-const secondsFile = PAGE === 'gpr-short.html' ? 'seconds.js' : `seconds-${path.basename(PAGE, '.html')}.js`;
+// 声の長さのファイルはページごとに分ける（gpr-basics.html → seconds.js、ほかのページ → seconds-<名前>.js）。声のファイルは場面の id で分かれる
+const secondsFile = PAGE === 'gpr-basics.html' ? 'seconds.js' : `seconds-${path.basename(PAGE, '.html')}.js`;
 const clipPath = (key) => path.join(clipDir, `${key.replace(':', '_')}.aiff`);
 const VOICE_SAMPLE_RATE = 24000;
 // 声だけの音声なので 24kHz・48kbps で足りる
@@ -270,7 +270,7 @@ if (mode === 'voice') {
 }
 
 if (mode === 'mux') {
-  const name = args[0] || 'gpr-short';
+  const name = args[0] || 'gpr-basics';
   const video = path.join(out, `${name}.mp4`);
   const videoSeconds = audioSeconds(video);
   if (Math.abs(videoSeconds - DUR) > 0.5) throw new Error(`映像の長さ ${videoSeconds.toFixed(1)} 秒が今の時間割 ${DUR.toFixed(1)} 秒と合いません。voice のあとに video で書き出し直してください`);

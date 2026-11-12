@@ -26,7 +26,7 @@
   const BEAT_MAX_SECONDS = 12;
 
   const KIND_LABEL = { theory: '理論', visual: '図解', summary: 'まとめ', points: 'ポイント' };
-  const PART_LABEL = 'ガウス過程回帰 短縮版'; // 右上に出す動画の題名
+  const PART_LABEL = 'ガウス過程回帰'; // 右上に出す動画の題名
   const KIND_COLOR = { theory: C.theory, visual: C.visual, summary: C.text2, points: C.yellow, title: C.muted };
   const KATEX_OPTIONS = { throwOnError: true, strict: 'ignore', trust: (c) => c.command === '\\htmlClass' };
 
