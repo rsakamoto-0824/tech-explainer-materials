@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>RBF と TPS の資料の画像</title>
+<link rel="stylesheet" href="../node_modules/katex/dist/katex.min.css">
+<style>
+  body { margin: 0; padding: 20px; background: transparent; }
+  #assets { display: flex; flex-direction: column; align-items: flex-start; gap: 24px; }
+  .formula { display: inline-block; padding: 6px 10px; background: transparent; line-height: 1.2; }
+  .figure { display: block; }
+</style>
+</head>
+<body>
+<div id="assets"></div>
+<!-- kit.js・rbf-math.js・view3d.js は動画と同じ部品。assets.js が画像にする数式と図を並べる -->
+<script src="../node_modules/katex/dist/katex.min.js"></script>
+<script src="../js/kit.js"></script>
+<script src="../js/rbf-math.js"></script>
+<script src="../js/view3d.js"></script>
+<script src="assets.js"></script>
+</body>
+</html>

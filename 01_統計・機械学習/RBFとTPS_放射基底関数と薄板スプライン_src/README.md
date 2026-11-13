@@ -76,6 +76,28 @@ node tools/render.mjs mux rbf-tps             # 音声を字幕の時刻に並�
 ブラウザで見るときは `serve` が表示する URL を開きます（KaTeX のフォントは `file://` では読めないため）。
 `?scene=5V` でその場面から、`?t=480` でその時刻に止めて表示します。再生中はスペースで一時停止、←→ で5秒戻る・進む、[ ] で前・次の場面です。
 
+## パワーポイント（deck/）
+
+動画にあわせた資料 `../RBFとTPS_放射基底関数と薄板スプライン.pptx`（27枚・発表者ノート付き）の生成元です。
+見た目は「技術レポートPowerPoint」テンプレート（濃紺の表紙とまとめ、白地の本文、淡い色のカード）に合わせています。
+数値は動画と同じ計算（`js/rbf-math.js`、`js/multi-data.js`）から取り、数式と斜めから見た面は動画と同じ部品で画像にしています。
+
+| ファイル | 役割 |
+|---|---|
+| `deck/assets.html`・`deck/assets.js` | 数式（KaTeX）と、斜めから見た面などの図を並べるページ |
+| `deck/make-assets.mjs` | そのページをヘッドレス Chrome で開き、数式は透明な PNG、図は JPEG にする（`deck/assets/`、Git には含めない） |
+| `deck/build-deck.cjs` | pptxgenjs でスライドを組み立てる（曲線は図形、棒・折れ線・ヒストグラムは PowerPoint のグラフ） |
+| `deck/postprocess.py` | フォント指定（和文 BIZ UDGothic・欧文 Arial）、重複した段落プロパティ、ノートマスターと Content_Types の正規化、図形IDの振り直し、ZIP の再圧縮 |
+
+```bash
+node deck/make-assets.mjs
+NODE_PATH="$(npm root -g)" node deck/build-deck.cjs out/deck_raw.pptx
+python3 deck/postprocess.py out/deck_raw.pptx out/deck.building.pptx
+```
+
+検証（`validate.py`、全スライドの画像での確認、Microsoft PowerPoint での再オープン）が済んでから、`out/deck.building.pptx` を `../RBFとTPS_放射基底関数と薄板スプライン.pptx` へ移します。
+PowerPoint で開いているときは上書きしません（同じフォルダに `~$` で始まるロックファイルがないことを確かめる）。
+
 ## 注意事項
 
 - 認証情報や環境変数は使いません。
