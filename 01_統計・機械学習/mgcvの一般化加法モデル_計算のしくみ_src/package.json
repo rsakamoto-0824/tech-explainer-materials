@@ -1,0 +1,17 @@
+{
+  "name": "mgcv-gam-video",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "data": "node tools/make-data.mjs",
+    "check": "node tools/check-math.mjs",
+    "info": "node tools/render.mjs info",
+    "sheet": "node tools/render.mjs sheet 24",
+    "video": "node tools/render.mjs video mgcv-gam"
+  },
+  "devDependencies": {
+    "katex": "0.16.22",
+    "playwright-core": "1.59.1",
+    "webr": "0.6.1"
+  }
+}

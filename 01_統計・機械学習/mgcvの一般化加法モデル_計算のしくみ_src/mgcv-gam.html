@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>mgcv の一般化加法モデルの解説動画</title>
+<link rel="stylesheet" href="node_modules/katex/dist/katex.min.css">
+<link rel="stylesheet" href="css/video.css">
+<link rel="icon" href="data:,">
+</head>
+<body>
+<div id="stage"></div>
+<!-- kit.js = 描画の小道具、gam-data.js = mgcv で計算した数値（tools/make-data.mjs で作る）、gam-math.js = 当てはめ・GCV・REML・P-IRLS の計算、gam-setup.js = 場面で共通に使う計算と絵 -->
+<script src="node_modules/katex/dist/katex.min.js"></script>
+<script src="js/kit.js"></script>
+<script src="js/gam-data.js"></script>
+<script src="js/gam-math.js"></script>
+<script src="js/gam-setup.js"></script>
+<!-- scenes-basis.js = はじめに・ポイント・第1〜2章、scenes-fit.js = 第3〜5章、scenes-select.js = 第6章、scenes-output.js = 第7〜8章・まとめ・おわり -->
+<script src="js/scenes-basis.js"></script>
+<script src="js/scenes-fit.js"></script>
+<script src="js/scenes-select.js"></script>
+<script src="js/scenes-output.js"></script>
+<!-- narration.js = 読み上げ原稿、narration/seconds.js = 声の長さ（voice で自動生成。無ければ字幕だけの動画） -->
+<script src="js/narration.js"></script>
+<script src="narration/seconds.js"></script>
+<script src="js/engine.js"></script>
+</body>
+</html>
