@@ -25,6 +25,7 @@ window.KIT = (() => {
   const SERIES = [C.blue, C.orange, C.aqua];
   const FONT = "'Hiragino Sans', 'Noto Sans JP', 'Yu Gothic UI', sans-serif";
 
+  const VIDEO_TITLE = '動画で学ぶガウス過程回帰'; // 題名（はじめ・右上・おわりに出す）
   const CHAPTERS = [
     'ガウス過程回帰の全体像',
     '多変量正規分布 ― 条件づけの道具',
@@ -365,7 +366,7 @@ window.KIT = (() => {
   }
 
   return {
-    W, H, C, SERIES, FONT, CHAPTERS,
+    W, H, C, SERIES, FONT, VIDEO_TITLE, CHAPTERS,
     clamp, ramp, lerp, easeOut, easeInOut, keyframes,
     rgba, hexToRgb, colorRamp, seqColor, divColor, heatmapCanvas, drawImage, drawMatrixHeat,
     fmt, texNum, texFactor, canvasText, roundRect, Plot, legend, colorBar,
