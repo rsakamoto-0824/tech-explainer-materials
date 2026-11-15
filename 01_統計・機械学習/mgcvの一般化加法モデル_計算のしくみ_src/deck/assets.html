@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>mgcv の一般化加法モデルの資料の画像</title>
+<link rel="stylesheet" href="../node_modules/katex/dist/katex.min.css">
+<style>
+  body { margin: 0; padding: 20px; background: transparent; }
+  #assets { display: flex; flex-direction: column; align-items: flex-start; gap: 24px; }
+  .formula { display: inline-block; padding: 6px 10px; background: transparent; line-height: 1.2; }
+  .formula .katex .text { font-family: KaTeX_Main, "BIZ UDGothic", "Hiragino Sans", sans-serif; }
+  .figure { display: block; }
+</style>
+</head>
+<body>
+<div id="assets"></div>
+<!-- gam-data.js（mgcv の計算結果）と gam-math.js（再計算）は動画と同じ部品。assets.js が画像にする数式と図を並べる -->
+<script src="../node_modules/katex/dist/katex.min.js"></script>
+<script src="../js/gam-data.js"></script>
+<script src="../js/gam-math.js"></script>
+<script src="assets.js"></script>
+</body>
+</html>

@@ -4,6 +4,7 @@ R のパッケージ mgcv で一般化加法モデル（GAM）を当てはめる
 冒頭で「この動画のポイント」を4つにまとめ、そのあと理論（式）と図解（グラフ）を交互に進めます。
 
 - 1920×1080、30fps、H.264、字幕と読み上げ音声つき（Mac の声 Kyoko、AAC 24kHz・48kbps）
+- 動画にあわせたパワーポイント `../mgcvの一般化加法モデル_計算のしくみ.pptx`（28枚）もあります。生成元は `deck/`（下の「パワーポイント」の節）
 - 作り方は、加法ガウス過程などの解説動画と同じです。時刻 t を入れると必ず同じ絵が出るページを作り、ヘッドレス Chrome で1コマずつ撮って ffmpeg で MP4 にします。`js/engine.js`・`js/kit.js`・`tools/render.mjs`・`css/video.css` は `../加法ガウス過程_全次数の交互作用を学ぶカーネル_src/` から、`tools/check-layout.mjs` は `../動画で学ぶガウス過程回帰_src/` から写し、章の一覧・右上の題名・既定のページ名を変えています。
 - 図の数値は、本物の mgcv（1.9-4）で計算しています。R はこの PC に入れず、webR（Node の上で動く R）を使いました。λ を動かす図などは、mgcv が作った基底の行列 X とペナルティの行列 S を使って JavaScript で計算し直し、mgcv の結果と一致することを確かめています。
 
@@ -97,6 +98,30 @@ node tools/render.mjs mux mgcv-gam     # 音声を重ねる（out/mgcv-gam-voice
 できた `out/mgcv-gam-voice.mp4` を、親フォルダに `mgcvの一般化加法モデル_計算のしくみ.mp4` として置きます。
 
 R が入っている PC では、`Rscript -e 'cat(source("tools/gam_data.R")$value)'` でも同じ JSON を作れます（mgcv と jsonlite が必要。この方法は試していません）。
+
+## パワーポイント（deck/）
+
+動画にあわせた資料 `../mgcvの一般化加法モデル_計算のしくみ.pptx`（28枚・発表者ノート付き）の生成元です。
+見た目は「技術レポートPowerPoint」テンプレート（濃紺の表紙とまとめ、白地の本文、淡い色のカード）に合わせています。
+構成と例は動画と同じで、数値は動画と同じデータ（`js/gam-data.js`）と計算（`js/gam-math.js`）から取っています。発表者ノートは、動画の字幕をもとにした説明文です。
+
+| ファイル | 役割 |
+|---|---|
+| `deck/assets.html`・`deck/assets.js` | 数式（KaTeX）と、図形で描くと重くなる図（表紙の図、400点 × 4枚の散布図、REML の面）を並べるページ |
+| `deck/make-assets.mjs` | そのページをヘッドレス Chrome で開き、数式は透明な PNG、図は JPEG にする（`deck/assets/`、Git には含めない） |
+| `deck/build-deck.cjs` | pptxgenjs でスライドを組み立てる（曲線・帯・点は図形、棒グラフは PowerPoint のグラフ） |
+| `deck/postprocess.py` | フォント指定（和文 BIZ UDGothic・欧文 Arial）、重複した段落プロパティ、ノートマスターと Content_Types の正規化、図形IDの振り直し、ZIP の再圧縮 |
+
+```bash
+node deck/make-assets.mjs
+NODE_PATH="$(npm root -g)" node deck/build-deck.cjs out/deck_raw.pptx
+python3 deck/postprocess.py out/deck_raw.pptx out/deck.building.pptx
+```
+
+検証（`validate.py`、全スライドの画像での確認、Microsoft PowerPoint での再オープン）が済んでから、`out/deck.building.pptx` を `../mgcvの一般化加法モデル_計算のしくみ.pptx` へ移します。
+PowerPoint で開いているときは上書きしません（同じフォルダに `~$` で始まるロックファイルがないことを確かめる）。
+
+確認したこと（2026-11-16）: 構造の検証に合格、全28枚を画像にして目で確認、Microsoft PowerPoint で修復なしで開けて28枚、全スライドの図形の数が生成元と一致。PowerPoint の画面での見た目は、画面ロック中だったため確認していません（見た目の確認は LibreOffice で作った画像で行いました）。
 
 ## 注意
 
