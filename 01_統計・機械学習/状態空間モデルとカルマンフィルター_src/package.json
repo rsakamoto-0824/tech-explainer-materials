@@ -1,0 +1,13 @@
+{
+  "name": "state-space-kalman-videos",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "node tools/check-math.mjs",
+    "info": "node tools/render.mjs info --page ssm-1.html"
+  },
+  "devDependencies": {
+    "katex": "0.16.22",
+    "playwright-core": "1.59.1"
+  }
+}
