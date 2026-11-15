@@ -3,3 +3,6 @@ out/
 
 # 読み上げの音声ファイル（node tools/render.mjs voice で作り直せる）
 narration/clips/
+
+# パワーポイントに貼る画像（node deck/make-assets.mjs で作り直せる）
+deck/assets/
