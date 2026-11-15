@@ -3,7 +3,7 @@
 // beats は字幕の列（c = 文、d = 秒。省くと文の長さから決まる）。部品の at は「何番目の字幕で出すか」。
 // 画面に出す数値は手で書かず、gp-math.js・short-data.js で計算した値を表示する。
 (() => {
-  const { W, C, CHAPTERS, Plot, fmt, canvasText, keyframes, clamp, legend, roundRect } = KIT;
+  const { W, C, VIDEO_TITLE, CHAPTERS, Plot, fmt, canvasText, keyframes, clamp, legend, roundRect } = KIT;
   const G = GPM;
   const D = SHORT_DATA;
   const S = SDRAW;
@@ -36,12 +36,12 @@
     kind: 'title',
     title: 'はじめに',
     beats: [
-      beat('ガウス過程回帰を、式と図で、基礎から予測まで解説します。最後に、実務で使うときの手順と注意もまとめます。', 9),
+      beat('動画で学ぶガウス過程回帰。ガウス過程回帰を、式と図で、基礎から予測まで解説します。最後に、実務で使うときの手順と注意もまとめます。', 11),
       beat('全部で7章です。はじめに、この動画のポイントを4つにまとめます。', 6),
     ],
     build(ui) {
-      ui.text('ガウス過程回帰 ― 基礎から予測まで', { x: 134, y: 112, size: 24, color: C.theory, weight: 700 });
-      ui.text('<span class="mincho">ガウス過程回帰</span>', { x: 128, y: 146, size: 86, weight: 600, delay: 0.2 });
+      ui.text('Gaussian Process Regression', { x: 134, y: 112, size: 24, color: C.theory, weight: 700 });
+      ui.text(`<span class="mincho">${VIDEO_TITLE}</span>`, { x: 128, y: 146, size: 86, weight: 600, delay: 0.2 });
       ui.text('関数に正規分布を置き、データで条件づけて予測する', { x: 134, y: 280, size: 30, color: C.text2, delay: 0.5 });
       CHAPTERS.forEach((title, i) => {
         const left = i < 4;
@@ -199,6 +199,7 @@
       beat(R`$m(x)$ は平均の関数で、ふつうは 0 とします。$k(x, x')$ はカーネルで、2点の値の共分散を表します。`, 10),
       beat('データを見たあとの分布、つまり予測は、多変量正規分布の条件づけで求まります。次の章で、その道具を準備します。', 10),
       beat('ガウス過程回帰は、データが少ないとき、予測の不確かさも知りたいとき、関数の形が分からないときに向いています。実験の条件を選ぶベイズ最適化でも使われます。', 12),
+      beat('特に、少ない計測点から、面全体の値の分布を推定する面内推定に有効です。入力を面の上の2つの座標にすれば同じ仕組みで使え、測っていない場所の不確かさも分かります。', 13),
     ],
     build(ui) {
       ui.tex(R`y = f(x) + \varepsilon,\qquad \varepsilon \sim \mathcal{N}(0,\ \sigma_n^2)`, { x: LEFT_X, y: 130, size: 34 });
@@ -210,12 +211,13 @@
       ui.text(R`$k(x, x')$：カーネル ＝ $\operatorname{Cov}\big[f(x),\ f(x')\big]$`, { x: LEFT_X + 20, y: 482, size: 24, at: 3, delay: 0.5 });
       ui.text('→ 予測 ＝ 多変量正規分布の条件づけ（第2章・第5章）', { x: LEFT_X, y: 610, size: 27, weight: 700, color: C.yellow, at: 4, glow: [{ from: 4, to: 5 }] });
 
-      ui.card({ x: CARD_X, y: 128, w: CARD_W, h: 250, title: '使いどころ', at: 5, glow: [{ from: 5 }] });
-      ['データが少ない（数十〜数千点）', '予測の不確かさも知りたい', '関数の形が分からない', '実験条件の探索（ベイズ最適化）'].forEach((text, i) => ui.text(`・${text}`, { x: CARD_X + 28, y: 180 + i * 46, size: 22, at: 5, delay: 0.3 + 0.3 * i }));
+      ui.card({ x: CARD_X, y: 128, w: CARD_W, h: 282, title: '使いどころ', at: 5, glow: [{ from: 5 }] });
+      ['データが少ない（数十〜数千点）', '予測の不確かさも知りたい', '関数の形が分からない', '実験条件の探索（ベイズ最適化）'].forEach((text, i) => ui.text(`・${text}`, { x: CARD_X + 28, y: 180 + i * 44, size: 22, at: 5, delay: 0.3 + 0.3 * i }));
+      ui.text('・面内推定（計測点から面全体を推定）', { x: CARD_X + 28, y: 180 + 4 * 44, size: 22, weight: 700, color: C.yellow, at: 6, glow: [{ from: 6 }] });
 
-      ui.card({ x: CARD_X, y: 400, w: CARD_W, h: 300, title: 'この動画の用語', at: 2 });
+      ui.card({ x: CARD_X, y: 428, w: CARD_W, h: 272, title: 'この動画の用語', at: 2 });
       ui.table({
-        x: CARD_X + 20, y: 450, widths: [190, 270], aligns: ['left', 'left'], size: 19, rowH: 46,
+        x: CARD_X + 20, y: 478, widths: [190, 270], aligns: ['left', 'left'], size: 19, rowH: 46,
         header: ['用語', '意味'],
         rows: [
           ['事前分布', 'データを見る前の関数の分布'],
@@ -522,7 +524,7 @@
       beat(R`迷ったら $\nu = 3/2$ か $5/2$ から始めるのがふつうです。どれが良いかは、周辺尤度で比べられます。`, 9),
     ],
     build(ui) {
-      ui.text('RBF：何回でも微分できる（とてもなめらか）。実際のデータはもっとガタガタなことも', { x: LEFT_X, y: 124, w: 900, size: 23 });
+      ui.text('RBF：何回でも微分できる（とてもなめらか）。実際のデータはもっとガタガタなことも', { x: LEFT_X, y: 124, w: 1300, size: 23 });
       ui.tex(R`\nu = \tfrac{1}{2}:\quad k = \sigma_f^2\, e^{-r/\ell}`, { x: LEFT_X, y: 214, size: 29, at: 1 });
       ui.tex(R`\nu = \tfrac{3}{2}:\quad k = \sigma_f^2 \Big(1 + \tfrac{\sqrt{3}\,r}{\ell}\Big)\, e^{-\sqrt{3}\,r/\ell}`, { x: LEFT_X, y: 284, size: 29, at: 1, delay: 0.5 });
       ui.tex(R`\nu = \tfrac{5}{2}:\quad k = \sigma_f^2 \Big(1 + \tfrac{\sqrt{5}\,r}{\ell} + \tfrac{5r^2}{3\ell^2}\Big)\, e^{-\sqrt{5}\,r/\ell}`, { x: LEFT_X, y: 360, size: 29, at: 1, delay: 1.0 });

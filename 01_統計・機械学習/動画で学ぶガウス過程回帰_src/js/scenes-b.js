@@ -1,6 +1,6 @@
 // scenes-b.js — 第5〜7章（予測の式、ノイズとハイパーパラメータ、実務での注意）、まとめ、おわり。書き方は scenes-a.js と同じ。
 (() => {
-  const { W, C, CHAPTERS, Plot, fmt, texNum, canvasText, keyframes, clamp, legend } = KIT;
+  const { W, C, VIDEO_TITLE, CHAPTERS, Plot, fmt, texNum, canvasText, keyframes, clamp, legend } = KIT;
   const G = GPM;
   const D = SHORT_DATA;
   const S = SDRAW;
@@ -137,7 +137,7 @@
     beats: [
       beat(R`データ3点で、実際に計算してみます。$x = 1, 2, 4$ の3点から、$x_* = 3$ の値を予測します。カーネルは $\sigma_f = 1$、$\ell = 1$ の RBF、ノイズの分散は 0.01 です。`, 12),
       beat(`まず、データ点どうしのカーネル行列に、ノイズの分散を足します。近い1と2は ${fmt(EX_KERNEL(1, 2), 2)}、遠い1と4は ${fmt(EX_KERNEL(1, 4), 2)} です。`, 10),
-      beat(R`次に、重み $\boldsymbol\alpha$ を連立方程式で求めます。実際の計算では、コレスキー分解を使います。`, 8),
+      beat(R`次に、重み $\boldsymbol\alpha$ を連立方程式で求めます。$\boldsymbol\alpha$ は、データ点ごとに置くカーネルの山の高さです。`, 8),
       beat(R`予測点とデータ点のカーネル $\mathbf{k}_*$ を作り、$\boldsymbol\alpha$ との内積をとると、予測の平均は ${fmt(EX_MEAN, 2)} です。`, 10),
       beat(`分散は、1 から ${fmt(EX_REDUCTION, 2)} を引いて ${fmt(EX_VAR, 2)}、標準偏差は ${fmt(Math.sqrt(EX_VAR), 2)} です。右の図の $x = 3$ の点が、この平均と帯に当たります。`, 11),
     ],
@@ -234,7 +234,7 @@
       beat(`長さスケールが小さすぎると（$\\ell = ${SMALL_ELL}$）、平均は点ごとに山を作り、点の間ですぐ 0 に戻ります。`, 9),
       beat(`大きすぎると（$\\ell = ${LARGE_ELL}$）、平均はゆるやかすぎて、データの山と谷を表せません。`, 8),
       beat(`右は、$\\ell$ を動かしたときの対数周辺尤度です。最大になるのは $\\ell \\approx ${fmt(D.BEST.lengthScale, 2)}$ で、このときの予測が左の図です。`, 10),
-      beat('真の関数（点線）の大きな形を、よくとらえています。細かい揺れは7点では分からないので、帯の中に収めています。', 10),
+      beat('点線は真の関数です。選ばれた長さスケールの予測は、その大きな形を、よくとらえています。', 8),
       beat(R`右の図を2つの項に分けました。$\ell$ が小さいと当てはまりは良いのですが罰則が大きく、$\ell$ が大きいと罰則は小さくなるものの、当てはまりが急に悪くなります。`, 12),
     ],
     build() {
@@ -324,15 +324,15 @@
     kind: 'theory',
     title: CHAPTERS[6],
     beats: [
-      beat(R`計算の中心は、$n$ 行 $n$ 列の行列のコレスキー分解です。計算量は $n^3$、記憶する量は $n^2$ に比例します。`, 10),
-      beat('数千点までは、ふつうのパソコンで計算できます。それより多いときは、代表点を使う近似などを検討します。', 9),
+      beat(R`データが $n$ 点のとき、$n$ 行 $n$ 列の行列を扱います。計算量は $n^3$、記憶する量は $n^2$ に比例します。`, 10),
+      beat('数千点までは、ふつうのパソコンで計算できます。', 6),
       beat(R`入力が複数あるときは、入力ごとに長さスケール $\ell_d$ を持たせます。$\ell_d$ が大きい入力ほど、出力への影響が小さいと読めます。`, 11),
       beat('データから離れた点では、予測は事前の平均に戻り、帯は事前の幅まで広がります。外挿は得意ではありません。', 10),
     ],
     build(ui) {
       const items = [
-        [0, 130, R`計算量 $\propto n^3$、記憶 $\propto n^2$（コレスキー分解）`],
-        [1, 230, '数千点まではそのまま、それ以上は近似（代表点など）'],
+        [0, 130, R`計算量 $\propto n^3$、記憶 $\propto n^2$（$n$ 行 $n$ 列の行列を扱う）`],
+        [1, 230, '数千点までは、ふつうのパソコンで計算できる'],
         [2, 330, R`入力が複数：入力ごとの長さスケール $\ell_d$（大きいほど影響が小さい）`],
         [3, 560, '外挿は苦手：データから離れると、事前の平均と幅に戻る'],
       ];
@@ -354,7 +354,7 @@
       beat(R`データの右側、$x = 6$ より先を見ます。データから離れるほど、平均は 0 に戻り、帯は事前の幅まで広がります。`, 10),
       beat('真の関数は、その先も揺れ続けていますが、予測にはそれを知るすべがありません。帯が広いのは、分からないという正直な答えです。', 11),
       beat('右は、計算量の目安です。データが10倍になると、計算時間は約1000倍になります。', 8),
-      beat('1万点なら、100点のときの約100万倍です。大きなデータでは、近似の方法を使います。', 8),
+      beat('1万点なら、100点のときの約100万倍です。データの数が増えると、計算時間は急に伸びます。', 8),
     ],
     build() {
       return {};
@@ -404,9 +404,9 @@
   const STEPS = [
     ['標準化する', '入力と出力を、平均 0・分散 1 にそろえる'],
     ['カーネルを選ぶ', R`迷ったら Matérn の $\nu = 5/2$ か RBF から`],
-    ['ハイパーパラメータを決める', '周辺尤度を最大化。初期値を変えて何回か試す'],
+    ['ハイパーパラメータを決める', '周辺尤度を最大化。MATLAB などでは関数の中で自動で計算される'],
     ['予測する', '平均だけでなく帯も見る。帯が広い場所はデータを足す候補'],
-    ['確かめる', R`学習に使っていないデータで、2σ の帯に約 95% が入るか`],
+    ['確かめる', '学習に使っていないデータで、予測の精度を確かめる'],
   ];
   SCENES.push({
     id: '7T-2',
@@ -416,9 +416,9 @@
     beats: [
       beat('実務で使うときの手順をまとめます。まず、入力と出力を、平均 0、分散 1 に標準化します。', 9),
       beat(R`次に、カーネルを選びます。迷ったら、Matérn の $\nu = 5/2$ か、RBF から始めます。`, 8),
-      beat('ハイパーパラメータは、周辺尤度の最大化で決めます。山が複数あることがあるので、初期値を変えて何回か試します。', 10),
+      beat('ハイパーパラメータは、周辺尤度の最大化で決めます。MATLAB の fitrgp や、Python の scikit-learn では、この最大化が、学習の関数の中で自動的に行われます。', 12),
       beat('予測では、平均だけでなく帯も見ます。帯が広い場所は、データを足すと効果が大きい場所です。', 9),
-      beat('最後に、学習に使っていないデータで、予測と帯の当たり具合を確かめます。MATLAB の fitrgp や、Python の scikit-learn に、同じ計算が用意されています。', 12),
+      beat('最後に、学習に使っていないデータで、予測の精度を確かめます。', 6),
     ],
     build(ui) {
       STEPS.forEach(([title, body], i) => {
@@ -427,9 +427,10 @@
         ui.text(`<span class="toc-num">${String(i + 1).padStart(2, '0')}</span>${title}`, { x: LEFT_X + 24, y: y + 14, size: 25, weight: 700, at: i });
         ui.text(body, { x: LEFT_X + 100, y: y + 54, w: 740, size: 20, color: C.text2, at: i, delay: 0.3 });
       });
-      ui.card({ x: CARD_X, y: 124, w: CARD_W, h: 300, title: '計算できるツールの例', at: 4 });
-      ui.text('MATLAB：fitrgp<br><span style="color:#8a857a;font-size:18px">Statistics and Machine Learning Toolbox</span>', { x: CARD_X + 28, y: 182, size: 23, lh: 1.5, at: 4, delay: 0.4 });
-      ui.text('Python：scikit-learn の<br>GaussianProcessRegressor', { x: CARD_X + 28, y: 300, size: 23, lh: 1.5, at: 4, delay: 0.8 });
+      ui.card({ x: CARD_X, y: 124, w: CARD_W, h: 384, title: '計算できるツールの例', at: 2, glow: [{ from: 2, to: 3 }] });
+      ui.text('MATLAB：fitrgp<br><span style="color:#8a857a;font-size:18px">Statistics and Machine Learning Toolbox</span>', { x: CARD_X + 28, y: 182, size: 23, lh: 1.5, at: 2, delay: 0.4 });
+      ui.text('Python：scikit-learn の<br>GaussianProcessRegressor', { x: CARD_X + 28, y: 300, size: 23, lh: 1.5, at: 2, delay: 0.8 });
+      ui.text('どちらも、学習の関数（fitrgp、fit）の中で<br>周辺尤度の最大化まで自動で行う', { x: CARD_X + 28, y: 412, size: 20, lh: 1.5, color: C.yellow, weight: 700, at: 2, delay: 1.4 });
     },
   });
 
@@ -467,11 +468,11 @@
     chapter: 9,
     kind: 'title',
     title: 'おわり',
-    beats: [beat('これで、ガウス過程回帰の解説は終わりです。ご視聴ありがとうございました。', 6)],
+    beats: [beat('これで、動画で学ぶガウス過程回帰を終わります。ご視聴ありがとうございました。', 6)],
     build(ui) {
       ui.text('<span class="mincho">おわり</span>', { x: 0, y: 220, w: W, align: 'center', size: 100, weight: 600 });
       ui.text('ご視聴ありがとうございました', { x: 0, y: 390, w: W, align: 'center', size: 36, color: C.text2, delay: 0.4 });
-      ui.text('ガウス過程回帰 ― 基礎から予測まで', { x: 0, y: 490, w: W, align: 'center', size: 24, color: C.muted, delay: 0.8 });
+      ui.text(VIDEO_TITLE, { x: 0, y: 490, w: W, align: 'center', size: 24, color: C.muted, delay: 0.8 });
     },
   });
 })();
