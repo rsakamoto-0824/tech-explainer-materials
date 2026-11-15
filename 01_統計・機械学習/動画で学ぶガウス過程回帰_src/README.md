@@ -93,3 +93,25 @@ node tools/render.mjs mux gpr-basics          # 音声を字幕の時刻に並�
 - C. E. Rasmussen, C. K. I. Williams, *Gaussian Processes for Machine Learning*, MIT Press, 2006
 - B. Matérn, *Spatial Variation*, 2nd ed., Lecture Notes in Statistics 36, Springer, 1986
 - M. L. Stein, *Interpolation of Spatial Data: Some Theory for Kriging*, Springer, 1999
+
+## パワーポイント（deck/）
+
+動画にあわせた資料 `../動画で学ぶガウス過程回帰.pptx`（24枚・発表者ノート付き）の生成元です。動画と同じ7章の構成で、ノートには字幕の文をもとにした説明を入れています。
+見た目は「技術レポートPowerPoint」テンプレート（濃紺の表紙とまとめ、白地の本文、淡い色のカード）に合わせ、グラフの色は動画と同じ（予測の平均と帯は青、引いた関数はオレンジ・青緑・紫）です。
+数値とグラフの線は動画と同じ計算（`js/gp-math.js`、`js/short-data.js`、同じ乱数の種）から取っています。数式とカーネル行列の色の図だけを画像にしています。
+
+| ファイル | 役割 |
+|---|---|
+| `deck/assets.html`・`deck/assets.js` | 数式（KaTeX。3点の計算例の数値も計算して入れる）と、カーネル行列の色の図を並べるページ |
+| `deck/make-assets.mjs` | そのページをヘッドレス Chrome で開き、1つずつ PNG にする（`deck/assets/`、Git には含めない） |
+| `deck/build-deck.cjs` | pptxgenjs でスライドを組み立てる（曲線・帯・点は図形、計算時間の比は PowerPoint の棒グラフ）。ν は v と見分けやすいように Times New Roman の斜体にする |
+| `deck/postprocess.py` | フォント指定（和文 BIZ UDGothic・欧文 Arial）、重複した段落プロパティ、ノートマスターと Content_Types の正規化、図形IDの振り直し、ZIP の再圧縮（RBF と TPS の資料と同じもの） |
+
+```bash
+node deck/make-assets.mjs
+NODE_PATH="$(npm root -g)" node deck/build-deck.cjs out/deck_raw.pptx
+python3 deck/postprocess.py out/deck_raw.pptx out/deck.building.pptx
+```
+
+検証（`validate.py`、全スライドの画像での確認、Microsoft PowerPoint での再オープン）が済んでから、`out/deck.building.pptx` を `../動画で学ぶガウス過程回帰.pptx` へ移します。
+PowerPoint で開いているときは上書きしません（同じフォルダに `~$` で始まるロックファイルがないことを確かめる）。
