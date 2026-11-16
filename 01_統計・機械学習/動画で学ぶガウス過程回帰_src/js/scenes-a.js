@@ -521,7 +521,7 @@
       beat('RBF は、何回でも微分できる、とてもなめらかな関数を作ります。実際のデータは、もっとガタガタしていることがあります。', 9),
       beat(R`Matérn カーネルは、なめらかさを $\nu$ で調整できます。よく使う $\nu = 1/2,\ 3/2,\ 5/2$ では、式が簡単になります。`, 10),
       beat(R`$\nu$ が大きいほどなめらかで、関数は $\nu$ より小さい回数だけ微分できます。$\nu \to \infty$ で RBF になります。`, 10),
-      beat(R`迷ったら $\nu = 3/2$ か $5/2$ から始めるのがふつうです。どれが良いかは、周辺尤度で比べられます。`, 9),
+      beat(R`一般には、$\nu = 3/2$ か $5/2$ を用いることが多いです。どれが良いかは、周辺尤度で比べられます。`, 9),
     ],
     build(ui) {
       ui.text('RBF：何回でも微分できる（とてもなめらか）。実際のデータはもっとガタガタなことも', { x: LEFT_X, y: 124, w: 1300, size: 23 });
@@ -529,7 +529,7 @@
       ui.tex(R`\nu = \tfrac{3}{2}:\quad k = \sigma_f^2 \Big(1 + \tfrac{\sqrt{3}\,r}{\ell}\Big)\, e^{-\sqrt{3}\,r/\ell}`, { x: LEFT_X, y: 284, size: 29, at: 1, delay: 0.5 });
       ui.tex(R`\nu = \tfrac{5}{2}:\quad k = \sigma_f^2 \Big(1 + \tfrac{\sqrt{5}\,r}{\ell} + \tfrac{5r^2}{3\ell^2}\Big)\, e^{-\sqrt{5}\,r/\ell}`, { x: LEFT_X, y: 360, size: 29, at: 1, delay: 1.0 });
       ui.text(R`$\nu$ が大きいほどなめらか。$\nu \to \infty$ で RBF`, { x: LEFT_X, y: 470, size: 24, at: 2 });
-      ui.text(R`迷ったら $\nu = 3/2$ か $5/2$ から（周辺尤度で比べられる）`, { x: LEFT_X, y: 610, size: 27, weight: 700, color: C.yellow, at: 3, glow: [{ from: 3 }] });
+      ui.text(R`一般には $\nu = 3/2$ か $5/2$ を用いることが多い<br>（どれが良いかは、周辺尤度で比べられる）`, { x: LEFT_X, y: 585, size: 27, lh: 1.5, weight: 700, color: C.yellow, at: 3, glow: [{ from: 3 }] });
 
       ui.card({ x: CARD_X, y: 360, w: CARD_W, h: 340, title: '微分できる回数', at: 2 });
       ui.table({

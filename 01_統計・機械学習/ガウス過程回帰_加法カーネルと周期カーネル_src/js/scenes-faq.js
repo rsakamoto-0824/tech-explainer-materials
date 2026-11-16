@@ -22,6 +22,7 @@
     '周辺尤度とは、何か',
     'ガンマ関数とは、何か',
     'RBF と Matérn は、どちらを使えばよいか',
+    'Matérn の ν は、周辺尤度でどう決めるのか',
     R`ノイズ $\sigma_n^2$ は、何のためにあるのか`,
     'データが多いと、なぜ計算が重いのか',
   ];
@@ -41,7 +42,7 @@
       ui.text('ガウス過程回帰　想定質問と回答', { x: 0, y: 110, w: W, align: 'center', size: 64, weight: 800 });
       ui.text('本編の補足：よくある質問に、式と図で答える', { x: 0, y: 210, w: W, align: 'center', size: 30, color: C.text2, delay: 0.3 });
       QUESTIONS.forEach((q, i) => ui.text(`<span class="toc-num">Q${i + 1}</span>${q}`, {
-        x: 400, y: 295 + i * 54, size: 27, delay: 0.6 + 0.15 * i,
+        x: 400, y: 285 + i * 50, size: 26, delay: 0.6 + 0.15 * i,
         glow: i < 3 ? [{ from: 1, color: C.yellow }] : undefined,
       }));
     },
@@ -688,23 +689,23 @@
     kind: 'theory',
     title: QUESTIONS[5],
     beats: [
-      beat(R`迷ったら、Matérn の $\nu = 3/2$ か $5/2$ から始めるのがふつうです。RBF は「何回でも微分できる」という、とても強い仮定です。`, 11),
+      beat(R`一般には、Matérn の $\nu = 3/2$ か $5/2$ を用いることが多いです。RBF は「何回でも微分できる」という、とても強い仮定です。`, 11),
       beat(R`データが本当になめらかなら、どちらでも予測はほぼ同じです。$\nu \ge 7/2$ では、RBF とほとんど区別できません。`, 10),
       beat(R`ガタガタした動きのあるデータに RBF を使うと、それを表すために長さスケール $\ell$ が小さく推定され、データの間で予測が平均に戻りやすくなります。`, 12),
-      beat('決めきれないときは、候補ごとに周辺尤度を比べるか、一部のデータを隠して、予測の当たり具合を比べます。', 10),
+      beat('決めきれないときは、候補ごとに周辺尤度を比べるか、一部のデータを隠して、予測の当たり具合を比べます。周辺尤度での比べ方は、次の Q7 で説明します。', 12),
     ],
     build(ui) {
-      ui.text(R`迷ったら Matérn（$\nu = 3/2$ か $5/2$）から`, { x: LEFT_X, y: 135, size: 30, weight: 700, glow: [{ from: 0, to: 1, color: C.yellow }] });
+      ui.text(R`一般には Matérn の $\nu = 3/2$ か $5/2$ を用いることが多い`, { x: LEFT_X, y: 135, size: 30, weight: 700, glow: [{ from: 0, to: 1, color: C.yellow }] });
       ui.text(R`なめらかなデータ → どれでもほぼ同じ（$\nu \ge 7/2$ は RBF とほぼ同じ）`, { x: LEFT_X, y: 230, size: 26, at: 1 });
       ui.text(R`ガタガタしたデータに RBF → $\ell$ が小さく推定され、予測が平均に戻りやすい`, { x: LEFT_X, y: 310, size: 26, at: 2 });
-      ui.text('比べ方：周辺尤度 ／ 一部のデータを隠して予測の当たり具合（交差検証）', { x: LEFT_X, y: 390, size: 26, at: 3 });
+      ui.text('比べ方：周辺尤度（Q7）／ 一部のデータを隠して予測の当たり具合（交差検証）', { x: LEFT_X, y: 390, size: 26, at: 3 });
       ui.card({ x: LEFT_X, y: 470, w: 1420, h: 240, title: 'カーネルが仮定するなめらかさ', at: 0, delay: 0.6 });
       ui.table({
         x: LEFT_X + 24, y: 520, widths: [300, 330, 700], size: 24, rowH: 42, at: 0, delay: 0.9, aligns: ['left', 'left', 'left'],
         header: ['カーネル', '微分できる回数', '合うデータの例'],
         rows: [
           [R`Matérn $\nu = 1/2$`, '0 回', '細かくガタガタ揺れる測定値'],
-          [R`Matérn $\nu = 3/2,\ 5/2$`, '1 回、2 回', 'ふつうの物理量（迷ったらここ）'],
+          [R`Matérn $\nu = 3/2,\ 5/2$`, '1 回、2 回', 'ふつうの物理量（一般によく使う）'],
           [R`RBF（$\nu = \infty$）`, '何回でも', 'とてもなめらかな変化'],
         ],
         rowDelay: 0.3,
@@ -713,7 +714,177 @@
     },
   });
 
-  // ---------------------------------------------------------------- Q7 理論（ノイズ σ_n²）
+  // ---------------------------------------------------------------- Q7 理論（ν を周辺尤度で決める）
+  SCENES.push({
+    id: 'Q7T',
+    ...question(7),
+    kind: 'theory',
+    title: QUESTIONS[6],
+    beats: [
+      beat(R`$\nu$ も、周辺尤度で選べます。ただし、$\ell$ や $\sigma_f$ のように連続に動かして最大化するのではなく、候補の中から選ぶのがふつうです。`, 11),
+      beat(R`候補は、式が簡単になる $\nu = 1/2$、$3/2$、$5/2$ と、RBF に当たる $\nu = \infty$ です。`, 8),
+      beat(R`まず $\nu$ を1つ固定し、$\sigma_f$、$\ell$、$\sigma_n$ を、周辺尤度の最大化で決めます。これを候補ごとにくり返します。`, 10),
+      beat(R`次に、候補ごとの最大値を比べ、いちばん大きい $\nu$ を選びます。差が1より小さければ、データからはほとんど区別できません。`, 10),
+      beat('MATLAB の fitrgp では、カーネルの指定を変えて学習し、LogLikelihood を比べます。<span style="white-space:nowrap">scikit-learn</span> では、Matern の nu を変えて学習します。nu は、学習の中では最適化されません。', 12),
+    ],
+    build(ui) {
+      ui.text(R`$\nu$ は、候補の中から周辺尤度で選ぶ`, { x: LEFT_X, y: 128, size: 30, weight: 700, glow: [{ from: 0, to: 1, color: C.yellow }] });
+      ui.text(R`候補：$\nu = 1/2$、$3/2$、$5/2$（式が簡単になる値）と $\nu = \infty$（RBF）`, { x: LEFT_X, y: 200, size: 26, at: 1 });
+      ui.tex(R`\hat{\nu} = \underset{\nu\ \in\ \{1/2,\ 3/2,\ 5/2,\ \infty\}}{\mathrm{arg\,max}}\ \Big[\ \max_{\sigma_f,\ \ell,\ \sigma_n}\ \log p(\mathbf{y} \mid X,\ \nu,\ \sigma_f,\ \ell,\ \sigma_n)\ \Big]`, { x: LEFT_X, y: 262, size: 32, at: 2, delay: 0.3 });
+      ui.text(R`<span class="toc-num">1</span>$\nu$ を1つ固定し、$\sigma_f$・$\ell$・$\sigma_n$ を周辺尤度の最大化で決める（候補ごとにくり返す）`, { x: LEFT_X, y: 385, size: 25, at: 2, glow: [{ from: 2, to: 3, color: C.yellow }] });
+      ui.text(R`<span class="toc-num">2</span>最大値を比べ、いちばん大きい $\nu$ を選ぶ。差が 1 未満なら、ほとんど区別できない`, { x: LEFT_X, y: 445, size: 25, at: 3, glow: [{ from: 3, to: 4, color: C.yellow }] });
+      ui.card({ x: LEFT_X, y: 510, w: 1420, h: 222, title: 'ツールでの比べ方', at: 4 });
+      ui.text(R`MATLAB：fitrgp の KernelFunction を変えて学習し、LogLikelihood を比べる<br><span style="color:#8f8e86;font-size:19px">exponential（$\nu = 1/2$）・matern32・matern52・squaredexponential（RBF）</span>`, { x: LEFT_X + 28, y: 562, w: 1370, size: 22, lh: 1.5, at: 4, delay: 0.3 });
+      ui.text(R`Python：scikit-learn の Matern(nu=…) を変えて学習し、log_marginal_likelihood_value_ を比べる<br><span style="color:#8f8e86;font-size:19px">nu は学習の中では最適化されない（指定した値のまま）</span>`, { x: LEFT_X + 28, y: 642, w: 1370, size: 22, lh: 1.5, at: 4, delay: 0.8 });
+    },
+  });
+
+  // ---------------------------------------------------------------- Q7 図解（なめらかなデータとガタガタしたデータで ν を選ぶ）
+  // 60点のデータを2つ作る。なめらか: 正弦波の和 ＋ ノイズ 0.1。ガタガタ: ν = 1/2 の GP から引いた関数 ＋ ノイズ 0.05。
+  // 候補の ν ごとに、σ_f を式で消した周辺尤度を (ℓ, σ_n²/σ_f²) の格子で最大化し、最良の近くをもう一度細かく探す
+  const NU_CANDIDATES = [0.5, 1.5, 2.5, Infinity];
+  const NU_NAMES = ['ν = 1/2', 'ν = 3/2', 'ν = 5/2', 'RBF（ν = ∞）'];
+  const NU_X = G.linspace(0.1, 5.9, 60);
+  const nuSmoothTruth = (x) => Math.sin(1.3 * x) + 0.35 * Math.cos(2.9 * x + 0.4);
+  const NU_SMOOTH_NOISE = G.standardNormals(NU_X.length, 3101);
+  const NU_SMOOTH_Y = Float64Array.from(NU_X, (x, i) => nuSmoothTruth(x) + 0.1 * NU_SMOOTH_NOISE[i]);
+  const NU_ROUGH_PATH = G.sampleFunctions(NU_X, G.matern({ variance: 1, lengthScale: 1, nu: 0.5 }), [G.standardNormals(NU_X.length, 3201)], 1e-10)[0];
+  const NU_ROUGH_NOISE = G.standardNormals(NU_X.length, 3301);
+  const NU_ROUGH_Y = Float64Array.from(NU_ROUGH_PATH, (v, i) => v + 0.05 * NU_ROUGH_NOISE[i]);
+  const NU_LOG_ELL = [Math.log(0.05), Math.log(10)];
+  const NU_LOG_RATIO = [Math.log(1e-4), Math.log(10)]; // σ_n² / σ_f²
+  const NU_GRID = 30;
+  const NU_FINE = 9;
+  // σ_f² を最適な値 yᵀ(R + λI)⁻¹y / n に置いたときの対数周辺尤度（R は σ_f = 1 のカーネル行列、λ = σ_n²/σ_f²）
+  function nuProfile(x, y, nu, ell, ratio) {
+    const n = x.length;
+    const model = G.fit(x, y, G.matern({ variance: 1, lengthScale: ell, nu }), ratio);
+    let quad = 0;
+    let logDet = 0;
+    for (let i = 0; i < n; i++) {
+      quad += y[i] * model.alpha[i];
+      logDet += 2 * Math.log(model.L[i][i]);
+    }
+    const signalVar = quad / n;
+    return { value: -n / 2 - (n / 2) * Math.log(signalVar) - 0.5 * logDet - (n / 2) * Math.log(2 * Math.PI), ell, signal: Math.sqrt(signalVar), noise: Math.sqrt(signalVar * ratio) };
+  }
+  function nuBest(x, y, nu) {
+    let best = null;
+    const consider = (logEll, logRatio) => {
+      const r = nuProfile(x, y, nu, Math.exp(logEll), Math.exp(logRatio));
+      if (!best || r.value > best.value) best = { ...r, logEll, logRatio };
+    };
+    const stepEll = (NU_LOG_ELL[1] - NU_LOG_ELL[0]) / (NU_GRID - 1);
+    const stepRatio = (NU_LOG_RATIO[1] - NU_LOG_RATIO[0]) / (NU_GRID - 1);
+    for (let i = 0; i < NU_GRID; i++) for (let j = 0; j < NU_GRID; j++) consider(NU_LOG_ELL[0] + i * stepEll, NU_LOG_RATIO[0] + j * stepRatio);
+    const center = { logEll: best.logEll, logRatio: best.logRatio };
+    for (let i = 0; i < NU_FINE; i++) {
+      for (let j = 0; j < NU_FINE; j++) consider(center.logEll + stepEll * ((2 * i) / (NU_FINE - 1) - 1), center.logRatio + stepRatio * ((2 * j) / (NU_FINE - 1) - 1));
+    }
+    return best;
+  }
+  const NU_GRID_X = G.linspace(0, 6, 241);
+  function nuCase(y) {
+    const fits = NU_CANDIDATES.map((nu) => nuBest(NU_X, y, nu));
+    const top = Math.max(...fits.map((f) => f.value));
+    const bestIndex = fits.findIndex((f) => f.value === top);
+    const predictWith = (i) => {
+      const kernel = G.matern({ variance: fits[i].signal ** 2, lengthScale: fits[i].ell, nu: NU_CANDIDATES[i] });
+      return G.predict(G.fit(NU_X, y, kernel, fits[i].noise ** 2), NU_GRID_X, kernel);
+    };
+    return { y, fits, gaps: fits.map((f) => f.value - top), bestIndex, predictWith };
+  }
+  const NU_SMOOTH = nuCase(NU_SMOOTH_Y);
+  const NU_ROUGH = nuCase(NU_ROUGH_Y);
+  const NU_SMOOTH_ALT = 0; // なめらかなデータで比べる候補（ν = 1/2）
+  const NU_ROUGH_ALT = 3; // ガタガタしたデータで比べる候補（RBF）
+  const NU_GAP_RANGE = [-12, 0.6];
+
+  SCENES.push({
+    id: 'Q7V',
+    ...question(7),
+    kind: 'visual',
+    title: 'なめらかなデータとガタガタしたデータで ν を選ぶ',
+    beats: [
+      beat(`なめらかな関数から作ったデータ（上）と、ガタガタした関数から作ったデータ（下）です。どちらも${NU_X.length}点です。`, 9),
+      beat(R`候補の $\nu$ ごとに、ほかのハイパーパラメータを周辺尤度で決め、その最大値を右に打ちました。いちばん高い候補との差で表しています。`, 11),
+      beat(`なめらかなデータでは、RBF が最も高く、$\\nu = 5/2$ との差は約 ${fmt(-NU_SMOOTH.gaps[2], 0)} です。$\\nu = 1/2$ は約 ${fmt(-NU_SMOOTH.gaps[0], 0)} 低く、ばらつきまで関数とみなして、点をなぞる予測になります。`, 12),
+      beat(`ガタガタしたデータでは、$\\nu = 1/2$ が最も高く、RBF より約 ${fmt(-NU_ROUGH.gaps[3], 0)} 高くなります。RBF は、ガタガタをノイズとみなし、なめらかすぎる予測になります。`, 12),
+      beat('データの性質に合った ν が、周辺尤度で選ばれます。差が小さい候補どうしなら、どちらを使っても予測はほぼ同じです。', 9),
+    ],
+    build() {
+      const rows = [
+        { kase: NU_SMOOTH, alt: NU_SMOOTH_ALT, title: `なめらかな関数から作ったデータ（${NU_X.length}点）`, yr: [-2.5, 2.5], yticks: [-2, 0, 2], at: 2 },
+        { kase: NU_ROUGH, alt: NU_ROUGH_ALT, title: `ガタガタした関数から作ったデータ（${NU_X.length}点）`, yr: [-3, 3], yticks: [-2, 0, 2], at: 3 },
+      ];
+      return {
+        rows: rows.map((row, r) => ({
+          ...row,
+          best: row.kase.predictWith(row.kase.bestIndex),
+          other: row.kase.predictWith(row.alt),
+          plot: new Plot({ x: 130, y: 180 + r * 300, w: 780, h: 200, xr: [0, 6], yr: row.yr }),
+          gapPlot: new Plot({ x: 1180, y: 180 + r * 300, w: 320, h: 200, xr: NU_GAP_RANGE, yr: [0, 4] }),
+        })),
+      };
+    },
+    draw(ctx, s, st) {
+      st.rows.forEach((row, r) => {
+        const P = row.plot;
+        const show = s.p(0, 0.8, 0.3 * r);
+        if (show <= 0.001) return;
+        ctx.save();
+        ctx.globalAlpha *= show;
+        canvasText(ctx, row.title, P.x, P.y - 22, TITLE);
+        P.axes(ctx, { xticks: [0, 1, 2, 3, 4, 5, 6], yticks: row.yticks, xlabel: r === 1 ? 'x' : undefined });
+        const fitShow = s.p(row.at, 0.8);
+        if (fitShow > 0.001) {
+          const mean = Array.from(row.best.mean);
+          const sd = Array.from(row.best.sd);
+          P.band(ctx, NU_GRID_X, mean.map((m, i) => m - 2 * sd[i]), mean.map((m, i) => m + 2 * sd[i]), { color: C.blue, alpha: 0.26 * fitShow });
+          P.line(ctx, NU_GRID_X, mean, { color: C.blue, width: 3, alpha: fitShow, upto: s.p(row.at, 1.5) });
+          P.line(ctx, NU_GRID_X, Array.from(row.other.mean), { color: C.orange, width: 2.2, dash: [8, 6], alpha: fitShow, upto: s.p(row.at, 1.5, 1.2) });
+          canvasText(ctx, `青：${NU_NAMES[row.kase.bestIndex]}（最大）　橙の点線：${NU_NAMES[row.alt]}`, P.x + P.w - 8, P.y + 20, { size: 17, color: C.text2, align: 'right', alpha: fitShow });
+        }
+        P.dots(ctx, NU_X, Array.from(row.kase.y), { color: C.text, r: 3.5 });
+        ctx.restore();
+
+        // 右: 候補ごとの対数周辺尤度（いちばん高い候補との差）
+        const Q = row.gapPlot;
+        const gapShow = s.p(1, 0.8, 0.3 * r);
+        if (gapShow <= 0.001) return;
+        ctx.save();
+        ctx.globalAlpha *= gapShow;
+        if (r === 0) canvasText(ctx, '対数周辺尤度（最大との差）', Q.x - 150, Q.y - 22, TITLE);
+        ctx.fillStyle = 'rgba(201,133,0,0.16)';
+        ctx.fillRect(Q.sx(-1), Q.y, Q.sx(0) - Q.sx(-1), Q.h);
+        Q.axes(ctx, { xticks: [-12, -9, -6, -3, 0], yticks: [], zero: false });
+        if (r === 1) canvasText(ctx, '差 1 未満', Q.sx(-0.5), Q.y + Q.h + 52, { size: 16, color: C.yellow, align: 'center' });
+        row.kase.gaps.forEach((gap, i) => {
+          const yv = 3.5 - i;
+          const appear = s.p(1, 0.5, 0.6 + 0.3 * i + 0.3 * r);
+          if (appear <= 0.001) return;
+          const isBest = i === row.kase.bestIndex;
+          canvasText(ctx, NU_NAMES[i], Q.x - 14, Q.sy(yv) + 6, { size: 18, color: C.text2, align: 'right', alpha: appear });
+          ctx.save();
+          ctx.globalAlpha *= appear;
+          ctx.strokeStyle = C.grid;
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(Q.x, Q.sy(yv));
+          ctx.lineTo(Q.x + Q.w, Q.sy(yv));
+          ctx.stroke();
+          ctx.restore();
+          const highlight = isBest && s.p(row.at, 0.6) > 0;
+          Q.dots(ctx, [Math.max(gap, NU_GAP_RANGE[0])], [yv], { color: highlight ? C.yellow : C.text, r: 7, alpha: appear });
+          const text = isBest ? '最大' : fmt(gap, 1);
+          Q.label(ctx, text, Math.max(gap, NU_GAP_RANGE[0]), yv, { dx: isBest ? -14 : 12, dy: -10, size: 16, color: isBest ? C.yellow : C.text2, align: isBest ? 'right' : 'left', weight: isBest ? 700 : 500, alpha: appear });
+        });
+        ctx.restore();
+      });
+    },
+  });
+
+  // ---------------------------------------------------------------- Q8 理論（ノイズ σ_n²）
   // 説明用のデータ（なめらかな関数 ＋ 標準偏差 0.2 のばらつき）。x が 0.1 しか離れていない組を入れて、σ_n² ≈ 0 のうねりを見せる
   const NOISE_X = [0.3, 0.9, 1.0, 1.8, 2.4, 2.5, 3.3, 3.9, 4.0, 4.5];
   const NOISE_DRAW = G.standardNormals(NOISE_X.length, 1301);
@@ -725,10 +896,10 @@
   ];
 
   SCENES.push({
-    id: 'Q7T',
-    ...question(7),
+    id: 'Q8T',
+    ...question(8),
     kind: 'theory',
-    title: QUESTIONS[6],
+    title: QUESTIONS[7],
     beats: [
       beat(R`$\sigma_n^2$ は観測のばらつきです。0 にすると、予測平均はすべてのデータ点をちょうど通ります。`, 9),
       beat('ばらつきのあるデータでそうすると、ばらつきまで関数とみなし、データの間で大きくうねる予測になります。', 10),
@@ -767,14 +938,14 @@
     },
   });
 
-  // ---------------------------------------------------------------- Q8 理論（計算量）
+  // ---------------------------------------------------------------- Q9 理論（計算量）
   const COST_ROWS = [100, 1000, 10000].map((n) => ({ n, relative: (n / 100) ** 3, memoryMb: (n * n * 8) / 1e6 }));
 
   SCENES.push({
-    id: 'Q8T',
-    ...question(8),
+    id: 'Q9T',
+    ...question(9),
     kind: 'theory',
-    title: QUESTIONS[7],
+    title: QUESTIONS[8],
     beats: [
       beat(R`学習にも予測にも、$n \times n$ の行列 $K + \sigma_n^2 I$ のコレスキー分解が必要です。計算量は $n^3$、記憶する量は $n^2$ に比例します。`, 11),
       beat(R`$n$ が 10 倍になると、計算時間は約 1000 倍です。数千点を超えると、そのままでは重くなります。`, 9),
@@ -797,7 +968,7 @@
   // ---------------------------------------------------------------- まとめ
   SCENES.push({
     id: 'QS',
-    chapter: 9,
+    chapter: 10,
     chapterLabel: '',
     part: PART,
     kind: 'summary',
@@ -815,19 +986,20 @@
         [1, '質的変数：ずれの差は決まるが、全体の高さは決まらない → 平均を引いて比べる'],
         [2, '周辺尤度：カーネルが作るデータの中での、手元のデータの出やすさ。最大にしてハイパーパラメータを決める'],
         [2, R`ガンマ関数：階乗をなめらかにつないだ関数。Matérn では $r = 0$ の高さをそろえる係数に使う`],
-        [2, R`RBF と Matérn：迷ったら $\nu = 3/2$・$5/2$。$\nu \ge 7/2$ は RBF とほぼ同じ`],
+        [2, R`RBF と Matérn：一般には $\nu = 3/2$ か $5/2$ を用いることが多い。$\nu \ge 7/2$ は RBF とほぼ同じ`],
+        [2, R`$\nu$ の決め方：候補（$1/2$・$3/2$・$5/2$・$\infty$）ごとに周辺尤度を最大化し、最大値を比べる`],
         [2, R`$\sigma_n^2$ は観測のばらつき。0 にするとうねる・計算できないことがある。周辺尤度で決める`],
         [2, R`計算量は $n^3$。数千点を超えたら近似を検討する`],
       ];
       const orderInBeat = points.map(([at], i) => points.slice(0, i).filter(([before]) => before === at).length);
-      points.forEach(([at, text], i) => ui.text(`<span class="toc-num">${i + 1}</span>${text}`, { x: LEFT_X, y: 125 + i * 58, size: 25, at, delay: orderInBeat[i] * 0.5 }));
+      points.forEach(([at, text], i) => ui.text(`<span class="toc-num">${i + 1}</span>${text}`, { x: LEFT_X, y: 120 + i * 54, size: 24, at, delay: orderInBeat[i] * 0.5 }));
     },
   });
 
   // ---------------------------------------------------------------- おわり
   SCENES.push({
     id: 'Qend',
-    chapter: 10,
+    chapter: 11,
     kind: 'title',
     title: 'おわり',
     beats: [beat('これで、想定質問の解説は終わりです。', 7)],
