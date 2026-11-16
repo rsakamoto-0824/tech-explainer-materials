@@ -1,0 +1,11 @@
+node_modules
+dist
+.DS_Store
+.env
+
+# 確認画像と書き出し途中のファイル（完成した MP4 は親フォルダに置く）
+out
+
+# 読み上げの音声（npm run voice で作り直せる）
+public/voice
+narration
