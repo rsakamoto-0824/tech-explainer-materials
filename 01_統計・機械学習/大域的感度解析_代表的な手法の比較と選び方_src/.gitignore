@@ -1,0 +1,10 @@
+node_modules
+dist
+.DS_Store
+.env
+# 書き出した動画・確認画像・読み上げ音声は作り直せるので登録しない
+out
+narration/clips
+public/voice
+narration/kana.txt
+narration/*.log

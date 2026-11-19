@@ -1,0 +1,43 @@
+【題名の案】
+大域的感度解析｜代表的な6つの手法を同じ例題で比べる【理論と図解】
+
+【概要欄】
+モデルの出力がばらつくとき、どの入力が効いているのか。
+大域的感度解析の代表的な手法を、同じ例題（石上関数）に当てて、式と図解を交互に使って比べます。
+
+・回帰と相関（SRC・PRCC）：手軽だが単調な効果だけ
+・Morris法：少ない計算でふるい分け（μ* と σ）
+・Sobol法とFAST・eFAST：分散の割合で一次効果と総合効果
+・PAWN と Borgonovo の δ：出力の分布の形の変化
+・DGSM：微分から総合効果の上限
+・手法の選び方と使い分けの流れ
+
+▼ 目次
+0:00 はじめに
+0:44 第1章 大域的感度解析と例題
+2:32 第2章 回帰と相関で測る
+4:30 第3章 Morris法でふるい分ける
+6:28 第4章 分散で測る：Sobol法とFAST
+9:07 第5章 分布で測る：PAWNとδ
+11:06 第6章 微分で測る：DGSM
+12:51 第7章 手法の選び方
+14:37 まとめ
+
+▼ 参考文献
+A. Saltelli et al., Global Sensitivity Analysis: The Primer, Wiley, 2008
+T. Ishigami, T. Homma, "An importance quantification technique in uncertainty analysis for computer models", Proc. ISUMA '90, 398–403, 1990
+M. D. Morris, "Factorial sampling plans for preliminary computational experiments", Technometrics 33(2), 161–174, 1991
+F. Campolongo, J. Cariboni, A. Saltelli, "An effective screening design for sensitivity analysis of large models", Environmental Modelling & Software 22, 1509–1518, 2007
+R. I. Cukier et al., "Study of the sensitivity of coupled reaction systems to uncertainties in rate coefficients. I Theory", Journal of Chemical Physics 59, 3873–3878, 1973
+A. Saltelli, S. Tarantola, K. P.-S. Chan, "A quantitative model-independent method for global sensitivity analysis of model output", Technometrics 41(1), 39–56, 1999
+I. M. Sobol', "Global sensitivity indices for nonlinear mathematical models and their Monte Carlo estimates", Mathematics and Computers in Simulation 55, 271–280, 2001
+E. Borgonovo, "A new uncertainty importance measure", Reliability Engineering & System Safety 92, 771–784, 2007
+F. Pianosi, T. Wagener, "A simple and efficient method for global sensitivity analysis based on cumulative distribution functions", Environmental Modelling & Software 67, 1–11, 2015
+I. M. Sobol', S. Kucherenko, "Derivative based global sensitivity measures and their link with global sensitivity indices", Mathematics and Computers in Simulation 79, 3009–3017, 2009
+A. B. Owen, "Sobol' indices and Shapley value", SIAM/ASA Journal on Uncertainty Quantification 2, 245–251, 2014
+J. Herman, W. Usher, "SALib: An open-source Python library for sensitivity analysis", Journal of Open Source Software 2(9), 97, 2017
+
+▼ クレジット
+音声：VOICEVOX:四国めたん
+
+#感度解析 #大域的感度解析 #Sobol #Morris法 #統計 #シミュレーション
