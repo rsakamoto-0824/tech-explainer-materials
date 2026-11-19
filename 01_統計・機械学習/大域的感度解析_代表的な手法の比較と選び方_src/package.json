@@ -1,0 +1,42 @@
+{
+  "name": "global-sensitivity-video",
+  "version": "1.0.0",
+  "description": "大域的感度解析の代表的な手法の解説動画（YouTube向け、Remotion）",
+  "repository": {},
+  "license": "UNLICENSED",
+  "engines": {
+    "node": "^20.19.0 || ^22.13.0 || >=24"
+  },
+  "private": true,
+  "dependencies": {
+    "@remotion/cli": "4.0.543",
+    "@remotion/media": "4.0.543",
+    "katex": "^0.16.22",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "remotion": "4.0.543"
+  },
+  "devDependencies": {
+    "@remotion/eslint-config-flat": "4.0.543",
+    "@types/katex": "^0.16.8",
+    "@types/react": "19.3.0",
+    "@types/web": "0.0.166",
+    "eslint": "10.12.0",
+    "prettier": "3.8.1",
+    "typescript": "5.9.3"
+  },
+  "scripts": {
+    "dev": "remotion studio",
+    "build": "remotion bundle",
+    "upgrade": "remotion upgrade",
+    "lint": "eslint src && tsc",
+    "voice": "node tools/voice.ts",
+    "render": "remotion render GlobalSensitivity out/global-sensitivity.mp4 --concurrency=2 --crf=25 --jpeg-quality=95 --audio-bitrate=128k",
+    "numbers": "node tools/numbers.ts",
+    "precompute": "node tools/precompute.ts"
+  },
+  "allowScripts": {
+    "esbuild": false
+  },
+  "type": "module"
+}
