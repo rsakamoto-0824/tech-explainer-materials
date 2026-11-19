@@ -1,0 +1,37 @@
+【題名の案】
+Sobol感度解析｜出力のばらつきを入力ごとに分ける【理論と図解】
+
+【概要欄】
+シミュレーションや実験で出力がばらつくとき、その原因はどの入力にあるのか。
+分散にもとづく大域的感度解析「Sobol感度解析」を、式と図解を交互に使って基礎から解説します。
+
+・一次効果と総合効果の意味と、その差でわかる交互作用
+・分散分解（Sobol分解）
+・行列の列を入れかえる推定法（Saltelli・Jansen の式）
+・Sobol列とブートストラップで精度を確かめる方法
+・実務での手順と結果の読み方
+
+▼ 目次
+0:00 はじめに
+0:40 第1章 1つずつ動かす方法の落とし穴
+2:29 第2章 分散で測る一次効果
+5:05 第3章 分散分解
+6:54 第4章 総合効果と交互作用
+8:34 第5章 推定のしかた
+10:25 第6章 精度を上げる工夫と注意点
+12:10 第7章 実務での使い方
+13:49 まとめ
+
+▼ 参考文献
+I. M. Sobol', "Global sensitivity indices for nonlinear mathematical models and their Monte Carlo estimates", Mathematics and Computers in Simulation 55, 271–280, 2001
+T. Ishigami, T. Homma, "An importance quantification technique in uncertainty analysis for computer models", Proc. ISUMA '90, 398–403, 1990
+M. J. W. Jansen, "Analysis of variance designs for model output", Computer Physics Communications 117, 35–43, 1999
+A. Saltelli et al., "Variance based sensitivity analysis of model output. Design and estimator for the total sensitivity index", Computer Physics Communications 181, 259–270, 2010
+A. Saltelli et al., Global Sensitivity Analysis: The Primer, Wiley, 2008
+S. Joe, F. Y. Kuo, "Constructing Sobol sequences with better two-dimensional projections", SIAM Journal on Scientific Computing 30, 2635–2654, 2008
+J. Herman, W. Usher, "SALib: An open-source Python library for sensitivity analysis", Journal of Open Source Software 2(9), 97, 2017
+
+▼ クレジット
+音声：VOICEVOX:四国めたん
+
+#感度解析 #Sobol #統計 #シミュレーション
